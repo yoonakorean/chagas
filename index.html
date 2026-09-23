@@ -135,6 +135,12 @@
             border-radius: 8px;
             border: 1px solid #d1d5db;
         }
+
+        .error-msg {
+            color: #ef4444;
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
@@ -173,34 +179,29 @@
             <div class="score-badge" id="lbl-score">得分：--</div>
         </div>
 
-        <!-- 導覽切換按鈕 (跳轉題目) -->
+        <!-- 導覽切換按鈕 -->
         <div class="nav-controls">
             <button class="btn-nav" id="btn-prev" onclick="prevQuestion()">上一題</button>
             <span id="lbl-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
             <button class="btn-nav" id="btn-next" onclick="nextQuestion()">下一題</button>
         </div>
+
+        <div id="debug-info" class="error-msg"></div>
     </div>
 </div>
 
 <script>
-    // 正確的 GAS 部署 API URL (/exec)
+    // 正確的 GAS 部署 API URL
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec";
 
-    // 當前關卡設定
+    // ⚠️ 請確認這裡的數值跟你的 Google Sheet 第一筆資料欄位完全一致！
     let currentConfig = {
-        category: 'korean',
-        level: '1A',
-        unit_id: 1,
-        stage: 1,
-        lang: 'zh'
+        category: 'korean',  // Sheet 中的 category (注意大小寫)
+        level: '1A',         // Sheet 中的 level
+        unit_id: '1',        // Sheet 中的 unit_id
+        stage: '1',          // Sheet 中的 stage
+        lang: 'zh'           // 翻譯語系 (zh / en / ja)
     };
-
-    // 備用測試資料 (當 GAS 連線失敗或無資料時自動啟用)
-    const mockQuestions = [
-        { text: "안녕하세요", translation: "你好 (備用題目)", audioUrl: "" },
-        { text: "감사합니다", translation: "謝謝 (備用題目)", audioUrl: "" },
-        { text: "맛있어요", translation: "很好吃 (備用題目)", audioUrl: "" }
-    ];
 
     let questions = [];
     let currentIndex = 0;
@@ -210,7 +211,7 @@
     function initSpeechRecognition() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) {
-            alert("您的瀏覽器不支援語音辨識，建議使用 Chrome 瀏覽器開啟！");
+            alert("您的瀏覽器不支援語音辨識，建議使用 Chrome 瀏覽器！");
             return;
         }
 
@@ -226,20 +227,17 @@
         recognition.lang = langMap[currentConfig.category] || 'ko-KR';
 
         recognition.onstart = () => {
-            const btn = document.getElementById('btn-start-record');
-            btn.classList.add('recording');
+            document.getElementById('btn-start-record').classList.add('recording');
         };
 
         recognition.onend = () => {
-            const btn = document.getElementById('btn-start-record');
-            btn.classList.remove('recording');
+            document.getElementById('btn-start-record').classList.remove('recording');
         };
 
         recognition.onresult = (event) => {
             const userSpeech = event.results[0][0].transcript;
             document.getElementById('lbl-recognized-text').innerText = userSpeech;
             
-            // 計算相似度得分
             const targetText = questions[currentIndex].text;
             const score = calculateSimilarity(targetText, userSpeech);
             document.getElementById('lbl-score').innerText = `得分：${score}分`;
@@ -247,16 +245,17 @@
 
         recognition.onerror = (event) => {
             console.error("語音辨識錯誤：", event.error);
-            const btn = document.getElementById('btn-start-record');
-            btn.classList.remove('recording');
+            document.getElementById('btn-start-record').classList.remove('recording');
         };
     }
 
     // 2. 從 GAS 後端載入題目
     async function loadQuestions() {
         document.getElementById('lbl-target-text').innerText = "載入題目中...";
+        document.getElementById('lbl-translation').innerText = "...";
+        document.getElementById('debug-info').innerText = "";
         
-        const url = `${GAS_API_URL}?action=getShadowingQuestions&category=${currentConfig.category}&level=${currentConfig.level}&unit_id=${currentConfig.unit_id}&stage=${currentConfig.stage}&lang=${currentConfig.lang}`;
+        const url = `${GAS_API_URL}?action=getShadowingQuestions&category=${encodeURIComponent(currentConfig.category)}&level=${encodeURIComponent(currentConfig.level)}&unit_id=${encodeURIComponent(currentConfig.unit_id)}&stage=${encodeURIComponent(currentConfig.stage)}&lang=${encodeURIComponent(currentConfig.lang)}`;
 
         try {
             const res = await fetch(url);
@@ -264,16 +263,19 @@
             
             if (data.status === 'success' && data.data && data.data.length > 0) {
                 questions = data.data;
+                currentIndex = 0;
+                displayQuestion();
             } else {
-                throw new Error("API 未回傳有效題目資料");
+                document.getElementById('lbl-target-text').innerText = "無相關題目";
+                document.getElementById('lbl-translation').innerText = "";
+                document.getElementById('lbl-progress').innerText = "0 / 0";
+                document.getElementById('debug-info').innerText = `查無資料，請確認 Sheet 資料是否符合：category=${currentConfig.category}, level=${currentConfig.level}, unit_id=${currentConfig.unit_id}, stage=${currentConfig.stage}`;
             }
         } catch (err) {
-            console.warn("GAS 載入失敗或傳回空值，自動切換至預設題目：", err);
-            questions = mockQuestions;
+            console.error("載入失敗：", err);
+            document.getElementById('lbl-target-text').innerText = "載入失敗";
+            document.getElementById('debug-info').innerText = "無法連線至 API，請檢查 GAS 部署與網路權限。";
         }
-
-        currentIndex = 0;
-        displayQuestion();
     }
 
     // 3. 顯示當前題目
@@ -281,8 +283,8 @@
         if (!questions || questions.length === 0) return;
 
         const q = questions[currentIndex];
-        document.getElementById('lbl-target-text').innerText = q.text;
-        document.getElementById('lbl-translation').innerText = q.translation;
+        document.getElementById('lbl-target-text').innerText = q.text || "無題目文字";
+        document.getElementById('lbl-translation').innerText = q.translation || "";
         document.getElementById('lbl-recognized-text').innerText = "-";
         document.getElementById('lbl-score').innerText = "得分：--";
 
@@ -307,25 +309,33 @@
         }
     }
 
-    // 5. 播放語音（優先使用音檔 URL，否則使用瀏覽器合成發音）
+    // 5. 播放語音（優先使用 audio_url，若空則採用 TTS 語音合成）
     function playAudio() {
         if (!questions[currentIndex]) return;
         const q = questions[currentIndex];
 
-        if (q.audioUrl) {
+        if (q.audioUrl && q.audioUrl.trim() !== "") {
             const audio = new Audio(q.audioUrl);
-            audio.play().catch(e => console.error("音檔播放失敗：", e));
+            audio.play().catch(e => {
+                console.warn("MP3 播放失敗，切換為系統合成發音：", e);
+                speakTTS(q.text);
+            });
         } else {
-            const synth = window.speechSynthesis;
-            synth.cancel(); // 停止先前的發音
-            const utterance = new SpeechSynthesisUtterance(q.text);
-            const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
-            utterance.lang = langMap[currentConfig.category] || 'ko-KR';
-            synth.speak(utterance);
+            speakTTS(q.text);
         }
     }
 
-    // 6. 字串相似度計算 (Levenshtein Distance)
+    function speakTTS(text) {
+        if (!text) return;
+        const synth = window.speechSynthesis;
+        synth.cancel(); // 停止先前的聲音
+        const utterance = new SpeechSynthesisUtterance(text);
+        const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
+        utterance.lang = langMap[currentConfig.category] || 'ko-KR';
+        synth.speak(utterance);
+    }
+
+    // 6. 字串相似度計算
     function calculateSimilarity(str1, str2) {
         const s1 = str1.replace(/\s+/g, '').toLowerCase();
         const s2 = str2.replace(/\s+/g, '').toLowerCase();
@@ -353,7 +363,7 @@
         return score < 0 ? 0 : score;
     }
 
-    // 事件監聽綁定
+    // 事件綁定
     document.getElementById('btn-play-audio').addEventListener('click', playAudio);
     
     document.getElementById('btn-start-record').addEventListener('click', () => {
@@ -361,7 +371,7 @@
             try {
                 recognition.start();
             } catch(e) {
-                console.warn("語音辨識已經在執行中", e);
+                console.warn("語音辨識已在執行中", e);
             }
         }
     });
@@ -371,7 +381,7 @@
         loadQuestions();
     });
 
-    // 頁面初始化
+    // 初始化
     window.onload = () => {
         initSpeechRecognition();
         loadQuestions();
