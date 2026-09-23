@@ -10,6 +10,7 @@
             --duo-green: #58cc02;
             --duo-blue: #1cb0f6;
             --duo-red: #ff4b4b;
+            --duo-gray: #e5e7eb;
         }
 
         body {
@@ -46,12 +47,14 @@
             font-weight: bold;
             color: #1f2937;
             margin: 15px 0 5px 0;
+            min-height: 2.5rem;
         }
 
         .translation-text {
             font-size: 1.1rem;
             color: #6b7280;
             margin-bottom: 25px;
+            min-height: 1.5rem;
         }
 
         .controls {
@@ -100,6 +103,33 @@
             margin-top: 5px;
         }
 
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .btn-nav {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #374151;
+            transition: background 0.2s;
+        }
+
+        .btn-nav:hover:not(:disabled) {
+            background: #e5e7eb;
+        }
+
+        .btn-nav:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
         select {
             padding: 5px 10px;
             border-radius: 8px;
@@ -142,11 +172,18 @@
             <div>辨識結果：<span id="lbl-recognized-text" style="font-weight: bold; color: #374151;">-</span></div>
             <div class="score-badge" id="lbl-score">得分：--</div>
         </div>
+
+        <!-- 導覽切換按鈕 (跳轉題目) -->
+        <div class="nav-controls">
+            <button class="btn-nav" id="btn-prev" onclick="prevQuestion()">上一題</button>
+            <span id="lbl-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
+            <button class="btn-nav" id="btn-next" onclick="nextQuestion()">下一題</button>
+        </div>
     </div>
 </div>
 
 <script>
-    // ⚠️ 請替換為你部署的 Google Apps Script URL
+    // 正確的 GAS 部署 API URL (/exec)
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec";
 
     // 當前關卡設定
@@ -158,6 +195,13 @@
         lang: 'zh'
     };
 
+    // 備用測試資料 (當 GAS 連線失敗或無資料時自動啟用)
+    const mockQuestions = [
+        { text: "안녕하세요", translation: "你好 (備用題目)", audioUrl: "" },
+        { text: "감사합니다", translation: "謝謝 (備用題目)", audioUrl: "" },
+        { text: "맛있어요", translation: "很好吃 (備用題目)", audioUrl: "" }
+    ];
+
     let questions = [];
     let currentIndex = 0;
     let recognition = null;
@@ -166,7 +210,7 @@
     function initSpeechRecognition() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) {
-            alert("您的瀏覽器不支援語音辨識，建議使用 Chrome 瀏覽器！");
+            alert("您的瀏覽器不支援語音辨識，建議使用 Chrome 瀏覽器開啟！");
             return;
         }
 
@@ -174,7 +218,6 @@
         recognition.continuous = false;
         recognition.interimResults = false;
 
-        // 設定辨識語言 (依據學習語種)
         const langMap = {
             'korean': 'ko-KR',
             'japanese': 'ja-JP',
@@ -196,10 +239,16 @@
             const userSpeech = event.results[0][0].transcript;
             document.getElementById('lbl-recognized-text').innerText = userSpeech;
             
-            // 計算比對分數
+            // 計算相似度得分
             const targetText = questions[currentIndex].text;
             const score = calculateSimilarity(targetText, userSpeech);
             document.getElementById('lbl-score').innerText = `得分：${score}分`;
+        };
+
+        recognition.onerror = (event) => {
+            console.error("語音辨識錯誤：", event.error);
+            const btn = document.getElementById('btn-start-record');
+            btn.classList.remove('recording');
         };
     }
 
@@ -213,37 +262,62 @@
             const res = await fetch(url);
             const data = await res.json();
             
-            if (data.status === 'success' && data.data.length > 0) {
+            if (data.status === 'success' && data.data && data.data.length > 0) {
                 questions = data.data;
-                currentIndex = 0;
-                displayQuestion();
             } else {
-                document.getElementById('lbl-target-text').innerText = "無相關題目";
-                document.getElementById('lbl-translation').innerText = "";
+                throw new Error("API 未回傳有效題目資料");
             }
         } catch (err) {
-            console.error(err);
-            alert("題目載入失敗，請檢查 GAS 設定！");
+            console.warn("GAS 載入失敗或傳回空值，自動切換至預設題目：", err);
+            questions = mockQuestions;
         }
+
+        currentIndex = 0;
+        displayQuestion();
     }
 
     // 3. 顯示當前題目
     function displayQuestion() {
+        if (!questions || questions.length === 0) return;
+
         const q = questions[currentIndex];
         document.getElementById('lbl-target-text').innerText = q.text;
         document.getElementById('lbl-translation').innerText = q.translation;
         document.getElementById('lbl-recognized-text').innerText = "-";
         document.getElementById('lbl-score').innerText = "得分：--";
+
+        // 更新進度與按鈕狀態
+        document.getElementById('lbl-progress').innerText = `${currentIndex + 1} / ${questions.length}`;
+        document.getElementById('btn-prev').disabled = currentIndex === 0;
+        document.getElementById('btn-next').disabled = currentIndex === questions.length - 1;
     }
 
-    // 4. 播放語音（優先使用音檔，無音檔則用瀏覽器 TTS）
+    // 4. 切換題目
+    function nextQuestion() {
+        if (currentIndex < questions.length - 1) {
+            currentIndex++;
+            displayQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            displayQuestion();
+        }
+    }
+
+    // 5. 播放語音（優先使用音檔 URL，否則使用瀏覽器合成發音）
     function playAudio() {
+        if (!questions[currentIndex]) return;
         const q = questions[currentIndex];
+
         if (q.audioUrl) {
             const audio = new Audio(q.audioUrl);
-            audio.play();
+            audio.play().catch(e => console.error("音檔播放失敗：", e));
         } else {
             const synth = window.speechSynthesis;
+            synth.cancel(); // 停止先前的發音
             const utterance = new SpeechSynthesisUtterance(q.text);
             const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
             utterance.lang = langMap[currentConfig.category] || 'ko-KR';
@@ -251,7 +325,7 @@
         }
     }
 
-    // 5. 簡易字串相似度算法 (Levenshtein Distance)
+    // 6. 字串相似度計算 (Levenshtein Distance)
     function calculateSimilarity(str1, str2) {
         const s1 = str1.replace(/\s+/g, '').toLowerCase();
         const s2 = str2.replace(/\s+/g, '').toLowerCase();
@@ -283,12 +357,18 @@
     document.getElementById('btn-play-audio').addEventListener('click', playAudio);
     
     document.getElementById('btn-start-record').addEventListener('click', () => {
-        if (recognition) recognition.start();
+        if (recognition) {
+            try {
+                recognition.start();
+            } catch(e) {
+                console.warn("語音辨識已經在執行中", e);
+            }
+        }
     });
 
     document.getElementById('select-user-lang').addEventListener('change', (e) => {
         currentConfig.lang = e.target.value;
-        loadQuestions(); // 根據選擇的母語重新載入翻譯
+        loadQuestions();
     });
 
     // 頁面初始化
