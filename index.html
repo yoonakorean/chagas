@@ -191,16 +191,16 @@
 </div>
 
 <script>
-    // 正確的 GAS 部署 API URL
+    // 最新部署的 GAS 應用程式 API 網址
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec";
 
-    // ⚠️ 請確認這裡的數值跟你的 Google Sheet 第一筆資料欄位完全一致！
+    // 關卡與查詢參數設定
     let currentConfig = {
-        category: 'korean',  // Sheet 中的 category (注意大小寫)
-        level: '1A',         // Sheet 中的 level
-        unit_id: '1',        // Sheet 中的 unit_id
-        stage: '1',          // Sheet 中的 stage
-        lang: 'zh'           // 翻譯語系 (zh / en / ja)
+        category: 'korean',  // 學習語種
+        level: '1A',         // 難易度
+        unit_id: '1',        // 單元編號
+        stage: '1',          // 關卡編號
+        lang: 'zh'           // 預設翻譯語系 (zh / en / ja)
     };
 
     let questions = [];
@@ -238,7 +238,8 @@
             const userSpeech = event.results[0][0].transcript;
             document.getElementById('lbl-recognized-text').innerText = userSpeech;
             
-            const targetText = questions[currentIndex].text;
+            const currentQ = questions[currentIndex];
+            const targetText = currentQ.text || currentQ.text_content || "";
             const score = calculateSimilarity(targetText, userSpeech);
             document.getElementById('lbl-score').innerText = `得分：${score}分`;
         };
@@ -261,6 +262,8 @@
             const res = await fetch(url);
             const data = await res.json();
             
+            console.log("從 GAS 抓到的 response 資料：", data);
+
             if (data.status === 'success' && data.data && data.data.length > 0) {
                 questions = data.data;
                 currentIndex = 0;
@@ -278,13 +281,18 @@
         }
     }
 
-    // 3. 顯示當前題目
+    // 3. 顯示當前題目（含備用屬性自動相容）
     function displayQuestion() {
         if (!questions || questions.length === 0) return;
 
         const q = questions[currentIndex];
-        document.getElementById('lbl-target-text').innerText = q.text || "無題目文字";
-        document.getElementById('lbl-translation').innerText = q.translation || "";
+        
+        // 相容多種屬性寫法（以防後端 key 值命名有差異）
+        const targetText = q.text || q.text_content || "無題目文字";
+        const translationText = q.translation || q.zh_tw || q.zh || "";
+
+        document.getElementById('lbl-target-text').innerText = targetText;
+        document.getElementById('lbl-translation').innerText = translationText;
         document.getElementById('lbl-recognized-text').innerText = "-";
         document.getElementById('lbl-score').innerText = "得分：--";
 
@@ -309,33 +317,35 @@
         }
     }
 
-    // 5. 播放語音（優先使用 audio_url，若空則採用 TTS 語音合成）
+    // 5. 播放語音（優先使用 audioUrl，若空白則採用瀏覽器內建 TTS）
     function playAudio() {
         if (!questions[currentIndex]) return;
         const q = questions[currentIndex];
+        const targetText = q.text || q.text_content || "";
+        const audioUrl = q.audioUrl || q.audio_url || "";
 
-        if (q.audioUrl && q.audioUrl.trim() !== "") {
-            const audio = new Audio(q.audioUrl);
+        if (audioUrl && audioUrl.trim() !== "") {
+            const audio = new Audio(audioUrl);
             audio.play().catch(e => {
                 console.warn("MP3 播放失敗，切換為系統合成發音：", e);
-                speakTTS(q.text);
+                speakTTS(targetText);
             });
         } else {
-            speakTTS(q.text);
+            speakTTS(targetText);
         }
     }
 
     function speakTTS(text) {
         if (!text) return;
         const synth = window.speechSynthesis;
-        synth.cancel(); // 停止先前的聲音
+        synth.cancel(); // 停止先前尚未播放完的語音
         const utterance = new SpeechSynthesisUtterance(text);
         const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
         utterance.lang = langMap[currentConfig.category] || 'ko-KR';
         synth.speak(utterance);
     }
 
-    // 6. 字串相似度計算
+    // 6. 語音辨識相似度計算 (Levenshtein Distance)
     function calculateSimilarity(str1, str2) {
         const s1 = str1.replace(/\s+/g, '').toLowerCase();
         const s2 = str2.replace(/\s+/g, '').toLowerCase();
@@ -381,7 +391,7 @@
         loadQuestions();
     });
 
-    // 初始化
+    // 頁面載入完成時執行初始化
     window.onload = () => {
         initSpeechRecognition();
         loadQuestions();
