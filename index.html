@@ -28,16 +28,48 @@
             border-radius: 20px;
             padding: 20px;
             width: 100%;
-            max-width: 480px;
+            max-width: 500px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             text-align: center;
+        }
+
+        .level-selector-box {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            background: #f3f4f6;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .selector-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .selector-item label {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #4b5563;
+        }
+
+        .selector-item select {
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            background: white;
+            font-weight: bold;
+            color: #1f2937;
         }
 
         .lang-setting {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-size: 0.9rem;
             color: #6b7280;
         }
@@ -121,20 +153,8 @@
             transition: background 0.2s;
         }
 
-        .btn-nav:hover:not(:disabled) {
-            background: #e5e7eb;
-        }
-
-        .btn-nav:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        select {
-            padding: 5px 10px;
-            border-radius: 8px;
-            border: 1px solid #d1d5db;
-        }
+        .btn-nav:hover:not(:disabled) { background: #e5e7eb; }
+        .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
 
         .error-msg {
             color: #ef4444;
@@ -146,9 +166,47 @@
 <body>
 
 <div class="shadowing-card">
+
+    <!-- 關卡選擇區塊 (Level, Unit, Stage) -->
+    <div class="level-selector-box">
+        <div class="selector-item">
+            <label>程度 (Level)</label>
+            <select id="select-level">
+                <option value="0A" selected>0A</option>
+                <option value="0B">0B</option>
+                <option value="1A">1A</option>
+                <option value="1B">1B</option>
+                <option value="2A">2A</option>
+                <option value="2B">2B</option>
+                <option value="3A">3A</option>
+                <option value="3B">3B</option>
+                <option value="4A">4A</option>
+                <option value="4B">4B</option>
+            </select>
+        </div>
+        <div class="selector-item">
+            <label>單元 (Unit)</label>
+            <select id="select-unit">
+                <option value="1" selected>第 1 單元</option>
+                <option value="2">第 2 單元</option>
+                <option value="3">第 3 單元</option>
+                <option value="4">第 4 單元</option>
+                <option value="5">第 5 單元</option>
+            </select>
+        </div>
+        <div class="selector-item">
+            <label>關卡 (Stage)</label>
+            <select id="select-stage">
+                <option value="1" selected>第 1 關</option>
+                <option value="2">第 2 關</option>
+                <option value="3">第 3 關</option>
+            </select>
+        </div>
+    </div>
+
     <!-- 母語設定選單 -->
     <div class="lang-setting">
-        <span><i class="fa-solid fa-language"></i> 我的母語翻譯：</span>
+        <span><i class="fa-solid fa-language"></i> 母語翻譯：</span>
         <select id="select-user-lang">
             <option value="zh" selected>繁體中文</option>
             <option value="en">English</option>
@@ -191,23 +249,21 @@
 </div>
 
 <script>
-    // 最新部署的 GAS 應用程式 API 網址
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec";
 
-    // 關卡與查詢參數設定
     let currentConfig = {
-        category: 'korean',  // 學習語種
-        level: '1A',         // 難易度
-        unit_id: '1',        // 單元編號
-        stage: '1',          // 關卡編號
-        lang: 'zh'           // 預設翻譯語系 (zh / en / ja)
+        category: 'korean',
+        level: '0A',
+        unit_id: '1',
+        stage: '1',
+        lang: 'zh'
     };
 
     let questions = [];
     let currentIndex = 0;
     let recognition = null;
 
-    // 1. 初始化語音辨識 (Web Speech API)
+    // 1. 初始化語音辨識
     function initSpeechRecognition() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) {
@@ -219,11 +275,7 @@
         recognition.continuous = false;
         recognition.interimResults = false;
 
-        const langMap = {
-            'korean': 'ko-KR',
-            'japanese': 'ja-JP',
-            'english': 'en-US'
-        };
+        const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
         recognition.lang = langMap[currentConfig.category] || 'ko-KR';
 
         recognition.onstart = () => {
@@ -239,7 +291,7 @@
             document.getElementById('lbl-recognized-text').innerText = userSpeech;
             
             const currentQ = questions[currentIndex];
-            const targetText = currentQ.text || currentQ.text_content || "";
+            const targetText = currentQ ? (currentQ.text || "") : "";
             const score = calculateSimilarity(targetText, userSpeech);
             document.getElementById('lbl-score').innerText = `得分：${score}分`;
         };
@@ -261,42 +313,37 @@
         try {
             const res = await fetch(url);
             const data = await res.json();
-            
-            console.log("從 GAS 抓到的 response 資料：", data);
 
             if (data.status === 'success' && data.data && data.data.length > 0) {
                 questions = data.data;
                 currentIndex = 0;
                 displayQuestion();
             } else {
+                questions = [];
                 document.getElementById('lbl-target-text').innerText = "無相關題目";
                 document.getElementById('lbl-translation').innerText = "";
                 document.getElementById('lbl-progress').innerText = "0 / 0";
-                document.getElementById('debug-info').innerText = `查無資料，請確認 Sheet 資料是否符合：category=${currentConfig.category}, level=${currentConfig.level}, unit_id=${currentConfig.unit_id}, stage=${currentConfig.stage}`;
+                document.getElementById('btn-prev').disabled = true;
+                document.getElementById('btn-next').disabled = true;
+                document.getElementById('debug-info').innerText = `查無資料，請確認此關卡是否有資料：Level=${currentConfig.level}, Unit=${currentConfig.unit_id}, Stage=${currentConfig.stage}`;
             }
         } catch (err) {
             console.error("載入失敗：", err);
             document.getElementById('lbl-target-text').innerText = "載入失敗";
-            document.getElementById('debug-info').innerText = "無法連線至 API，請檢查 GAS 部署與網路權限。";
+            document.getElementById('debug-info').innerText = "無法連線至 API，請檢查網路狀態。";
         }
     }
 
-    // 3. 顯示當前題目（含備用屬性自動相容）
+    // 3. 顯示當前題目
     function displayQuestion() {
         if (!questions || questions.length === 0) return;
 
         const q = questions[currentIndex];
-        
-        // 相容多種屬性寫法（以防後端 key 值命名有差異）
-        const targetText = q.text || q.text_content || "無題目文字";
-        const translationText = q.translation || q.zh_tw || q.zh || "";
-
-        document.getElementById('lbl-target-text').innerText = targetText;
-        document.getElementById('lbl-translation').innerText = translationText;
+        document.getElementById('lbl-target-text').innerText = q.text || "無題目文字";
+        document.getElementById('lbl-translation').innerText = q.translation || "";
         document.getElementById('lbl-recognized-text').innerText = "-";
         document.getElementById('lbl-score').innerText = "得分：--";
 
-        // 更新進度與按鈕狀態
         document.getElementById('lbl-progress').innerText = `${currentIndex + 1} / ${questions.length}`;
         document.getElementById('btn-prev').disabled = currentIndex === 0;
         document.getElementById('btn-next').disabled = currentIndex === questions.length - 1;
@@ -317,39 +364,33 @@
         }
     }
 
-    // 5. 播放語音（優先使用 audioUrl，若空白則採用瀏覽器內建 TTS）
+    // 5. 播放語音
     function playAudio() {
         if (!questions[currentIndex]) return;
         const q = questions[currentIndex];
-        const targetText = q.text || q.text_content || "";
-        const audioUrl = q.audioUrl || q.audio_url || "";
 
-        if (audioUrl && audioUrl.trim() !== "") {
-            const audio = new Audio(audioUrl);
-            audio.play().catch(e => {
-                console.warn("MP3 播放失敗，切換為系統合成發音：", e);
-                speakTTS(targetText);
-            });
+        if (q.audioUrl && q.audioUrl.trim() !== "") {
+            const audio = new Audio(q.audioUrl);
+            audio.play().catch(e => speakTTS(q.text));
         } else {
-            speakTTS(targetText);
+            speakTTS(q.text);
         }
     }
 
     function speakTTS(text) {
         if (!text) return;
         const synth = window.speechSynthesis;
-        synth.cancel(); // 停止先前尚未播放完的語音
+        synth.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
         utterance.lang = langMap[currentConfig.category] || 'ko-KR';
         synth.speak(utterance);
     }
 
-    // 6. 語音辨識相似度計算 (Levenshtein Distance)
+    // 6. 字串相似度計算
     function calculateSimilarity(str1, str2) {
         const s1 = str1.replace(/\s+/g, '').toLowerCase();
         const s2 = str2.replace(/\s+/g, '').toLowerCase();
-        
         if (s1 === s2) return 100;
         
         let track = Array(s2.length + 1).fill(null).map(() => Array(s1.length + 1).fill(null));
@@ -373,17 +414,20 @@
         return score < 0 ? 0 : score;
     }
 
-    // 事件綁定
-    document.getElementById('btn-play-audio').addEventListener('click', playAudio);
-    
-    document.getElementById('btn-start-record').addEventListener('click', () => {
-        if (recognition) {
-            try {
-                recognition.start();
-            } catch(e) {
-                console.warn("語音辨識已在執行中", e);
-            }
-        }
+    // 事件監聽與關卡連動
+    document.getElementById('select-level').addEventListener('change', (e) => {
+        currentConfig.level = e.target.value;
+        loadQuestions();
+    });
+
+    document.getElementById('select-unit').addEventListener('change', (e) => {
+        currentConfig.unit_id = e.target.value;
+        loadQuestions();
+    });
+
+    document.getElementById('select-stage').addEventListener('change', (e) => {
+        currentConfig.stage = e.target.value;
+        loadQuestions();
     });
 
     document.getElementById('select-user-lang').addEventListener('change', (e) => {
@@ -391,7 +435,13 @@
         loadQuestions();
     });
 
-    // 頁面載入完成時執行初始化
+    document.getElementById('btn-play-audio').addEventListener('click', playAudio);
+    document.getElementById('btn-start-record').addEventListener('click', () => {
+        if (recognition) {
+            try { recognition.start(); } catch(e) {}
+        }
+    });
+
     window.onload = () => {
         initSpeechRecognition();
         loadQuestions();
