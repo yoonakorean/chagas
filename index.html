@@ -11,6 +11,7 @@
             --duo-blue: #1cb0f6;
             --duo-red: #ff4b4b;
             --duo-gray: #e5e7eb;
+            --duo-dark: #1f2937;
         }
 
         body {
@@ -26,54 +27,87 @@
             background: white;
             border: 2px solid #e5e7eb;
             border-radius: 20px;
-            padding: 20px;
+            padding: 24px;
             width: 100%;
-            max-width: 500px;
+            max-width: 480px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             text-align: center;
+            position: relative;
         }
 
-        .level-selector-box {
+        .step-page {
+            display: none; /* 預設隱藏所有步驟頁面 */
+        }
+
+        .step-page.active {
+            display: block; /* 僅顯示當前步驟 */
+        }
+
+        h2.step-title {
+            color: var(--duo-dark);
+            font-size: 1.4rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        /* 選項按鈕通用網格 */
+        .option-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            background: #f3f4f6;
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            text-align: left;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
-        .selector-item {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
 
-        .selector-item label {
-            font-size: 0.75rem;
-            font-weight: bold;
-            color: #4b5563;
-        }
-
-        .selector-item select {
-            padding: 6px;
-            border-radius: 8px;
-            border: 1px solid #d1d5db;
+        .btn-option {
             background: white;
+            border: 2px solid #e5e7eb;
+            border-bottom: 4px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 14px 10px;
+            font-size: 1.1rem;
             font-weight: bold;
-            color: #1f2937;
+            color: var(--duo-dark);
+            cursor: pointer;
+            transition: all 0.1s ease;
         }
 
-        .lang-setting {
+        .btn-option:hover {
+            border-color: var(--duo-blue);
+            color: var(--duo-blue);
+        }
+
+        .btn-option:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+
+        /* 回上一頁／選單按鈕 */
+        .top-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
-            font-size: 0.9rem;
-            color: #6b7280;
         }
 
+        .btn-back-step {
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: bold;
+        }
+
+        .btn-back-step:hover {
+            color: var(--duo-blue);
+        }
+
+        /* 挑戰區域樣式 */
         .target-text {
             font-size: 1.8rem;
             font-weight: bold;
@@ -150,11 +184,33 @@
             cursor: pointer;
             font-weight: bold;
             color: #374151;
-            transition: background 0.2s;
         }
 
         .btn-nav:hover:not(:disabled) { background: #e5e7eb; }
         .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .challenge-header-btns {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .btn-sub-nav {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: bold;
+            color: #4b5563;
+        }
+
+        .btn-sub-nav:hover {
+            background: #e5e7eb;
+            color: var(--duo-blue);
+        }
 
         .error-msg {
             color: #ef4444;
@@ -167,57 +223,81 @@
 
 <div class="shadowing-card">
 
-    <!-- 關卡選擇區塊 (Level, Unit, Stage) -->
-    <div class="level-selector-box">
-        <div class="selector-item">
-            <label>程度 (Level)</label>
-            <select id="select-level">
-                <option value="0A" selected>0A</option>
-                <option value="0B">0B</option>
-                <option value="1A">1A</option>
-                <option value="1B">1B</option>
-                <option value="2A">2A</option>
-                <option value="2B">2B</option>
-                <option value="3A">3A</option>
-                <option value="3B">3B</option>
-                <option value="4A">4A</option>
-                <option value="4B">4B</option>
-            </select>
+    <!-- 步驟 1：選擇學習語言與母語 -->
+    <div id="step-lang" class="step-page active">
+        <h2 class="step-title"><i class="fa-solid fa-earth-americas"></i> 請選擇學習語言與翻譯</h2>
+        
+        <p style="text-align: left; font-size: 0.9rem; color: #6b7280; font-weight: bold;">要學習的語言：</p>
+        <div class="option-grid grid-3">
+            <button class="btn-option" onclick="selectCategory('korean')">🇰🇷 韓文</button>
+            <button class="btn-option" onclick="selectCategory('japanese')">🇯🇵 日文</button>
+            <button class="btn-option" onclick="selectCategory('english')">🇺🇸 英文</button>
         </div>
-        <div class="selector-item">
-            <label>單元 (Unit)</label>
-            <select id="select-unit">
-                <option value="1" selected>第 1 單元</option>
-                <option value="2">第 2 單元</option>
-                <option value="3">第 3 單元</option>
-                <option value="4">第 4 單元</option>
-                <option value="5">第 5 單元</option>
-            </select>
-        </div>
-        <div class="selector-item">
-            <label>關卡 (Stage)</label>
-            <select id="select-stage">
-                <option value="1" selected>第 1 關</option>
-                <option value="2">第 2 關</option>
-                <option value="3">第 3 關</option>
-            </select>
+
+        <p style="text-align: left; font-size: 0.9rem; color: #6b7280; font-weight: bold;">你的母語（題目翻譯）：</p>
+        <div class="option-grid grid-3">
+            <button class="btn-option" id="btn-lang-zh" onclick="setUserLang('zh')">繁體中文</button>
+            <button class="btn-option" id="btn-lang-en" onclick="setUserLang('en')">English</button>
+            <button class="btn-option" id="btn-lang-ja" onclick="setUserLang('ja')">日本語</button>
         </div>
     </div>
 
-    <!-- 母語設定選單 -->
-    <div class="lang-setting">
-        <span><i class="fa-solid fa-language"></i> 母語翻譯：</span>
-        <select id="select-user-lang">
-            <option value="zh" selected>繁體中文</option>
-            <option value="en">English</option>
-            <option value="ja">日本語</option>
-        </select>
+    <!-- 步驟 2：選擇程度 (Level) -->
+    <div id="step-level" class="step-page">
+        <div class="top-nav">
+            <button class="btn-back-step" onclick="goToStep('step-lang')"><i class="fa-solid fa-arrow-left"></i> 重選語言</button>
+        </div>
+        <h2 class="step-title"><i class="fa-solid fa-layer-group"></i> 請選擇程度 (Level)</h2>
+        <div class="option-grid grid-2">
+            <button class="btn-option" onclick="selectLevel('0A')">0A</button>
+            <button class="btn-option" onclick="selectLevel('0B')">0B</button>
+            <button class="btn-option" onclick="selectLevel('1A')">1A</button>
+            <button class="btn-option" onclick="selectLevel('1B')">1B</button>
+            <button class="btn-option" onclick="selectLevel('2A')">2A</button>
+            <button class="btn-option" onclick="selectLevel('2B')">2B</button>
+            <button class="btn-option" onclick="selectLevel('3A')">3A</button>
+            <button class="btn-option" onclick="selectLevel('3B')">3B</button>
+            <button class="btn-option" onclick="selectLevel('4A')">4A</button>
+            <button class="btn-option" onclick="selectLevel('4B')">4B</button>
+        </div>
     </div>
 
-    <hr style="border: 0; border-top: 1px solid #f3f4f6;">
+    <!-- 步驟 3：選擇單元與關卡 (Unit & Stage) -->
+    <div id="step-unit-stage" class="step-page">
+        <div class="top-nav">
+            <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
+            <span id="lbl-selected-level" style="font-weight: bold; color: var(--duo-blue);">Level: 0A</span>
+        </div>
+        
+        <h2 class="step-title"><i class="fa-solid fa-book-open"></i> 請選擇單元 (Unit)</h2>
+        <div class="option-grid grid-3" style="margin-bottom: 25px;">
+            <button class="btn-option" onclick="selectUnit('1')">第 1 單元</button>
+            <button class="btn-option" onclick="selectUnit('2')">第 2 單元</button>
+            <button class="btn-option" onclick="selectUnit('3')">第 3 單元</button>
+            <button class="btn-option" onclick="selectUnit('4')">第 4 單元</button>
+            <button class="btn-option" onclick="selectUnit('5')">第 5 單元</button>
+        </div>
 
-    <!-- 題目區域 -->
-    <div id="quiz-container">
+        <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇關卡 (Stage)</h2>
+        <div class="option-grid grid-3">
+            <button class="btn-option" onclick="selectStage('1')">第 1 關</button>
+            <button class="btn-option" onclick="selectStage('2')">第 2 關</button>
+            <button class="btn-option" onclick="selectStage('3')">第 3 關</button>
+        </div>
+    </div>
+
+    <!-- 步驟 4：跟讀挑戰畫面 -->
+    <div id="step-quiz" class="step-page">
+        <!-- 新增回到程度與關卡選擇按鈕 -->
+        <div class="challenge-header-btns">
+            <button class="btn-sub-nav" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 回程度選擇</button>
+            <button class="btn-sub-nav" onclick="goToStep('step-unit-stage')"><i class="fa-solid fa-list-check"></i> 回關卡選擇</button>
+        </div>
+
+        <div style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 10px;" id="lbl-quiz-info">
+            韓文 | 0A | 單元 1 | 第 1 關
+        </div>
+
         <div class="target-text" id="lbl-target-text">載入中...</div>
         <div class="translation-text" id="lbl-translation">...</div>
 
@@ -246,6 +326,7 @@
 
         <div id="debug-info" class="error-msg"></div>
     </div>
+
 </div>
 
 <script>
@@ -262,6 +343,54 @@
     let questions = [];
     let currentIndex = 0;
     let recognition = null;
+
+    // 畫面切換控制
+    function goToStep(stepId) {
+        document.querySelectorAll('.step-page').forEach(page => {
+            page.classList.remove('active');
+        });
+        document.getElementById(stepId).classList.add('active');
+    }
+
+    // 選擇語言
+    function selectCategory(category) {
+        currentConfig.category = category;
+        goToStep('step-level');
+    }
+
+    function setUserLang(lang) {
+        currentConfig.lang = lang;
+        
+        // 更新母語選擇按鈕樣式
+        document.getElementById('btn-lang-zh').style.borderColor = lang === 'zh' ? 'var(--duo-blue)' : '#e5e7eb';
+        document.getElementById('btn-lang-en').style.borderColor = lang === 'en' ? 'var(--duo-blue)' : '#e5e7eb';
+        document.getElementById('btn-lang-ja').style.borderColor = lang === 'ja' ? 'var(--duo-blue)' : '#e5e7eb';
+    }
+
+    // 選擇程度 Level
+    function selectLevel(level) {
+        currentConfig.level = level;
+        document.getElementById('lbl-selected-level').innerText = `Level: ${level}`;
+        goToStep('step-unit-stage');
+    }
+
+    // 選擇單元 Unit
+    function selectUnit(unitId) {
+        currentConfig.unit_id = unitId;
+        alert(`已選擇第 ${unitId} 單元，請接著選擇關卡 (Stage)`);
+    }
+
+    // 選擇關卡 Stage 並開始挑戰
+    function selectStage(stage) {
+        currentConfig.stage = stage;
+        goToStep('step-quiz');
+        
+        // 更新當前關卡文字提示
+        document.getElementById('lbl-quiz-info').innerText = `${currentConfig.category.toUpperCase()} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} | 第 ${currentConfig.stage} 關`;
+        
+        // 向 GAS 抓取題目資料
+        loadQuestions();
+    }
 
     // 1. 初始化語音辨識
     function initSpeechRecognition() {
@@ -302,7 +431,7 @@
         };
     }
 
-    // 2. 從 GAS 後端載入題目
+    // 2. 從 GAS 載入題目
     async function loadQuestions() {
         document.getElementById('lbl-target-text').innerText = "載入題目中...";
         document.getElementById('lbl-translation').innerText = "...";
@@ -325,7 +454,7 @@
                 document.getElementById('lbl-progress').innerText = "0 / 0";
                 document.getElementById('btn-prev').disabled = true;
                 document.getElementById('btn-next').disabled = true;
-                document.getElementById('debug-info').innerText = `查無資料，請確認此關卡是否有資料：Level=${currentConfig.level}, Unit=${currentConfig.unit_id}, Stage=${currentConfig.stage}`;
+                document.getElementById('debug-info').innerText = `查無資料，請確認 Sheet 中是否有符合：Level=${currentConfig.level}, Unit=${currentConfig.unit_id}, Stage=${currentConfig.stage} 的資料`;
             }
         } catch (err) {
             console.error("載入失敗：", err);
@@ -334,7 +463,7 @@
         }
     }
 
-    // 3. 顯示當前題目
+    // 3. 顯示題目
     function displayQuestion() {
         if (!questions || questions.length === 0) return;
 
@@ -364,7 +493,7 @@
         }
     }
 
-    // 5. 播放語音
+    // 5. 播放發音
     function playAudio() {
         if (!questions[currentIndex]) return;
         const q = questions[currentIndex];
@@ -387,7 +516,7 @@
         synth.speak(utterance);
     }
 
-    // 6. 字串相似度計算
+    // 6. 相似度計算
     function calculateSimilarity(str1, str2) {
         const s1 = str1.replace(/\s+/g, '').toLowerCase();
         const s2 = str2.replace(/\s+/g, '').toLowerCase();
@@ -414,27 +543,7 @@
         return score < 0 ? 0 : score;
     }
 
-    // 事件監聽與關卡連動
-    document.getElementById('select-level').addEventListener('change', (e) => {
-        currentConfig.level = e.target.value;
-        loadQuestions();
-    });
-
-    document.getElementById('select-unit').addEventListener('change', (e) => {
-        currentConfig.unit_id = e.target.value;
-        loadQuestions();
-    });
-
-    document.getElementById('select-stage').addEventListener('change', (e) => {
-        currentConfig.stage = e.target.value;
-        loadQuestions();
-    });
-
-    document.getElementById('select-user-lang').addEventListener('change', (e) => {
-        currentConfig.lang = e.target.value;
-        loadQuestions();
-    });
-
+    // 初始化綁定
     document.getElementById('btn-play-audio').addEventListener('click', playAudio);
     document.getElementById('btn-start-record').addEventListener('click', () => {
         if (recognition) {
@@ -444,7 +553,7 @@
 
     window.onload = () => {
         initSpeechRecognition();
-        loadQuestions();
+        setUserLang('zh'); // 預設繁體中文
     };
 </script>
 
