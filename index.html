@@ -130,7 +130,6 @@
 
         .btn-back-step:hover { color: var(--duo-blue); }
 
-        /* 下拉選單彈窗樣式 */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -202,8 +201,20 @@
         .translation-text {
             font-size: 1.1rem;
             color: #6b7280;
-            margin-bottom: 25px;
+            margin-bottom: 8px;
             min-height: 1.5rem;
+        }
+
+        /* 💡 提示詞樣式區塊 */
+        .hint-text {
+            font-size: 0.9rem;
+            color: #f59e0b;
+            background-color: #fef3c7;
+            padding: 6px 12px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 20px;
+            min-height: 1.2rem;
         }
 
         .controls {
@@ -303,15 +314,13 @@
     <div id="step-lang" class="step-page active">
         <h2 class="step-title"><i class="fa-solid fa-earth-americas"></i> 請選擇語言設定</h2>
         
-        <!-- 💡 母語放在上面 -->
-        <p style="text-align: left; font-size: 0.9rem; color: #6b7280; font-weight: bold;">你的母語：</p>
+        <p style="text-align: left; font-size: 0.9rem; color: #6b7280; font-weight: bold;">你的母語（題目翻譯）：</p>
         <div class="option-grid grid-3">
             <button class="btn-option" id="btn-lang-zh" onclick="setUserLang('zh')">繁體中文</button>
             <button class="btn-option" id="btn-lang-en" onclick="setUserLang('en')">English</button>
             <button class="btn-option" id="btn-lang-ja" onclick="setUserLang('ja')">日本語</button>
         </div>
 
-        <!-- 💡 要學習的語言放在下面 -->
         <p style="text-align: left; font-size: 0.9rem; color: #6b7280; font-weight: bold;">要學習的語言：</p>
         <div class="option-grid grid-3">
             <button class="btn-option" id="btn-cat-korean" onclick="selectCategory('korean')">🇰🇷 韓文</button>
@@ -362,6 +371,8 @@
 
         <div class="target-text" id="lbl-target-text">載入中...</div>
         <div class="translation-text" id="lbl-translation">...</div>
+        <!-- 💡 新增的提示詞容器 -->
+        <div id="lbl-hint" class="hint-text" style="display: none;"></div>
 
         <!-- 按鈕區 -->
         <div class="controls">
@@ -467,7 +478,6 @@
         }
     }
 
-    // 強制清除舊快取並重新向 GAS 抓最新資料
     async function forceClearAndSync() {
         const cacheKey = `shadowing_data_${currentConfig.category}`;
         localStorage.removeItem(cacheKey);
@@ -490,7 +500,6 @@
         btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 同步最新試算表中...`;
 
         try {
-            // 加隨機時間戳記防止瀏覽器 HTTP 快取
             const url = `${GAS_API_URL}?action=getLanguageData&category=${encodeURIComponent(currentConfig.category)}&t=${Date.now()}`;
             const res = await fetch(url);
             const data = await res.json();
@@ -602,7 +611,8 @@
             id: i[0],
             text: i[4],
             translation: i[langIdx] || i[5] || '',
-            audioUrl: i[8]
+            audioUrl: i[8],
+            hint: i[9] || '' // 💡 抓取提示詞
         }));
 
         currentIndex = 0;
@@ -611,16 +621,28 @@
         } else {
             document.getElementById('lbl-target-text').innerText = "無相關題目";
             document.getElementById('lbl-translation').innerText = "";
+            document.getElementById('lbl-hint').style.display = "none";
             document.getElementById('lbl-progress').innerText = "0 / 0";
         }
     }
 
+    // 💡 顯示題目與提示詞
     function displayQuestion() {
         if (!questions || questions.length === 0) return;
 
         const q = questions[currentIndex];
         document.getElementById('lbl-target-text').innerText = q.text || "無題目文字";
         document.getElementById('lbl-translation').innerText = q.translation || "";
+        
+        // 💡 提示詞判斷：如果有字就顯示，沒字或空格就隱藏
+        const hintElem = document.getElementById('lbl-hint');
+        if (q.hint && q.hint.trim() !== '') {
+            hintElem.innerText = `💡 提示：${q.hint.trim()}`;
+            hintElem.style.display = "inline-block";
+        } else {
+            hintElem.style.display = "none";
+        }
+
         document.getElementById('lbl-recognized-text').innerText = "-";
         document.getElementById('lbl-score').innerText = "得分：--";
 
