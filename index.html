@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多語種跟讀關卡</title>
+    <title>多語種語言學習關卡</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -51,7 +51,6 @@
             margin-bottom: 20px;
         }
 
-        .grid-1 { grid-template-columns: 1fr; }
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
         .grid-3 { grid-template-columns: repeat(3, 1fr); }
 
@@ -61,7 +60,7 @@
             border-bottom: 4px solid #e5e7eb;
             border-radius: 14px;
             padding: 14px 10px;
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: bold;
             color: var(--duo-dark);
             cursor: pointer;
@@ -155,7 +154,6 @@
             border-radius: 10px;
             display: inline-block;
             margin-bottom: 20px;
-            min-height: 1.2rem;
         }
 
         .controls {
@@ -244,40 +242,82 @@
 
         .btn-sub-nav:hover { background: #e5e7eb; color: var(--duo-blue); }
 
-        .error-msg { color: #ef4444; font-size: 0.85rem; margin-top: 8px; }
+        /* 🧩 字塊拼字專用樣式 */
+        .block-zone {
+            min-height: 70px;
+            border-bottom: 2px dashed #cbd5e1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .block-chip {
+            background: white;
+            border: 2px solid #cbd5e1;
+            border-bottom: 4px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 8px 14px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--duo-dark);
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.1s;
+        }
+
+        .block-chip:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+
+        .block-chip.used {
+            opacity: 0.3;
+            pointer-events: none;
+            background: #f3f4f6;
+        }
     </style>
 </head>
 <body>
 
 <div class="shadowing-card">
 
-    <!-- 步驟 1：選擇學習語言與母語 -->
+    <!-- 步驟 1：選擇模式、母語與學習語言 -->
     <div id="step-lang" class="step-page active">
-        <h2 class="step-title"><i class="fa-solid fa-earth-americas"></i> 請選擇語言設定</h2>
+        <h2 class="step-title"><i class="fa-solid fa-gamepad"></i> 選擇學習模式與語言</h2>
         
-        <p style="text-align: left; font-size: 0.9rem; color: #6b7280; font-weight: bold;">你的母語（題目翻譯）：</p>
+        <p style="text-align: left; font-size: 0.9rem; color: #6b7280; font-weight: bold;">1. 選擇遊戲挑戰模式：</p>
+        <div class="option-grid grid-2">
+            <button class="btn-option selected" id="btn-mode-shadow" onclick="setGameMode('shadow')">🎙️ 跟讀練習</button>
+            <button class="btn-option" id="btn-mode-blocks" onclick="setGameMode('blocks')">🧩 聽音重組字塊</button>
+        </div>
+
+        <p style="text-align: left; font-size: 0.9rem; color: #6b7280; font-weight: bold;">2. 你的母語（翻譯）：</p>
         <div class="option-grid grid-3">
-            <button class="btn-option" id="btn-lang-zh" onclick="setUserLang('zh')">繁體中文</button>
+            <button class="btn-option selected" id="btn-lang-zh" onclick="setUserLang('zh')">繁體中文</button>
             <button class="btn-option" id="btn-lang-en" onclick="setUserLang('en')">English</button>
             <button class="btn-option" id="btn-lang-ja" onclick="setUserLang('ja')">日本語</button>
         </div>
 
-        <p style="text-align: left; font-size: 0.9rem; color: #6b7280; font-weight: bold;">要學習的語言：</p>
+        <p style="text-align: left; font-size: 0.9rem; color: #6b7280; font-weight: bold;">3. 要學習的語言：</p>
         <div class="option-grid grid-3">
-            <button class="btn-option" id="btn-cat-korean" onclick="selectCategory('korean')">🇰🇷 韓文</button>
+            <button class="btn-option selected" id="btn-cat-korean" onclick="selectCategory('korean')">🇰🇷 韓文</button>
             <button class="btn-option" id="btn-cat-japanese" onclick="selectCategory('japanese')">🇯🇵 日文</button>
             <button class="btn-option" id="btn-cat-english" onclick="selectCategory('english')">🇺🇸 英文</button>
         </div>
 
         <button class="btn-confirm" id="btn-confirm-lang" onclick="confirmLangSetting()"><i class="fa-solid fa-check"></i> 確定並進入</button>
-        <button class="btn-sync-refresh" onclick="forceClearAndSync()"><i class="fa-solid fa-arrows-rotate"></i> 強制連線更新試算表資料</button>
+        <button class="btn-sync-refresh" onclick="forceClearAndSync()"><i class="fa-solid fa-arrows-rotate"></i> 強制更新試算表資料</button>
         <div id="cache-status" style="font-size: 0.75rem; color: #9ca3af; margin-top: 8px;"></div>
     </div>
 
-    <!-- 步驟 2：獨立的選擇課程程度畫面 (畫面取代 Modal) -->
+    <!-- 步驟 2：選擇課程程度 -->
     <div id="step-level" class="step-page">
         <div class="top-nav">
-            <button class="btn-back-step" onclick="goToStep('step-lang')"><i class="fa-solid fa-arrow-left"></i> 重選語言</button>
+            <button class="btn-back-step" onclick="goToStep('step-lang')"><i class="fa-solid fa-arrow-left"></i> 重選模式語言</button>
         </div>
         
         <h2 class="step-title"><i class="fa-solid fa-layer-group"></i> 選擇課程程度</h2>
@@ -317,23 +357,20 @@
         <div id="container-stages" class="option-grid grid-3"></div>
     </div>
 
-    <!-- 步驟 5：跟讀挑戰畫面 -->
-    <div id="step-quiz" class="step-page">
+    <!-- 步驟 5-A：跟讀挑戰畫面 -->
+    <div id="step-quiz-shadow" class="step-page">
         <div class="challenge-header-btns">
             <button class="btn-sub-nav" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
             <button class="btn-sub-nav" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
             <button class="btn-sub-nav" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
         </div>
 
-        <div style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 10px;" id="lbl-quiz-info">
-            韓文 | 0A | 單元 1 | 第 1 關
-        </div>
+        <div style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 10px;" class="lbl-quiz-info"></div>
 
         <div class="target-text" id="lbl-target-text">載入中...</div>
         <div class="translation-text" id="lbl-translation">...</div>
         <div id="lbl-hint" class="hint-text" style="display: none;"></div>
 
-        <!-- 按鈕區 -->
         <div class="controls">
             <button class="btn-circle btn-listen" id="btn-play-audio" title="聽示範音">
                 <i class="fa-solid fa-volume-high"></i>
@@ -343,20 +380,55 @@
             </button>
         </div>
 
-        <!-- 比對結果區 -->
         <div class="result-box">
             <div>辨識結果：<span id="lbl-recognized-text" style="font-weight: bold; color: #374151;">-</span></div>
             <div class="score-badge" id="lbl-score">得分：--</div>
         </div>
 
-        <!-- 導覽切換按鈕 -->
         <div class="nav-controls">
             <button class="btn-nav" id="btn-prev" onclick="prevQuestion()">上一題</button>
-            <span id="lbl-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
+            <span class="lbl-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
             <button class="btn-nav" id="btn-next" onclick="nextQuestion()">下一題</button>
         </div>
+    </div>
 
-        <div id="debug-info" class="error-msg"></div>
+    <!-- 步驟 5-B：🧩 聽音重組字塊畫面 -->
+    <div id="step-quiz-blocks" class="step-page">
+        <div class="challenge-header-btns">
+            <button class="btn-sub-nav" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
+            <button class="btn-sub-nav" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
+            <button class="btn-sub-nav" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+        </div>
+
+        <div style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 10px;" class="lbl-quiz-info"></div>
+
+        <div style="margin: 15px 0;">
+            <button class="btn-circle btn-listen" onclick="playBlockAudio()" style="margin: 0 auto;">
+                <i class="fa-solid fa-volume-high"></i>
+            </button>
+        </div>
+
+        <div class="translation-text" id="lbl-block-translation">...</div>
+
+        <!-- 答題組合區 -->
+        <p style="font-size: 0.8rem; color: #9ca3af; text-align: left; margin: 0;">排列結果：</p>
+        <div id="zone-answer" class="block-zone"></div>
+
+        <!-- 候選字塊區 -->
+        <p style="font-size: 0.8rem; color: #9ca3af; text-align: left; margin: 0;">點擊字塊組句：</p>
+        <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
+
+        <button class="btn-confirm" onclick="checkBlockAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
+
+        <div class="result-box" style="margin-top: 15px;">
+            <div class="score-badge" id="lbl-block-score">等待回答...</div>
+        </div>
+
+        <div class="nav-controls">
+            <button class="btn-nav" id="btn-block-prev" onclick="prevQuestion()">上一題</button>
+            <span class="lbl-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
+            <button class="btn-nav" id="btn-block-next" onclick="nextQuestion()">下一題</button>
+        </div>
     </div>
 
 </div>
@@ -365,6 +437,7 @@
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec";
 
     let currentConfig = {
+        mode: 'shadow', // 'shadow' 或 'blocks'
         category: 'korean',
         level: '0A',
         unit_id: '1',
@@ -376,10 +449,21 @@
     let questions = [];
     let currentIndex = 0;
     let recognition = null;
+    let selectedBlockIndices = []; // 紀錄點選的字塊
 
     function goToStep(stepId) {
         document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
         document.getElementById(stepId).classList.add('active');
+    }
+
+    function setGameMode(mode) {
+        currentConfig.mode = mode;
+        ['shadow', 'blocks'].forEach(m => {
+            const btn = document.getElementById(`btn-mode-${m}`);
+            if (btn) btn.classList.remove('selected');
+        });
+        document.getElementById(`btn-mode-${mode}`).classList.add('selected');
+        checkCacheStatus();
     }
 
     function selectCategory(category) {
@@ -402,12 +486,12 @@
     }
 
     function checkCacheStatus() {
-        const cacheKey = `shadowing_data_${currentConfig.category}`;
+        const cacheKey = `${currentConfig.mode}_data_${currentConfig.category}`;
         const cached = localStorage.getItem(cacheKey);
         const statusDiv = document.getElementById('cache-status');
 
         if (cached) {
-            statusDiv.innerText = "⚡ 已備有本機快取（若試算表有更新請按上方連線更新）";
+            statusDiv.innerText = "⚡ 已備有本機快取（若試算表有更新請按連線更新）";
             statusDiv.style.color = "#10b981";
         } else {
             statusDiv.innerText = "☁️ 首次載入需連線同步（約 1~2 秒）";
@@ -416,19 +500,19 @@
     }
 
     async function forceClearAndSync() {
-        const cacheKey = `shadowing_data_${currentConfig.category}`;
+        const cacheKey = `${currentConfig.mode}_data_${currentConfig.category}`;
         localStorage.removeItem(cacheKey);
-        alert(`已清除 ${currentConfig.category} 本機快取，準備抓取最新試算表資料！`);
+        alert(`已清除快取，準備抓取最新試算表資料！`);
         confirmLangSetting();
     }
 
     async function confirmLangSetting() {
-        const cacheKey = `shadowing_data_${currentConfig.category}`;
+        const cacheKey = `${currentConfig.mode}_data_${currentConfig.category}`;
         const cachedData = localStorage.getItem(cacheKey);
 
         if (cachedData) {
             globalCategoryData = JSON.parse(cachedData);
-            goToStep('step-level'); // 進入獨立選擇程度頁面
+            goToStep('step-level');
             return;
         }
 
@@ -436,8 +520,10 @@
         btnConfirm.disabled = true;
         btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 同步最新試算表中...`;
 
+        const actionName = currentConfig.mode === 'blocks' ? 'getBlocksData' : 'getLanguageData';
+
         try {
-            const url = `${GAS_API_URL}?action=getLanguageData&category=${encodeURIComponent(currentConfig.category)}&t=${Date.now()}`;
+            const url = `${GAS_API_URL}?action=${actionName}&category=${encodeURIComponent(currentConfig.category)}&t=${Date.now()}`;
             const res = await fetch(url);
             const data = await res.json();
 
@@ -445,27 +531,23 @@
                 globalCategoryData = data.data;
                 try {
                     localStorage.setItem(cacheKey, JSON.stringify(data.data));
-                } catch(e) {
-                    console.warn("快取寫入失敗", e);
-                }
+                } catch(e) {}
                 
-                goToStep('step-level'); // 進入獨立選擇程度頁面
+                goToStep('step-level');
             } else {
                 alert("資料讀取失敗，請重試！");
             }
         } catch(e) {
-            alert("無法連線至 API，請檢查網路狀態！");
+            alert("無法連線至 API，請檢查網路！");
         } finally {
             btnConfirm.disabled = false;
             btnConfirm.innerHTML = `<i class="fa-solid fa-check"></i> 確定並進入`;
         }
     }
 
-    // 在獨立頁面選擇程度
     function selectLevel(levelCode, levelTitle) {
         currentConfig.level = levelCode;
         document.getElementById('lbl-unit-level').innerText = levelTitle;
-        
         renderUnits(levelCode);
         goToStep('step-unit');
     }
@@ -486,7 +568,7 @@
                 container.appendChild(btn);
             });
         } else {
-            container.innerHTML = `<div style="color: #6b7280; grid-column: span 3;">此 Level 尚無單元資料</div>`;
+            container.innerHTML = `<div style="color: #6b7280; grid-column: span 3;">此 Level 尚無資料</div>`;
         }
     }
 
@@ -512,7 +594,7 @@
                 container.appendChild(btn);
             });
         } else {
-            container.innerHTML = `<div style="color: #6b7280; grid-column: span 3;">此單元尚無關卡資料</div>`;
+            container.innerHTML = `<div style="color: #6b7280; grid-column: span 3;">此單元尚無資料</div>`;
         }
 
         goToStep('step-stage');
@@ -520,58 +602,160 @@
 
     function selectStage(stage) {
         currentConfig.stage = stage;
-        goToStep('step-quiz');
         
         const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
-        document.getElementById('lbl-quiz-info').innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} | 第 ${currentConfig.stage} 關`;
-        
-        const langIndexMap = { 'zh': 5, 'en': 6, 'ja': 7 };
-        const langIdx = langIndexMap[currentConfig.lang] || 5;
+        const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} | 第 ${currentConfig.stage} 關`;
+        document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
 
-        questions = globalCategoryData.filter(i => 
-            String(i[1]).toUpperCase() === currentConfig.level.toUpperCase() &&
-            String(i[2]) === String(currentConfig.unit_id) &&
-            String(i[3]) === String(stage)
-        ).map(i => ({
-            id: i[0],
-            text: i[4],
-            translation: i[langIdx] || i[5] || '',
-            audioUrl: i[8],
-            hint: i[9] || ''
-        }));
+        const langIndexMap = { 'zh': 6, 'en': 7, 'ja': 8 };
+        const langIdx = langIndexMap[currentConfig.lang] || 6;
+
+        if (currentConfig.mode === 'shadow') {
+            goToStep('step-quiz-shadow');
+            const shadowLangMap = { 'zh': 5, 'en': 6, 'ja': 7 };
+            const sLangIdx = shadowLangMap[currentConfig.lang] || 5;
+
+            questions = globalCategoryData.filter(i => 
+                String(i[1]).toUpperCase() === currentConfig.level.toUpperCase() &&
+                String(i[2]) === String(currentConfig.unit_id) &&
+                String(i[3]) === String(stage)
+            ).map(i => ({
+                id: i[0],
+                text: i[4],
+                translation: i[sLangIdx] || i[5] || '',
+                audioUrl: i[8],
+                hint: i[9] || ''
+            }));
+        } else {
+            // 🧩 拼字模式
+            goToStep('step-quiz-blocks');
+            questions = globalCategoryData.filter(i => 
+                String(i[1]).toUpperCase() === currentConfig.level.toUpperCase() &&
+                String(i[2]) === String(currentConfig.unit_id) &&
+                String(i[3]) === String(stage)
+            ).map(i => {
+                // 將 comma 分隔的字塊拆開並打亂
+                let rawOptions = (i[5] || '').split(',').map(s => s.trim()).filter(Boolean);
+                let shuffled = [...rawOptions].sort(() => Math.random() - 0.5);
+
+                return {
+                    id: i[0],
+                    fullText: i[4],
+                    options: shuffled,
+                    translation: i[langIdx] || i[6] || '',
+                    audioUrl: i[9] || ''
+                };
+            });
+        }
 
         currentIndex = 0;
         if (questions.length > 0) {
             displayQuestion();
-        } else {
-            document.getElementById('lbl-target-text').innerText = "無相關題目";
-            document.getElementById('lbl-translation').innerText = "";
-            document.getElementById('lbl-hint').style.display = "none";
-            document.getElementById('lbl-progress').innerText = "0 / 0";
         }
     }
 
     function displayQuestion() {
         if (!questions || questions.length === 0) return;
-
         const q = questions[currentIndex];
-        document.getElementById('lbl-target-text').innerText = q.text || "無題目文字";
-        document.getElementById('lbl-translation').innerText = q.translation || "";
+
+        // 更新進度
+        document.querySelectorAll('.lbl-progress').forEach(e => e.innerText = `${currentIndex + 1} / ${questions.length}`);
         
-        const hintElem = document.getElementById('lbl-hint');
-        if (q.hint && q.hint.trim() !== '') {
-            hintElem.innerText = `💡 提示：${q.hint.trim()}`;
-            hintElem.style.display = "inline-block";
+        if (currentConfig.mode === 'shadow') {
+            document.getElementById('lbl-target-text').innerText = q.text || "";
+            document.getElementById('lbl-translation').innerText = q.translation || "";
+            const hintElem = document.getElementById('lbl-hint');
+            if (q.hint && q.hint.trim() !== '') {
+                hintElem.innerText = `💡 提示：${q.hint.trim()}`;
+                hintElem.style.display = "inline-block";
+            } else {
+                hintElem.style.display = "none";
+            }
+            document.getElementById('lbl-recognized-text').innerText = "-";
+            document.getElementById('lbl-score').innerText = "得分：--";
+            document.getElementById('btn-prev').disabled = currentIndex === 0;
+            document.getElementById('btn-next').disabled = currentIndex === questions.length - 1;
         } else {
-            hintElem.style.display = "none";
+            // 🧩 顯示字塊模式
+            document.getElementById('lbl-block-translation').innerText = q.translation || "";
+            document.getElementById('lbl-block-score').innerText = "請選取字塊組合句子";
+            document.getElementById('lbl-block-score').style.color = "#58cc02";
+            document.getElementById('btn-block-prev').disabled = currentIndex === 0;
+            document.getElementById('btn-block-next').disabled = currentIndex === questions.length - 1;
+
+            selectedBlockIndices = [];
+            renderBlocks();
+            playBlockAudio(); // 自動讀音
         }
+    }
 
-        document.getElementById('lbl-recognized-text').innerText = "-";
-        document.getElementById('lbl-score').innerText = "得分：--";
+    // 🧩 渲染字塊選單
+    function renderBlocks() {
+        const q = questions[currentIndex];
+        const zoneOptions = document.getElementById('zone-options');
+        const zoneAnswer = document.getElementById('zone-answer');
 
-        document.getElementById('lbl-progress').innerText = `${currentIndex + 1} / ${questions.length}`;
-        document.getElementById('btn-prev').disabled = currentIndex === 0;
-        document.getElementById('btn-next').disabled = currentIndex === questions.length - 1;
+        zoneOptions.innerHTML = "";
+        zoneAnswer.innerHTML = "";
+
+        // 渲染候選字塊
+        q.options.forEach((optText, idx) => {
+            const btn = document.createElement('div');
+            btn.className = 'block-chip';
+            if (selectedBlockIndices.includes(idx)) {
+                btn.classList.add('used');
+            }
+            btn.innerText = optText;
+            btn.onclick = () => selectBlock(idx);
+            zoneOptions.appendChild(btn);
+        });
+
+        // 渲染答題區字塊
+        selectedBlockIndices.forEach(idx => {
+            const btn = document.createElement('div');
+            btn.className = 'block-chip';
+            btn.innerText = q.options[idx];
+            btn.onclick = () => deselectBlock(idx);
+            zoneAnswer.appendChild(btn);
+        });
+    }
+
+    function selectBlock(idx) {
+        selectedBlockIndices.push(idx);
+        renderBlocks();
+    }
+
+    function deselectBlock(idx) {
+        selectedBlockIndices = selectedBlockIndices.filter(i => i !== idx);
+        renderBlocks();
+    }
+
+    // 🧩 檢查拼字答案
+    function checkBlockAnswer() {
+        const q = questions[currentIndex];
+        const userSentence = selectedBlockIndices.map(i => q.options[i]).join('');
+        const targetSentence = q.fullText.replace(/\s+/g, '');
+
+        const scoreBadge = document.getElementById('lbl-block-score');
+
+        if (userSentence === targetSentence) {
+            scoreBadge.innerText = "🎉 完全正確！太棒了！";
+            scoreBadge.style.color = "#58cc02";
+            playBlockAudio();
+        } else {
+            scoreBadge.innerText = "❌ 答案不太對喔，再試試看！";
+            scoreBadge.style.color = "#ff4b4b";
+        }
+    }
+
+    function playBlockAudio() {
+        const q = questions[currentIndex];
+        if (!q) return;
+        if (q.audioUrl && q.audioUrl.trim() !== '') {
+            new Audio(q.audioUrl).play().catch(() => speakTTS(q.fullText));
+        } else {
+            speakTTS(q.fullText);
+        }
     }
 
     function nextQuestion() {
@@ -591,10 +775,8 @@
     function playAudio() {
         if (!questions[currentIndex]) return;
         const q = questions[currentIndex];
-
         if (q.audioUrl && q.audioUrl.trim() !== "") {
-            const audio = new Audio(q.audioUrl);
-            audio.play().catch(e => speakTTS(q.text));
+            new Audio(q.audioUrl).play().catch(() => speakTTS(q.text));
         } else {
             speakTTS(q.text);
         }
@@ -648,11 +830,13 @@
         recognition.lang = langMap[currentConfig.category] || 'ko-KR';
 
         recognition.onstart = () => {
-            document.getElementById('btn-start-record').classList.add('recording');
+            const btn = document.getElementById('btn-start-record');
+            if (btn) btn.classList.add('recording');
         };
 
         recognition.onend = () => {
-            document.getElementById('btn-start-record').classList.remove('recording');
+            const btn = document.getElementById('btn-start-record');
+            if (btn) btn.classList.remove('recording');
         };
 
         recognition.onresult = (event) => {
@@ -666,7 +850,8 @@
         };
 
         recognition.onerror = () => {
-            document.getElementById('btn-start-record').classList.remove('recording');
+            const btn = document.getElementById('btn-start-record');
+            if (btn) btn.classList.remove('recording');
         };
     }
 
@@ -681,6 +866,7 @@
         initSpeechRecognition();
         selectCategory('korean');
         setUserLang('zh');
+        setGameMode('shadow');
     };
 </script>
 
