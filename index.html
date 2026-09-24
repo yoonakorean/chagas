@@ -119,6 +119,67 @@
 
         .btn-back-step:hover { color: var(--duo-blue); }
 
+        /* 💡 圖片對應的下拉彈窗樣式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            width: 90%;
+            max-width: 360px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            position: relative;
+            text-align: center;
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: #f3f4f6;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            color: #9ca3af;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .modal-select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--duo-blue);
+            border-radius: 14px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--duo-dark);
+            margin: 20px 0;
+            outline: none;
+            background: white;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 16px;
+        }
+
         .target-text {
             font-size: 1.8rem;
             font-weight: bold;
@@ -249,20 +310,14 @@
         <div id="cache-status" style="font-size: 0.75rem; color: #9ca3af; margin-top: 8px;"></div>
     </div>
 
-    <!-- 步驟 2：選擇程度 (Level) -->
-    <div id="step-level" class="step-page">
-        <div class="top-nav">
-            <button class="btn-back-step" onclick="goToStep('step-lang')"><i class="fa-solid fa-arrow-left"></i> 重選語言</button>
-        </div>
-        <h2 class="step-title"><i class="fa-solid fa-layer-group"></i> 請選擇程度 (Level)</h2>
-        <div class="option-grid grid-2" id="container-levels"></div>
-    </div>
-
     <!-- 步驟 3：選擇單元 (Unit) -->
     <div id="step-unit" class="step-page">
         <div class="top-nav">
-            <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
-            <span id="lbl-unit-level" style="font-weight: bold; color: var(--duo-blue);">Level: 0A</span>
+            <button class="btn-back-step" onclick="goToStep('step-lang')"><i class="fa-solid fa-arrow-left"></i> 重選語言</button>
+            <!-- 點擊程度即可彈出選單彈窗 -->
+            <button class="btn-sub-nav" style="border-color: var(--duo-blue); color: var(--duo-blue);" onclick="openLevelModal()">
+                <span id="lbl-unit-level">0A 認識字母</span> <i class="fa-solid fa-caret-down"></i>
+            </button>
         </div>
         
         <h2 class="step-title"><i class="fa-solid fa-book-open"></i> 請選擇單元 (Unit)</h2>
@@ -283,7 +338,7 @@
     <!-- 步驟 5：跟讀挑戰畫面 -->
     <div id="step-quiz" class="step-page">
         <div class="challenge-header-btns">
-            <button class="btn-sub-nav" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 回程度</button>
+            <button class="btn-sub-nav" onclick="openLevelModal()"><i class="fa-solid fa-layer-group"></i> 換程度</button>
             <button class="btn-sub-nav" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
             <button class="btn-sub-nav" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
         </div>
@@ -321,6 +376,28 @@
         <div id="debug-info" class="error-msg"></div>
     </div>
 
+</div>
+
+<!-- 💡 下拉選單彈窗 Modal (如圖片樣式) -->
+<div class="modal-overlay" id="modal-level">
+    <div class="modal-card">
+        <button class="modal-close-btn" onclick="closeLevelModal()"><i class="fa-solid fa-xmark"></i></button>
+        <h3 style="margin-top: 10px; color: var(--duo-dark);">選擇課程程度</h3>
+        
+        <select class="modal-select" id="select-level-dropdown">
+            <option value="0A">0A 認識字母</option>
+            <option value="1A" selected>1A 基礎級</option>
+            <option value="1B">1B 初級</option>
+            <option value="2A">2A 中初級</option>
+            <option value="2B">2B 中級</option>
+            <option value="3A">3A 中高級</option>
+            <option value="3B">3B 高級</option>
+            <option value="4A">4A 精通級</option>
+            <option value="TOPIK1">TOPIK 1 檢定</option>
+        </select>
+
+        <button class="btn-confirm" onclick="confirmLevelSelection()">確定切換</button>
+    </div>
 </div>
 
 <script>
@@ -363,7 +440,6 @@
         document.getElementById(`btn-lang-${lang}`).classList.add('selected');
     }
 
-    // 檢查本機快取
     function checkCacheStatus() {
         const cacheKey = `shadowing_data_${currentConfig.category}`;
         const cached = localStorage.getItem(cacheKey);
@@ -378,21 +454,17 @@
         }
     }
 
-    // ⚡ 核心：優先使用本機快取，毫秒級秒開！
     async function confirmLangSetting() {
         const btnConfirm = document.getElementById('btn-confirm-lang');
         const cacheKey = `shadowing_data_${currentConfig.category}`;
         const cachedData = localStorage.getItem(cacheKey);
 
         if (cachedData) {
-            // 🚀 有快取直接用！
             globalCategoryData = JSON.parse(cachedData);
-            renderLevels();
-            goToStep('step-level');
+            openLevelModal(); // 進入程度彈窗選單
             return;
         }
 
-        // 無快取才請求網路
         btnConfirm.disabled = true;
         btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 首次同步中...`;
 
@@ -403,15 +475,13 @@
 
             if (data.status === 'success') {
                 globalCategoryData = data.data;
-                // 存入 localStorage 快取
                 try {
                     localStorage.setItem(cacheKey, JSON.stringify(data.data));
                 } catch(e) {
                     console.warn("本機容量不足，無法快取", e);
                 }
                 
-                renderLevels();
-                goToStep('step-level');
+                openLevelModal(); // 進入程度彈窗選單
             } else {
                 alert("資料讀取失敗，請重試！");
             }
@@ -423,30 +493,30 @@
         }
     }
 
-    // 動態渲染 Level (純記憶體操作，0 秒)
-    function renderLevels() {
-        const container = document.getElementById('container-levels');
-        container.innerHTML = "";
-
-        // 格式：0:id, 1:level, 2:unit_id, 3:stage, 4:text, 5:zh, 6:en, 7:ja, 8:audioUrl
-        const levelsSet = [...new Set(globalCategoryData.map(item => String(item[1]).toUpperCase()))].filter(Boolean);
-        const defaultLevels = ['0A', '0B', '1A', '1B', '2A', '2B', '3A', '3B', '4A', '4B'];
-        const displayLevels = levelsSet.length > 0 ? levelsSet : defaultLevels;
-
-        displayLevels.sort().forEach(lvl => {
-            const btn = document.createElement('button');
-            btn.className = "btn-option";
-            btn.innerText = lvl;
-            btn.onclick = () => selectLevel(lvl);
-            container.appendChild(btn);
-        });
+    // 💡 彈窗對話框開關控制
+    function openLevelModal() {
+        document.getElementById('modal-level').classList.add('active');
     }
 
-    // 選擇 Level (純記憶體操作，0 秒)
-    function selectLevel(level) {
-        currentConfig.level = level;
-        document.getElementById('lbl-unit-level').innerText = `Level: ${level}`;
+    function closeLevelModal() {
+        document.getElementById('modal-level').classList.remove('active');
+    }
+
+    function confirmLevelSelection() {
+        const select = document.getElementById('select-level-dropdown');
+        const selectedVal = select.value;
+        const selectedText = select.options[select.selectedIndex].text;
+
+        currentConfig.level = selectedVal;
+        document.getElementById('lbl-unit-level').innerText = selectedText;
         
+        closeLevelModal();
+        renderUnits(selectedVal);
+        goToStep('step-unit');
+    }
+
+    // 依選取的程度顯示 Unit
+    function renderUnits(level) {
         const container = document.getElementById('container-units');
         container.innerHTML = "";
 
@@ -464,11 +534,8 @@
         } else {
             container.innerHTML = `<div style="color: #6b7280; grid-column: span 3;">此 Level 尚無單元資料</div>`;
         }
-
-        goToStep('step-unit');
     }
 
-    // 選擇 Unit (純記憶體操作，0 秒)
     function selectUnit(unitId) {
         currentConfig.unit_id = unitId;
         document.getElementById('lbl-stage-unit').innerText = `Level ${currentConfig.level} | 第 ${unitId} 單元`;
@@ -497,7 +564,6 @@
         goToStep('step-stage');
     }
 
-    // 進入挑戰 (純記憶體操作，0 秒)
     function selectStage(stage) {
         currentConfig.stage = stage;
         goToStep('step-quiz');
@@ -505,7 +571,6 @@
         const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
         document.getElementById('lbl-quiz-info').innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} | 第 ${currentConfig.stage} 關`;
         
-        // 5:zh, 6:en, 7:ja
         const langIndexMap = { 'zh': 5, 'en': 6, 'ja': 7 };
         const langIdx = langIndexMap[currentConfig.lang] || 5;
 
