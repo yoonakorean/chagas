@@ -35,13 +35,8 @@
             position: relative;
         }
 
-        .step-page {
-            display: none;
-        }
-
-        .step-page.active {
-            display: block;
-        }
+        .step-page { display: none; }
+        .step-page.active { display: block; }
 
         h2.step-title {
             color: var(--duo-dark);
@@ -58,7 +53,6 @@
 
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
         .grid-3 { grid-template-columns: repeat(3, 1fr); }
-        .grid-4 { grid-template-columns: repeat(4, 1fr); }
 
         .btn-option {
             background: white;
@@ -85,7 +79,6 @@
             color: var(--duo-blue) !important;
         }
 
-        /* 確定按鈕 */
         .btn-confirm {
             width: 100%;
             background: var(--duo-green);
@@ -227,17 +220,17 @@
 
         .btn-sub-nav:hover { background: #e5e7eb; color: var(--duo-blue); }
 
-        .loading-spinner {
+        .loading-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
             color: var(--duo-blue);
             font-weight: bold;
-            padding: 20px;
         }
 
-        .error-msg {
-            color: #ef4444;
-            font-size: 0.85rem;
-            margin-top: 8px;
-        }
+        .error-msg { color: #ef4444; font-size: 0.85rem; margin-top: 8px; }
     </style>
 </head>
 <body>
@@ -262,7 +255,7 @@
             <button class="btn-option" id="btn-lang-ja" onclick="setUserLang('ja')">日本語</button>
         </div>
 
-        <button class="btn-confirm" onclick="confirmLangSetting()"><i class="fa-solid fa-check"></i> 確定</button>
+        <button class="btn-confirm" id="btn-confirm-lang" onclick="confirmLangSetting()"><i class="fa-solid fa-check"></i> 確定並載入</button>
     </div>
 
     <!-- 步驟 2：選擇程度 (Level) -->
@@ -271,21 +264,12 @@
             <button class="btn-back-step" onclick="goToStep('step-lang')"><i class="fa-solid fa-arrow-left"></i> 重選語言</button>
         </div>
         <h2 class="step-title"><i class="fa-solid fa-layer-group"></i> 請選擇程度 (Level)</h2>
-        <div class="option-grid grid-2">
-            <button class="btn-option" onclick="selectLevel('0A')">0A</button>
-            <button class="btn-option" onclick="selectLevel('0B')">0B</button>
-            <button class="btn-option" onclick="selectLevel('1A')">1A</button>
-            <button class="btn-option" onclick="selectLevel('1B')">1B</button>
-            <button class="btn-option" onclick="selectLevel('2A')">2A</button>
-            <button class="btn-option" onclick="selectLevel('2B')">2B</button>
-            <button class="btn-option" onclick="selectLevel('3A')">3A</button>
-            <button class="btn-option" onclick="selectLevel('3B')">3B</button>
-            <button class="btn-option" onclick="selectLevel('4A')">4A</button>
-            <button class="btn-option" onclick="selectLevel('4B')">4B</button>
+        <div class="option-grid grid-2" id="container-levels">
+            <!-- 動態渲染 Level -->
         </div>
     </div>
 
-    <!-- 步驟 3：動態單元選擇 (Unit) -->
+    <!-- 步驟 3：選擇單元 (Unit) -->
     <div id="step-unit" class="step-page">
         <div class="top-nav">
             <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
@@ -293,12 +277,10 @@
         </div>
         
         <h2 class="step-title"><i class="fa-solid fa-book-open"></i> 請選擇單元 (Unit)</h2>
-        <div id="container-units" class="option-grid grid-3">
-            <div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i> 載入單元中...</div>
-        </div>
+        <div id="container-units" class="option-grid grid-3"></div>
     </div>
 
-    <!-- 步驟 4：動態關卡選擇 (Stage) -->
+    <!-- 步驟 4：選擇關卡 (Stage) -->
     <div id="step-stage" class="step-page">
         <div class="top-nav">
             <button class="btn-back-step" onclick="goToStep('step-unit')"><i class="fa-solid fa-arrow-left"></i> 回單元選擇</button>
@@ -306,9 +288,7 @@
         </div>
 
         <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇關卡 (Stage)</h2>
-        <div id="container-stages" class="option-grid grid-3">
-            <div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i> 載入關卡中...</div>
-        </div>
+        <div id="container-stages" class="option-grid grid-3"></div>
     </div>
 
     <!-- 步驟 5：跟讀挑戰畫面 -->
@@ -365,19 +345,17 @@
         lang: 'zh'
     };
 
+    // 💡 全域快取：一次載入後，所有切換都在快取內完成
+    let globalCategoryData = []; 
     let questions = [];
     let currentIndex = 0;
     let recognition = null;
 
-    // 畫面切換控制
     function goToStep(stepId) {
-        document.querySelectorAll('.step-page').forEach(page => {
-            page.classList.remove('active');
-        });
+        document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
         document.getElementById(stepId).classList.add('active');
     }
 
-    // 選擇語言
     function selectCategory(category) {
         currentConfig.category = category;
         ['korean', 'japanese', 'english'].forEach(c => {
@@ -396,153 +374,140 @@
         document.getElementById(`btn-lang-${lang}`).classList.add('selected');
     }
 
-    // 點擊「確定」按鈕後進入程度選擇
-    function confirmLangSetting() {
-        goToStep('step-level');
+    // ⚡ 核心優化：點擊確定時一次抓完所有資料
+    async function confirmLangSetting() {
+        const btnConfirm = document.getElementById('btn-confirm-lang');
+        btnConfirm.disabled = true;
+        btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 資料同步中...`;
+
+        try {
+            const url = `${GAS_API_URL}?action=getLanguageData&category=${encodeURIComponent(currentConfig.category)}`;
+            const res = await fetch(url);
+            const data = await res.json();
+
+            if (data.status === 'success') {
+                globalCategoryData = data.data; // 寫入前端快取
+                renderLevels();                 // 動態算有那些 Level
+                goToStep('step-level');
+            } else {
+                alert("資料讀取失敗，請重試！");
+            }
+        } catch(e) {
+            alert("無法連線至 API，請檢查網路狀態！");
+        } finally {
+            btnConfirm.disabled = false;
+            btnConfirm.innerHTML = `<i class="fa-solid fa-check"></i> 確定並載入`;
+        }
     }
 
-    // 選擇程度 Level，動態讀取單元 (Unit) 數量
-    async function selectLevel(level) {
+    // ⚡ 從快取動態計算 Level 列表（純記憶體操作，0 秒完成）
+    function renderLevels() {
+        const container = document.getElementById('container-levels');
+        container.innerHTML = "";
+
+        const levelsSet = [...new Set(globalCategoryData.map(item => item.level.toUpperCase()))].filter(Boolean);
+        
+        // 預設常見級別
+        const defaultLevels = ['0A', '0B', '1A', '1B', '2A', '2B', '3A', '3B', '4A', '4B'];
+        const displayLevels = levelsSet.length > 0 ? levelsSet : defaultLevels;
+
+        displayLevels.sort().forEach(lvl => {
+            const btn = document.createElement('button');
+            btn.className = "btn-option";
+            btn.innerText = lvl;
+            btn.onclick = () => selectLevel(lvl);
+            container.appendChild(btn);
+        });
+    }
+
+    // ⚡ 選擇 Level 後秒出 Unit
+    function selectLevel(level) {
         currentConfig.level = level;
         document.getElementById('lbl-unit-level').innerText = `Level: ${level}`;
-        goToStep('step-unit');
-
-        // 動態抓取此 Level 有哪些 Unit
+        
         const container = document.getElementById('container-units');
-        container.innerHTML = `<div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i> 查詢單元中...</div>`;
+        container.innerHTML = "";
 
-        try {
-            const url = `${GAS_API_URL}?action=getStructure&category=${encodeURIComponent(currentConfig.category)}&level=${encodeURIComponent(currentConfig.level)}`;
-            const res = await fetch(url);
-            const data = await res.json();
+        // 純 JS 快速過濾
+        const filtered = globalCategoryData.filter(i => i.level.toUpperCase() === level.toUpperCase());
+        const units = [...new Set(filtered.map(i => i.unit_id))].filter(Boolean).sort((a,b) => a - b);
 
-            if (data.status === 'success' && data.units && data.units.length > 0) {
-                container.innerHTML = "";
-                data.units.forEach(u => {
-                    const btn = document.createElement('button');
-                    btn.className = "btn-option";
-                    btn.innerText = `第 ${u} 單元`;
-                    btn.onclick = () => selectUnit(u);
-                    container.appendChild(btn);
-                });
-            } else {
-                container.innerHTML = `<div style="color: #6b7280; grid-column: span 3;">此程度目前尚無單元資料</div>`;
-            }
-        } catch(e) {
-            container.innerHTML = `<div class="error-msg" style="grid-column: span 3;">讀取失敗，請檢查 API 連線</div>`;
+        if (units.length > 0) {
+            units.forEach(u => {
+                const btn = document.createElement('button');
+                btn.className = "btn-option";
+                btn.innerText = `第 ${u} 單元`;
+                btn.onclick = () => selectUnit(u);
+                container.appendChild(btn);
+            });
+        } else {
+            container.innerHTML = `<div style="color: #6b7280; grid-column: span 3;">此 Level 尚無單元資料</div>`;
         }
+
+        goToStep('step-unit');
     }
 
-    // 選擇單元 Unit，動態讀取關卡 (Stage) 數量
-    async function selectUnit(unitId) {
+    // ⚡ 選擇 Unit 後秒出 Stage
+    function selectUnit(unitId) {
         currentConfig.unit_id = unitId;
         document.getElementById('lbl-stage-unit').innerText = `Level ${currentConfig.level} | 第 ${unitId} 單元`;
-        goToStep('step-stage');
 
-        // 動態抓取此 Unit 有哪些 Stage
         const container = document.getElementById('container-stages');
-        container.innerHTML = `<div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i> 查詢關卡中...</div>`;
+        container.innerHTML = "";
 
-        try {
-            const url = `${GAS_API_URL}?action=getStructure&category=${encodeURIComponent(currentConfig.category)}&level=${encodeURIComponent(currentConfig.level)}&unit_id=${encodeURIComponent(currentConfig.unit_id)}`;
-            const res = await fetch(url);
-            const data = await res.json();
+        // 純 JS 快速過濾
+        const filtered = globalCategoryData.filter(i => 
+            i.level.toUpperCase() === currentConfig.level.toUpperCase() && 
+            String(i.unit_id) === String(unitId)
+        );
+        const stages = [...new Set(filtered.map(i => i.stage))].filter(Boolean).sort((a,b) => a - b);
 
-            if (data.status === 'success' && data.stages && data.stages.length > 0) {
-                container.innerHTML = "";
-                data.stages.forEach(s => {
-                    const btn = document.createElement('button');
-                    btn.className = "btn-option";
-                    btn.innerText = `第 ${s} 關`;
-                    btn.onclick = () => selectStage(s);
-                    container.appendChild(btn);
-                });
-            } else {
-                container.innerHTML = `<div style="color: #6b7280; grid-column: span 3;">此單元目前尚無關卡資料</div>`;
-            }
-        } catch(e) {
-            container.innerHTML = `<div class="error-msg" style="grid-column: span 3;">讀取失敗，請檢查 API 連線</div>`;
+        if (stages.length > 0) {
+            stages.forEach(s => {
+                const btn = document.createElement('button');
+                btn.className = "btn-option";
+                btn.innerText = `第 ${s} 關`;
+                btn.onclick = () => selectStage(s);
+                container.appendChild(btn);
+            });
+        } else {
+            container.innerHTML = `<div style="color: #6b7280; grid-column: span 3;">此單元尚無關卡資料</div>`;
         }
+
+        goToStep('step-stage');
     }
 
-    // 選擇關卡 Stage 並開始挑戰
+    // ⚡ 進入挑戰（直接從快取的記憶體載入，不用再發 HTTP 請求）
     function selectStage(stage) {
         currentConfig.stage = stage;
         goToStep('step-quiz');
         
         const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
-        document.getElementById('lbl-quiz-info').innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} | 第 ${currentConfig.stage} 關`;
+        document.getElementById('lbl-quiz-info').innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} | 第 ${currentConfig.stage} 关`;
         
-        loadQuestions();
-    }
+        // 純前端記憶體篩選題目
+        const langKey = currentConfig.lang; // 'zh', 'en', 'ja'
+        questions = globalCategoryData.filter(i => 
+            i.level.toUpperCase() === currentConfig.level.toUpperCase() &&
+            String(i.unit_id) === String(currentConfig.unit_id) &&
+            String(i.stage) === String(stage)
+        ).map(i => ({
+            id: i.id,
+            text: i.text,
+            translation: i[langKey] || i.zh || '',
+            audioUrl: i.audioUrl
+        }));
 
-    // 初始化語音辨識
-    function initSpeechRecognition() {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) return;
-
-        recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = false;
-
-        const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
-        recognition.lang = langMap[currentConfig.category] || 'ko-KR';
-
-        recognition.onstart = () => {
-            document.getElementById('btn-start-record').classList.add('recording');
-        };
-
-        recognition.onend = () => {
-            document.getElementById('btn-start-record').classList.remove('recording');
-        };
-
-        recognition.onresult = (event) => {
-            const userSpeech = event.results[0][0].transcript;
-            document.getElementById('lbl-recognized-text').innerText = userSpeech;
-            
-            const currentQ = questions[currentIndex];
-            const targetText = currentQ ? (currentQ.text || "") : "";
-            const score = calculateSimilarity(targetText, userSpeech);
-            document.getElementById('lbl-score').innerText = `得分：${score}分`;
-        };
-
-        recognition.onerror = (event) => {
-            document.getElementById('btn-start-record').classList.remove('recording');
-        };
-    }
-
-    // 從 GAS 載入題目
-    async function loadQuestions() {
-        document.getElementById('lbl-target-text').innerText = "載入題目中...";
-        document.getElementById('lbl-translation').innerText = "...";
-        document.getElementById('debug-info').innerText = "";
-        
-        const url = `${GAS_API_URL}?action=getShadowingQuestions&category=${encodeURIComponent(currentConfig.category)}&level=${encodeURIComponent(currentConfig.level)}&unit_id=${encodeURIComponent(currentConfig.unit_id)}&stage=${encodeURIComponent(currentConfig.stage)}&lang=${encodeURIComponent(currentConfig.lang)}`;
-
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
-
-            if (data.status === 'success' && data.data && data.data.length > 0) {
-                questions = data.data;
-                currentIndex = 0;
-                displayQuestion();
-            } else {
-                questions = [];
-                document.getElementById('lbl-target-text').innerText = "無相關題目";
-                document.getElementById('lbl-translation').innerText = "";
-                document.getElementById('lbl-progress').innerText = "0 / 0";
-                document.getElementById('btn-prev').disabled = true;
-                document.getElementById('btn-next').disabled = true;
-                document.getElementById('debug-info').innerText = `查無資料，請確認 Sheet 中是否有符合：Level=${currentConfig.level}, Unit=${currentConfig.unit_id}, Stage=${currentConfig.stage} 的資料`;
-            }
-        } catch (err) {
-            document.getElementById('lbl-target-text').innerText = "載入失敗";
-            document.getElementById('debug-info').innerText = "無法連線至 API，請檢查網路狀態。";
+        currentIndex = 0;
+        if (questions.length > 0) {
+            displayQuestion();
+        } else {
+            document.getElementById('lbl-target-text').innerText = "無相關題目";
+            document.getElementById('lbl-translation').innerText = "";
+            document.getElementById('lbl-progress').innerText = "0 / 0";
         }
     }
 
-    // 顯示題目
     function displayQuestion() {
         if (!questions || questions.length === 0) return;
 
@@ -619,6 +584,40 @@
         return score < 0 ? 0 : score;
     }
 
+    function initSpeechRecognition() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) return;
+
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
+        recognition.lang = langMap[currentConfig.category] || 'ko-KR';
+
+        recognition.onstart = () => {
+            document.getElementById('btn-start-record').classList.add('recording');
+        };
+
+        recognition.onend = () => {
+            document.getElementById('btn-start-record').classList.remove('recording');
+        };
+
+        recognition.onresult = (event) => {
+            const userSpeech = event.results[0][0].transcript;
+            document.getElementById('lbl-recognized-text').innerText = userSpeech;
+            
+            const currentQ = questions[currentIndex];
+            const targetText = currentQ ? (currentQ.text || "") : "";
+            const score = calculateSimilarity(targetText, userSpeech);
+            document.getElementById('lbl-score').innerText = `得分：${score}分`;
+        };
+
+        recognition.onerror = () => {
+            document.getElementById('btn-start-record').classList.remove('recording');
+        };
+    }
+
     document.getElementById('btn-play-audio').addEventListener('click', playAudio);
     document.getElementById('btn-start-record').addEventListener('click', () => {
         if (recognition) {
@@ -628,8 +627,6 @@
 
     window.onload = () => {
         initSpeechRecognition();
-        
-        // 預設選取
         selectCategory('korean');
         setUserLang('zh');
     };
