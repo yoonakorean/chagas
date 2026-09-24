@@ -119,7 +119,7 @@
 
         .btn-back-step:hover { color: var(--duo-blue); }
 
-        /* 💡 圖片對應的下拉彈窗樣式 */
+        /* 下拉選單彈窗樣式 */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -314,7 +314,6 @@
     <div id="step-unit" class="step-page">
         <div class="top-nav">
             <button class="btn-back-step" onclick="goToStep('step-lang')"><i class="fa-solid fa-arrow-left"></i> 重選語言</button>
-            <!-- 點擊程度即可彈出選單彈窗 -->
             <button class="btn-sub-nav" style="border-color: var(--duo-blue); color: var(--duo-blue);" onclick="openLevelModal()">
                 <span id="lbl-unit-level">0A 認識字母</span> <i class="fa-solid fa-caret-down"></i>
             </button>
@@ -378,15 +377,15 @@
 
 </div>
 
-<!-- 💡 下拉選單彈窗 Modal (如圖片樣式) -->
+<!-- 下拉選單彈窗 Modal -->
 <div class="modal-overlay" id="modal-level">
     <div class="modal-card">
         <button class="modal-close-btn" onclick="closeLevelModal()"><i class="fa-solid fa-xmark"></i></button>
         <h3 style="margin-top: 10px; color: var(--duo-dark);">選擇課程程度</h3>
         
         <select class="modal-select" id="select-level-dropdown">
-            <option value="0A">0A 認識字母</option>
-            <option value="1A" selected>1A 基礎級</option>
+            <option value="0A" selected>0A 認識字母</option>
+            <option value="1A">1A 基礎級</option>
             <option value="1B">1B 初級</option>
             <option value="2A">2A 中初級</option>
             <option value="2B">2B 中級</option>
@@ -446,54 +445,67 @@
         const statusDiv = document.getElementById('cache-status');
 
         if (cached) {
-            statusDiv.innerText = "⚡ 已備有本機快取（將秒速開啟）";
+            statusDiv.innerText = "⚡ 舊快取已準備（將在背景自動檢查更新）";
             statusDiv.style.color = "#10b981";
         } else {
-            statusDiv.innerText = "☁️ 首次載入需連線同步（約 1~2 秒）";
+            statusDiv.innerText = "☁️ 首次同步中...";
             statusDiv.style.color = "#6b7280";
         }
     }
 
+    // ⚡ 策略：優先用快取秒開，同時非同步發送 API 抓最新資料（默默更新）
     async function confirmLangSetting() {
-        const btnConfirm = document.getElementById('btn-confirm-lang');
         const cacheKey = `shadowing_data_${currentConfig.category}`;
         const cachedData = localStorage.getItem(cacheKey);
 
         if (cachedData) {
+            // 🚀 1. 有舊快取：立即顯示舊資料，體驗 0 秒開啟
             globalCategoryData = JSON.parse(cachedData);
-            openLevelModal(); // 進入程度彈窗選單
-            return;
-        }
+            openLevelModal();
 
-        btnConfirm.disabled = true;
-        btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 首次同步中...`;
+            // 🚀 2. 在背景默默抓最新 Sheet 資料，成功後默默替換快取
+            fetchLatestDataInBackground(cacheKey);
+        } else {
+            // 無快取：顯示轉圈並等待下載
+            const btnConfirm = document.getElementById('btn-confirm-lang');
+            btnConfirm.disabled = true;
+            btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 同步最新表格中...`;
 
-        try {
-            const url = `${GAS_API_URL}?action=getLanguageData&category=${encodeURIComponent(currentConfig.category)}`;
-            const res = await fetch(url);
-            const data = await res.json();
-
-            if (data.status === 'success') {
-                globalCategoryData = data.data;
-                try {
-                    localStorage.setItem(cacheKey, JSON.stringify(data.data));
-                } catch(e) {
-                    console.warn("本機容量不足，無法快取", e);
-                }
-                
-                openLevelModal(); // 進入程度彈窗選單
-            } else {
-                alert("資料讀取失敗，請重試！");
+            try {
+                await fetchLatestDataInBackground(cacheKey);
+                openLevelModal();
+            } catch(e) {
+                alert("連線失敗，請稍後重試！");
+            } finally {
+                btnConfirm.disabled = false;
+                btnConfirm.innerHTML = `<i class="fa-solid fa-check"></i> 確定並進入`;
             }
-        } catch(e) {
-            alert("無法連線至 API，請檢查網路狀態！");
-        } finally {
-            btnConfirm.disabled = false;
-            btnConfirm.innerHTML = `<i class="fa-solid fa-check"></i> 確定並進入`;
         }
     }
 
-    // 💡 彈窗對話框開關控制
+    // 背景同步函式
+    async function fetchLatestDataInBackground(cacheKey) {
+        try {
+            const url = `${GAS_API_URL}?action=getLanguageData&category=${encodeURIComponent(currentConfig.category)}&t=${Date.now()}`;
+            const res = await fetch(url);
+            const data = await res.json();
+
+            if (data.status === 'success' && data.data) {
+                globalCategoryData = data.data;
+                localStorage.setItem(cacheKey, JSON.stringify(data.data));
+
+                // 如果當前使用者正卡在 Unit / Stage 選擇頁面，自動重新整理視圖（載入新單元）
+                if (document.getElementById('step-unit').classList.contains('active')) {
+                    renderUnits(currentConfig.level);
+                } else if (document.getElementById('step-stage').classList.contains('active')) {
+                    selectUnit(currentConfig.unit_id);
+                }
+            }
+        } catch(e) {
+            console.warn("背景同步失敗：", e);
+        }
+    }
+
     function openLevelModal() {
         document.getElementById('modal-level').classList.add('active');
     }
@@ -515,7 +527,6 @@
         goToStep('step-unit');
     }
 
-    // 依選取的程度顯示 Unit
     function renderUnits(level) {
         const container = document.getElementById('container-units');
         container.innerHTML = "";
@@ -652,7 +663,7 @@
         
         let track = Array(s2.length + 1).fill(null).map(() => Array(s1.length + 1).fill(null));
         for (let i = 0; i <= s1.length; i += 1) track[0][i] = i;
-        for (let j = 0; j <= s2.length; j += 1) track[j][0] = j;
+        for (let j = 1; j <= s2.length; j += 1) track[j][0] = j;
 
         for (let j = 1; j <= s2.length; j += 1) {
             for (let i = 1; i <= s1.length; i += 1) {
