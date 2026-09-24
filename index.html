@@ -220,16 +220,6 @@
 
         .btn-sub-nav:hover { background: #e5e7eb; color: var(--duo-blue); }
 
-        .loading-overlay {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 30px;
-            color: var(--duo-blue);
-            font-weight: bold;
-        }
-
         .error-msg { color: #ef4444; font-size: 0.85rem; margin-top: 8px; }
     </style>
 </head>
@@ -255,7 +245,8 @@
             <button class="btn-option" id="btn-lang-ja" onclick="setUserLang('ja')">日本語</button>
         </div>
 
-        <button class="btn-confirm" id="btn-confirm-lang" onclick="confirmLangSetting()"><i class="fa-solid fa-check"></i> 確定並載入</button>
+        <button class="btn-confirm" id="btn-confirm-lang" onclick="confirmLangSetting()"><i class="fa-solid fa-check"></i> 確定並進入</button>
+        <div id="cache-status" style="font-size: 0.75rem; color: #9ca3af; margin-top: 8px;"></div>
     </div>
 
     <!-- 步驟 2：選擇程度 (Level) -->
@@ -264,9 +255,7 @@
             <button class="btn-back-step" onclick="goToStep('step-lang')"><i class="fa-solid fa-arrow-left"></i> 重選語言</button>
         </div>
         <h2 class="step-title"><i class="fa-solid fa-layer-group"></i> 請選擇程度 (Level)</h2>
-        <div class="option-grid grid-2" id="container-levels">
-            <!-- 動態渲染 Level -->
-        </div>
+        <div class="option-grid grid-2" id="container-levels"></div>
     </div>
 
     <!-- 步驟 3：選擇單元 (Unit) -->
@@ -345,7 +334,6 @@
         lang: 'zh'
     };
 
-    // 💡 全域快取：一次載入後，所有切換都在快取內完成
     let globalCategoryData = []; 
     let questions = [];
     let currentIndex = 0;
@@ -363,6 +351,7 @@
             if (btn) btn.classList.remove('selected');
         });
         document.getElementById(`btn-cat-${category}`).classList.add('selected');
+        checkCacheStatus();
     }
 
     function setUserLang(lang) {
@@ -374,11 +363,38 @@
         document.getElementById(`btn-lang-${lang}`).classList.add('selected');
     }
 
-    // ⚡ 核心優化：點擊確定時一次抓完所有資料
+    // 檢查本機快取
+    function checkCacheStatus() {
+        const cacheKey = `shadowing_data_${currentConfig.category}`;
+        const cached = localStorage.getItem(cacheKey);
+        const statusDiv = document.getElementById('cache-status');
+
+        if (cached) {
+            statusDiv.innerText = "⚡ 已備有本機快取（將秒速開啟）";
+            statusDiv.style.color = "#10b981";
+        } else {
+            statusDiv.innerText = "☁️ 首次載入需連線同步（約 1~2 秒）";
+            statusDiv.style.color = "#6b7280";
+        }
+    }
+
+    // ⚡ 核心：優先使用本機快取，毫秒級秒開！
     async function confirmLangSetting() {
         const btnConfirm = document.getElementById('btn-confirm-lang');
+        const cacheKey = `shadowing_data_${currentConfig.category}`;
+        const cachedData = localStorage.getItem(cacheKey);
+
+        if (cachedData) {
+            // 🚀 有快取直接用！
+            globalCategoryData = JSON.parse(cachedData);
+            renderLevels();
+            goToStep('step-level');
+            return;
+        }
+
+        // 無快取才請求網路
         btnConfirm.disabled = true;
-        btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 資料同步中...`;
+        btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 首次同步中...`;
 
         try {
             const url = `${GAS_API_URL}?action=getLanguageData&category=${encodeURIComponent(currentConfig.category)}`;
@@ -386,8 +402,15 @@
             const data = await res.json();
 
             if (data.status === 'success') {
-                globalCategoryData = data.data; // 寫入前端快取
-                renderLevels();                 // 動態算有那些 Level
+                globalCategoryData = data.data;
+                // 存入 localStorage 快取
+                try {
+                    localStorage.setItem(cacheKey, JSON.stringify(data.data));
+                } catch(e) {
+                    console.warn("本機容量不足，無法快取", e);
+                }
+                
+                renderLevels();
                 goToStep('step-level');
             } else {
                 alert("資料讀取失敗，請重試！");
@@ -396,18 +419,17 @@
             alert("無法連線至 API，請檢查網路狀態！");
         } finally {
             btnConfirm.disabled = false;
-            btnConfirm.innerHTML = `<i class="fa-solid fa-check"></i> 確定並載入`;
+            btnConfirm.innerHTML = `<i class="fa-solid fa-check"></i> 確定並進入`;
         }
     }
 
-    // ⚡ 從快取動態計算 Level 列表（純記憶體操作，0 秒完成）
+    // 動態渲染 Level (純記憶體操作，0 秒)
     function renderLevels() {
         const container = document.getElementById('container-levels');
         container.innerHTML = "";
 
-        const levelsSet = [...new Set(globalCategoryData.map(item => item.level.toUpperCase()))].filter(Boolean);
-        
-        // 預設常見級別
+        // 格式：0:id, 1:level, 2:unit_id, 3:stage, 4:text, 5:zh, 6:en, 7:ja, 8:audioUrl
+        const levelsSet = [...new Set(globalCategoryData.map(item => String(item[1]).toUpperCase()))].filter(Boolean);
         const defaultLevels = ['0A', '0B', '1A', '1B', '2A', '2B', '3A', '3B', '4A', '4B'];
         const displayLevels = levelsSet.length > 0 ? levelsSet : defaultLevels;
 
@@ -420,7 +442,7 @@
         });
     }
 
-    // ⚡ 選擇 Level 後秒出 Unit
+    // 選擇 Level (純記憶體操作，0 秒)
     function selectLevel(level) {
         currentConfig.level = level;
         document.getElementById('lbl-unit-level').innerText = `Level: ${level}`;
@@ -428,9 +450,8 @@
         const container = document.getElementById('container-units');
         container.innerHTML = "";
 
-        // 純 JS 快速過濾
-        const filtered = globalCategoryData.filter(i => i.level.toUpperCase() === level.toUpperCase());
-        const units = [...new Set(filtered.map(i => i.unit_id))].filter(Boolean).sort((a,b) => a - b);
+        const filtered = globalCategoryData.filter(i => String(i[1]).toUpperCase() === level.toUpperCase());
+        const units = [...new Set(filtered.map(i => i[2]))].filter(Boolean).sort((a,b) => a - b);
 
         if (units.length > 0) {
             units.forEach(u => {
@@ -447,7 +468,7 @@
         goToStep('step-unit');
     }
 
-    // ⚡ 選擇 Unit 後秒出 Stage
+    // 選擇 Unit (純記憶體操作，0 秒)
     function selectUnit(unitId) {
         currentConfig.unit_id = unitId;
         document.getElementById('lbl-stage-unit').innerText = `Level ${currentConfig.level} | 第 ${unitId} 單元`;
@@ -455,12 +476,11 @@
         const container = document.getElementById('container-stages');
         container.innerHTML = "";
 
-        // 純 JS 快速過濾
         const filtered = globalCategoryData.filter(i => 
-            i.level.toUpperCase() === currentConfig.level.toUpperCase() && 
-            String(i.unit_id) === String(unitId)
+            String(i[1]).toUpperCase() === currentConfig.level.toUpperCase() && 
+            String(i[2]) === String(unitId)
         );
-        const stages = [...new Set(filtered.map(i => i.stage))].filter(Boolean).sort((a,b) => a - b);
+        const stages = [...new Set(filtered.map(i => i[3]))].filter(Boolean).sort((a,b) => a - b);
 
         if (stages.length > 0) {
             stages.forEach(s => {
@@ -477,25 +497,27 @@
         goToStep('step-stage');
     }
 
-    // ⚡ 進入挑戰（直接從快取的記憶體載入，不用再發 HTTP 請求）
+    // 進入挑戰 (純記憶體操作，0 秒)
     function selectStage(stage) {
         currentConfig.stage = stage;
         goToStep('step-quiz');
         
         const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
-        document.getElementById('lbl-quiz-info').innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} | 第 ${currentConfig.stage} 关`;
+        document.getElementById('lbl-quiz-info').innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} | 第 ${currentConfig.stage} 關`;
         
-        // 純前端記憶體篩選題目
-        const langKey = currentConfig.lang; // 'zh', 'en', 'ja'
+        // 5:zh, 6:en, 7:ja
+        const langIndexMap = { 'zh': 5, 'en': 6, 'ja': 7 };
+        const langIdx = langIndexMap[currentConfig.lang] || 5;
+
         questions = globalCategoryData.filter(i => 
-            i.level.toUpperCase() === currentConfig.level.toUpperCase() &&
-            String(i.unit_id) === String(currentConfig.unit_id) &&
-            String(i.stage) === String(stage)
+            String(i[1]).toUpperCase() === currentConfig.level.toUpperCase() &&
+            String(i[2]) === String(currentConfig.unit_id) &&
+            String(i[3]) === String(stage)
         ).map(i => ({
-            id: i.id,
-            text: i.text,
-            translation: i[langKey] || i.zh || '',
-            audioUrl: i.audioUrl
+            id: i[0],
+            text: i[4],
+            translation: i[langIdx] || i[5] || '',
+            audioUrl: i[8]
         }));
 
         currentIndex = 0;
