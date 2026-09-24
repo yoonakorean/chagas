@@ -98,6 +98,17 @@
             border-bottom-width: 2px;
         }
 
+        .btn-sync-refresh {
+            background: none;
+            border: none;
+            color: var(--duo-blue);
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 12px;
+            text-decoration: underline;
+        }
+
         .top-nav {
             display: flex;
             justify-content: space-between;
@@ -292,6 +303,15 @@
     <div id="step-lang" class="step-page active">
         <h2 class="step-title"><i class="fa-solid fa-earth-americas"></i> 請選擇語言設定</h2>
         
+        <!-- 💡 母語放在上面 -->
+        <p style="text-align: left; font-size: 0.9rem; color: #6b7280; font-weight: bold;">你的母語：</p>
+        <div class="option-grid grid-3">
+            <button class="btn-option" id="btn-lang-zh" onclick="setUserLang('zh')">繁體中文</button>
+            <button class="btn-option" id="btn-lang-en" onclick="setUserLang('en')">English</button>
+            <button class="btn-option" id="btn-lang-ja" onclick="setUserLang('ja')">日本語</button>
+        </div>
+
+        <!-- 💡 要學習的語言放在下面 -->
         <p style="text-align: left; font-size: 0.9rem; color: #6b7280; font-weight: bold;">要學習的語言：</p>
         <div class="option-grid grid-3">
             <button class="btn-option" id="btn-cat-korean" onclick="selectCategory('korean')">🇰🇷 韓文</button>
@@ -299,14 +319,8 @@
             <button class="btn-option" id="btn-cat-english" onclick="selectCategory('english')">🇺🇸 英文</button>
         </div>
 
-        <p style="text-align: left; font-size: 0.9rem; color: #6b7280; font-weight: bold;">你的母語（題目翻譯）：</p>
-        <div class="option-grid grid-3">
-            <button class="btn-option" id="btn-lang-zh" onclick="setUserLang('zh')">繁體中文</button>
-            <button class="btn-option" id="btn-lang-en" onclick="setUserLang('en')">English</button>
-            <button class="btn-option" id="btn-lang-ja" onclick="setUserLang('ja')">日本語</button>
-        </div>
-
         <button class="btn-confirm" id="btn-confirm-lang" onclick="confirmLangSetting()"><i class="fa-solid fa-check"></i> 確定並進入</button>
+        <button class="btn-sync-refresh" onclick="forceClearAndSync()"><i class="fa-solid fa-arrows-rotate"></i> 強制連線更新試算表資料</button>
         <div id="cache-status" style="font-size: 0.75rem; color: #9ca3af; margin-top: 8px;"></div>
     </div>
 
@@ -445,64 +459,59 @@
         const statusDiv = document.getElementById('cache-status');
 
         if (cached) {
-            statusDiv.innerText = "⚡ 舊快取已準備（將在背景自動檢查更新）";
+            statusDiv.innerText = "⚡ 已備有本機快取（若試算表有更新請按上方連線更新）";
             statusDiv.style.color = "#10b981";
         } else {
-            statusDiv.innerText = "☁️ 首次同步中...";
+            statusDiv.innerText = "☁️ 首次載入需連線同步（約 1~2 秒）";
             statusDiv.style.color = "#6b7280";
         }
     }
 
-    // ⚡ 策略：優先用快取秒開，同時非同步發送 API 抓最新資料（默默更新）
+    // 強制清除舊快取並重新向 GAS 抓最新資料
+    async function forceClearAndSync() {
+        const cacheKey = `shadowing_data_${currentConfig.category}`;
+        localStorage.removeItem(cacheKey);
+        alert(`已清除 ${currentConfig.category} 本機快取，準備抓取最新試算表資料！`);
+        confirmLangSetting();
+    }
+
     async function confirmLangSetting() {
         const cacheKey = `shadowing_data_${currentConfig.category}`;
         const cachedData = localStorage.getItem(cacheKey);
 
         if (cachedData) {
-            // 🚀 1. 有舊快取：立即顯示舊資料，體驗 0 秒開啟
             globalCategoryData = JSON.parse(cachedData);
             openLevelModal();
-
-            // 🚀 2. 在背景默默抓最新 Sheet 資料，成功後默默替換快取
-            fetchLatestDataInBackground(cacheKey);
-        } else {
-            // 無快取：顯示轉圈並等待下載
-            const btnConfirm = document.getElementById('btn-confirm-lang');
-            btnConfirm.disabled = true;
-            btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 同步最新表格中...`;
-
-            try {
-                await fetchLatestDataInBackground(cacheKey);
-                openLevelModal();
-            } catch(e) {
-                alert("連線失敗，請稍後重試！");
-            } finally {
-                btnConfirm.disabled = false;
-                btnConfirm.innerHTML = `<i class="fa-solid fa-check"></i> 確定並進入`;
-            }
+            return;
         }
-    }
 
-    // 背景同步函式
-    async function fetchLatestDataInBackground(cacheKey) {
+        const btnConfirm = document.getElementById('btn-confirm-lang');
+        btnConfirm.disabled = true;
+        btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 同步最新試算表中...`;
+
         try {
+            // 加隨機時間戳記防止瀏覽器 HTTP 快取
             const url = `${GAS_API_URL}?action=getLanguageData&category=${encodeURIComponent(currentConfig.category)}&t=${Date.now()}`;
             const res = await fetch(url);
             const data = await res.json();
 
-            if (data.status === 'success' && data.data) {
+            if (data.status === 'success') {
                 globalCategoryData = data.data;
-                localStorage.setItem(cacheKey, JSON.stringify(data.data));
-
-                // 如果當前使用者正卡在 Unit / Stage 選擇頁面，自動重新整理視圖（載入新單元）
-                if (document.getElementById('step-unit').classList.contains('active')) {
-                    renderUnits(currentConfig.level);
-                } else if (document.getElementById('step-stage').classList.contains('active')) {
-                    selectUnit(currentConfig.unit_id);
+                try {
+                    localStorage.setItem(cacheKey, JSON.stringify(data.data));
+                } catch(e) {
+                    console.warn("快取寫入失敗", e);
                 }
+                
+                openLevelModal();
+            } else {
+                alert("資料讀取失敗，請重試！");
             }
         } catch(e) {
-            console.warn("背景同步失敗：", e);
+            alert("無法連線至 API，請檢查網路狀態！");
+        } finally {
+            btnConfirm.disabled = false;
+            btnConfirm.innerHTML = `<i class="fa-solid fa-check"></i> 確定並進入`;
         }
     }
 
