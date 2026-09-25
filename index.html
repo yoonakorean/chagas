@@ -423,9 +423,10 @@
 </div>
 
 <script>
+    // 💡 已更新日文 API 網址為最新修正版
     const API_URLS = {
         korean: "https://script.google.com/macros/s/AKfycbNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
-        japanese: "https://script.google.com/macros/s/AKfycbQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
+        japanese: "https://script.google.com/macros/s/AKfycbxQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
         english: ""
     };
 
@@ -537,17 +538,16 @@
                 renderLevelMenu();
                 goToStep('step-level');
             } else {
-                alert("資料讀取失敗，請確認 API 設定或試算表分頁名稱！");
+                alert(`資料讀取失敗：${data.message || '請確認 API 設定或試算表分頁名稱！'}`);
             }
         } catch(e) {
-            alert("無法連線至 API，請檢查網路或 API 網址！");
+            alert("無法連線至 API，請檢查日文 Google Apps Script 的「誰有存取權」是否設為「所有人 (Anyone)」！");
         } finally {
             btnConfirm.disabled = false;
             btnConfirm.innerHTML = `<i class="fa-solid fa-check"></i> 確定並進入`;
         }
     }
 
-    // 💡 依據語言動態渲染「程度」選單
     function renderLevelMenu() {
         const container = document.getElementById('container-levels');
         container.innerHTML = "";
@@ -570,7 +570,6 @@
                 container.appendChild(btn);
             });
         } else {
-            // 韓文 / 預設程度選單
             const krLevels = [
                 { code: '0A', title: '0A 認識字母' },
                 { code: '1A', title: '1A 基礎級' },
@@ -604,7 +603,6 @@
         const container = document.getElementById('container-units');
         container.innerHTML = "";
 
-        // 不區分大小寫比對 level
         const filtered = globalCategoryData.filter(i => String(i[1]).trim().toUpperCase() === level.trim().toUpperCase());
         const units = [...new Set(filtered.map(i => i[2]))].filter(Boolean).sort((a,b) => a - b);
 
