@@ -423,7 +423,7 @@
 </div>
 
 <script>
-    // 💡 已更新日文 API 網址為最新修正版
+    // 💡 韓文與日文獨立 API 網址
     const API_URLS = {
         korean: "https://script.google.com/macros/s/AKfycbNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
         japanese: "https://script.google.com/macros/s/AKfycbxQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
@@ -501,6 +501,34 @@
         confirmLangSetting();
     }
 
+    // 🚀 JSONP 跨網域連線核心函式（完全避開跨網域 CORS 阻擋）
+    function loadDataViaJSONP(apiUrl, actionName) {
+        return new Promise((resolve, reject) => {
+            const callbackName = 'gas_cb_' + Date.now();
+            const script = document.createElement('script');
+
+            window[callbackName] = function(data) {
+                delete window[callbackName];
+                if (document.body.contains(script)) {
+                    document.body.removeChild(script);
+                }
+                resolve(data);
+            };
+
+            script.onerror = function() {
+                delete window[callbackName];
+                if (document.body.contains(script)) {
+                    document.body.removeChild(script);
+                }
+                reject(new Error("JSONP 連線失敗"));
+            };
+
+            const connector = apiUrl.includes('?') ? '&' : '?';
+            script.src = `${apiUrl}${connector}action=${actionName}&prefix=${callbackName}&t=${Date.now()}`;
+            document.body.appendChild(script);
+        });
+    }
+
     async function confirmLangSetting() {
         const targetApi = API_URLS[currentConfig.category];
         if (!targetApi) {
@@ -525,23 +553,34 @@
         const actionName = currentConfig.mode === 'blocks' ? 'getBlocksData' : 'getLanguageData';
 
         try {
+            // 優先使用一般的 fetch
             const url = `${targetApi}?action=${actionName}&category=${encodeURIComponent(currentConfig.category)}&t=${Date.now()}`;
             const res = await fetch(url);
             const data = await res.json();
 
             if (data.status === 'success') {
                 globalCategoryData = data.data;
-                try {
-                    localStorage.setItem(cacheKey, JSON.stringify(data.data));
-                } catch(e) {}
-                
+                try { localStorage.setItem(cacheKey, JSON.stringify(data.data)); } catch(e) {}
                 renderLevelMenu();
                 goToStep('step-level');
             } else {
-                alert(`資料讀取失敗：${data.message || '請確認 API 設定或試算表分頁名稱！'}`);
+                alert(`資料讀取失敗：${data.message || '請確認 API 設定'}`);
             }
         } catch(e) {
-            alert("無法連線至 API，請檢查日文 Google Apps Script 的「誰有存取權」是否設為「所有人 (Anyone)」！");
+            // 🚀 若 Fetch 被 CORS 阻擋，自動無縫啟用 JSONP 備援
+            try {
+                const data = await loadDataViaJSONP(targetApi, actionName);
+                if (data.status === 'success') {
+                    globalCategoryData = data.data;
+                    try { localStorage.setItem(cacheKey, JSON.stringify(data.data)); } catch(err) {}
+                    renderLevelMenu();
+                    goToStep('step-level');
+                } else {
+                    alert(`資料讀取失敗：${data.message || '請確認 API 設定'}`);
+                }
+            } catch(jsonpErr) {
+                alert("無法連線至 API！請確認 Apps Script 部署設定是否正確！");
+            }
         } finally {
             btnConfirm.disabled = false;
             btnConfirm.innerHTML = `<i class="fa-solid fa-check"></i> 確定並進入`;
