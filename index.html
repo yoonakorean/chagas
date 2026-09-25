@@ -299,7 +299,7 @@
         <div class="option-grid grid-3">
             <button class="btn-option selected" id="btn-lang-zh" onclick="setUserLang('zh')">繁體中文</button>
             <button class="btn-option" id="btn-lang-en" onclick="setUserLang('en')">English</button>
-            <button class="btn-option" id="btn-lang-ja" onclick="setUserLang('ja')">日本語</button>
+            <button class="btn-option" id="btn-lang-kr" onclick="setUserLang('kr')">한국어</button>
         </div>
 
         <p style="text-align: left; font-size: 0.9rem; color: #6b7280; font-weight: bold;">3. 要學習的語言：</p>
@@ -331,7 +331,7 @@
             <button class="btn-option" onclick="selectLevel('3A', '3A 中高級')">3A 中高級</button>
             <button class="btn-option" onclick="selectLevel('3B', '3B 高級')">3B 高級</button>
             <button class="btn-option" onclick="selectLevel('4A', '4A 精通級')">4A 精通級</button>
-            <button class="btn-option" style="grid-column: span 2;" onclick="selectLevel('TOPIK1', 'TOPIK 1 檢定')">TOPIK 1 檢定</button>
+            <button class="btn-option" style="grid-column: span 2;" onclick="selectLevel('JLPT/TOPIK', '檢定課程')">檢定課程</button>
         </div>
     </div>
 
@@ -434,7 +434,12 @@
 </div>
 
 <script>
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec";
+    // 💡 各語言分開抓取對應的 Google Sheet API
+    const API_URLS = {
+        korean: "https://script.google.com/macros/s/AKfycbNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
+        japanese: "https://script.google.com/macros/s/AKfycbQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
+        english: "" // 未來有英文 API 再填入
+    };
 
     let currentConfig = {
         mode: 'shadow', // 'shadow' 或 'blocks'
@@ -449,7 +454,7 @@
     let questions = [];
     let currentIndex = 0;
     let recognition = null;
-    let selectedBlockIndices = []; // 紀錄點選的字塊
+    let selectedBlockIndices = [];
 
     function goToStep(stepId) {
         document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
@@ -478,11 +483,12 @@
 
     function setUserLang(lang) {
         currentConfig.lang = lang;
-        ['zh', 'en', 'ja'].forEach(l => {
+        ['zh', 'en', 'kr', 'ja'].forEach(l => {
             const btn = document.getElementById(`btn-lang-${l}`);
             if (btn) btn.classList.remove('selected');
         });
-        document.getElementById(`btn-lang-${lang}`).classList.add('selected');
+        const activeBtn = document.getElementById(`btn-lang-${lang}`);
+        if (activeBtn) activeBtn.classList.add('selected');
     }
 
     function checkCacheStatus() {
@@ -507,6 +513,12 @@
     }
 
     async function confirmLangSetting() {
+        const targetApi = API_URLS[currentConfig.category];
+        if (!targetApi) {
+            alert("該語言的 API 網址尚未設定！");
+            return;
+        }
+
         const cacheKey = `${currentConfig.mode}_data_${currentConfig.category}`;
         const cachedData = localStorage.getItem(cacheKey);
 
@@ -523,7 +535,7 @@
         const actionName = currentConfig.mode === 'blocks' ? 'getBlocksData' : 'getLanguageData';
 
         try {
-            const url = `${GAS_API_URL}?action=${actionName}&category=${encodeURIComponent(currentConfig.category)}&t=${Date.now()}`;
+            const url = `${targetApi}?action=${actionName}&category=${encodeURIComponent(currentConfig.category)}&t=${Date.now()}`;
             const res = await fetch(url);
             const data = await res.json();
 
@@ -535,10 +547,10 @@
                 
                 goToStep('step-level');
             } else {
-                alert("資料讀取失敗，請重試！");
+                alert("資料讀取失敗，請確認 API 設定或試算表分頁名稱！");
             }
         } catch(e) {
-            alert("無法連線至 API，請檢查網路！");
+            alert("無法連線至 API，請檢查網路或 API 網址！");
         } finally {
             btnConfirm.disabled = false;
             btnConfirm.innerHTML = `<i class="fa-solid fa-check"></i> 確定並進入`;
@@ -607,13 +619,12 @@
         const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} | 第 ${currentConfig.stage} 關`;
         document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
 
-        const langIndexMap = { 'zh': 6, 'en': 7, 'ja': 8 };
-        const langIdx = langIndexMap[currentConfig.lang] || 6;
+        // 判斷母語索引（zh: 6, en: 7, kr/ja: 8）
+        const langIndexMap = { 'zh': 5, 'en': 6, 'kr': 7, 'ja': 7 };
+        const langIdx = langIndexMap[currentConfig.lang] !== undefined ? langIndexMap[currentConfig.lang] : 5;
 
         if (currentConfig.mode === 'shadow') {
             goToStep('step-quiz-shadow');
-            const shadowLangMap = { 'zh': 5, 'en': 6, 'ja': 7 };
-            const sLangIdx = shadowLangMap[currentConfig.lang] || 5;
 
             questions = globalCategoryData.filter(i => 
                 String(i[1]).toUpperCase() === currentConfig.level.toUpperCase() &&
@@ -622,19 +633,22 @@
             ).map(i => ({
                 id: i[0],
                 text: i[4],
-                translation: i[sLangIdx] || i[5] || '',
+                translation: i[langIdx] || i[5] || '',
                 audioUrl: i[8],
                 hint: i[9] || ''
             }));
         } else {
             // 🧩 拼字模式
             goToStep('step-quiz-blocks');
+            
+            const blockLangIndexMap = { 'zh': 6, 'en': 7, 'kr': 8, 'ja': 8 };
+            const bLangIdx = blockLangIndexMap[currentConfig.lang] !== undefined ? blockLangIndexMap[currentConfig.lang] : 6;
+
             questions = globalCategoryData.filter(i => 
                 String(i[1]).toUpperCase() === currentConfig.level.toUpperCase() &&
                 String(i[2]) === String(currentConfig.unit_id) &&
                 String(i[3]) === String(stage)
             ).map(i => {
-                // 將 comma 分隔的字塊拆開並打亂
                 let rawOptions = (i[5] || '').split(',').map(s => s.trim()).filter(Boolean);
                 let shuffled = [...rawOptions].sort(() => Math.random() - 0.5);
 
@@ -642,7 +656,7 @@
                     id: i[0],
                     fullText: i[4],
                     options: shuffled,
-                    translation: i[langIdx] || i[6] || '',
+                    translation: i[bLangIdx] || i[6] || '',
                     audioUrl: i[9] || ''
                 };
             });
@@ -658,7 +672,6 @@
         if (!questions || questions.length === 0) return;
         const q = questions[currentIndex];
 
-        // 更新進度
         document.querySelectorAll('.lbl-progress').forEach(e => e.innerText = `${currentIndex + 1} / ${questions.length}`);
         
         if (currentConfig.mode === 'shadow') {
@@ -685,11 +698,10 @@
 
             selectedBlockIndices = [];
             renderBlocks();
-            playBlockAudio(); // 自動讀音
+            playBlockAudio();
         }
     }
 
-    // 🧩 渲染字塊選單
     function renderBlocks() {
         const q = questions[currentIndex];
         const zoneOptions = document.getElementById('zone-options');
@@ -698,7 +710,6 @@
         zoneOptions.innerHTML = "";
         zoneAnswer.innerHTML = "";
 
-        // 渲染候選字塊
         q.options.forEach((optText, idx) => {
             const btn = document.createElement('div');
             btn.className = 'block-chip';
@@ -710,7 +721,6 @@
             zoneOptions.appendChild(btn);
         });
 
-        // 渲染答題區字塊
         selectedBlockIndices.forEach(idx => {
             const btn = document.createElement('div');
             btn.className = 'block-chip';
@@ -730,7 +740,6 @@
         renderBlocks();
     }
 
-    // 🧩 檢查拼字答案
     function checkBlockAnswer() {
         const q = questions[currentIndex];
         const userSentence = selectedBlockIndices.map(i => q.options[i]).join('');
