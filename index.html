@@ -242,7 +242,6 @@
 
         .btn-sub-nav:hover { background: #e5e7eb; color: var(--duo-blue); }
 
-        /* 🧩 字塊拼字專用樣式 */
         .block-zone {
             min-height: 70px;
             border-bottom: 2px dashed #cbd5e1;
@@ -322,16 +321,8 @@
         
         <h2 class="step-title"><i class="fa-solid fa-layer-group"></i> 選擇課程程度</h2>
         
-        <div class="option-grid grid-2">
-            <button class="btn-option" onclick="selectLevel('0A', '0A 認識字母')">0A 認識字母</button>
-            <button class="btn-option" onclick="selectLevel('1A', '1A 基礎級')">1A 基礎級</button>
-            <button class="btn-option" onclick="selectLevel('1B', '1B 初級')">1B 初級</button>
-            <button class="btn-option" onclick="selectLevel('2A', '2A 中初級')">2A 中初級</button>
-            <button class="btn-option" onclick="selectLevel('2B', '2B 中級')">2B 中級</button>
-            <button class="btn-option" onclick="selectLevel('3A', '3A 中高級')">3A 中高級</button>
-            <button class="btn-option" onclick="selectLevel('3B', '3B 高級')">3B 高級</button>
-            <button class="btn-option" onclick="selectLevel('4A', '4A 精通級')">4A 精通級</button>
-            <button class="btn-option" style="grid-column: span 2;" onclick="selectLevel('JLPT/TOPIK', '檢定課程')">檢定課程</button>
+        <div id="container-levels" class="option-grid grid-2">
+            <!-- 程度選項會由 JavaScript 動態產生 -->
         </div>
     </div>
 
@@ -410,11 +401,9 @@
 
         <div class="translation-text" id="lbl-block-translation">...</div>
 
-        <!-- 答題組合區 -->
         <p style="font-size: 0.8rem; color: #9ca3af; text-align: left; margin: 0;">排列結果：</p>
         <div id="zone-answer" class="block-zone"></div>
 
-        <!-- 候選字塊區 -->
         <p style="font-size: 0.8rem; color: #9ca3af; text-align: left; margin: 0;">點擊字塊組句：</p>
         <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
 
@@ -434,17 +423,16 @@
 </div>
 
 <script>
-    // 💡 各語言分開抓取對應的 Google Sheet API
     const API_URLS = {
         korean: "https://script.google.com/macros/s/AKfycbNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
         japanese: "https://script.google.com/macros/s/AKfycbQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
-        english: "" // 未來有英文 API 再填入
+        english: ""
     };
 
     let currentConfig = {
-        mode: 'shadow', // 'shadow' 或 'blocks'
+        mode: 'shadow',
         category: 'korean',
-        level: '0A',
+        level: '',
         unit_id: '1',
         stage: '1',
         lang: 'zh'
@@ -524,6 +512,7 @@
 
         if (cachedData) {
             globalCategoryData = JSON.parse(cachedData);
+            renderLevelMenu();
             goToStep('step-level');
             return;
         }
@@ -545,6 +534,7 @@
                     localStorage.setItem(cacheKey, JSON.stringify(data.data));
                 } catch(e) {}
                 
+                renderLevelMenu();
                 goToStep('step-level');
             } else {
                 alert("資料讀取失敗，請確認 API 設定或試算表分頁名稱！");
@@ -554,6 +544,52 @@
         } finally {
             btnConfirm.disabled = false;
             btnConfirm.innerHTML = `<i class="fa-solid fa-check"></i> 確定並進入`;
+        }
+    }
+
+    // 💡 依據語言動態渲染「程度」選單
+    function renderLevelMenu() {
+        const container = document.getElementById('container-levels');
+        container.innerHTML = "";
+
+        if (currentConfig.category === 'japanese') {
+            const jpLevels = [
+                { code: 'beginner', title: '初心者' },
+                { code: 'N5', title: 'N5初級' },
+                { code: 'N4', title: 'N4初級' },
+                { code: 'N3', title: 'N3中級' },
+                { code: 'N2', title: 'N2高級' },
+                { code: 'N1', title: 'N1高級' }
+            ];
+
+            jpLevels.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = "btn-option";
+                btn.innerText = `${item.title}`;
+                btn.onclick = () => selectLevel(item.code, item.title);
+                container.appendChild(btn);
+            });
+        } else {
+            // 韓文 / 預設程度選單
+            const krLevels = [
+                { code: '0A', title: '0A 認識字母' },
+                { code: '1A', title: '1A 基礎級' },
+                { code: '1B', title: '1B 初級' },
+                { code: '2A', title: '2A 中初級' },
+                { code: '2B', title: '2B 中級' },
+                { code: '3A', title: '3A 中高級' },
+                { code: '3B', title: '3B 高級' },
+                { code: '4A', title: '4A 精通級' },
+                { code: 'JLPT/TOPIK', title: '檢定課程' }
+            ];
+
+            krLevels.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = "btn-option";
+                btn.innerText = `${item.title}`;
+                btn.onclick = () => selectLevel(item.code, item.title);
+                container.appendChild(btn);
+            });
         }
     }
 
@@ -568,7 +604,8 @@
         const container = document.getElementById('container-units');
         container.innerHTML = "";
 
-        const filtered = globalCategoryData.filter(i => String(i[1]).toUpperCase() === level.toUpperCase());
+        // 不區分大小寫比對 level
+        const filtered = globalCategoryData.filter(i => String(i[1]).trim().toUpperCase() === level.trim().toUpperCase());
         const units = [...new Set(filtered.map(i => i[2]))].filter(Boolean).sort((a,b) => a - b);
 
         if (units.length > 0) {
@@ -580,7 +617,7 @@
                 container.appendChild(btn);
             });
         } else {
-            container.innerHTML = `<div style="color: #6b7280; grid-column: span 3;">此 Level 尚無資料</div>`;
+            container.innerHTML = `<div style="color: #6b7280; grid-column: span 3; padding: 20px 0;">此程度 (${level}) 尚無資料</div>`;
         }
     }
 
@@ -592,7 +629,7 @@
         container.innerHTML = "";
 
         const filtered = globalCategoryData.filter(i => 
-            String(i[1]).toUpperCase() === currentConfig.level.toUpperCase() && 
+            String(i[1]).trim().toUpperCase() === currentConfig.level.trim().toUpperCase() && 
             String(i[2]) === String(unitId)
         );
         const stages = [...new Set(filtered.map(i => i[3]))].filter(Boolean).sort((a,b) => a - b);
@@ -606,7 +643,7 @@
                 container.appendChild(btn);
             });
         } else {
-            container.innerHTML = `<div style="color: #6b7280; grid-column: span 3;">此單元尚無資料</div>`;
+            container.innerHTML = `<div style="color: #6b7280; grid-column: span 3; padding: 20px 0;">此單元尚無資料</div>`;
         }
 
         goToStep('step-stage');
@@ -619,7 +656,6 @@
         const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} | 第 ${currentConfig.stage} 關`;
         document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
 
-        // 判斷母語索引（zh: 6, en: 7, kr/ja: 8）
         const langIndexMap = { 'zh': 5, 'en': 6, 'kr': 7, 'ja': 7 };
         const langIdx = langIndexMap[currentConfig.lang] !== undefined ? langIndexMap[currentConfig.lang] : 5;
 
@@ -627,7 +663,7 @@
             goToStep('step-quiz-shadow');
 
             questions = globalCategoryData.filter(i => 
-                String(i[1]).toUpperCase() === currentConfig.level.toUpperCase() &&
+                String(i[1]).trim().toUpperCase() === currentConfig.level.trim().toUpperCase() &&
                 String(i[2]) === String(currentConfig.unit_id) &&
                 String(i[3]) === String(stage)
             ).map(i => ({
@@ -638,14 +674,13 @@
                 hint: i[9] || ''
             }));
         } else {
-            // 🧩 拼字模式
             goToStep('step-quiz-blocks');
             
             const blockLangIndexMap = { 'zh': 6, 'en': 7, 'kr': 8, 'ja': 8 };
             const bLangIdx = blockLangIndexMap[currentConfig.lang] !== undefined ? blockLangIndexMap[currentConfig.lang] : 6;
 
             questions = globalCategoryData.filter(i => 
-                String(i[1]).toUpperCase() === currentConfig.level.toUpperCase() &&
+                String(i[1]).trim().toUpperCase() === currentConfig.level.trim().toUpperCase() &&
                 String(i[2]) === String(currentConfig.unit_id) &&
                 String(i[3]) === String(stage)
             ).map(i => {
@@ -689,7 +724,6 @@
             document.getElementById('btn-prev').disabled = currentIndex === 0;
             document.getElementById('btn-next').disabled = currentIndex === questions.length - 1;
         } else {
-            // 🧩 顯示字塊模式
             document.getElementById('lbl-block-translation').innerText = q.translation || "";
             document.getElementById('lbl-block-score').innerText = "請選取字塊組合句子";
             document.getElementById('lbl-block-score').style.color = "#58cc02";
