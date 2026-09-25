@@ -423,9 +423,9 @@
 </div>
 
 <script>
-    // 💡 韓文與日文獨立 API 網址
+    // 💡 韓文與日文獨立 API 網址（已更新最新的韓文與日文 API）
     const API_URLS = {
-        korean: "https://script.google.com/macros/s/AKfycbNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
+        korean: "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
         japanese: "https://script.google.com/macros/s/AKfycbxQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
         english: ""
     };
@@ -501,7 +501,7 @@
         confirmLangSetting();
     }
 
-    // 🚀 JSONP 跨網域連線核心函式（完全避開跨網域 CORS 阻擋）
+    // 🚀 JSONP 跨網域連線核心函式
     function loadDataViaJSONP(apiUrl, actionName) {
         return new Promise((resolve, reject) => {
             const callbackName = 'gas_cb_' + Date.now();
@@ -531,8 +531,10 @@
 
     async function confirmLangSetting() {
         const targetApi = API_URLS[currentConfig.category];
+        const langName = currentConfig.category === 'korean' ? '韓文' : (currentConfig.category === 'japanese' ? '日文' : '英文');
+
         if (!targetApi) {
-            alert("該語言的 API 網址尚未設定！");
+            alert(`該語言 (${langName}) 的 API 網址尚未設定！`);
             return;
         }
 
@@ -567,7 +569,7 @@
                 alert(`資料讀取失敗：${data.message || '請確認 API 設定'}`);
             }
         } catch(e) {
-            // 🚀 若 Fetch 被 CORS 阻擋，自動無縫啟用 JSONP 備援
+            // 🚀 若 Fetch 被 CORS 阻擋，自動啟用 JSONP 備援
             try {
                 const data = await loadDataViaJSONP(targetApi, actionName);
                 if (data.status === 'success') {
@@ -579,7 +581,7 @@
                     alert(`資料讀取失敗：${data.message || '請確認 API 設定'}`);
                 }
             } catch(jsonpErr) {
-                alert("無法連線至 API！請確認 Apps Script 部署設定是否正確！");
+                alert(`無法連線至 ${langName} API！請確認 ${langName} Google Apps Script 是否已部署為 Web App 且設定為「所有人 (Anyone)」！`);
             }
         } finally {
             btnConfirm.disabled = false;
