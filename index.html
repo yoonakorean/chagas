@@ -51,9 +51,7 @@
             margin-bottom: 20px;
         }
 
-        /* 垂直單欄排列 */
         .grid-1 { grid-template-columns: 1fr; }
-        
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
         .grid-3 { grid-template-columns: repeat(3, 1fr); }
 
@@ -82,6 +80,50 @@
             border-bottom-color: #1899d6 !important;
             background-color: #ddf4ff !important;
             color: var(--duo-blue) !important;
+        }
+
+        /* 整合後的雙按鈕專用樣式 */
+        .stage-card-item {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stage-card-title {
+            font-weight: bold;
+            color: var(--duo-dark);
+            text-align: left;
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .stage-btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-stage-action {
+            flex: 1;
+            background: white;
+            border: 2px solid #cbd5e1;
+            border-bottom: 3px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 10px 4px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-stage-action:hover {
+            border-color: var(--duo-blue);
+            color: var(--duo-blue);
         }
 
         .btn-confirm {
@@ -297,6 +339,7 @@
             line-height: 1.6;
             position: relative;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            cursor: pointer;
         }
 
         .btn-gram2-audio {
@@ -431,26 +474,10 @@
         <div id="container-levels" class="option-grid grid-2"></div>
     </div>
 
-    <!-- 步驟 4：選擇遊戲挑戰模式 -->
-    <div id="step-game-mode" class="step-page">
-        <div class="top-nav">
-            <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
-        </div>
-
-        <h2 class="step-title"><i class="fa-solid fa-gamepad"></i> 選擇遊戲挑戰模式</h2>
-        
-        <div class="option-grid grid-1">
-            <button class="btn-option selected" id="btn-mode-shadow" onclick="setGameMode('shadow')">🎙️ 跟讀練習</button>
-            <button class="btn-option" id="btn-mode-blocks" onclick="setGameMode('blocks')">🧩 聽音重組字塊</button>
-        </div>
-
-        <button class="btn-confirm" id="btn-confirm-mode" onclick="confirmGameMode()"><i class="fa-solid fa-check"></i> 確定並選擇單元</button>
-    </div>
-
-    <!-- 步驟 5：選擇單元 (Unit) -->
+    <!-- 步驟 4：選擇單元 (Unit) -->
     <div id="step-unit" class="step-page">
         <div class="top-nav">
-            <button class="btn-back-step" onclick="goToStep('step-game-mode')"><i class="fa-solid fa-arrow-left"></i> 回模式選擇</button>
+            <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
             <span id="lbl-unit-level" style="font-weight: bold; color: var(--duo-blue);">0A 認識字母</span>
         </div>
         
@@ -458,18 +485,18 @@
         <div id="container-units" class="option-grid grid-3"></div>
     </div>
 
-    <!-- 步驟 6：選擇關卡 (Stage) -->
+    <!-- 步驟 5：選擇關卡 (Stage) 與挑戰模式 -->
     <div id="step-stage" class="step-page">
         <div class="top-nav">
             <button class="btn-back-step" onclick="goToStep('step-unit')"><i class="fa-solid fa-arrow-left"></i> 回單元選擇</button>
             <span id="lbl-stage-unit" style="font-weight: bold; color: var(--duo-blue);">單元 1</span>
         </div>
 
-        <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇關卡 (Stage)</h2>
-        <div id="container-stages" class="option-grid grid-3"></div>
+        <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇關卡挑戰</h2>
+        <div id="container-stages"></div>
     </div>
 
-    <!-- 步驟 6.5：語法說明頁面 -->
+    <!-- 步驟 5.5：語法說明頁面 -->
     <div id="step-grammar" class="step-page">
         <div class="top-nav">
             <button class="btn-back-step" onclick="goToStep('step-stage')"><i class="fa-solid fa-arrow-left"></i> 回關卡選擇</button>
@@ -532,7 +559,7 @@
         </div>
     </div>
 
-    <!-- 步驟 7-A：跟讀挑戰畫面 -->
+    <!-- 步驟 6-A：跟讀挑戰畫面 -->
     <div id="step-quiz-shadow" class="step-page">
         <div class="challenge-header-btns">
             <button class="btn-sub-nav" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
@@ -567,7 +594,7 @@
         </div>
     </div>
 
-    <!-- 步驟 7-B：聽音重組字塊畫面 -->
+    <!-- 步驟 6-B：聽音重組字塊畫面 -->
     <div id="step-quiz-blocks" class="step-page">
         <div class="challenge-header-btns">
             <button class="btn-sub-nav" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
@@ -624,7 +651,6 @@
 
     let rawShadowData = [];  
     let rawBlocksData = [];  
-    let globalCategoryData = []; 
     let globalGrammarData = []; 
     let questions = [];
     let currentIndex = 0;
@@ -682,15 +708,6 @@
         }
         
         checkCacheStatus();
-    }
-
-    function setGameMode(mode) {
-        currentConfig.mode = mode;
-        ['shadow', 'blocks'].forEach(m => {
-            const btn = document.getElementById(`btn-mode-${m}`);
-            if (btn) btn.classList.remove('selected');
-        });
-        document.getElementById(`btn-mode-${mode}`).classList.add('selected');
     }
 
     function checkCacheStatus() {
@@ -853,16 +870,10 @@
         }
     }
 
-    // 第三步：選擇程度 -> 跳至「選擇遊戲挑戰模式」
+    // 第三步：選擇程度 -> 直接進入「選擇單元」
     function selectLevel(levelCode, levelTitle) {
         currentConfig.level = levelCode;
         document.getElementById('lbl-unit-level').innerText = levelTitle;
-        goToStep('step-game-mode');
-    }
-
-    // 第四步：確定挑戰模式 -> 開啟「選擇單元」
-    function confirmGameMode() {
-        globalCategoryData = (currentConfig.mode === 'blocks') ? rawBlocksData : rawShadowData;
         renderUnits(currentConfig.level);
         goToStep('step-unit');
     }
@@ -871,8 +882,9 @@
         const container = document.getElementById('container-units');
         container.innerHTML = "";
 
-        const dataSource = globalCategoryData.length > 0 ? globalCategoryData : (rawShadowData.length > 0 ? rawShadowData : rawBlocksData);
-        const filtered = dataSource.filter(i => String(i[1]).trim().toUpperCase() === level.trim().toUpperCase());
+        // 集合跟讀與重組兩者資料
+        const combinedData = [...rawShadowData, ...rawBlocksData];
+        const filtered = combinedData.filter(i => String(i[1]).trim().toUpperCase() === level.trim().toUpperCase());
         const units = [...new Set(filtered.map(i => i[2]))].filter(Boolean).sort((a,b) => a - b);
 
         if (units.length > 0) {
@@ -888,6 +900,7 @@
         }
     }
 
+    // 第四步：點選單元 -> 生成該單元之關卡，每個關卡包含「跟讀」與「重組」模式按鈕
     function selectUnit(unitId) {
         currentConfig.unit_id = unitId;
         document.getElementById('lbl-stage-unit').innerText = `Level ${currentConfig.level} | 第 ${unitId} 單元`;
@@ -895,8 +908,8 @@
         const container = document.getElementById('container-stages');
         container.innerHTML = "";
 
-        const dataSource = globalCategoryData.length > 0 ? globalCategoryData : (rawShadowData.length > 0 ? rawShadowData : rawBlocksData);
-        const filtered = dataSource.filter(i => 
+        const combinedData = [...rawShadowData, ...rawBlocksData];
+        const filtered = combinedData.filter(i => 
             String(i[1]).trim().toUpperCase() === currentConfig.level.trim().toUpperCase() && 
             String(i[2]) === String(unitId)
         );
@@ -904,21 +917,45 @@
 
         if (stages.length > 0) {
             stages.forEach(s => {
-                const btn = document.createElement('button');
-                btn.className = "btn-option";
-                btn.innerText = `第 ${s} 關`;
-                btn.onclick = () => selectStage(s);
-                container.appendChild(btn);
+                const card = document.createElement('div');
+                card.className = "stage-card-item";
+
+                const title = document.createElement('div');
+                title.className = "stage-card-title";
+                title.innerText = `第 ${s} 關卡 (${currentConfig.unit_id}-${s})`;
+
+                const btnGroup = document.createElement('div');
+                btnGroup.className = "stage-btn-group";
+
+                const btnShadow = document.createElement('button');
+                btnShadow.className = "btn-stage-action";
+                btnShadow.innerHTML = `<i class="fa-solid fa-microphone"></i> 🎙️ 跟讀`;
+                btnShadow.onclick = () => selectStageAndMode(s, 'shadow');
+
+                const btnBlocks = document.createElement('button');
+                btnBlocks.className = "btn-stage-action";
+                btnBlocks.innerHTML = `<i class="fa-solid fa-puzzle-piece"></i> 🧩 重組`;
+                btnBlocks.onclick = () => selectStageAndMode(s, 'blocks');
+
+                btnGroup.appendChild(btnShadow);
+                btnGroup.appendChild(btnBlocks);
+
+                card.appendChild(title);
+                card.appendChild(btnGroup);
+
+                container.appendChild(card);
             });
         } else {
-            container.innerHTML = `<div style="color: #6b7280; grid-column: span 3; padding: 20px 0;">此單元尚無資料</div>`;
+            container.innerHTML = `<div style="color: #6b7280; padding: 20px 0;">此單元尚無關卡資料</div>`;
         }
 
         goToStep('step-stage');
     }
 
-    function selectStage(stage) {
+    // 點擊具體的「關卡+模式」
+    function selectStageAndMode(stage, mode) {
         currentConfig.stage = stage;
+        currentConfig.mode = mode;
 
         const matchGrammar = globalGrammarData.find(g => 
             String(g.level).trim().toUpperCase() === currentConfig.level.trim().toUpperCase() &&
@@ -1270,7 +1307,8 @@
         stopSpeechRecognition();
 
         const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
-        const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} | 第 ${currentConfig.stage} 關`;
+        const modeTitle = currentConfig.mode === 'shadow' ? '跟讀挑戰' : '重組挑戰';
+        const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - 關卡 ${currentConfig.stage} (${modeTitle})`;
         document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
 
         const langIndexMap = { 'zh': 5, 'en': 6, 'kr': 7, 'ja': 7 };
@@ -1279,7 +1317,7 @@
         if (currentConfig.mode === 'shadow') {
             goToStep('step-quiz-shadow');
 
-            questions = globalCategoryData.filter(i => 
+            questions = rawShadowData.filter(i => 
                 String(i[1]).trim().toUpperCase() === currentConfig.level.trim().toUpperCase() &&
                 String(i[2]) === String(currentConfig.unit_id) &&
                 String(i[3]) === String(currentConfig.stage)
@@ -1296,7 +1334,7 @@
             const blockLangIndexMap = { 'zh': 6, 'en': 7, 'kr': 8, 'ja': 8 };
             const bLangIdx = blockLangIndexMap[currentConfig.lang] !== undefined ? blockLangIndexMap[currentConfig.lang] : 6;
 
-            questions = globalCategoryData.filter(i => 
+            questions = rawBlocksData.filter(i => 
                 String(i[1]).trim().toUpperCase() === currentConfig.level.trim().toUpperCase() &&
                 String(i[2]) === String(currentConfig.unit_id) &&
                 String(i[3]) === String(currentConfig.stage)
@@ -1563,7 +1601,6 @@
         initSpeechRecognition();
         setUserLang('zh');
         selectCategory('korean');
-        setGameMode('shadow');
     };
 </script>
 
