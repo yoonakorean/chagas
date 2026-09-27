@@ -364,52 +364,6 @@
             color: var(--duo-blue);
             margin-right: 6px;
         }
-
-        /* 💡 新增：Example 例句與音檔列表樣式 */
-        .example-list-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .example-item {
-            background: #ffffff;
-            border: 2px solid #e5e7eb;
-            border-radius: 14px;
-            padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-align: left;
-        }
-
-        .example-text {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: var(--duo-dark);
-        }
-
-        .btn-play-sm {
-            background: var(--duo-blue);
-            color: white;
-            border: none;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            box-shadow: 0 3px 0 #1899d6;
-            flex-shrink: 0;
-        }
-
-        .btn-play-sm:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #1899d6;
-        }
     </style>
 </head>
 <body>
@@ -477,14 +431,14 @@
         <div id="container-stages" class="option-grid grid-3"></div>
     </div>
 
-    <!-- 💡 步驟 4.5：語法說明頁面 (新增 Example -> Exam -> Question 階段) -->
+    <!-- 💡 步驟 4.5：語法說明頁面 (支援打字機、上一步、跳過、全部顯示) -->
     <div id="step-grammar" class="step-page">
         <div class="top-nav">
             <button class="btn-back-step" onclick="goToStep('step-stage')"><i class="fa-solid fa-arrow-left"></i> 回關卡選擇</button>
             <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-blue);">語法教室</span>
         </div>
 
-        <!-- 💡 1. 對話框說明區塊 (gram1 ~ gram10) -->
+        <!-- 💡 1. 對話框說明區塊 -->
         <div id="area-grammar-dialog">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <h3 style="margin: 0; color: #4338ca;"><i class="fa-solid fa-lightbulb"></i> 觀念小教室</h3>
@@ -504,27 +458,13 @@
             </div>
         </div>
 
-        <!-- 💡 1.2 Example 示範例句區塊 (含有單獨語音按鈕) -->
-        <div id="area-grammar-example" style="display: none;">
-            <h3 style="margin-top: 0; color: #4338ca; text-align: left;"><i class="fa-solid fa-volume-high"></i> 例句示範</h3>
-            <div id="container-grammar-examples" class="example-list-container"></div>
-            <button class="btn-confirm" onclick="nextGrammarStage('exam')">下一步 <i class="fa-solid fa-arrow-right"></i></button>
-        </div>
-
-        <!-- 💡 1.3 Exam 延伸說明區塊 -->
-        <div id="area-grammar-exam" style="display: none;">
-            <h3 style="margin-top: 0; color: #4338ca; text-align: left;"><i class="fa-solid fa-book-bookmark"></i> 補充說明</h3>
-            <div class="grammar-dialog-box" id="lbl-grammar-exam-text" style="min-height: 100px;"></div>
-            <button class="btn-confirm" onclick="nextGrammarStage('question')">下一步 (進入測驗) <i class="fa-solid fa-arrow-right"></i></button>
-        </div>
-
-        <!-- 💡 1.5 觀念複習區塊（隨時可檢視總覽） -->
+        <!-- 💡 1.5 觀念複習區塊（對話看完後可隨時查看完整文字） -->
         <div id="area-grammar-all-history" style="display: none;">
             <h3 style="margin-top: 15px; margin-bottom: 10px; color: #4338ca; text-align: left;"><i class="fa-solid fa-list-check"></i> 觀念總覽</h3>
             <div class="dialog-history-list" id="container-dialog-history"></div>
         </div>
 
-        <!-- 💡 2. 測驗填空區塊 (Question) -->
+        <!-- 💡 2. 測驗填空區塊 -->
         <div id="area-grammar-quiz" style="display: none; margin-top: 15px;">
             <h3 style="margin-top: 0; color: var(--duo-dark);"><i class="fa-solid fa-pen-to-square"></i> 語法測驗</h3>
             <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
@@ -906,7 +846,7 @@
             String(g.stage) === String(stage)
         );
 
-        if (matchGrammar && ((matchGrammar.dialogs && matchGrammar.dialogs.length > 0) || matchGrammar.example || matchGrammar.exam || matchGrammar.question)) {
+        if (matchGrammar && ((matchGrammar.dialogs && matchGrammar.dialogs.length > 0) || matchGrammar.question)) {
             startGrammarChallenge(matchGrammar);
         } else {
             startMainQuiz();
@@ -920,8 +860,6 @@
         
         document.getElementById('lbl-grammar-info').innerText = `語法教室 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Stage ${currentConfig.stage}`;
         document.getElementById('area-grammar-all-history').style.display = 'none';
-        document.getElementById('area-grammar-example').style.display = 'none';
-        document.getElementById('area-grammar-exam').style.display = 'none';
 
         if (grammarData.dialogs && grammarData.dialogs.length > 0) {
             document.getElementById('area-grammar-dialog').style.display = 'block';
@@ -929,7 +867,7 @@
             
             showCurrentGrammarDialog();
         } else {
-            nextGrammarStage('example');
+            showGrammarQuizArea();
         }
 
         goToStep('step-grammar');
@@ -942,11 +880,21 @@
         const total = currentGrammarItem.dialogs.length;
         document.getElementById('lbl-dialog-counter').innerText = `${currentDialogIndex + 1} / ${total}`;
 
+        // 設定控制按鈕狀態
         document.getElementById('btn-prev-dialog').disabled = currentDialogIndex === 0;
 
         const nextBtn = document.getElementById('btn-next-dialog');
-        nextBtn.innerHTML = `下一步 <i class="fa-solid fa-arrow-right"></i>`;
+        if (currentDialogIndex === total - 1) {
+            if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') {
+                nextBtn.innerHTML = `進入測驗 <i class="fa-solid fa-pen-to-square"></i>`;
+            } else {
+                nextBtn.innerHTML = `開始練習 <i class="fa-solid fa-play"></i>`;
+            }
+        } else {
+            nextBtn.innerHTML = `下一步 <i class="fa-solid fa-arrow-right"></i>`;
+        }
 
+        // 開始打字機動畫
         currentFullDialogText = currentGrammarItem.dialogs[currentDialogIndex];
         startTypewriter(currentFullDialogText);
     }
@@ -967,7 +915,7 @@
                 clearInterval(typewriterTimer);
                 isTypewriterTyping = false;
             }
-        }, 35);
+        }, 35); // 35ms 打一個字，速度極佳
     }
 
     // 💡 點擊對話框可立即完成打字機
@@ -979,8 +927,9 @@
         }
     }
 
-    // 💡 點擊「下一步」：gram1~10 結束後切換至 Example
+    // 💡 點擊「下一步」
     function nextGrammarDialog() {
+        // 如果打字機還在打，按一下會先補滿文字
         if (isTypewriterTyping) {
             completeTypewriterImmediately();
             return;
@@ -992,8 +941,13 @@
             currentDialogIndex++;
             showCurrentGrammarDialog();
         } else {
-            // gram 播放完畢，推移至 Example 階段
-            nextGrammarStage('example');
+            // 對話結束，切換到測驗或主關卡
+            renderGrammarHistoryList();
+            if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') {
+                showGrammarQuizArea();
+            } else {
+                startMainQuiz();
+            }
         }
     }
 
@@ -1007,89 +961,17 @@
         }
     }
 
-    // 💡 跳過對話，直接往 Example 前進
+    // 💡 點擊「跳過對話」直接進測驗/主關卡
     function skipGrammarDialog() {
         if (typewriterTimer) clearInterval(typewriterTimer);
         isTypewriterTyping = false;
-        nextGrammarStage('example');
-    }
-
-    // 💡 控制 Example -> Exam -> Question (測驗) 流程切換
-    function nextGrammarStage(stage) {
-        document.getElementById('area-grammar-dialog').style.display = 'none';
-        document.getElementById('area-grammar-example').style.display = 'none';
-        document.getElementById('area-grammar-exam').style.display = 'none';
-        document.getElementById('area-grammar-quiz').style.display = 'none';
 
         renderGrammarHistoryList();
-
-        if (stage === 'example') {
-            if (currentGrammarItem && currentGrammarItem.example && currentGrammarItem.example.trim() !== '') {
-                renderExampleStage();
-            } else {
-                nextGrammarStage('exam');
-            }
-        } else if (stage === 'exam') {
-            if (currentGrammarItem && currentGrammarItem.exam && currentGrammarItem.exam.trim() !== '') {
-                renderExamStage();
-            } else {
-                nextGrammarStage('question');
-            }
-        } else if (stage === 'question') {
-            if (currentGrammarItem && currentGrammarItem.question && currentGrammarItem.question.trim() !== '') {
-                showGrammarQuizArea();
-            } else {
-                startMainQuiz();
-            }
-        }
-    }
-
-    // 💡 渲染 Example 頁面 (解析 / 分割例句並綁定 audio_url)
-    function renderExampleStage() {
-        document.getElementById('area-grammar-example').style.display = 'block';
-        const container = document.getElementById('container-grammar-examples');
-        container.innerHTML = '';
-
-        // 分割例句 (以 / 區隔)
-        const rawExamples = (currentGrammarItem.example || '').split('/').map(s => s.trim()).filter(Boolean);
-        
-        // 分割對應的音檔 URL (若有 multiple URLs 以 / 區隔)
-        const rawAudioUrls = (currentGrammarItem.audio_url || '').split('/').map(s => s.trim()).filter(Boolean);
-
-        rawExamples.forEach((exText, idx) => {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'example-item';
-
-            const textSpan = document.createElement('span');
-            textSpan.className = 'example-text';
-            textSpan.innerText = `${idx + 1}. ${exText}`;
-
-            const playBtn = document.createElement('button');
-            playBtn.className = 'btn-play-sm';
-            playBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
-            
-            const audioUrl = rawAudioUrls[idx] || rawAudioUrls[0] || ''; 
-            playBtn.onclick = () => playExampleAudio(exText, audioUrl);
-
-            itemDiv.appendChild(textSpan);
-            itemDiv.appendChild(playBtn);
-            container.appendChild(itemDiv);
-        });
-    }
-
-    // 💡 播放 Example 的個別音檔
-    function playExampleAudio(text, audioUrl) {
-        if (audioUrl && audioUrl.trim() !== '') {
-            new Audio(audioUrl).play().catch(() => speakTTS(text));
+        if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') {
+            showGrammarQuizArea();
         } else {
-            speakTTS(text);
+            startMainQuiz();
         }
-    }
-
-    // 💡 渲染 Exam 說明頁面
-    function renderExamStage() {
-        document.getElementById('area-grammar-exam').style.display = 'block';
-        document.getElementById('lbl-grammar-exam-text').innerText = currentGrammarItem.exam || '';
     }
 
     // 💡 渲染「顯示全部」對話總覽區塊
@@ -1108,8 +990,9 @@
         }
     }
 
-    // 💡 展示語法填空測驗 (Question)
+    // 💡 展示語法填空測驗
     function showGrammarQuizArea() {
+        document.getElementById('area-grammar-dialog').style.display = 'none';
         document.getElementById('area-grammar-quiz').style.display = 'block';
         document.getElementById('box-grammar-result').style.display = 'none';
 
@@ -1117,6 +1000,7 @@
         userGrammarAnswers = new Array(rawQuestions.length).fill('');
         activeBlankIndex = 0;
 
+        // 1. 渲染題目
         const qContainer = document.getElementById('container-grammar-questions');
         qContainer.innerHTML = '';
 
@@ -1129,6 +1013,7 @@
             qContainer.appendChild(div);
         });
 
+        // 2. 渲染選項 (Choice)
         const cContainer = document.getElementById('container-grammar-choices');
         cContainer.innerHTML = '';
 
