@@ -51,6 +51,9 @@
             margin-bottom: 20px;
         }
 
+        /* 垂直單欄排列（用於前三頁首頁流程） */
+        .grid-1 { grid-template-columns: 1fr; }
+        
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
         .grid-3 { grid-template-columns: repeat(3, 1fr); }
 
@@ -66,6 +69,7 @@
             cursor: pointer;
             transition: all 0.15s ease;
             text-align: center;
+            white-space: nowrap; /* 確保內容盡量保持單行 */
         }
 
         .btn-option:hover {
@@ -388,11 +392,11 @@
 
 <div class="shadowing-card">
 
-    <!-- 頁面 1：選擇母語 -->
+    <!-- 頁面 1：選擇母語 (改為由上到下單欄直排) -->
     <div id="step-user-lang" class="step-page active">
         <h2 class="step-title"><i class="fa-solid fa-earth-americas"></i> 請選擇你的母語</h2>
         
-        <div class="option-grid grid-3">
+        <div class="option-grid grid-1">
             <button class="btn-option selected" id="btn-lang-zh" onclick="setUserLang('zh')">繁體中文</button>
             <button class="btn-option" id="btn-lang-en" onclick="setUserLang('en')">English</button>
             <button class="btn-option" id="btn-lang-kr" onclick="setUserLang('kr')">한국어</button>
@@ -401,7 +405,7 @@
         <button class="btn-confirm" onclick="goToStep('step-learn-lang')">下一步 <i class="fa-solid fa-arrow-right"></i></button>
     </div>
 
-    <!-- 頁面 2：選擇要學習的語言 -->
+    <!-- 頁面 2：選擇要學習的語言 (改為由上到下單欄直排) -->
     <div id="step-learn-lang" class="step-page">
         <div class="top-nav">
             <button class="btn-back-step" onclick="goToStep('step-user-lang')"><i class="fa-solid fa-arrow-left"></i> 回母語選擇</button>
@@ -409,7 +413,7 @@
 
         <h2 class="step-title"><i class="fa-solid fa-language"></i> 請選擇要學習的語言</h2>
         
-        <div class="option-grid grid-3">
+        <div class="option-grid grid-1">
             <button class="btn-option selected" id="btn-cat-korean" onclick="selectCategory('korean')">🇰🇷 韓文</button>
             <button class="btn-option" id="btn-cat-japanese" onclick="selectCategory('japanese')">🇯🇵 日文</button>
             <button class="btn-option" id="btn-cat-english" onclick="selectCategory('english')">🇺🇸 英文</button>
@@ -423,7 +427,7 @@
         </div>
     </div>
 
-    <!-- 頁面 3：選擇遊戲挑戰模式 -->
+    <!-- 頁面 3：選擇遊戲挑戰模式 (改為由上到下單欄直排) -->
     <div id="step-game-mode" class="step-page">
         <div class="top-nav">
             <button class="btn-back-step" onclick="goToStep('step-learn-lang')"><i class="fa-solid fa-arrow-left"></i> 重選學習語言</button>
@@ -431,7 +435,7 @@
 
         <h2 class="step-title"><i class="fa-solid fa-gamepad"></i> 選擇遊戲挑戰模式</h2>
         
-        <div class="option-grid grid-2">
+        <div class="option-grid grid-1">
             <button class="btn-option selected" id="btn-mode-shadow" onclick="setGameMode('shadow')">🎙️ 跟讀練習</button>
             <button class="btn-option" id="btn-mode-blocks" onclick="setGameMode('blocks')">🧩 聽音重組字塊</button>
         </div>
