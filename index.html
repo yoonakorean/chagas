@@ -472,13 +472,7 @@
             <button class="btn-confirm" onclick="enterGrammarQuizFromReady()"><i class="fa-solid fa-pen-to-square"></i> 開始測驗</button>
         </div>
 
-        <!-- 觀念複習區塊 -->
-        <div id="area-grammar-all-history" style="display: none;">
-            <h3 style="margin-top: 15px; margin-bottom: 10px; color: #4338ca; text-align: left;"><i class="fa-solid fa-list-check"></i> 觀念總覽</h3>
-            <div class="dialog-history-list" id="container-dialog-history"></div>
-        </div>
-
-        <!-- 2. 測驗填空區塊 (Question) -->
+        <!-- 2. 測驗填空區塊 (Question) - 調整置於觀念總覽上方 -->
         <div id="area-grammar-quiz" style="display: none; margin-top: 15px;">
             <h3 style="margin-top: 0; color: var(--duo-dark);"><i class="fa-solid fa-pen-to-square"></i> 語法測驗</h3>
             <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
@@ -494,6 +488,12 @@
                 <div id="lbl-grammar-result-text" style="font-size: 1.1rem; font-weight: bold;"></div>
                 <button class="btn-confirm" id="btn-grammar-action" style="margin-top: 10px;"></button>
             </div>
+        </div>
+
+        <!-- 觀念複習區塊 - 調整置於語法測驗下方 -->
+        <div id="area-grammar-all-history" style="display: none; margin-top: 20px;">
+            <h3 style="margin-top: 15px; margin-bottom: 10px; color: #4338ca; text-align: left;"><i class="fa-solid fa-list-check"></i> 觀念總覽</h3>
+            <div class="dialog-history-list" id="container-dialog-history"></div>
         </div>
     </div>
 
@@ -1097,6 +1097,9 @@
         document.getElementById('area-grammar-ready').style.display = 'none';
         document.getElementById('area-grammar-quiz').style.display = 'block';
         document.getElementById('box-grammar-result').style.display = 'none';
+
+        // 確保觀念總覽已渲染，且擺放在測驗下方
+        renderGrammarHistoryList();
 
         const rawQuestions = currentGrammarItem.question.split('/').map(s => s.trim()).filter(Boolean);
         userGrammarAnswers = new Array(rawQuestions.length).fill('');
