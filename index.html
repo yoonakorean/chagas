@@ -588,6 +588,7 @@
     let questions = [];
     let currentIndex = 0;
     let recognition = null;
+    let isRecording = false;
     let selectedBlockIndices = [];
 
     let currentGrammarItem = null;
@@ -608,14 +609,14 @@
                 try { recognition.stop(); } catch(err) {}
             }
         }
-        // 重設麥克風按鈕樣式
+        isRecording = false;
         const btn = document.getElementById('btn-start-record');
         if (btn) btn.classList.remove('recording');
     }
 
     // 💡 切換頁面時，強制關閉麥克風錄音
     function goToStep(stepId) {
-        stopSpeechRecognition(); // <--- 關鍵修復
+        stopSpeechRecognition();
         document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
         document.getElementById(stepId).classList.add('active');
     }
@@ -637,6 +638,13 @@
             if (btn) btn.classList.remove('selected');
         });
         document.getElementById(`btn-cat-${category}`).classList.add('selected');
+        
+        // 更新語音辨識的語言設定
+        if (recognition) {
+            const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
+            recognition.lang = langMap[category] || 'ko-KR';
+        }
+        
         checkCacheStatus();
     }
 
@@ -1181,7 +1189,7 @@
     }
 
     function startMainQuiz() {
-        stopSpeechRecognition(); // <--- 進入主測驗時先清空錄音
+        stopSpeechRecognition();
 
         const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
         const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} | 第 ${currentConfig.stage} 關`;
@@ -1237,7 +1245,7 @@
     }
 
     function displayQuestion() {
-        stopSpeechRecognition(); // <--- 切換題目時先停止上一題的錄音
+        stopSpeechRecognition();
 
         if (!questions || questions.length === 0) return;
         const q = questions[currentIndex];
@@ -1398,7 +1406,10 @@
 
     function initSpeechRecognition() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) return;
+        if (!SpeechRecognition) {
+            alert("您的瀏覽器不支援語音辨識功能，請使用 Chrome 瀏覽器。");
+            return;
+        }
 
         recognition = new SpeechRecognition();
         recognition.continuous = false;
@@ -1408,11 +1419,13 @@
         recognition.lang = langMap[currentConfig.category] || 'ko-KR';
 
         recognition.onstart = () => {
+            isRecording = true;
             const btn = document.getElementById('btn-start-record');
             if (btn) btn.classList.add('recording');
         };
 
         recognition.onend = () => {
+            isRecording = false;
             const btn = document.getElementById('btn-start-record');
             if (btn) btn.classList.remove('recording');
         };
@@ -1427,26 +1440,38 @@
             document.getElementById('lbl-score').innerText = `得分：${score}分`;
         };
 
-        recognition.onerror = () => {
+        recognition.onerror = (e) => {
+            isRecording = false;
             const btn = document.getElementById('btn-start-record');
             if (btn) btn.classList.remove('recording');
         };
     }
 
-    document.getElementById('btn-play-audio').addEventListener('click', playAudio);
-    document.getElementById('btn-start-record').addEventListener('click', () => {
-        if (recognition) {
-            try { 
-                recognition.start(); 
+    function toggleRecording() {
+        if (!recognition) {
+            initSpeechRecognition();
+        }
+
+        if (isRecording) {
+            stopSpeechRecognition();
+        } else {
+            try {
+                const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
+                recognition.lang = langMap[currentConfig.category] || 'ko-KR';
+                recognition.start();
             } catch(e) {
-                // 若重複點擊或仍在連線中，先關閉再啟動
                 stopSpeechRecognition();
-                setTimeout(() => { try { recognition.start(); } catch(err){} }, 100);
+                setTimeout(() => {
+                    try { recognition.start(); } catch(err){}
+                }, 200);
             }
         }
-    });
+    }
 
-    // 💡 防護措施：網頁背景化（切換 App/切換頁籤/關閉網頁）時，強制停掉錄音
+    document.getElementById('btn-play-audio').addEventListener('click', playAudio);
+    document.getElementById('btn-start-record').addEventListener('click', toggleRecording);
+
+    // 防護措施：網頁背景化時強制停掉錄音
     window.addEventListener('visibilitychange', () => {
         if (document.hidden) {
             stopSpeechRecognition();
