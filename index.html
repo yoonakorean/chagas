@@ -363,6 +363,24 @@
             color: var(--duo-blue);
             margin-right: 6px;
         }
+        
+        .btn-play-inline {
+            background: var(--duo-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 4px 10px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-left: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .btn-play-inline:hover {
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
@@ -600,11 +618,10 @@
     let isTypewriterTyping = false;
     let currentFullDialogText = "";
 
-    // 💡 強化：強制停止錄音的函式
     function stopSpeechRecognition() {
         if (recognition) {
             try {
-                recognition.abort(); // 強制放棄目前語音傳輸，立即關閉麥克風
+                recognition.abort();
             } catch (e) {
                 try { recognition.stop(); } catch(err) {}
             }
@@ -614,7 +631,6 @@
         if (btn) btn.classList.remove('recording');
     }
 
-    // 💡 切換頁面時，強制關閉麥克風錄音
     function goToStep(stepId) {
         stopSpeechRecognition();
         document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
@@ -639,7 +655,6 @@
         });
         document.getElementById(`btn-cat-${category}`).classList.add('selected');
         
-        // 更新語音辨識的語言設定
         if (recognition) {
             const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
             recognition.lang = langMap[category] || 'ko-KR';
@@ -1030,9 +1045,8 @@
             textSpan.innerText = `${idx + 1}. ${exText}`;
 
             const playBtn = document.createElement('button');
-            playBtn.className = 'btn-circle btn-listen';
-            playBtn.style.cssText = "width: 40px; height: 40px; font-size: 0.9rem; flex-shrink: 0;";
-            playBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
+            playBtn.className = 'btn-play-inline';
+            playBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i> 播放`;
             
             const audioUrl = audioUrls[idx] || '';
             playBtn.onclick = () => {
@@ -1471,7 +1485,6 @@
     document.getElementById('btn-play-audio').addEventListener('click', playAudio);
     document.getElementById('btn-start-record').addEventListener('click', toggleRecording);
 
-    // 防護措施：網頁背景化時強制停掉錄音
     window.addEventListener('visibilitychange', () => {
         if (document.hidden) {
             stopSpeechRecognition();
