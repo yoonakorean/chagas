@@ -449,7 +449,7 @@
         <div id="container-stages" class="option-grid grid-3"></div>
     </div>
 
-    <!-- 💡 步驟 4.5：語法說明頁面 -->
+    <!-- 步驟 4.5：語法說明頁面 -->
     <div id="step-grammar" class="step-page">
         <div class="top-nav">
             <button class="btn-back-step" onclick="goToStep('step-stage')"><i class="fa-solid fa-arrow-left"></i> 回關卡選擇</button>
@@ -624,11 +624,10 @@
     let isTypewriterTyping = false;
     let currentFullDialogText = "";
 
-    // 💡 強化：強制停止錄音的函式
     function stopSpeechRecognition() {
         if (recognition) {
             try {
-                recognition.abort(); // 強制放棄目前語音傳輸，轉換時立即關閉麥克風
+                recognition.abort();
             } catch (e) {
                 try { recognition.stop(); } catch(err) {}
             }
@@ -638,7 +637,6 @@
         if (btn) btn.classList.remove('recording');
     }
 
-    // 💡 切換頁面時，強制關閉麥克風錄音
     function goToStep(stepId) {
         stopSpeechRecognition();
         document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
@@ -936,7 +934,6 @@
         goToStep('step-grammar');
     }
 
-    // 💡 播放 Gram2 例句發音/音檔的函式
     function playGrammar2Audio() {
         if (!currentGrammarItem) return;
         const audioUrl = currentGrammarItem.gram2_audio;
@@ -976,7 +973,6 @@
 
         currentFullDialogText = currentGrammarItem.dialogs[currentDialogIndex];
 
-        // 💡 當切換到 gram2 (索引值 1) 時，顯示發音按鈕並自動播放語音/音檔
         const audioBtn = document.getElementById('btn-gram2-audio');
         if (currentDialogIndex === 1) {
             audioBtn.style.display = 'block';
@@ -1125,12 +1121,19 @@
         }
     }
 
+    // 💡 觀念總覽：自動過濾移除最後一句引導語
     function renderGrammarHistoryList() {
         const container = document.getElementById('container-dialog-history');
         container.innerHTML = "";
 
         if (currentGrammarItem && currentGrammarItem.dialogs && currentGrammarItem.dialogs.length > 0) {
-            currentGrammarItem.dialogs.forEach((dText, idx) => {
+            let listToRender = [...currentGrammarItem.dialogs];
+
+            if (listToRender.length > 1) {
+                listToRender.pop();
+            }
+
+            listToRender.forEach((dText, idx) => {
                 const item = document.createElement('div');
                 item.className = 'dialog-history-item';
                 item.innerHTML = `<span class="num">${idx + 1}.</span> ${dText}`;
