@@ -278,6 +278,43 @@
             pointer-events: none;
             background: #f3f4f6;
         }
+
+        /* 💡 語法說明專屬樣式 */
+        .grammar-dialog-box {
+            background: #eef2ff;
+            border: 2px solid #818cf8;
+            border-radius: 16px;
+            padding: 20px;
+            font-size: 1.1rem;
+            color: #312e81;
+            text-align: left;
+            margin-bottom: 15px;
+            min-height: 80px;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .grammar-q-item {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .blank-slot {
+            display: inline-block;
+            min-width: 80px;
+            border-bottom: 3px solid var(--duo-blue);
+            color: var(--duo-blue);
+            text-align: center;
+            padding: 0 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -320,10 +357,7 @@
         </div>
         
         <h2 class="step-title"><i class="fa-solid fa-layer-group"></i> 選擇課程程度</h2>
-        
-        <div id="container-levels" class="option-grid grid-2">
-            <!-- 程度選項會由 JavaScript 動態產生 -->
-        </div>
+        <div id="container-levels" class="option-grid grid-2"></div>
     </div>
 
     <!-- 步驟 3：選擇單元 (Unit) -->
@@ -346,6 +380,39 @@
 
         <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇關卡 (Stage)</h2>
         <div id="container-stages" class="option-grid grid-3"></div>
+    </div>
+
+    <!-- 💡 步驟 4.5：語法說明挑戰頁面 -->
+    <div id="step-grammar" class="step-page">
+        <div class="top-nav">
+            <button class="btn-back-step" onclick="goToStep('step-stage')"><i class="fa-solid fa-arrow-left"></i> 回關卡選擇</button>
+            <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-blue);">語法教室</span>
+        </div>
+
+        <!-- 💡 1. 對話框說明區塊 -->
+        <div id="area-grammar-dialog">
+            <h3 style="margin-top: 0; color: #4338ca;"><i class="fa-solid fa-lightbulb"></i> 觀念小教室</h3>
+            <div class="grammar-dialog-box" id="lbl-grammar-dialog">...</div>
+            <button class="btn-confirm" id="btn-next-dialog" onclick="nextGrammarDialog()">下一步 <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+
+        <!-- 💡 2. 測驗填空區塊 -->
+        <div id="area-grammar-quiz" style="display: none;">
+            <h3 style="margin-top: 0; color: var(--duo-dark);"><i class="fa-solid fa-pen-to-square"></i> 語法測驗</h3>
+            <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
+            
+            <div id="container-grammar-questions"></div>
+
+            <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin: 15px 0 5px 0;">選項：</p>
+            <div id="container-grammar-choices" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;"></div>
+
+            <button class="btn-confirm" id="btn-check-grammar" onclick="checkGrammarQuiz()"><i class="fa-solid fa-check"></i> 送出答案</button>
+
+            <div class="result-box" id="box-grammar-result" style="display: none; margin-top: 15px;">
+                <div id="lbl-grammar-result-text" style="font-size: 1.1rem; font-weight: bold;"></div>
+                <button class="btn-confirm" id="btn-grammar-action" style="margin-top: 10px;"></button>
+            </div>
+        </div>
     </div>
 
     <!-- 步驟 5-A：跟讀挑戰畫面 -->
@@ -423,7 +490,6 @@
 </div>
 
 <script>
-    // 💡 韓文與日文獨立 API 網址（已更新最新的韓文與日文 API）
     const API_URLS = {
         korean: "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
         japanese: "https://script.google.com/macros/s/AKfycbxQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
@@ -440,10 +506,17 @@
     };
 
     let globalCategoryData = []; 
+    let globalGrammarData = []; // 💡 儲存語法講義資料
     let questions = [];
     let currentIndex = 0;
     let recognition = null;
     let selectedBlockIndices = [];
+
+    // 💡 語法說明狀態控管
+    let currentGrammarItem = null;
+    let currentDialogIndex = 0;
+    let userGrammarAnswers = [];
+    let activeBlankIndex = 0;
 
     function goToStep(stepId) {
         document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
@@ -496,12 +569,13 @@
 
     async function forceClearAndSync() {
         const cacheKey = `${currentConfig.mode}_data_${currentConfig.category}`;
+        const grammarCacheKey = `grammar_data_${currentConfig.category}`;
         localStorage.removeItem(cacheKey);
+        localStorage.removeItem(grammarCacheKey);
         alert(`已清除快取，準備抓取最新試算表資料！`);
         confirmLangSetting();
     }
 
-    // 🚀 JSONP 跨網域連線核心函式
     function loadDataViaJSONP(apiUrl, actionName) {
         return new Promise((resolve, reject) => {
             const callbackName = 'gas_cb_' + Date.now();
@@ -539,13 +613,22 @@
         }
 
         const cacheKey = `${currentConfig.mode}_data_${currentConfig.category}`;
+        const grammarCacheKey = `grammar_data_${currentConfig.category}`;
+
         const cachedData = localStorage.getItem(cacheKey);
+        const cachedGrammar = localStorage.getItem(grammarCacheKey);
 
         if (cachedData) {
-            globalCategoryData = JSON.parse(cachedData);
-            renderLevelMenu();
-            goToStep('step-level');
-            return;
+            try {
+                const parsed = JSON.parse(cachedData);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    globalCategoryData = parsed;
+                    if (cachedGrammar) try { globalGrammarData = JSON.parse(cachedGrammar); } catch(e) {}
+                    renderLevelMenu();
+                    goToStep('step-level');
+                    return;
+                }
+            } catch(e) {}
         }
 
         const btnConfirm = document.getElementById('btn-confirm-lang');
@@ -555,34 +638,28 @@
         const actionName = currentConfig.mode === 'blocks' ? 'getBlocksData' : 'getLanguageData';
 
         try {
-            // 優先使用一般的 fetch
-            const url = `${targetApi}?action=${actionName}&category=${encodeURIComponent(currentConfig.category)}&t=${Date.now()}`;
-            const res = await fetch(url);
-            const data = await res.json();
-
-            if (data.status === 'success') {
+            // 💡 1. 抓取主要關卡資料
+            const data = await loadDataViaJSONP(targetApi, actionName);
+            if (data && data.status === 'success') {
                 globalCategoryData = data.data;
-                try { localStorage.setItem(cacheKey, JSON.stringify(data.data)); } catch(e) {}
+                try { localStorage.setItem(cacheKey, JSON.stringify(data.data)); } catch(err) {}
+
+                // 💡 2. 順便抓取語法說明資料 (getGrammarData)
+                try {
+                    const grammarRes = await loadDataViaJSONP(targetApi, 'getGrammarData');
+                    if (grammarRes && grammarRes.status === 'success') {
+                        globalGrammarData = grammarRes.data;
+                        try { localStorage.setItem(grammarCacheKey, JSON.stringify(grammarRes.data)); } catch(err) {}
+                    }
+                } catch(gErr) {}
+
                 renderLevelMenu();
                 goToStep('step-level');
             } else {
-                alert(`資料讀取失敗：${data.message || '請確認 API 設定'}`);
+                alert(`資料讀取失敗：${data ? data.message : '無回應'}`);
             }
-        } catch(e) {
-            // 🚀 若 Fetch 被 CORS 阻擋，自動啟用 JSONP 備援
-            try {
-                const data = await loadDataViaJSONP(targetApi, actionName);
-                if (data.status === 'success') {
-                    globalCategoryData = data.data;
-                    try { localStorage.setItem(cacheKey, JSON.stringify(data.data)); } catch(err) {}
-                    renderLevelMenu();
-                    goToStep('step-level');
-                } else {
-                    alert(`資料讀取失敗：${data.message || '請確認 API 設定'}`);
-                }
-            } catch(jsonpErr) {
-                alert(`無法連線至 ${langName} API！請確認 ${langName} Google Apps Script 是否已部署為 Web App 且設定為「所有人 (Anyone)」！`);
-            }
+        } catch(jsonpErr) {
+            alert(`無法連線至 ${langName} API！\n請確認 ${langName} Google Apps Script 已部署為「所有人 (Anyone)」！`);
         } finally {
             btnConfirm.disabled = false;
             btnConfirm.innerHTML = `<i class="fa-solid fa-check"></i> 確定並進入`;
@@ -688,9 +765,172 @@
         goToStep('step-stage');
     }
 
+    // 💡 點擊關卡：判斷是否有語法教學
     function selectStage(stage) {
         currentConfig.stage = stage;
+
+        // 搜尋是否有對應的語法資料
+        const matchGrammar = globalGrammarData.find(g => 
+            String(g.level).trim().toUpperCase() === currentConfig.level.trim().toUpperCase() &&
+            String(g.unit_id) === String(currentConfig.unit_id) &&
+            String(g.stage) === String(stage)
+        );
+
+        if (matchGrammar && ((matchGrammar.dialogs && matchGrammar.dialogs.length > 0) || matchGrammar.question)) {
+            startGrammarChallenge(matchGrammar);
+        } else {
+            // 無語法資料，直接跳入跟讀/字塊挑戰
+            startMainQuiz();
+        }
+    }
+
+    // 💡 啟動語法小教室
+    function startGrammarChallenge(grammarData) {
+        currentGrammarItem = grammarData;
+        currentDialogIndex = 0;
         
+        document.getElementById('lbl-grammar-info').innerText = `語法小教室 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Stage ${currentConfig.stage}`;
+
+        if (grammarData.dialogs && grammarData.dialogs.length > 0) {
+            document.getElementById('area-grammar-dialog').style.display = 'block';
+            document.getElementById('area-grammar-quiz').style.display = 'none';
+            document.getElementById('lbl-grammar-dialog').innerText = grammarData.dialogs[0];
+            
+            if (grammarData.dialogs.length === 1 && !grammarData.question) {
+                document.getElementById('btn-next-dialog').innerHTML = `開始練習 <i class="fa-solid fa-arrow-right"></i>`;
+            } else {
+                document.getElementById('btn-next-dialog').innerHTML = `下一步 <i class="fa-solid fa-arrow-right"></i>`;
+            }
+        } else {
+            // 若無對話框台詞，直接進入測驗填空
+            showGrammarQuizArea();
+        }
+
+        goToStep('step-grammar');
+    }
+
+    // 💡 點擊語法對話框「下一步」
+    function nextGrammarDialog() {
+        if (!currentGrammarItem) return;
+        currentDialogIndex++;
+
+        if (currentGrammarItem.dialogs && currentDialogIndex < currentGrammarItem.dialogs.length) {
+            document.getElementById('lbl-grammar-dialog').innerText = currentGrammarItem.dialogs[currentDialogIndex];
+            
+            if (currentDialogIndex === currentGrammarItem.dialogs.length - 1 && (!currentGrammarItem.question || currentGrammarItem.question.trim() === '')) {
+                document.getElementById('btn-next-dialog').innerHTML = `開始練習 <i class="fa-solid fa-arrow-right"></i>`;
+            }
+        } else {
+            // 對話完畢，進入測驗或直接進主關卡
+            if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') {
+                showGrammarQuizArea();
+            } else {
+                startMainQuiz();
+            }
+        }
+    }
+
+    // 💡 展示語法填空測驗
+    function showGrammarQuizArea() {
+        document.getElementById('area-grammar-dialog').style.display = 'none';
+        document.getElementById('area-grammar-quiz').style.display = 'block';
+        document.getElementById('box-grammar-result').style.display = 'none';
+
+        const rawQuestions = currentGrammarItem.question.split('/').map(s => s.trim()).filter(Boolean);
+        userGrammarAnswers = new Array(rawQuestions.length).fill('');
+        activeBlankIndex = 0;
+
+        // 1. 渲染題目
+        const qContainer = document.getElementById('container-grammar-questions');
+        qContainer.innerHTML = '';
+
+        rawQuestions.forEach((qStr, idx) => {
+            const div = document.createElement('div');
+            div.className = 'grammar-q-item';
+            
+            // 將底線替代為可點擊的空位
+            const formattedText = qStr.replace(/__/g, `<span class="blank-slot" id="blank-slot-${idx}" onclick="setActiveBlank(${idx})">___</span>`);
+            div.innerHTML = `${idx + 1}. ${formattedText}`;
+            qContainer.appendChild(div);
+        });
+
+        // 2. 渲染選項 (Choice)
+        const cContainer = document.getElementById('container-grammar-choices');
+        cContainer.innerHTML = '';
+
+        const choices = currentGrammarItem.choice.split('/').map(s => s.trim()).filter(Boolean);
+        choices.forEach(opt => {
+            const btn = document.createElement('div');
+            btn.className = 'block-chip';
+            btn.innerText = opt;
+            btn.onclick = () => fillGrammarAnswer(opt);
+            cContainer.appendChild(btn);
+        });
+    }
+
+    function setActiveBlank(index) {
+        activeBlankIndex = index;
+    }
+
+    function fillGrammarAnswer(optionText) {
+        userGrammarAnswers[activeBlankIndex] = optionText;
+        const slot = document.getElementById(`blank-slot-${activeBlankIndex}`);
+        if (slot) {
+            slot.innerText = optionText;
+        }
+
+        // 自動跳到下一個未填寫的格子
+        const nextBlank = userGrammarAnswers.findIndex(a => a === '');
+        if (nextBlank !== -1) {
+            activeBlankIndex = nextBlank;
+        }
+    }
+
+    // 💡 檢查語法測驗答案
+    function checkGrammarQuiz() {
+        const rawQuestions = currentGrammarItem.question.split('/').map(s => s.trim()).filter(Boolean);
+        const correctAnswers = currentGrammarItem.answer.split('/').map(s => s.trim().replace(/\s+/g, ''));
+
+        // 組合出玩家選擇後的整句答案
+        let isAllCorrect = true;
+
+        if (userGrammarAnswers.includes('')) {
+            alert('請填寫完所有空格後再送出！');
+            return;
+        }
+
+        rawQuestions.forEach((qStr, idx) => {
+            const builtSentence = qStr.replace(/__/g, userGrammarAnswers[idx]).replace(/\s+/g, '');
+            const targetSentence = correctAnswers[idx];
+
+            if (builtSentence !== targetSentence) {
+                isAllCorrect = false;
+            }
+        });
+
+        const resultBox = document.getElementById('box-grammar-result');
+        const resultText = document.getElementById('lbl-grammar-result-text');
+        const actionBtn = document.getElementById('btn-grammar-action');
+
+        resultBox.style.display = 'block';
+
+        if (isAllCorrect) {
+            resultText.innerText = currentGrammarItem.correct || "🎉 完全正確！太棒了！";
+            resultText.style.color = "#58cc02";
+            actionBtn.innerHTML = `<i class="fa-solid fa-play"></i> 進入挑戰`;
+            actionBtn.style.background = "#58cc02";
+            actionBtn.onclick = () => startMainQuiz();
+        } else {
+            resultText.innerText = currentGrammarItem.incorrect || "❌ 答案不太對喔，再試一次！";
+            resultText.style.color = "#ff4b4b";
+            actionBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> 再來一次`;
+            actionBtn.style.background = "#ff4b4b";
+            actionBtn.onclick = () => showGrammarQuizArea();
+        }
+    }
+
+    // 💡 進入主要的跟讀／拼字測驗
+    function startMainQuiz() {
         const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
         const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} | 第 ${currentConfig.stage} 關`;
         document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
@@ -704,7 +944,7 @@
             questions = globalCategoryData.filter(i => 
                 String(i[1]).trim().toUpperCase() === currentConfig.level.trim().toUpperCase() &&
                 String(i[2]) === String(currentConfig.unit_id) &&
-                String(i[3]) === String(stage)
+                String(i[3]) === String(currentConfig.stage)
             ).map(i => ({
                 id: i[0],
                 text: i[4],
@@ -721,7 +961,7 @@
             questions = globalCategoryData.filter(i => 
                 String(i[1]).trim().toUpperCase() === currentConfig.level.trim().toUpperCase() &&
                 String(i[2]) === String(currentConfig.unit_id) &&
-                String(i[3]) === String(stage)
+                String(i[3]) === String(currentConfig.stage)
             ).map(i => {
                 let rawOptions = (i[5] || '').split(',').map(s => s.trim()).filter(Boolean);
                 let shuffled = [...rawOptions].sort(() => Math.random() - 0.5);
@@ -739,6 +979,8 @@
         currentIndex = 0;
         if (questions.length > 0) {
             displayQuestion();
+        } else {
+            alert("該關卡尚無練習題目！");
         }
     }
 
