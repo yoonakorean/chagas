@@ -103,10 +103,10 @@
             background: none;
             border: none;
             color: var(--duo-blue);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 12px;
+            margin-top: 15px;
             text-decoration: underline;
         }
 
@@ -388,46 +388,68 @@
 
 <div class="shadowing-card">
 
-    <!-- 步驟 1：選擇模式、母語與學習語言 -->
-    <div id="step-lang" class="step-page active">
-        <h2 class="step-title"><i class="fa-solid fa-gamepad"></i> 選擇學習模式與語言</h2>
+    <!-- 頁面 1：選擇母語 -->
+    <div id="step-user-lang" class="step-page active">
+        <h2 class="step-title"><i class="fa-solid fa-earth-americas"></i> 請選擇你的母語</h2>
         
-        <p style="text-align: left; font-size: 0.9rem; color: #6b7280; font-weight: bold;">1. 選擇遊戲挑戰模式：</p>
-        <div class="option-grid grid-2">
-            <button class="btn-option selected" id="btn-mode-shadow" onclick="setGameMode('shadow')">🎙️ 跟讀練習</button>
-            <button class="btn-option" id="btn-mode-blocks" onclick="setGameMode('blocks')">🧩 聽音重組字塊</button>
-        </div>
-
-        <p style="text-align: left; font-size: 0.9rem; color: #6b7280; font-weight: bold;">2. 你的母語（翻譯）：</p>
         <div class="option-grid grid-3">
             <button class="btn-option selected" id="btn-lang-zh" onclick="setUserLang('zh')">繁體中文</button>
             <button class="btn-option" id="btn-lang-en" onclick="setUserLang('en')">English</button>
             <button class="btn-option" id="btn-lang-kr" onclick="setUserLang('kr')">한국어</button>
         </div>
 
-        <p style="text-align: left; font-size: 0.9rem; color: #6b7280; font-weight: bold;">3. 要學習的語言：</p>
+        <button class="btn-confirm" onclick="goToStep('step-learn-lang')">下一步 <i class="fa-solid fa-arrow-right"></i></button>
+    </div>
+
+    <!-- 頁面 2：選擇要學習的語言 -->
+    <div id="step-learn-lang" class="step-page">
+        <div class="top-nav">
+            <button class="btn-back-step" onclick="goToStep('step-user-lang')"><i class="fa-solid fa-arrow-left"></i> 回母語選擇</button>
+        </div>
+
+        <h2 class="step-title"><i class="fa-solid fa-language"></i> 請選擇要學習的語言</h2>
+        
         <div class="option-grid grid-3">
             <button class="btn-option selected" id="btn-cat-korean" onclick="selectCategory('korean')">🇰🇷 韓文</button>
             <button class="btn-option" id="btn-cat-japanese" onclick="selectCategory('japanese')">🇯🇵 日文</button>
             <button class="btn-option" id="btn-cat-english" onclick="selectCategory('english')">🇺🇸 英文</button>
         </div>
 
-        <button class="btn-confirm" id="btn-confirm-lang" onclick="confirmLangSetting()"><i class="fa-solid fa-check"></i> 確定並進入</button>
-        <button class="btn-sync-refresh" onclick="forceClearAndSync()"><i class="fa-solid fa-arrows-rotate"></i> 強制更新試算表資料</button>
-        <div id="cache-status" style="font-size: 0.75rem; color: #9ca3af; margin-top: 8px;"></div>
+        <button class="btn-confirm" onclick="goToStep('step-game-mode')">下一步 <i class="fa-solid fa-arrow-right"></i></button>
+
+        <div style="margin-top: 15px; border-top: 1px dashed #e5e7eb; padding-top: 10px;">
+            <button class="btn-sync-refresh" onclick="forceClearAndSync()"><i class="fa-solid fa-arrows-rotate"></i> 強制更新試算表資料</button>
+            <div id="cache-status" style="font-size: 0.75rem; color: #9ca3af; margin-top: 8px;"></div>
+        </div>
     </div>
 
-    <!-- 步驟 2：選擇課程程度 -->
+    <!-- 頁面 3：選擇遊戲挑戰模式 -->
+    <div id="step-game-mode" class="step-page">
+        <div class="top-nav">
+            <button class="btn-back-step" onclick="goToStep('step-learn-lang')"><i class="fa-solid fa-arrow-left"></i> 重選學習語言</button>
+        </div>
+
+        <h2 class="step-title"><i class="fa-solid fa-gamepad"></i> 選擇遊戲挑戰模式</h2>
+        
+        <div class="option-grid grid-2">
+            <button class="btn-option selected" id="btn-mode-shadow" onclick="setGameMode('shadow')">🎙️ 跟讀練習</button>
+            <button class="btn-option" id="btn-mode-blocks" onclick="setGameMode('blocks')">🧩 聽音重組字塊</button>
+        </div>
+
+        <button class="btn-confirm" id="btn-confirm-lang" onclick="confirmLangSetting()"><i class="fa-solid fa-check"></i> 確定並進入課程</button>
+    </div>
+
+    <!-- 步驟 4：選擇課程程度 -->
     <div id="step-level" class="step-page">
         <div class="top-nav">
-            <button class="btn-back-step" onclick="goToStep('step-lang')"><i class="fa-solid fa-arrow-left"></i> 重選模式語言</button>
+            <button class="btn-back-step" onclick="goToStep('step-game-mode')"><i class="fa-solid fa-arrow-left"></i> 回模式選擇</button>
         </div>
         
         <h2 class="step-title"><i class="fa-solid fa-layer-group"></i> 選擇課程程度</h2>
         <div id="container-levels" class="option-grid grid-2"></div>
     </div>
 
-    <!-- 步驟 3：選擇單元 (Unit) -->
+    <!-- 步驟 5：選擇單元 (Unit) -->
     <div id="step-unit" class="step-page">
         <div class="top-nav">
             <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
@@ -438,7 +460,7 @@
         <div id="container-units" class="option-grid grid-3"></div>
     </div>
 
-    <!-- 步驟 4：選擇關卡 (Stage) -->
+    <!-- 步驟 6：選擇關卡 (Stage) -->
     <div id="step-stage" class="step-page">
         <div class="top-nav">
             <button class="btn-back-step" onclick="goToStep('step-unit')"><i class="fa-solid fa-arrow-left"></i> 回單元選擇</button>
@@ -449,7 +471,7 @@
         <div id="container-stages" class="option-grid grid-3"></div>
     </div>
 
-    <!-- 步驟 4.5：語法說明頁面 -->
+    <!-- 步驟 6.5：語法說明頁面 -->
     <div id="step-grammar" class="step-page">
         <div class="top-nav">
             <button class="btn-back-step" onclick="goToStep('step-stage')"><i class="fa-solid fa-arrow-left"></i> 回關卡選擇</button>
@@ -517,7 +539,7 @@
         </div>
     </div>
 
-    <!-- 步驟 5-A：跟讀挑戰畫面 -->
+    <!-- 步驟 7-A：跟讀挑戰畫面 -->
     <div id="step-quiz-shadow" class="step-page">
         <div class="challenge-header-btns">
             <button class="btn-sub-nav" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
@@ -552,7 +574,7 @@
         </div>
     </div>
 
-    <!-- 步驟 5-B：🧩 聽音重組字塊畫面 -->
+    <!-- 步驟 7-B：🧩 聽音重組字塊畫面 -->
     <div id="step-quiz-blocks" class="step-page">
         <div class="challenge-header-btns">
             <button class="btn-sub-nav" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
@@ -643,14 +665,14 @@
         document.getElementById(stepId).classList.add('active');
     }
 
-    function setGameMode(mode) {
-        currentConfig.mode = mode;
-        ['shadow', 'blocks'].forEach(m => {
-            const btn = document.getElementById(`btn-mode-${m}`);
+    function setUserLang(lang) {
+        currentConfig.lang = lang;
+        ['zh', 'en', 'kr'].forEach(l => {
+            const btn = document.getElementById(`btn-lang-${l}`);
             if (btn) btn.classList.remove('selected');
         });
-        document.getElementById(`btn-mode-${mode}`).classList.add('selected');
-        checkCacheStatus();
+        const activeBtn = document.getElementById(`btn-lang-${lang}`);
+        if (activeBtn) activeBtn.classList.add('selected');
     }
 
     function selectCategory(category) {
@@ -669,14 +691,13 @@
         checkCacheStatus();
     }
 
-    function setUserLang(lang) {
-        currentConfig.lang = lang;
-        ['zh', 'en', 'kr', 'ja'].forEach(l => {
-            const btn = document.getElementById(`btn-lang-${l}`);
+    function setGameMode(mode) {
+        currentConfig.mode = mode;
+        ['shadow', 'blocks'].forEach(m => {
+            const btn = document.getElementById(`btn-mode-${m}`);
             if (btn) btn.classList.remove('selected');
         });
-        const activeBtn = document.getElementById(`btn-lang-${lang}`);
-        if (activeBtn) activeBtn.classList.add('selected');
+        document.getElementById(`btn-mode-${mode}`).classList.add('selected');
     }
 
     function checkCacheStatus() {
@@ -698,8 +719,10 @@
         const grammarCacheKey = `grammar_data_${currentConfig.category}`;
         localStorage.removeItem(cacheKey);
         localStorage.removeItem(grammarCacheKey);
-        alert(`已清除快取，準備抓取最新試算表資料！`);
-        confirmLangSetting();
+        
+        const langName = currentConfig.category === 'korean' ? '韓文' : (currentConfig.category === 'japanese' ? '日文' : '英文');
+        alert(`已清除 ${langName} 的快取！請繼續點擊下一步載入最新資料。`);
+        checkCacheStatus();
     }
 
     function loadDataViaJSONP(apiUrl, actionName) {
@@ -786,7 +809,7 @@
             alert(`無法連線至 ${langName} API！\n請確認 ${langName} Google Apps Script 已部署為「所有人 (Anyone)」！`);
         } finally {
             btnConfirm.disabled = false;
-            btnConfirm.innerHTML = `<i class="fa-solid fa-check"></i> 確定並進入`;
+            btnConfirm.innerHTML = `<i class="fa-solid fa-check"></i> 確定並進入課程`;
         }
     }
 
@@ -1121,7 +1144,6 @@
         }
     }
 
-    // 💡 觀念總覽：自動過濾移除最後一句引導語
     function renderGrammarHistoryList() {
         const container = document.getElementById('container-dialog-history');
         container.innerHTML = "";
@@ -1534,8 +1556,8 @@
 
     window.onload = () => {
         initSpeechRecognition();
-        selectCategory('korean');
         setUserLang('zh');
+        selectCategory('korean');
         setGameMode('shadow');
     };
 </script>
