@@ -284,6 +284,7 @@
             border: 2px solid #818cf8;
             border-radius: 16px;
             padding: 20px;
+            padding-bottom: 35px;
             font-size: 1.1rem;
             color: #312e81;
             text-align: left;
@@ -292,6 +293,24 @@
             line-height: 1.6;
             position: relative;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .btn-gram2-audio {
+            position: absolute;
+            bottom: 8px;
+            right: 12px;
+            background: #818cf8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 4px 10px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn-gram2-audio:active {
+            transform: scale(0.95);
         }
 
         .grammar-q-item {
@@ -362,24 +381,6 @@
             font-weight: bold;
             color: var(--duo-blue);
             margin-right: 6px;
-        }
-        
-        .btn-play-inline {
-            background: var(--duo-blue);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 4px 10px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            margin-left: 8px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .btn-play-inline:hover {
-            opacity: 0.9;
         }
     </style>
 </head>
@@ -462,7 +463,12 @@
                 <span id="lbl-dialog-counter" style="font-size: 0.85rem; color: #6b7280; font-weight: bold;">1 / 1</span>
             </div>
 
-            <div class="grammar-dialog-box" id="lbl-grammar-dialog" onclick="completeTypewriterImmediately()">...</div>
+            <div class="grammar-dialog-box" onclick="completeTypewriterImmediately()">
+                <span id="lbl-grammar-dialog">...</span>
+                <button class="btn-gram2-audio" id="btn-gram2-audio" style="display: none;" onclick="event.stopPropagation(); playGrammar2Audio();">
+                    <i class="fa-solid fa-volume-high"></i> 播放聲音
+                </button>
+            </div>
 
             <button class="btn-confirm" id="btn-next-dialog" onclick="nextGrammarDialog()">下一步 <i class="fa-solid fa-arrow-right"></i></button>
 
@@ -618,10 +624,11 @@
     let isTypewriterTyping = false;
     let currentFullDialogText = "";
 
+    // 💡 強化：強制停止錄音的函式
     function stopSpeechRecognition() {
         if (recognition) {
             try {
-                recognition.abort();
+                recognition.abort(); // 強制放棄目前語音傳輸，轉換時立即關閉麥克風
             } catch (e) {
                 try { recognition.stop(); } catch(err) {}
             }
@@ -631,6 +638,7 @@
         if (btn) btn.classList.remove('recording');
     }
 
+    // 💡 切換頁面時，強制關閉麥克風錄音
     function goToStep(stepId) {
         stopSpeechRecognition();
         document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
@@ -928,6 +936,21 @@
         goToStep('step-grammar');
     }
 
+    // 💡 播放 Gram2 例句發音/音檔的函式
+    function playGrammar2Audio() {
+        if (!currentGrammarItem) return;
+        const audioUrl = currentGrammarItem.gram2_audio;
+        const textToSpeak = currentGrammarItem.dialogs ? currentGrammarItem.dialogs[1] : "";
+
+        if (audioUrl && audioUrl.trim() !== '') {
+            new Audio(audioUrl).play().catch(() => {
+                if (textToSpeak) speakTTS(textToSpeak);
+            });
+        } else if (textToSpeak) {
+            speakTTS(textToSpeak);
+        }
+    }
+
     function showCurrentGrammarDialog() {
         if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
 
@@ -952,6 +975,16 @@
         }
 
         currentFullDialogText = currentGrammarItem.dialogs[currentDialogIndex];
+
+        // 💡 當切換到 gram2 (索引值 1) 時，顯示發音按鈕並自動播放語音/音檔
+        const audioBtn = document.getElementById('btn-gram2-audio');
+        if (currentDialogIndex === 1) {
+            audioBtn.style.display = 'block';
+            playGrammar2Audio();
+        } else {
+            audioBtn.style.display = 'none';
+        }
+
         startTypewriter(currentFullDialogText);
     }
 
@@ -1045,8 +1078,9 @@
             textSpan.innerText = `${idx + 1}. ${exText}`;
 
             const playBtn = document.createElement('button');
-            playBtn.className = 'btn-play-inline';
-            playBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i> 播放`;
+            playBtn.className = 'btn-circle btn-listen';
+            playBtn.style.cssText = "width: 40px; height: 40px; font-size: 0.9rem; flex-shrink: 0;";
+            playBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
             
             const audioUrl = audioUrls[idx] || '';
             playBtn.onclick = () => {
