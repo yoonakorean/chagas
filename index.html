@@ -51,7 +51,7 @@
             margin-bottom: 20px;
         }
 
-        /* 垂直單欄排列（用於前三頁首頁流程） */
+        /* 垂直單欄排列 */
         .grid-1 { grid-template-columns: 1fr; }
         
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
@@ -69,7 +69,7 @@
             cursor: pointer;
             transition: all 0.15s ease;
             text-align: center;
-            white-space: nowrap; /* 確保內容盡量保持單行 */
+            white-space: nowrap;
         }
 
         .btn-option:hover {
@@ -313,9 +313,6 @@
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .btn-gram2-audio:active {
-            transform: scale(0.95);
-        }
 
         .grammar-q-item {
             background: #f9fafb;
@@ -358,9 +355,6 @@
             cursor: pointer;
         }
 
-        .btn-grammar-sub:hover { background: #e5e7eb; color: var(--duo-dark); }
-        .btn-grammar-sub:disabled { opacity: 0.4; cursor: not-allowed; }
-
         .dialog-history-list {
             text-align: left;
             max-height: 250px;
@@ -392,7 +386,7 @@
 
 <div class="shadowing-card">
 
-    <!-- 頁面 1：選擇母語 (改為由上到下單欄直排) -->
+    <!-- 步驟 1：選擇母語 -->
     <div id="step-user-lang" class="step-page active">
         <h2 class="step-title"><i class="fa-solid fa-earth-americas"></i> 請選擇你的母語</h2>
         
@@ -405,7 +399,7 @@
         <button class="btn-confirm" onclick="goToStep('step-learn-lang')">下一步 <i class="fa-solid fa-arrow-right"></i></button>
     </div>
 
-    <!-- 頁面 2：選擇要學習的語言 (改為由上到下單欄直排) -->
+    <!-- 步驟 2：選擇要學習的語言 -->
     <div id="step-learn-lang" class="step-page">
         <div class="top-nav">
             <button class="btn-back-step" onclick="goToStep('step-user-lang')"><i class="fa-solid fa-arrow-left"></i> 回母語選擇</button>
@@ -419,18 +413,28 @@
             <button class="btn-option" id="btn-cat-english" onclick="selectCategory('english')">🇺🇸 英文</button>
         </div>
 
-        <button class="btn-confirm" onclick="goToStep('step-game-mode')">下一步 <i class="fa-solid fa-arrow-right"></i></button>
+        <button class="btn-confirm" id="btn-confirm-learn-lang" onclick="confirmLearnLang()"><i class="fa-solid fa-arrow-right"></i> 下一步（選擇程度）</button>
 
         <div style="margin-top: 15px; border-top: 1px dashed #e5e7eb; padding-top: 10px;">
             <button class="btn-sync-refresh" onclick="forceClearAndSync()"><i class="fa-solid fa-arrows-rotate"></i> 強制更新試算表資料</button>
-            <div id="cache-status" style="font-size: 0.75rem; color: #9ca3af; margin-top: 8px;"></div>
+            <div id="cache-status" style="font-size: 0.75rem; color: #6b7280; margin-top: 8px;"></div>
         </div>
     </div>
 
-    <!-- 頁面 3：選擇遊戲挑戰模式 (改為由上到下單欄直排) -->
+    <!-- 步驟 3：選擇課程程度 -->
+    <div id="step-level" class="step-page">
+        <div class="top-nav">
+            <button class="btn-back-step" onclick="goToStep('step-learn-lang')"><i class="fa-solid fa-arrow-left"></i> 回學習語言</button>
+        </div>
+        
+        <h2 class="step-title"><i class="fa-solid fa-layer-group"></i> 選擇課程程度</h2>
+        <div id="container-levels" class="option-grid grid-2"></div>
+    </div>
+
+    <!-- 步驟 4：選擇遊戲挑戰模式 -->
     <div id="step-game-mode" class="step-page">
         <div class="top-nav">
-            <button class="btn-back-step" onclick="goToStep('step-learn-lang')"><i class="fa-solid fa-arrow-left"></i> 重選學習語言</button>
+            <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
         </div>
 
         <h2 class="step-title"><i class="fa-solid fa-gamepad"></i> 選擇遊戲挑戰模式</h2>
@@ -440,23 +444,13 @@
             <button class="btn-option" id="btn-mode-blocks" onclick="setGameMode('blocks')">🧩 聽音重組字塊</button>
         </div>
 
-        <button class="btn-confirm" id="btn-confirm-lang" onclick="confirmLangSetting()"><i class="fa-solid fa-check"></i> 確定並進入課程</button>
-    </div>
-
-    <!-- 步驟 4：選擇課程程度 -->
-    <div id="step-level" class="step-page">
-        <div class="top-nav">
-            <button class="btn-back-step" onclick="goToStep('step-game-mode')"><i class="fa-solid fa-arrow-left"></i> 回模式選擇</button>
-        </div>
-        
-        <h2 class="step-title"><i class="fa-solid fa-layer-group"></i> 選擇課程程度</h2>
-        <div id="container-levels" class="option-grid grid-2"></div>
+        <button class="btn-confirm" id="btn-confirm-mode" onclick="confirmGameMode()"><i class="fa-solid fa-check"></i> 確定並選擇單元</button>
     </div>
 
     <!-- 步驟 5：選擇單元 (Unit) -->
     <div id="step-unit" class="step-page">
         <div class="top-nav">
-            <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
+            <button class="btn-back-step" onclick="goToStep('step-game-mode')"><i class="fa-solid fa-arrow-left"></i> 回模式選擇</button>
             <span id="lbl-unit-level" style="font-weight: bold; color: var(--duo-blue);">0A 認識字母</span>
         </div>
         
@@ -482,7 +476,6 @@
             <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-blue);">語法教室</span>
         </div>
 
-        <!-- 1. 對話框說明區塊 -->
         <div id="area-grammar-dialog">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <h3 style="margin: 0; color: #4338ca;"><i class="fa-solid fa-lightbulb"></i> 觀念小教室</h3>
@@ -504,21 +497,18 @@
             </div>
         </div>
 
-        <!-- 1.2 例句展示區塊 -->
         <div id="area-grammar-example" style="display: none;">
             <h3 style="margin-top: 10px; color: #4338ca; text-align: left;"><i class="fa-solid fa-book-bookmark"></i> 例句練習</h3>
             <div id="container-example-list" style="text-align: left; margin-bottom: 20px;"></div>
             <button class="btn-confirm" onclick="goToReadyPage()"><i class="fa-solid fa-arrow-right"></i> 繼續</button>
         </div>
 
-        <!-- 1.3 Ready 進入測驗引導區塊 -->
         <div id="area-grammar-ready" style="display: none; text-align: center; padding: 20px 10px;">
             <i class="fa-solid fa-flag-checkered" style="font-size: 3rem; color: #818cf8; margin-bottom: 15px;"></i>
             <div id="lbl-ready-text" style="font-size: 1.3rem; font-weight: bold; color: var(--duo-dark); margin-bottom: 25px; line-height: 1.6;"></div>
             <button class="btn-confirm" onclick="enterGrammarQuizFromReady()"><i class="fa-solid fa-pen-to-square"></i> 開始測驗</button>
         </div>
 
-        <!-- 2. 測驗填空區塊 -->
         <div id="area-grammar-quiz" style="display: none; margin-top: 15px;">
             <h3 style="margin-top: 0; color: var(--duo-dark);"><i class="fa-solid fa-pen-to-square"></i> 語法測驗</h3>
             <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
@@ -536,7 +526,6 @@
             </div>
         </div>
 
-        <!-- 3. 觀念複習區塊 -->
         <div id="area-grammar-all-history" style="display: none; margin-top: 20px;">
             <h3 style="margin-top: 15px; margin-bottom: 10px; color: #4338ca; text-align: left;"><i class="fa-solid fa-list-check"></i> 觀念總覽</h3>
             <div class="dialog-history-list" id="container-dialog-history"></div>
@@ -578,7 +567,7 @@
         </div>
     </div>
 
-    <!-- 步驟 7-B：🧩 聽音重組字塊畫面 -->
+    <!-- 步驟 7-B：聽音重組字塊畫面 -->
     <div id="step-quiz-blocks" class="step-page">
         <div class="challenge-header-btns">
             <button class="btn-sub-nav" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
@@ -633,6 +622,8 @@
         lang: 'zh'
     };
 
+    let rawShadowData = [];  
+    let rawBlocksData = [];  
     let globalCategoryData = []; 
     let globalGrammarData = []; 
     let questions = [];
@@ -652,9 +643,7 @@
 
     function stopSpeechRecognition() {
         if (recognition) {
-            try {
-                recognition.abort();
-            } catch (e) {
+            try { recognition.abort(); } catch (e) {
                 try { recognition.stop(); } catch(err) {}
             }
         }
@@ -705,7 +694,7 @@
     }
 
     function checkCacheStatus() {
-        const cacheKey = `${currentConfig.mode}_data_${currentConfig.category}`;
+        const cacheKey = `all_data_${currentConfig.category}`;
         const cached = localStorage.getItem(cacheKey);
         const statusDiv = document.getElementById('cache-status');
 
@@ -719,19 +708,17 @@
     }
 
     async function forceClearAndSync() {
-        const cacheKey = `${currentConfig.mode}_data_${currentConfig.category}`;
-        const grammarCacheKey = `grammar_data_${currentConfig.category}`;
-        localStorage.removeItem(cacheKey);
-        localStorage.removeItem(grammarCacheKey);
+        localStorage.removeItem(`all_data_${currentConfig.category}`);
+        localStorage.removeItem(`grammar_data_${currentConfig.category}`);
         
         const langName = currentConfig.category === 'korean' ? '韓文' : (currentConfig.category === 'japanese' ? '日文' : '英文');
-        alert(`已清除 ${langName} 的快取！請繼續點擊下一步載入最新資料。`);
+        alert(`已清除 ${langName} 的快取！請繼續點擊下一步。`);
         checkCacheStatus();
     }
 
     function loadDataViaJSONP(apiUrl, actionName) {
         return new Promise((resolve, reject) => {
-            const callbackName = 'gas_cb_' + Date.now();
+            const callbackName = 'gas_cb_' + Date.now() + Math.floor(Math.random()*1000);
             const script = document.createElement('script');
 
             window[callbackName] = function(data) {
@@ -756,7 +743,8 @@
         });
     }
 
-    async function confirmLangSetting() {
+    // 第二步：確定選取學習語言 -> 載入試算表資料 -> 跳至「選擇程度」
+    async function confirmLearnLang() {
         const targetApi = API_URLS[currentConfig.category];
         const langName = currentConfig.category === 'korean' ? '韓文' : (currentConfig.category === 'japanese' ? '日文' : '英文');
 
@@ -765,7 +753,7 @@
             return;
         }
 
-        const cacheKey = `${currentConfig.mode}_data_${currentConfig.category}`;
+        const cacheKey = `all_data_${currentConfig.category}`;
         const grammarCacheKey = `grammar_data_${currentConfig.category}`;
 
         const cachedData = localStorage.getItem(cacheKey);
@@ -774,8 +762,9 @@
         if (cachedData) {
             try {
                 const parsed = JSON.parse(cachedData);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    globalCategoryData = parsed;
+                if (parsed && (parsed.shadow || parsed.blocks)) {
+                    rawShadowData = parsed.shadow || [];
+                    rawBlocksData = parsed.blocks || [];
                     if (cachedGrammar) try { globalGrammarData = JSON.parse(cachedGrammar); } catch(e) {}
                     renderLevelMenu();
                     goToStep('step-level');
@@ -784,36 +773,39 @@
             } catch(e) {}
         }
 
-        const btnConfirm = document.getElementById('btn-confirm-lang');
+        const btnConfirm = document.getElementById('btn-confirm-learn-lang');
         btnConfirm.disabled = true;
         btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 同步最新試算表中...`;
 
-        const actionName = currentConfig.mode === 'blocks' ? 'getBlocksData' : 'getLanguageData';
-
         try {
-            const data = await loadDataViaJSONP(targetApi, actionName);
-            if (data && data.status === 'success') {
-                globalCategoryData = data.data;
-                try { localStorage.setItem(cacheKey, JSON.stringify(data.data)); } catch(err) {}
+            const [shadowRes, blocksRes, grammarRes] = await Promise.all([
+                loadDataViaJSONP(targetApi, 'getLanguageData').catch(()=>null),
+                loadDataViaJSONP(targetApi, 'getBlocksData').catch(()=>null),
+                loadDataViaJSONP(targetApi, 'getGrammarData').catch(()=>null)
+            ]);
 
-                try {
-                    const grammarRes = await loadDataViaJSONP(targetApi, 'getGrammarData');
-                    if (grammarRes && grammarRes.status === 'success') {
-                        globalGrammarData = grammarRes.data;
-                        try { localStorage.setItem(grammarCacheKey, JSON.stringify(grammarRes.data)); } catch(err) {}
-                    }
-                } catch(gErr) {}
-
-                renderLevelMenu();
-                goToStep('step-level');
-            } else {
-                alert(`資料讀取失敗：${data ? data.message : '無回應'}`);
+            if (shadowRes && shadowRes.status === 'success') rawShadowData = shadowRes.data || [];
+            if (blocksRes && blocksRes.status === 'success') rawBlocksData = blocksRes.data || [];
+            if (grammarRes && grammarRes.status === 'success') {
+                globalGrammarData = grammarRes.data || [];
+                try { localStorage.setItem(grammarCacheKey, JSON.stringify(grammarRes.data)); } catch(e){}
             }
+
+            try {
+                localStorage.setItem(cacheKey, JSON.stringify({
+                    shadow: rawShadowData,
+                    blocks: rawBlocksData
+                }));
+            } catch(err) {}
+
+            renderLevelMenu();
+            goToStep('step-level');
+
         } catch(jsonpErr) {
-            alert(`無法連線至 ${langName} API！\n請確認 ${langName} Google Apps Script 已部署為「所有人 (Anyone)」！`);
+            alert(`無法連線至 ${langName} API！\n請確認 API 狀態。`);
         } finally {
             btnConfirm.disabled = false;
-            btnConfirm.innerHTML = `<i class="fa-solid fa-check"></i> 確定並進入課程`;
+            btnConfirm.innerHTML = `<i class="fa-solid fa-arrow-right"></i> 下一步（選擇程度）`;
         }
     }
 
@@ -861,10 +853,17 @@
         }
     }
 
+    // 第三步：選擇程度 -> 跳至「選擇遊戲挑戰模式」
     function selectLevel(levelCode, levelTitle) {
         currentConfig.level = levelCode;
         document.getElementById('lbl-unit-level').innerText = levelTitle;
-        renderUnits(levelCode);
+        goToStep('step-game-mode');
+    }
+
+    // 第四步：確定挑戰模式 -> 開啟「選擇單元」
+    function confirmGameMode() {
+        globalCategoryData = (currentConfig.mode === 'blocks') ? rawBlocksData : rawShadowData;
+        renderUnits(currentConfig.level);
         goToStep('step-unit');
     }
 
@@ -872,7 +871,8 @@
         const container = document.getElementById('container-units');
         container.innerHTML = "";
 
-        const filtered = globalCategoryData.filter(i => String(i[1]).trim().toUpperCase() === level.trim().toUpperCase());
+        const dataSource = globalCategoryData.length > 0 ? globalCategoryData : (rawShadowData.length > 0 ? rawShadowData : rawBlocksData);
+        const filtered = dataSource.filter(i => String(i[1]).trim().toUpperCase() === level.trim().toUpperCase());
         const units = [...new Set(filtered.map(i => i[2]))].filter(Boolean).sort((a,b) => a - b);
 
         if (units.length > 0) {
@@ -895,7 +895,8 @@
         const container = document.getElementById('container-stages');
         container.innerHTML = "";
 
-        const filtered = globalCategoryData.filter(i => 
+        const dataSource = globalCategoryData.length > 0 ? globalCategoryData : (rawShadowData.length > 0 ? rawShadowData : rawBlocksData);
+        const filtered = dataSource.filter(i => 
             String(i[1]).trim().toUpperCase() === currentConfig.level.trim().toUpperCase() && 
             String(i[2]) === String(unitId)
         );
