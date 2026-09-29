@@ -138,6 +138,7 @@
             border-radius: 14px;
             cursor: pointer;
             margin-top: 10px;
+            box-sizing: border-box;
         }
 
         .btn-confirm:active {
@@ -549,7 +550,8 @@
 
             <div class="result-box" id="box-grammar-result" style="display: none; margin-top: 15px;">
                 <div id="lbl-grammar-result-text" style="font-size: 1.1rem; font-weight: bold;"></div>
-                <button class="btn-confirm" id="btn-grammar-action" style="margin-top: 10px;"></button>
+                <!-- 調整：移除限制按鈕樣式的內聯設定，使其繼承 .btn-confirm 的 100% 寬度 -->
+                <button class="btn-confirm" id="btn-grammar-action"></button>
             </div>
         </div>
 
@@ -760,7 +762,6 @@
         });
     }
 
-    // 第二步：確定選取學習語言 -> 載入試算表資料 -> 跳至「選擇程度」
     async function confirmLearnLang() {
         const targetApi = API_URLS[currentConfig.category];
         const langName = currentConfig.category === 'korean' ? '韓文' : (currentConfig.category === 'japanese' ? '日文' : '英文');
@@ -870,7 +871,6 @@
         }
     }
 
-    // 第三步：選擇程度 -> 直接進入「選擇單元」
     function selectLevel(levelCode, levelTitle) {
         currentConfig.level = levelCode;
         document.getElementById('lbl-unit-level').innerText = levelTitle;
@@ -882,7 +882,6 @@
         const container = document.getElementById('container-units');
         container.innerHTML = "";
 
-        // 集合跟讀與重組兩者資料
         const combinedData = [...rawShadowData, ...rawBlocksData];
         const filtered = combinedData.filter(i => String(i[1]).trim().toUpperCase() === level.trim().toUpperCase());
         const units = [...new Set(filtered.map(i => i[2]))].filter(Boolean).sort((a,b) => a - b);
@@ -900,7 +899,6 @@
         }
     }
 
-    // 第四步：點選單元 -> 生成該單元之關卡，每個關卡包含「跟讀」與「重組」模式按鈕
     function selectUnit(unitId) {
         currentConfig.unit_id = unitId;
         document.getElementById('lbl-stage-unit').innerText = `Level ${currentConfig.level} | 第 ${unitId} 單元`;
@@ -952,7 +950,6 @@
         goToStep('step-stage');
     }
 
-    // 點擊具體的「關卡+模式」
     function selectStageAndMode(stage, mode) {
         currentConfig.stage = stage;
         currentConfig.mode = mode;
