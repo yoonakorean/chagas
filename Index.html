@@ -406,8 +406,16 @@
             line-height: 1.6;
             position: relative;
             cursor: pointer;
-            white-space: pre-wrap;
+            white-space: pre-wrap !important;
             word-break: break-word;
+        }
+
+        /* 強制對話內容左靠齊並完美保留連續空格 */
+        .grammar-dialog-box #lbl-grammar-dialog,
+        .grammar-dialog-box * {
+            text-align: left !important;
+            display: block;
+            white-space: pre-wrap !important;
         }
 
         .btn-gram2-audio {
