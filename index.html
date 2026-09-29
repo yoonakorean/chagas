@@ -10,6 +10,7 @@
             --duo-green: #58cc02;
             --duo-blue: #1cb0f6;
             --duo-red: #ff4b4b;
+            --duo-purple: #818cf8;
             --duo-gray: #e5e7eb;
             --duo-dark: #1f2937;
         }
@@ -103,7 +104,7 @@
 
         .stage-btn-group {
             display: flex;
-            gap: 8px;
+            gap: 6px;
         }
 
         .btn-stage-action {
@@ -112,8 +113,8 @@
             border: 2px solid #cbd5e1;
             border-bottom: 3px solid #cbd5e1;
             border-radius: 10px;
-            padding: 10px 4px;
-            font-size: 0.9rem;
+            padding: 10px 2px;
+            font-size: 0.85rem;
             font-weight: bold;
             color: #334155;
             cursor: pointer;
@@ -123,6 +124,11 @@
         .btn-stage-action:hover {
             border-color: var(--duo-blue);
             color: var(--duo-blue);
+        }
+
+        .btn-stage-action.btn-grammar-stage:hover {
+            border-color: var(--duo-purple);
+            color: var(--duo-purple);
         }
 
         .btn-confirm {
@@ -140,7 +146,6 @@
             box-sizing: border-box;
         }
 
-        /* 專門調整語法測驗按鈕縮窄邊距切齊結果框 */
         .btn-grammar-action-narrow {
             width: calc(100% - 24px) !important;
             margin: 10px auto 0 auto !important;
@@ -503,11 +508,11 @@
         <div id="container-stages"></div>
     </div>
 
-    <!-- 步驟 5.5：語法說明頁面 -->
+    <!-- 步驟 5.5：語法說明頁面（獨立關卡模式） -->
     <div id="step-grammar" class="step-page">
         <div class="top-nav">
             <button class="btn-back-step" onclick="goToStep('step-stage')"><i class="fa-solid fa-arrow-left"></i> 回關卡選擇</button>
-            <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-blue);">語法教室</span>
+            <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-purple);">語法教室</span>
         </div>
 
         <div id="area-grammar-dialog">
@@ -726,7 +731,7 @@
             statusDiv.innerText = "⚡ 已備有本機快取（若試算表有更新請按連線更新）";
             statusDiv.style.color = "#10b981";
         } else {
-            statusDiv.innerText = "☁️️ 首次載入需連線同步（約 1~2 秒）";
+            statusDiv.innerText = "☁ 首次載入需連線同步（約 1~2 秒）";
             statusDiv.style.color = "#6b7280";
         }
     }
@@ -930,16 +935,25 @@
                 const btnGroup = document.createElement('div');
                 btnGroup.className = "stage-btn-group";
 
+                // 獨立語法挑戰按鈕
+                const btnGrammar = document.createElement('button');
+                btnGrammar.className = "btn-stage-action btn-grammar-stage";
+                btnGrammar.innerHTML = `<i class="fa-solid fa-book"></i> 📖 語法`;
+                btnGrammar.onclick = () => selectStageAndMode(s, 'grammar');
+
+                // 跟讀挑戰按鈕
                 const btnShadow = document.createElement('button');
                 btnShadow.className = "btn-stage-action";
                 btnShadow.innerHTML = `<i class="fa-solid fa-microphone"></i> 🎙️ 跟讀`;
                 btnShadow.onclick = () => selectStageAndMode(s, 'shadow');
 
+                // 重組挑戰按鈕
                 const btnBlocks = document.createElement('button');
                 btnBlocks.className = "btn-stage-action";
                 btnBlocks.innerHTML = `<i class="fa-solid fa-puzzle-piece"></i> 🧩 重組`;
                 btnBlocks.onclick = () => selectStageAndMode(s, 'blocks');
 
+                btnGroup.appendChild(btnGrammar);
                 btnGroup.appendChild(btnShadow);
                 btnGroup.appendChild(btnBlocks);
 
@@ -959,19 +973,23 @@
         currentConfig.stage = stage;
         currentConfig.mode = mode;
 
-        const matchGrammar = globalGrammarData.find(g => 
-            String(g.level).trim().toUpperCase() === currentConfig.level.trim().toUpperCase() &&
-            String(g.unit_id) === String(currentConfig.unit_id) &&
-            String(g.stage) === String(stage)
-        );
+        if (mode === 'grammar') {
+            const matchGrammar = globalGrammarData.find(g => 
+                String(g.level).trim().toUpperCase() === currentConfig.level.trim().toUpperCase() &&
+                String(g.unit_id) === String(currentConfig.unit_id) &&
+                String(g.stage) === String(stage)
+            );
 
-        if (matchGrammar && (
-            (matchGrammar.dialogs && matchGrammar.dialogs.length > 0) || 
-            (matchGrammar.example && matchGrammar.example.trim() !== '') ||
-            (matchGrammar.ready && matchGrammar.ready.trim() !== '') ||
-            (matchGrammar.question && matchGrammar.question.trim() !== '')
-        )) {
-            startGrammarChallenge(matchGrammar);
+            if (matchGrammar && (
+                (matchGrammar.dialogs && matchGrammar.dialogs.length > 0) || 
+                (matchGrammar.example && matchGrammar.example.trim() !== '') ||
+                (matchGrammar.ready && matchGrammar.ready.trim() !== '') ||
+                (matchGrammar.question && matchGrammar.question.trim() !== '')
+            )) {
+                startGrammarChallenge(matchGrammar);
+            } else {
+                alert("此關卡目前沒有設定獨立語法觀念喔！");
+            }
         } else {
             startMainQuiz();
         }
@@ -1001,7 +1019,6 @@
         goToStep('step-grammar');
     }
 
-    // 播放語法對話音檔（通用支援 gram2: dialogIdx 1, gram3: dialogIdx 2）
     function playGrammarAudio(dialogIdx) {
         if (!currentGrammarItem) return;
 
@@ -1039,7 +1056,7 @@
             } else if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') {
                 nextBtn.innerHTML = `進入測驗 <i class="fa-solid fa-pen-to-square"></i>`;
             } else {
-                nextBtn.innerHTML = `開始練習 <i class="fa-solid fa-play"></i>`;
+                nextBtn.innerHTML = `完成關卡 <i class="fa-solid fa-check"></i>`;
             }
         } else {
             nextBtn.innerHTML = `下一步 <i class="fa-solid fa-arrow-right"></i>`;
@@ -1047,7 +1064,6 @@
 
         currentFullDialogText = currentGrammarItem.dialogs[currentDialogIndex];
 
-        // 判斷 gram2 (索引 1) 與 gram3 (索引 2) 顯示語音按鈕並觸發自動播放
         const audioBtn = document.getElementById('btn-gram2-audio');
         if (currentDialogIndex === 1 || currentDialogIndex === 2) {
             audioBtn.style.display = 'block';
@@ -1131,7 +1147,7 @@
         } else if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') {
             showGrammarQuizArea();
         } else {
-            startMainQuiz();
+            goToStep('step-stage');
         }
     }
 
@@ -1179,7 +1195,7 @@
         } else if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') {
             showGrammarQuizArea();
         } else {
-            startMainQuiz();
+            goToStep('step-stage');
         }
     }
 
@@ -1196,7 +1212,7 @@
         if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') {
             showGrammarQuizArea();
         } else {
-            startMainQuiz();
+            goToStep('step-stage');
         }
     }
 
@@ -1303,11 +1319,11 @@
         resultBox.style.display = 'block';
 
         if (isAllCorrect) {
-            resultText.innerText = currentGrammarItem.correct || "🎉 完全正確！太棒了！";
+            resultText.innerText = currentGrammarItem.correct || "🎉 完全正確！通關成功！";
             resultText.style.color = "#58cc02";
-            actionBtn.innerHTML = `<i class="fa-solid fa-play"></i> 進入挑戰`;
+            actionBtn.innerHTML = `<i class="fa-solid fa-flag-checkered"></i> 完成關卡`;
             actionBtn.style.background = "#58cc02";
-            actionBtn.onclick = () => startMainQuiz();
+            actionBtn.onclick = () => goToStep('step-stage');
         } else {
             resultText.innerText = currentGrammarItem.incorrect || "❌ 答案不太對喔，再試一次！";
             resultText.style.color = "#ff4b4b";
