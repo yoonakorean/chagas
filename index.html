@@ -337,7 +337,7 @@
             background: #f3f4f6;
         }
 
-        /* 語法對話框：設定 white-space 與 word-break 以完整渲染打字機空格 */
+        /* 語法對話框：設定 white-space 與 word-break 以完整渲染換行 */
         .grammar-dialog-box {
             background: #eef2ff;
             border: 2px solid #818cf8;
@@ -513,7 +513,7 @@
         <div id="container-stages"></div>
     </div>
 
-    <!-- 步驟 5.5：語法說明頁面（獨立關卡模式） -->
+    <!-- 步驟 5.5：語法說明頁面 -->
     <div id="step-grammar" class="step-page">
         <div class="top-nav">
             <button class="btn-back-step" onclick="goToStep('step-stage')"><i class="fa-solid fa-arrow-left"></i> 回關卡選擇</button>
@@ -1027,7 +1027,7 @@
         else if (dialogIdx === 2) audioUrl = currentGrammarItem.gram3_audio;
 
         const textToSpeak = (currentGrammarItem.dialogs && currentGrammarItem.dialogs[dialogIdx])
-            ? currentGrammarItem.dialogs[dialogIdx].replace(/^[ \t]+/gm, '').trim()
+            ? currentGrammarItem.dialogs[dialogIdx].replace(/^[\s\u3000]+/gm, '').trim()
             : "";
 
         if (audioUrl && audioUrl.trim() !== '') {
@@ -1039,7 +1039,7 @@
         }
     }
 
-    // 📌 顯示當前對話：修正去除每行行首空格/Tab，保留行內字間空格[cite: 4, 5]
+    // 📌 顯示當前對話：完全清除包含全形空白在內的所有行首空白字元
     function showCurrentGrammarDialog() {
         if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
 
@@ -1063,10 +1063,10 @@
             nextBtn.innerHTML = `下一步 <i class="fa-solid fa-arrow-right"></i>`;
         }
 
-        /* 📌 修正：僅清除「每一行」開頭的空格與 Tab，保留行內字間空格[cite: 4, 5] */
+        /* 📌 徹底清除半形與全形 (Full-width space \u3000) 之行首空白 */
         currentFullDialogText = (currentGrammarItem.dialogs[currentDialogIndex] || "")
-            .replace(/^[ \t]+/gm, '')
-            .trim();
+            .trim()
+            .replace(/^[\s\u3000]+/gm, '');
 
         const audioBtn = document.getElementById('btn-gram2-audio');
         if (currentDialogIndex === 1 || currentDialogIndex === 2) {
@@ -1220,7 +1220,7 @@
         }
     }
 
-    // 📌 渲染對話紀錄歷史清單：同步去除每行行首空格[cite: 4, 5]
+    // 📌 渲染對話紀錄歷史清單：同樣徹底清除全形與半形行首空白
     function renderGrammarHistoryList() {
         const container = document.getElementById('container-dialog-history');
         container.innerHTML = "";
@@ -1235,8 +1235,7 @@
             listToRender.forEach((dText, idx) => {
                 const item = document.createElement('div');
                 item.className = 'dialog-history-item';
-                /* 📌 清除每行首尾多餘縮排[cite: 4, 5] */
-                const cleanText = dText.replace(/^[ \t]+/gm, '').trim();
+                const cleanText = dText.trim().replace(/^[\s\u3000]+/gm, '');
                 item.innerHTML = `<span class="num">${idx + 1}.</span> ${cleanText}`;
                 container.appendChild(item);
             });
