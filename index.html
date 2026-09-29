@@ -82,7 +82,6 @@
             color: var(--duo-blue) !important;
         }
 
-        /* 整合後的雙按鈕專用樣式 */
         .stage-card-item {
             background: #f9fafb;
             border: 1px solid #e5e7eb;
@@ -139,6 +138,13 @@
             cursor: pointer;
             margin-top: 10px;
             box-sizing: border-box;
+        }
+
+        /* 專門調整語法測驗按鈕（送出答案 & 結果按鈕）縮窄邊距 */
+        .btn-grammar-action-narrow {
+            width: calc(100% - 24px) !important;
+            margin: 10px auto 0 auto !important;
+            display: block;
         }
 
         .btn-confirm:active {
@@ -546,11 +552,11 @@
             <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin: 15px 0 5px 0;">選項：</p>
             <div id="container-grammar-choices" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;"></div>
 
-            <button class="btn-confirm" id="btn-check-grammar" onclick="checkGrammarQuiz()"><i class="fa-solid fa-check"></i> 送出答案</button>
+            <!-- 修改：加上 btn-grammar-action-narrow 樣式類別讓寬度縮窄切齊結果框按鈕 -->
+            <button class="btn-confirm btn-grammar-action-narrow" id="btn-check-grammar" onclick="checkGrammarQuiz()"><i class="fa-solid fa-check"></i> 送出答案</button>
 
             <div class="result-box" id="box-grammar-result" style="display: none; margin-top: 15px;">
                 <div id="lbl-grammar-result-text" style="font-size: 1.1rem; font-weight: bold;"></div>
-                <!-- 調整：移除限制按鈕樣式的內聯設定，使其繼承 .btn-confirm 的 100% 寬度 -->
                 <button class="btn-confirm" id="btn-grammar-action"></button>
             </div>
         </div>
