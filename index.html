@@ -338,7 +338,6 @@
             background: #f3f4f6;
         }
 
-        /* 對話卡片樣式 */
         .dialogue-sub-nav {
             display: flex;
             gap: 6px;
@@ -391,7 +390,6 @@
         .speaker-a { background-color: #e0f2fe; color: #0369a1; }
         .speaker-b { background-color: #fef3c7; color: #b45309; }
 
-        /* 語法與常規樣式 */
         .grammar-dialog-box {
             background: #eef2ff;
             border: 2px solid #818cf8;
@@ -687,7 +685,7 @@
         </div>
     </div>
 
-    <!-- 步驟 6-C：全新對話練習畫面 -->
+    <!-- 步驟 6-C：對話練習畫面 -->
     <div id="step-quiz-dialogue" class="step-page">
         <div class="challenge-header-btns">
             <button class="btn-sub-nav" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
@@ -697,14 +695,12 @@
 
         <div style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 8px;" class="lbl-quiz-info"></div>
 
-        <!-- 對話三模式切換 -->
         <div class="dialogue-sub-nav">
             <button class="btn-dialogue-mode active" id="btn-mode-basic" onclick="switchDialogueMode('basic')">基礎對話</button>
             <button class="btn-dialogue-mode" id="btn-mode-fill" onclick="switchDialogueMode('fill')">挖空填空</button>
             <button class="btn-dialogue-mode" id="btn-mode-blind" onclick="switchDialogueMode('blind')">盲測聽力</button>
         </div>
 
-        <!-- 角色選擇 -->
         <div class="role-switch-box">
             <button class="btn-role active" id="btn-role-a" onclick="switchUserRole('A')">扮演 A</button>
             <button class="btn-role" id="btn-role-b" onclick="switchUserRole('B')">扮演 B</button>
@@ -716,7 +712,6 @@
 
         <div class="target-text" id="lbl-dialogue-text">載入中...</div>
 
-        <!-- 盲測模式解鎖提示按鈕 -->
         <div id="box-blind-unlock" style="display: none; margin-bottom: 10px;">
             <button class="btn-sub-nav" onclick="unlockBlindTextManually()"><i class="fa-solid fa-eye"></i> 解鎖顯示文字</button>
         </div>
@@ -763,7 +758,7 @@
     let rawShadowData = [];  
     let rawBlocksData = [];  
     let globalGrammarData = []; 
-    let rawDialogueData = []; // 新增對話原始資料
+    let rawDialogueData = []; 
 
     let questions = [];
     let currentIndex = 0;
@@ -771,12 +766,11 @@
     let isRecording = false;
     let selectedBlockIndices = [];
 
-    // 對話練習專用狀態
     let currentDialogueItem = null;
-    let dialogueList = []; // 解析後的單句列表 [{ speaker: 'A', text: '...', fillText: '...', fullAudio: '...' }]
+    let dialogueList = []; 
     let dialogueIndex = 0;
-    let dialogueSubMode = 'basic'; // basic, fill, blind
-    let userRole = 'A'; // A, B
+    let dialogueSubMode = 'basic'; 
+    let userRole = 'A'; 
     let isBlindUnlocked = false;
 
     let currentGrammarItem = null;
@@ -1153,7 +1147,6 @@
         currentDialogueItem = dialogueItem;
         dialogueList = [];
 
-        // 動態解析 a1~a8 及 b1~b8 句數
         for (let i = 1; i <= 8; i++) {
             const aKey = `a${i}`;
             const bKey = `b${i}`;
@@ -1233,7 +1226,6 @@
 
         const current = dialogueList[dialogueIndex];
 
-        // 標籤顯示
         const speakerTag = document.getElementById('lbl-dialogue-speaker');
         speakerTag.innerText = `Speaker ${current.speaker}`;
         if (current.speaker === 'A') {
@@ -1242,7 +1234,6 @@
             speakerTag.className = "dialogue-speaker-tag speaker-b";
         }
 
-        // 依對話模式設定顯示文字
         const textElem = document.getElementById('lbl-dialogue-text');
         const blindBox = document.getElementById('box-blind-unlock');
 
@@ -1265,12 +1256,10 @@
         document.getElementById('lbl-dialogue-recognized').innerText = "-";
         document.getElementById('lbl-dialogue-score').innerText = "得分：--";
 
-        // 進度與導覽
         document.getElementById('lbl-dialogue-progress').innerText = `${dialogueIndex + 1} / ${dialogueList.length}`;
         document.getElementById('btn-dialogue-prev').disabled = dialogueIndex === 0;
         document.getElementById('btn-dialogue-next').disabled = dialogueIndex === dialogueList.length - 1;
 
-        // 如果當前句子非使用者扮演的角色（系統角色），自動播放
         const isUserTurn = (current.speaker === userRole);
         if (!isUserTurn) {
             playDialogueAudio();
@@ -1664,12 +1653,14 @@
         const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - 關卡 ${currentConfig.stage} (${modeTitle})`;
         document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
 
-        const langIndexMap = { 'zh': 5, 'en': 6, 'kr': 7, 'ja': 7 };
-        const langIdx = langIndexMap[currentConfig.lang] !== undefined ? langIndexMap[currentConfig.lang] : 5;
         const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
         if (currentConfig.mode === 'shadow') {
             goToStep('step-quiz-shadow');
+
+            // 修正欄位索引：0:id, 1:level, 2:unit_id, 3:stage, 4:text, 5:zhtw, 6:en, 7:third, 8:audio, 9:hint
+            const shadowLangIndexMap = { 'zh': 5, 'en': 6, 'kr': 7, 'ja': 7 };
+            const langIdx = shadowLangIndexMap[currentConfig.lang] !== undefined ? shadowLangIndexMap[currentConfig.lang] : 5;
 
             questions = rawShadowData.filter(i => 
                 normalizeLevelStr(i[1]) === targetLevelNormalized &&
@@ -1685,6 +1676,7 @@
         } else {
             goToStep('step-quiz-blocks');
             
+            // 修正欄位索引：0:id, 1:level, 2:unit_id, 3:stage, 4:fulltext, 5:options, 6:zhtw, 7:en, 8:third, 9:audio
             const blockLangIndexMap = { 'zh': 6, 'en': 7, 'kr': 8, 'ja': 8 };
             const bLangIdx = blockLangIndexMap[currentConfig.lang] !== undefined ? blockLangIndexMap[currentConfig.lang] : 6;
 
@@ -1901,25 +1893,21 @@
         recognition.onresult = (event) => {
             const userSpeech = event.results[0][0].transcript;
 
-            // 如果是在對話練習頁面
             if (currentConfig.mode === 'dialogue') {
                 document.getElementById('lbl-dialogue-recognized').innerText = userSpeech;
 
                 const currentSentence = dialogueList[dialogueIndex];
-                // 關鍵：無論在挖空還是盲測模式，評分基準文字 (targetText) 永遠都是完整的原本句子 (a1/b1)
                 const targetText = currentSentence ? currentSentence.targetText : "";
 
                 const score = calculateSimilarity(targetText, userSpeech);
                 document.getElementById('lbl-dialogue-score').innerText = `得分：${score}分`;
 
-                // 盲測模式下得分高於 60 分自動解鎖顯示文字
                 if (dialogueSubMode === 'blind' && score >= 60) {
                     isBlindUnlocked = true;
                     document.getElementById('lbl-dialogue-text').innerText = targetText;
                     document.getElementById('box-blind-unlock').style.display = 'none';
                 }
             } else {
-                // 常規跟讀模式
                 document.getElementById('lbl-recognized-text').innerText = userSpeech;
                 
                 const currentQ = questions[currentIndex];
