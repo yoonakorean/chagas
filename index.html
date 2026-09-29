@@ -337,6 +337,7 @@
             background: #f3f4f6;
         }
 
+        /* 語法對話框：設定 white-space 與 word-break 以完整渲染打字機空格 */
         .grammar-dialog-box {
             background: #eef2ff;
             border: 2px solid #818cf8;
@@ -352,6 +353,8 @@
             position: relative;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
             cursor: pointer;
+            white-space: pre-wrap;
+            word-break: break-word;
         }
 
         .btn-gram2-audio {
@@ -419,6 +422,8 @@
             border-radius: 12px;
             padding: 12px;
             margin-bottom: 15px;
+            white-space: pre-wrap;
+            word-break: break-word;
         }
 
         .dialog-history-item {
@@ -935,19 +940,16 @@
                 const btnGroup = document.createElement('div');
                 btnGroup.className = "stage-btn-group";
 
-                // 獨立語法挑戰按鈕
                 const btnGrammar = document.createElement('button');
                 btnGrammar.className = "btn-stage-action btn-grammar-stage";
                 btnGrammar.innerHTML = `<i class="fa-solid fa-book"></i> 📖 語法`;
                 btnGrammar.onclick = () => selectStageAndMode(s, 'grammar');
 
-                // 跟讀挑戰按鈕
                 const btnShadow = document.createElement('button');
                 btnShadow.className = "btn-stage-action";
                 btnShadow.innerHTML = `<i class="fa-solid fa-microphone"></i> 🎙️ 跟讀`;
                 btnShadow.onclick = () => selectStageAndMode(s, 'shadow');
 
-                // 重組挑戰按鈕
                 const btnBlocks = document.createElement('button');
                 btnBlocks.className = "btn-stage-action";
                 btnBlocks.innerHTML = `<i class="fa-solid fa-puzzle-piece"></i> 🧩 重組`;
@@ -1079,16 +1081,17 @@
         startTypewriter(currentFullDialogText);
     }
 
+    /* 📌 打字機邏輯修復：改用 textContent 與 substring，完整保留所有空白字元 */
     function startTypewriter(text) {
         if (typewriterTimer) clearInterval(typewriterTimer);
         const box = document.getElementById('lbl-grammar-dialog');
-        box.innerText = "";
+        box.textContent = "";
         isTypewriterTyping = true;
         
         let charIndex = 0;
         typewriterTimer = setInterval(() => {
             if (charIndex < text.length) {
-                box.innerText += text.charAt(charIndex);
+                box.textContent = text.substring(0, charIndex + 1);
                 charIndex++;
             } else {
                 clearInterval(typewriterTimer);
@@ -1100,7 +1103,7 @@
     function completeTypewriterImmediately() {
         if (isTypewriterTyping) {
             clearInterval(typewriterTimer);
-            document.getElementById('lbl-grammar-dialog').innerText = currentFullDialogText;
+            document.getElementById('lbl-grammar-dialog').textContent = currentFullDialogText;
             isTypewriterTyping = false;
         }
     }
