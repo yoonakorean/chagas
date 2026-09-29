@@ -14,9 +14,6 @@
             --duo-orange: #f59e0b;
             --duo-gray: #e5e7eb;
             --duo-dark: #1f2937;
-            --line-bg: #8cabd9; /* LINE 風格背景 */
-            --bubble-left: #ffffff;
-            --bubble-right: #85e249;
         }
 
         body {
@@ -341,7 +338,7 @@
             background: #f3f4f6;
         }
 
-        /* --- LINE 對話框專屬樣式 --- */
+        /* ---------------- LINE 風格對話框專屬樣式 ---------------- */
         .dialogue-sub-nav {
             display: flex;
             gap: 6px;
@@ -367,7 +364,7 @@
             display: flex;
             justify-content: center;
             gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .btn-role {
             padding: 8px 16px;
@@ -383,85 +380,86 @@
             color: var(--duo-blue);
         }
 
-        /* 聊天室容器 */
+        /* 對話容器 */
         .chat-container {
-            background-color: var(--line-bg);
+            background: #eef2f5;
             border-radius: 16px;
-            padding: 15px;
+            padding: 16px;
             height: 320px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            margin-bottom: 15px;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .chat-row {
-            display: flex;
-            align-items: flex-end;
-            gap: 8px;
-            max-width: 85%;
-        }
-
-        .chat-row.left {
-            align-self: flex-start;
-            flex-direction: row;
-        }
-
-        .chat-row.right {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-        }
-
-        .chat-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: #334155;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-            flex-shrink: 0;
+            margin-bottom: 12px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
 
         .chat-bubble {
-            padding: 10px 14px;
-            border-radius: 16px;
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
             font-size: 1.05rem;
             line-height: 1.4;
             position: relative;
             word-break: break-word;
             text-align: left;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            animation: fadeIn 0.3s ease;
         }
 
-        .chat-row.left .chat-bubble {
-            background-color: var(--bubble-left);
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 他人 (系統) 對話框：左側灰底 */
+        .chat-bubble.other {
+            align-self: flex-start;
+            background: #ffffff;
             color: #1f2937;
             border-bottom-left-radius: 4px;
+            border: 1px solid #e5e7eb;
         }
 
-        .chat-row.right .chat-bubble {
-            background-color: var(--bubble-right);
-            color: #0f172a;
+        /* 本人 (使用者) 對話框：右側綠底 */
+        .chat-bubble.me {
+            align-self: flex-end;
+            background: #58cc02;
+            color: white;
             border-bottom-right-radius: 4px;
         }
 
-        .chat-row.active-sentence .chat-bubble {
-            outline: 3px solid var(--duo-blue);
+        .chat-bubble.me.active-target {
+            border: 3px solid #1cb0f6;
+            animation: pulse-border 1.5s infinite;
         }
 
-        .chat-play-icon {
-            margin-left: 6px;
-            color: var(--duo-blue);
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(28, 176, 246, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(28, 176, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(28, 176, 246, 0); }
+        }
+
+        .chat-speaker-label {
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 4px;
+            opacity: 0.8;
+        }
+
+        .chat-bubble.other .chat-speaker-label { color: #6b7280; }
+        .chat-bubble.me .chat-speaker-label { color: #eef2ff; }
+
+        .chat-audio-btn {
+            background: none;
+            border: none;
             cursor: pointer;
             font-size: 0.9rem;
+            margin-left: 6px;
+            padding: 2px 6px;
         }
+        .chat-bubble.other .chat-audio-btn { color: var(--duo-blue); }
+        .chat-bubble.me .chat-audio-btn { color: white; }
 
         /* 語法與常規樣式 */
         .grammar-dialog-box {
@@ -759,7 +757,7 @@
         </div>
     </div>
 
-    <!-- 步驟 6-C：全新 LINE 對話框練習畫面 -->
+    <!-- 步驟 6-C：LINE 風格對話練習畫面 -->
     <div id="step-quiz-dialogue" class="step-page">
         <div class="challenge-header-btns">
             <button class="btn-sub-nav" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
@@ -778,22 +776,20 @@
 
         <!-- 角色選擇 -->
         <div class="role-switch-box">
-            <button class="btn-role active" id="btn-role-a" onclick="switchUserRole('A')">扮演 A</button>
-            <button class="btn-role" id="btn-role-b" onclick="switchUserRole('B')">扮演 B</button>
+            <button class="btn-role active" id="btn-role-a" onclick="switchUserRole('A')">扮演 A 角色</button>
+            <button class="btn-role" id="btn-role-b" onclick="switchUserRole('B')">扮演 B 角色</button>
         </div>
 
-        <!-- LINE 對話框容器 -->
-        <div class="chat-container" id="chat-container">
-            <!-- 動態生成聊天氣泡 -->
-        </div>
+        <!-- LINE 風格對話區域 -->
+        <div class="chat-container" id="chat-box"></div>
 
-        <!-- 盲測模式手動解鎖按鈕 -->
+        <!-- 盲測模式解鎖提示按鈕 -->
         <div id="box-blind-unlock" style="display: none; margin-bottom: 10px;">
             <button class="btn-sub-nav" onclick="unlockBlindTextManually()"><i class="fa-solid fa-eye"></i> 解鎖顯示文字</button>
         </div>
 
-        <div class="controls">
-            <button class="btn-circle btn-listen" id="btn-dialogue-play" onclick="playDialogueAudio()" title="聽當前對話">
+        <div class="controls" style="margin-bottom: 10px;">
+            <button class="btn-circle btn-listen" id="btn-dialogue-play" onclick="playCurrentStepAudio()" title="聽示範">
                 <i class="fa-solid fa-volume-high"></i>
             </button>
             <button class="btn-circle btn-record" id="btn-dialogue-record" onclick="toggleRecording()" title="開始跟讀">
@@ -807,9 +803,9 @@
         </div>
 
         <div class="nav-controls">
-            <button class="btn-nav" id="btn-dialogue-prev" onclick="prevDialogueSentence()">上一句</button>
+            <button class="btn-nav" id="btn-dialogue-restart" onclick="restartDialogueFlow()"><i class="fa-solid fa-rotate-right"></i> 重頭練習</button>
             <span class="lbl-progress" id="lbl-dialogue-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
-            <button class="btn-nav" id="btn-dialogue-next" onclick="nextDialogueSentence()">下一句</button>
+            <button class="btn-nav" id="btn-dialogue-next" onclick="forceNextStep()">下一句 <i class="fa-solid fa-arrow-right"></i></button>
         </div>
     </div>
 
@@ -842,12 +838,12 @@
     let isRecording = false;
     let selectedBlockIndices = [];
 
-    // 對話練習專用狀態
+    // 對話練習狀態
     let currentDialogueItem = null;
-    let dialogueList = []; // 解析後的單句列表 [{ speaker: 'A', targetText: '...', fillText: '...', audioUrl: '...' }]
-    let dialogueIndex = 0;
+    let dialogueList = []; // 解析後的按對話順序陣列: [{ speaker: 'A', targetText: '...', fillText: '...', audioUrl: '...' }]
+    let dialogueIndex = 0; // 當前解鎖進度
     let dialogueSubMode = 'basic'; // basic, fill, blind
-    let userRole = 'A'; // A, B
+    let userRole = 'A'; // A 或 B
     let isBlindUnlocked = false;
 
     let currentGrammarItem = null;
@@ -1146,7 +1142,7 @@
 
                 const btnShadow = document.createElement('button');
                 btnShadow.className = "btn-stage-action";
-                btnShadow.innerHTML = `<i class="fa-solid fa-microphone"></i> 🎙️ 跟讀`;
+                btnShadow.innerHTML = `<i class="fa-solid fa-microphone"></i> 🎙️️ 跟讀`;
                 btnShadow.onclick = () => selectStageAndMode(s, 'shadow');
 
                 const btnBlocks = document.createElement('button');
@@ -1218,23 +1214,18 @@
         }
     }
 
-    // --- 對話練習 (LINE 對話框模式) 邏輯 ---
+    // --- 全新 LINE 風格對話練習 (Dialogue Challenge) 核心邏輯 ---
 
     function startDialogueChallenge(dialogueItem) {
         currentDialogueItem = dialogueItem;
         dialogueList = [];
 
-        // 動態解析 a1~a8 及 b1~b8 句數
+        // 依序解析 a1 -> b1 -> a2 -> b2 ...
         for (let i = 1; i <= 8; i++) {
-            const aKey = `a${i}`;
-            const bKey = `b${i}`;
-            const axKey = `a${i}x`;
-            const bxKey = `b${i}x`;
-
-            const aText = (dialogueItem[aKey] || '').trim();
-            const bText = (dialogueItem[bKey] || '').trim();
-            const axText = (dialogueItem[axKey] || '').trim();
-            const bxText = (dialogueItem[bxKey] || '').trim();
+            const aText = (dialogueItem[`a${i}`] || '').trim();
+            const bText = (dialogueItem[`b${i}`] || '').trim();
+            const axText = (dialogueItem[`a${i}x`] || '').trim();
+            const bxText = (dialogueItem[`b${i}x`] || '').trim();
 
             if (aText) {
                 dialogueList.push({
@@ -1259,7 +1250,6 @@
             return;
         }
 
-        dialogueIndex = 0;
         dialogueSubMode = 'basic';
         userRole = 'A';
         
@@ -1268,11 +1258,10 @@
 
         const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
         document.querySelectorAll('.lbl-quiz-info').forEach(e => {
-            e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - 關卡 ${currentConfig.stage} (💬 對話挑戰)`;
+            e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - 關卡 ${currentConfig.stage} (💬 LINE對話挑戰)`;
         });
 
         goToStep('step-quiz-dialogue');
-        displayDialogueSentence();
     }
 
     function switchDialogueMode(mode) {
@@ -1283,8 +1272,7 @@
         });
         document.getElementById(`btn-mode-${mode}`).classList.add('active');
 
-        isBlindUnlocked = false;
-        displayDialogueSentence();
+        restartDialogueFlow();
     }
 
     function switchUserRole(role) {
@@ -1295,130 +1283,161 @@
         });
         document.getElementById(`btn-role-${role.toLowerCase()}`).classList.add('active');
 
-        dialogueIndex = 0;
-        isBlindUnlocked = false;
-        displayDialogueSentence();
+        restartDialogueFlow();
     }
 
-    function renderChatContainer() {
-        const chatContainer = document.getElementById('chat-container');
-        chatContainer.innerHTML = '';
-
-        // 只渲染到目前的 dialogueIndex 為止（漸進式呈現）
-        for (let i = 0; i <= dialogueIndex; i++) {
-            const item = dialogueList[i];
-            const isUser = (item.speaker === userRole);
-            
-            const chatRow = document.createElement('div');
-            chatRow.className = `chat-row ${isUser ? 'right' : 'left'}`;
-            if (i === dialogueIndex) {
-                chatRow.classList.add('active-sentence');
-            }
-
-            const avatar = document.createElement('div');
-            avatar.className = 'chat-avatar';
-            avatar.innerText = item.speaker;
-
-            const bubble = document.createElement('div');
-            bubble.className = 'chat-bubble';
-
-            let displayText = item.targetText;
-            if (dialogueSubMode === 'fill') {
-                displayText = item.fillText;
-            } else if (dialogueSubMode === 'blind') {
-                if (i < dialogueIndex || isBlindUnlocked) {
-                    displayText = item.targetText;
-                } else {
-                    displayText = "??? (對了將解鎖顯示)";
-                }
-            }
-
-            bubble.innerText = displayText;
-
-            // 聽聲音圖示
-            const playIcon = document.createElement('i');
-            playIcon.className = "fa-solid fa-volume-high chat-play-icon";
-            playIcon.title = "播放發音";
-            playIcon.onclick = (e) => {
-                e.stopPropagation();
-                playSpecificDialogueAudio(i);
-            };
-            bubble.appendChild(playIcon);
-
-            chatRow.appendChild(avatar);
-            chatRow.appendChild(bubble);
-            chatContainer.appendChild(chatRow);
-        }
-
-        // 滾動到底部
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-
-    function displayDialogueSentence() {
+    function restartDialogueFlow() {
         stopSpeechRecognition();
-        if (!dialogueList || dialogueList.length === 0) return;
-
-        const current = dialogueList[dialogueIndex];
-
-        // 渲染 LINE 對話框
-        renderChatContainer();
-
-        // 控制盲測解鎖按鈕
-        const blindBox = document.getElementById('box-blind-unlock');
-        if (dialogueSubMode === 'blind' && !isBlindUnlocked) {
-            blindBox.style.display = 'block';
-        } else {
-            blindBox.style.display = 'none';
-        }
+        isBlindUnlocked = false;
 
         document.getElementById('lbl-dialogue-recognized').innerText = "-";
         document.getElementById('lbl-dialogue-score').innerText = "得分：--";
 
-        // 進度與導覽
-        document.getElementById('lbl-dialogue-progress').innerText = `${dialogueIndex + 1} / ${dialogueList.length}`;
-        document.getElementById('btn-dialogue-prev').disabled = dialogueIndex === 0;
-        document.getElementById('btn-dialogue-next').disabled = dialogueIndex === dialogueList.length - 1;
-
-        // 如果當前句子非使用者扮演的角色（系統角色），自動播放語音
-        const isUserTurn = (current.speaker === userRole);
-        if (!isUserTurn) {
-            playDialogueAudio();
+        // 如果我是 Role A，對話從索引 0 (A1) 開始解鎖
+        // 如果我是 Role B，對話從索引 0 (A1) 系統自動播放，然後解鎖到 B1 (索引 1)
+        if (userRole === 'A') {
+            dialogueIndex = 0;
+            renderChatHistory();
+        } else {
+            dialogueIndex = 0; // 先呈現 A1
+            renderChatHistory();
+            // 自動播報 A1，並在結束後解鎖跳至 B1
+            setTimeout(() => {
+                playItemAudio(dialogueList[0], () => {
+                    if (dialogueList.length > 1) {
+                        dialogueIndex = 1; // 推進到 B1 讓使用者測試
+                        renderChatHistory();
+                    }
+                });
+            }, 400);
         }
+    }
+
+    function renderChatHistory() {
+        const chatBox = document.getElementById('chat-box');
+        chatBox.innerHTML = '';
+
+        if (!dialogueList || dialogueList.length === 0) return;
+
+        // 渲染目前已解鎖的所有對話句 (0 ~ dialogueIndex)
+        for (let i = 0; i <= dialogueIndex && i < dialogueList.length; i++) {
+            const item = dialogueList[i];
+            const isUser = (item.speaker === userRole);
+
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble ${isUser ? 'me' : 'other'}`;
+            
+            // 高亮標示當前正在練習的句子
+            if (i === dialogueIndex && isUser) {
+                bubble.classList.add('active-target');
+            }
+
+            const speakerTag = document.createElement('div');
+            speakerTag.className = 'chat-speaker-label';
+            speakerTag.innerText = `Speaker ${item.speaker}`;
+
+            const textSpan = document.createElement('span');
+            textSpan.innerText = getDisplayTextForBubble(item, i);
+
+            const audioBtn = document.createElement('button');
+            audioBtn.className = 'chat-audio-btn';
+            audioBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
+            audioBtn.onclick = (e) => {
+                e.stopPropagation();
+                playItemAudio(item);
+            };
+
+            bubble.appendChild(speakerTag);
+            bubble.appendChild(textSpan);
+            bubble.appendChild(audioBtn);
+            chatBox.appendChild(bubble);
+        }
+
+        // 自動滾動到最底部
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // 更新進度與解鎖提示
+        document.getElementById('lbl-dialogue-progress').innerText = `${dialogueIndex + 1} / ${dialogueList.length}`;
+        document.getElementById('btn-dialogue-next').disabled = (dialogueIndex >= dialogueList.length - 1);
+
+        const blindBox = document.getElementById('box-blind-unlock');
+        if (dialogueSubMode === 'blind' && !isBlindUnlocked && (dialogueList[dialogueIndex].speaker === userRole)) {
+            blindBox.style.display = 'block';
+        } else {
+            blindBox.style.display = 'none';
+        }
+    }
+
+    function getDisplayTextForBubble(item, index) {
+        if (dialogueSubMode === 'basic') {
+            return item.targetText;
+        } else if (dialogueSubMode === 'fill') {
+            return item.fillText;
+        } else if (dialogueSubMode === 'blind') {
+            if (index < dialogueIndex || isBlindUnlocked || item.speaker !== userRole) {
+                return item.targetText;
+            } else {
+                return "??? (聽音或跟讀高分解鎖)";
+            }
+        }
+        return item.targetText;
     }
 
     function unlockBlindTextManually() {
         isBlindUnlocked = true;
-        displayDialogueSentence();
+        renderChatHistory();
     }
 
-    function playDialogueAudio() {
-        playSpecificDialogueAudio(dialogueIndex);
+    function playCurrentStepAudio() {
+        if (!dialogueList || dialogueList.length === 0) return;
+        const current = dialogueList[dialogueIndex];
+        playItemAudio(current);
     }
 
-    function playSpecificDialogueAudio(index) {
-        if (!dialogueList || !dialogueList[index]) return;
-        const current = dialogueList[index];
-        
-        if (current.audioUrl && current.audioUrl.trim() !== '') {
-            new Audio(current.audioUrl).play().catch(() => speakTTS(current.targetText));
+    function playItemAudio(item, onEndedCallback) {
+        if (!item) return;
+        if (item.audioUrl && item.audioUrl.trim() !== '') {
+            const audio = new Audio(item.audioUrl);
+            audio.play().then(() => {
+                if (onEndedCallback) audio.onended = onEndedCallback;
+            }).catch(() => {
+                speakTTS(item.targetText, onEndedCallback);
+            });
         } else {
-            speakTTS(current.targetText);
+            speakTTS(item.targetText, onEndedCallback);
         }
     }
 
-    function prevDialogueSentence() {
-        if (dialogueIndex > 0) {
-            dialogueIndex--;
-            isBlindUnlocked = false;
-            displayDialogueSentence();
-        }
-    }
-
-    function nextDialogueSentence() {
+    function forceNextStep() {
         if (dialogueIndex < dialogueList.length - 1) {
-            dialogueIndex++;
-            isBlindUnlocked = false;
-            displayDialogueSentence();
+            advanceDialogueStep();
+        }
+    }
+
+    function advanceDialogueStep() {
+        if (dialogueIndex >= dialogueList.length - 1) {
+            document.getElementById('lbl-dialogue-score').innerText = "🎉 恭喜完成對話練習！";
+            return;
+        }
+
+        isBlindUnlocked = false;
+        dialogueIndex++; // 解鎖下一句
+
+        const nextItem = dialogueList[dialogueIndex];
+        const isUserTurn = (nextItem.speaker === userRole);
+
+        renderChatHistory();
+
+        // 若下一句是系統角色（非使用者扮演），自動朗讀，並隨後解鎖下一句給使用者練習
+        if (!isUserTurn) {
+            setTimeout(() => {
+                playItemAudio(nextItem, () => {
+                    if (dialogueIndex < dialogueList.length - 1) {
+                        dialogueIndex++; // 推進到使用者的回答句
+                        renderChatHistory();
+                    }
+                });
+            }, 500);
         }
     }
 
@@ -1951,13 +1970,16 @@
         }
     }
 
-    function speakTTS(text) {
+    function speakTTS(text, onEndedCallback) {
         if (!text) return;
         const synth = window.speechSynthesis;
         synth.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
         utterance.lang = langMap[currentConfig.category] || 'ko-KR';
+        if (onEndedCallback) {
+            utterance.onend = onEndedCallback;
+        }
         synth.speak(utterance);
     }
 
@@ -2014,7 +2036,6 @@
         recognition.onresult = (event) => {
             const userSpeech = event.results[0][0].transcript;
 
-            // 如果是在對話練習頁面
             if (currentConfig.mode === 'dialogue') {
                 document.getElementById('lbl-dialogue-recognized').innerText = userSpeech;
 
@@ -2024,21 +2045,16 @@
                 const score = calculateSimilarity(targetText, userSpeech);
                 document.getElementById('lbl-dialogue-score').innerText = `得分：${score}分`;
 
-                // 盲測模式下得分高於 60 分自動解鎖顯示文字
-                if (dialogueSubMode === 'blind' && score >= 60) {
-                    isBlindUnlocked = true;
-                    renderChatContainer();
-                    document.getElementById('box-blind-unlock').style.display = 'none';
-                }
-
-                // 如果分數及格 (>=60)，自動前進到下一句對話
-                if (score >= 60 && dialogueIndex < dialogueList.length - 1) {
+                // 當練習通過 (得分 >= 60 分) 且該句是使用者的角色，自動推進到下一句對話！
+                if (score >= 60 && currentSentence.speaker === userRole) {
+                    if (dialogueSubMode === 'blind') {
+                        isBlindUnlocked = true;
+                    }
                     setTimeout(() => {
-                        nextDialogueSentence();
-                    }, 1200);
+                        advanceDialogueStep();
+                    }, 800);
                 }
             } else {
-                // 常規跟讀模式
                 document.getElementById('lbl-recognized-text').innerText = userSpeech;
                 
                 const currentQ = questions[currentIndex];
