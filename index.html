@@ -877,6 +877,10 @@
     function stopSpeechRecognition() {
         if (recognition) {
             try { 
+                recognition.onstart = null;
+                recognition.onend = null;
+                recognition.onerror = null;
+                recognition.onresult = null;
                 recognition.abort(); 
             } catch (e) {}
         }
@@ -1285,7 +1289,7 @@
 
     function switchDialogueMode(mode) {
         dialogueSubMode = mode;
-        dialogueIndex = 0; // 💡 切換模式時，重新從第一句開始
+        dialogueIndex = 0; // 重置為第一句
         ['basic', 'fill', 'blind'].forEach(m => {
             const btn = document.getElementById(`btn-mode-${m}`);
             if (btn) btn.classList.remove('active');
@@ -1298,7 +1302,7 @@
 
     function switchUserRole(role) {
         userRole = role;
-        dialogueIndex = 0; // 💡 切換角色時，重新從第一句開始
+        dialogueIndex = 0; // 重置為第一句
         ['a', 'b'].forEach(r => {
             const btn = document.getElementById(`btn-role-${r.toLowerCase()}`);
             if (btn) btn.classList.remove('active');
@@ -1389,7 +1393,7 @@
     }
 
     function playSpecificDialogueAudio(idx) {
-        stopSpeechRecognition();
+        stopSpeechRecognition(); // 💡 播放語音時，務必先切斷錄音，防止衝突發出 aborted 錯誤
         if (!dialogueList || !dialogueList[idx]) return;
         const target = dialogueList[idx];
         if (target.audioUrl && target.audioUrl.trim() !== '') {
@@ -1954,6 +1958,7 @@
 
     function speakTTS(text) {
         if (!text) return;
+        stopSpeechRecognition(); // 💡 確保發音前關閉麥克風，防止中斷錯誤
         const synth = window.speechSynthesis;
         synth.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
@@ -2001,9 +2006,7 @@
             return;
         }
 
-        if (recognition) {
-            try { recognition.abort(); } catch(e){}
-        }
+        stopSpeechRecognition(); // 徹底釋放舊的辨識物件
 
         recognition = new SpeechRecognition();
         recognition.continuous = false;
@@ -2068,6 +2071,13 @@
         recognition.onerror = (e) => {
             isRecording = false;
             document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
+
+            // 忽略正常暫停引發的中斷
+            if (e.error === 'aborted') {
+                console.log("辨識被使用者或系統正常中斷");
+                return;
+            }
+
             console.error("語音辨識發生錯誤：", e.error);
 
             let msg = "錄音錯誤：";
@@ -2093,6 +2103,7 @@
         if (isToggling) return;
         isToggling = true;
 
+        // 💡 錄音前，先切斷所有正在播放的 TTS 語音
         if (window.speechSynthesis) {
             window.speechSynthesis.cancel();
         }
@@ -2120,7 +2131,7 @@
                 } finally {
                     setTimeout(() => { isToggling = false; }, 400);
                 }
-            }, 200);
+            }, 250);
         }
     }
 
