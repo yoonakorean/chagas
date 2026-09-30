@@ -286,25 +286,80 @@
         .btn-nav:hover:not(:disabled) { background: #e5e7eb; }
         .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        .challenge-header-btns {
+        /* ⚙️ 右上角齒輪選單樣式 */
+        .challenge-top-bar {
             display: flex;
-            gap: 8px;
-            justify-content: center;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 12px;
+            position: relative;
         }
 
-        .btn-sub-nav {
+        .gear-menu-container {
+            position: relative;
+        }
+
+        .btn-gear {
             background: #f3f4f6;
             border: 1px solid #d1d5db;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.85rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
             cursor: pointer;
-            font-weight: bold;
             color: #4b5563;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
         }
 
-        .btn-sub-nav:hover { background: #e5e7eb; color: var(--duo-blue); }
+        .btn-gear:hover {
+            background: #e5e7eb;
+            color: var(--duo-blue);
+        }
+
+        .gear-dropdown {
+            display: none;
+            position: absolute;
+            top: 42px;
+            right: 0;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 6px;
+            z-index: 100;
+            min-width: 120px;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .gear-dropdown.show {
+            display: flex;
+        }
+
+        .gear-dropdown-item {
+            background: none;
+            border: none;
+            padding: 8px 12px;
+            text-align: left;
+            font-size: 0.88rem;
+            font-weight: bold;
+            color: #374151;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .gear-dropdown-item:hover {
+            background: #ddf4ff;
+            color: var(--duo-blue);
+        }
 
         .block-zone {
             min-height: 70px;
@@ -728,13 +783,17 @@
 
     <!-- 步驟 6-A：跟讀挑戰畫面 -->
     <div id="step-quiz-shadow" class="step-page">
-        <div class="challenge-header-btns">
-            <button class="btn-sub-nav" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-            <button class="btn-sub-nav" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-            <button class="btn-sub-nav" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+        <div class="challenge-top-bar">
+            <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+            <div class="gear-menu-container">
+                <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-shadow')" title="選單"><i class="fa-solid fa-gear"></i></button>
+                <div class="gear-dropdown" id="gear-dropdown-shadow">
+                    <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
+                    <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
+                    <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+                </div>
+            </div>
         </div>
-
-        <div style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 10px;" class="lbl-quiz-info"></div>
 
         <div class="target-text" id="lbl-target-text">載入中...</div>
         <div class="translation-text" id="lbl-translation">...</div>
@@ -763,13 +822,17 @@
 
     <!-- 步驟 6-B：聽音重組字塊畫面 -->
     <div id="step-quiz-blocks" class="step-page">
-        <div class="challenge-header-btns">
-            <button class="btn-sub-nav" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-            <button class="btn-sub-nav" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-            <button class="btn-sub-nav" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+        <div class="challenge-top-bar">
+            <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+            <div class="gear-menu-container">
+                <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-blocks')" title="選單"><i class="fa-solid fa-gear"></i></button>
+                <div class="gear-dropdown" id="gear-dropdown-blocks">
+                    <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
+                    <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
+                    <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+                </div>
+            </div>
         </div>
-
-        <div style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 10px;" class="lbl-quiz-info"></div>
 
         <div style="margin: 15px 0;">
             <button class="btn-circle btn-listen" onclick="playBlockAudio()" style="margin: 0 auto;">
@@ -800,13 +863,17 @@
 
     <!-- 步驟 6-C：聊天視窗風對話練習畫面 -->
     <div id="step-quiz-dialogue" class="step-page">
-        <div class="challenge-header-btns">
-            <button class="btn-sub-nav" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-            <button class="btn-sub-nav" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-            <button class="btn-sub-nav" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+        <div class="challenge-top-bar">
+            <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+            <div class="gear-menu-container">
+                <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-dialogue')" title="選單"><i class="fa-solid fa-gear"></i></button>
+                <div class="gear-dropdown" id="gear-dropdown-dialogue">
+                    <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
+                    <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
+                    <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+                </div>
+            </div>
         </div>
-
-        <div style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 8px;" class="lbl-quiz-info"></div>
 
         <!-- 對話三模式切換 -->
         <div class="dialogue-sub-nav">
@@ -850,13 +917,17 @@
 
     <!-- 步驟 6-D：單字跟讀挑戰畫面 -->
     <div id="step-quiz-vocab-shadow" class="step-page">
-        <div class="challenge-header-btns">
-            <button class="btn-sub-nav" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-            <button class="btn-sub-nav" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-            <button class="btn-sub-nav" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+        <div class="challenge-top-bar">
+            <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+            <div class="gear-menu-container">
+                <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-shadow')" title="選單"><i class="fa-solid fa-gear"></i></button>
+                <div class="gear-dropdown" id="gear-dropdown-vocab-shadow">
+                    <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
+                    <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
+                    <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+                </div>
+            </div>
         </div>
-
-        <div style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 10px;" class="lbl-quiz-info"></div>
 
         <div class="target-text" id="lbl-vocab-target-text">載入中...</div>
         <div class="translation-text" id="lbl-vocab-translation" style="min-height: 1.5rem;"></div>
@@ -884,17 +955,22 @@
 
     <!-- 步驟 6-E：單字聽打挑戰畫面 -->
     <div id="step-quiz-vocab-type" class="step-page">
-        <div class="challenge-header-btns">
-            <button class="btn-sub-nav" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-            <button class="btn-sub-nav" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-            <button class="btn-sub-nav" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+        <div class="challenge-top-bar">
+            <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+            <div class="gear-menu-container">
+                <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-type')" title="選單"><i class="fa-solid fa-gear"></i></button>
+                <div class="gear-dropdown" id="gear-dropdown-vocab-type">
+                    <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
+                    <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
+                    <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+                </div>
+            </div>
         </div>
 
-        <div style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 10px;" class="lbl-quiz-info"></div>
-
-        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 15px 0;">
-            <div class="target-text" id="lbl-vocab-type-text" style="margin: 0; min-height: auto;">...</div>
-            <button class="btn-circle btn-listen" onclick="playVocabAudio()" style="width: 45px; height: 45px; font-size: 1rem; flex-shrink: 0;" title="聽示範音">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 25px 0 15px 0;">
+            <!-- 題目預設隱藏，避免洩題 -->
+            <div class="target-text" id="lbl-vocab-type-text" style="margin: 0; min-height: auto; display: none;">...</div>
+            <button class="btn-circle btn-listen" onclick="playVocabAudio()" style="width: 65px; height: 65px; font-size: 1.5rem; flex-shrink: 0;" title="聽示範音">
                 <i class="fa-solid fa-volume-high"></i>
             </button>
         </div>
@@ -918,13 +994,17 @@
 
     <!-- 步驟 6-F：單字意思選擇題畫面 -->
     <div id="step-quiz-vocab-choice" class="step-page">
-        <div class="challenge-header-btns">
-            <button class="btn-sub-nav" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-            <button class="btn-sub-nav" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-            <button class="btn-sub-nav" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+        <div class="challenge-top-bar">
+            <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+            <div class="gear-menu-container">
+                <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-choice')" title="選單"><i class="fa-solid fa-gear"></i></button>
+                <div class="gear-dropdown" id="gear-dropdown-vocab-choice">
+                    <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
+                    <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
+                    <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+                </div>
+            </div>
         </div>
-
-        <div style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 10px;" class="lbl-quiz-info"></div>
 
         <div class="target-text" id="lbl-vocab-choice-text">載入中...</div>
 
@@ -993,6 +1073,27 @@
     let isTypewriterTyping = false;
     let currentFullDialogText = "";
 
+    // 💡 齒輪下拉選單控制
+    function toggleGearDropdown(dropdownId) {
+        const dropdown = document.getElementById(dropdownId);
+        const allDropdowns = document.querySelectorAll('.gear-dropdown');
+        
+        allDropdowns.forEach(d => {
+            if (d.id !== dropdownId) d.classList.remove('show');
+        });
+
+        if (dropdown) {
+            dropdown.classList.toggle('show');
+        }
+    }
+
+    // 點擊頁面其他地方時自動關閉齒輪選單
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.gear-menu-container')) {
+            document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
+        }
+    });
+
     // 💡 iOS 專屬修復：徹底解綁事件並強制銷毀實體
     function stopSpeechRecognition() {
         if (recognition) {
@@ -1010,7 +1111,8 @@
     }
 
     function goToStep(stepId) {
-        stopSpeechRecognition(); // 💡 頁面切換強制銷毀麥克風
+        stopSpeechRecognition();
+        document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show')); // 關閉選單
         document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
         document.getElementById(stepId).classList.add('active');
     }
@@ -1450,7 +1552,12 @@
 
         } else if (currentConfig.mode === 'vocab_type') {
             document.getElementById('lbl-vocab-type-progress').innerText = `${vocabIndex + 1} / ${total}`;
-            document.getElementById('lbl-vocab-type-text').innerText = currentVocab.text || "";
+            
+            // 💡 單字聽打題目預設隱藏
+            const typeTextElem = document.getElementById('lbl-vocab-type-text');
+            typeTextElem.innerText = currentVocab.text || "";
+            typeTextElem.style.display = 'none';
+
             document.getElementById('input-vocab-type').value = "";
             document.getElementById('lbl-vocab-type-translation').innerText = "";
             document.getElementById('lbl-vocab-type-score').innerText = "等待輸入...";
@@ -1510,10 +1617,14 @@
 
         const scoreBadge = document.getElementById('lbl-vocab-type-score');
         const transLbl = document.getElementById('lbl-vocab-type-translation');
+        const typeTextElem = document.getElementById('lbl-vocab-type-text');
 
         if (userText === targetText) {
             scoreBadge.innerText = "🎉 完全正確！太棒了！";
             scoreBadge.style.color = "#58cc02";
+            
+            // 💡 答對後顯示單字文字與翻譯
+            typeTextElem.style.display = 'block';
             transLbl.innerText = `💡 翻譯：${getTranslationByLang(currentVocab)}`;
             playVocabAudio();
         } else {
@@ -1538,7 +1649,7 @@
     }
 
     function prevVocabQuestion() {
-        stopSpeechRecognition(); // 💡 上一題切換時關閉錄音
+        stopSpeechRecognition();
         if (vocabIndex > 0) {
             vocabIndex--;
             displayVocabQuestion();
@@ -1546,7 +1657,7 @@
     }
 
     function nextVocabQuestion() {
-        stopSpeechRecognition(); // 💡 下一題切換時關閉錄音
+        stopSpeechRecognition();
         if (vocabIndex < vocabQuestions.length - 1) {
             vocabIndex++;
             displayVocabQuestion();
@@ -1730,7 +1841,7 @@
     }
 
     function prevDialogueSentence() {
-        stopSpeechRecognition(); // 💡 切換對話上一句關閉麥克風
+        stopSpeechRecognition();
         if (dialogueIndex > 0) {
             dialogueIndex--;
             isBlindUnlocked = false;
@@ -1739,7 +1850,7 @@
     }
 
     function nextDialogueSentence() {
-        stopSpeechRecognition(); // 💡 切換對話下一句關閉麥克風
+        stopSpeechRecognition();
         if (dialogueIndex < dialogueList.length - 1) {
             dialogueIndex++;
             isBlindUnlocked = false;
@@ -2156,7 +2267,7 @@
     }
 
     function displayQuestion() {
-        stopSpeechRecognition(); // 💡 題目切換時關閉麥克風
+        stopSpeechRecognition();
 
         if (!questions || questions.length === 0) return;
         const q = questions[currentIndex];
@@ -2257,7 +2368,7 @@
     }
 
     function nextQuestion() {
-        stopSpeechRecognition(); // 💡 按下一題立刻摧毀麥克風
+        stopSpeechRecognition();
         if (currentIndex < questions.length - 1) {
             currentIndex++;
             displayQuestion();
@@ -2265,7 +2376,7 @@
     }
 
     function prevQuestion() {
-        stopSpeechRecognition(); // 💡 按上一題立刻摧毀麥克風
+        stopSpeechRecognition();
         if (currentIndex > 0) {
             currentIndex--;
             displayQuestion();
@@ -2353,7 +2464,7 @@
         };
 
         recognition.onend = () => {
-            stopSpeechRecognition(); // 💡 辨識完畢自動徹底關閉，避免 iOS 持續掛著
+            stopSpeechRecognition();
         };
 
         recognition.onresult = (event) => {
@@ -2399,7 +2510,7 @@
                 document.getElementById('lbl-score').innerText = `得分：${score}分`;
             }
 
-            stopSpeechRecognition(); // 💡 iOS 防護：產出結果後立刻切斷 session
+            stopSpeechRecognition();
         };
 
         recognition.onerror = (e) => {
@@ -2465,7 +2576,6 @@
         }
     }
 
-    // 💡 iPhone/iOS 防護：視窗背景/關閉螢幕/離開分頁時立刻切斷
     window.addEventListener('visibilitychange', () => {
         if (document.hidden) {
             stopSpeechRecognition();
