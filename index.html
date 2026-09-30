@@ -3,17 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>優娜多語島</title>
+    <title>多語種雲端遊戲化學習系統</title>
+    <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK (Compat Version 9.23.0) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <!-- Firebase 設定檔 -->
+    <script src="js/firebase-config.js"></script>
+
     <style>
         :root {
             --duo-green: #58cc02;
+            --duo-green-shadow: #46a302;
             --duo-blue: #1cb0f6;
+            --duo-blue-shadow: #1899d6;
             --duo-red: #ff4b4b;
+            --duo-red-shadow: #ea2b2b;
             --duo-purple: #818cf8;
             --duo-orange: #f59e0b;
             --duo-gray: #e5e7eb;
             --duo-dark: #1f2937;
+            --duo-gold: #f59e0b;
         }
 
         body {
@@ -21,2576 +35,1051 @@
             background: #f9fafb;
             display: flex;
             justify-content: center;
-            padding: 20px;
+            padding: 10px;
             margin: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .shadowing-card {
-            background: white;
-            border: 2px solid #e5e7eb;
-            border-radius: 20px;
-            padding: 24px;
+        .app-container {
             width: 100%;
-            max-width: 480px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            text-align: center;
+            max-width: 500px;
+            min-height: 95vh;
+            background: #ffffff;
+            border-radius: 20px;
+            border: 2px solid #e5e7eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
             position: relative;
+            box-sizing: border-box;
+            overflow: hidden;
         }
 
-        .step-page { display: none; }
+        /* 頂部導航資訊欄 */
+        .user-meta-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: #ffffff;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        .user-meta-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #374151;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            user-select: none;
+        }
+        .user-meta-item:hover { background: #f3f4f6; }
+
+        /* 3D 按鈕 */
+        .btn-3d {
+            font-size: 0.95rem; font-weight: bold; border: none;
+            border-radius: 14px; cursor: pointer; transition: all 0.1s ease;
+            user-select: none; touch-action: manipulation;
+        }
+        .btn-3d-primary { background: var(--duo-green); color: white; box-shadow: 0 4px 0 var(--duo-green-shadow); }
+        .btn-3d-primary:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--duo-green-shadow); }
+        .btn-3d-secondary { background: #ffffff; color: #4b5563; border: 2px solid #e5e7eb; box-shadow: 0 4px 0 #e5e7eb; }
+        .btn-3d-secondary:active { transform: translateY(2px); box-shadow: 0 1px 0 #e5e7eb; }
+
+        .btn-google {
+            background: #ffffff; color: #374151; border: 2px solid #e5e7eb;
+            box-shadow: 0 4px 0 #e5e7eb; display: flex; align-items: center;
+            justify-content: center; gap: 10px; width: 100%; padding: 12px;
+            font-size: 1rem; font-weight: bold; border-radius: 14px; cursor: pointer;
+        }
+        .btn-google:active { transform: translateY(2px); box-shadow: 0 1px 0 #e5e7eb; }
+
+        /* Modal 彈窗 */
+        .custom-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.55); display: flex; justify-content: center;
+            align-items: center; z-index: 9999;
+        }
+        .custom-modal-card {
+            background: white; border-radius: 24px; padding: 24px 20px;
+            width: 88%; max-width: 400px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25); position: relative;
+            box-sizing: border-box;
+        }
+        .close-icon-circle {
+            position: absolute; top: 14px; left: 16px; width: 28px; height: 28px;
+            background: #f3f4f6; color: #9ca3af; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .hidden { display: none !important; }
+        input, select {
+            width: 100%; padding: 10px 12px; margin: 6px 0; border-radius: 12px;
+            border: 2px solid #e5e7eb; box-sizing: border-box; font-size: 0.95rem;
+        }
+
+        /* 步驟畫面控制 */
+        .step-page { display: none; padding: 16px; text-align: center; }
         .step-page.active { display: block; }
 
-        h2.step-title {
-            color: var(--duo-dark);
-            font-size: 1.3rem;
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
-
-        .option-grid {
-            display: grid;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
+        h2.step-title { color: var(--duo-dark); font-size: 1.25rem; margin: 0 0 16px 0; }
+        .option-grid { display: grid; gap: 10px; margin-bottom: 16px; }
         .grid-1 { grid-template-columns: 1fr; }
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
         .grid-3 { grid-template-columns: repeat(3, 1fr); }
 
         .btn-option {
-            background: white;
-            border: 2px solid #e5e7eb;
-            border-bottom: 4px solid #e5e7eb;
-            border-radius: 14px;
-            padding: 14px 10px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: var(--duo-dark);
-            cursor: pointer;
-            transition: all 0.15s ease;
-            text-align: center;
-            white-space: nowrap;
+            background: white; border: 2px solid #e5e7eb; border-bottom: 4px solid #e5e7eb;
+            border-radius: 14px; padding: 12px 10px; font-size: 1rem; font-weight: bold;
+            color: var(--duo-dark); cursor: pointer; transition: all 0.15s ease;
         }
-
-        .btn-option:hover {
-            border-color: var(--duo-blue);
-            color: var(--duo-blue);
-        }
-
+        .btn-option:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
         .btn-option.selected {
-            border-color: var(--duo-blue) !important;
-            border-bottom-color: #1899d6 !important;
-            background-color: #ddf4ff !important;
-            color: var(--duo-blue) !important;
+            border-color: var(--duo-blue) !important; border-bottom-color: #1899d6 !important;
+            background-color: #ddf4ff !important; color: var(--duo-blue) !important;
         }
 
         .stage-card-item {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 14px;
-            padding: 12px;
-            margin-bottom: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+            background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 14px;
+            padding: 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;
         }
-
-        .stage-card-title {
-            font-weight: bold;
-            color: var(--duo-dark);
-            text-align: left;
-            font-size: 1rem;
-            margin-bottom: 4px;
-        }
-
-        .stage-btn-group {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 6px;
-        }
-
+        .stage-card-title { font-weight: bold; color: var(--duo-dark); text-align: left; font-size: 0.95rem; }
+        .stage-btn-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
         .btn-stage-action {
-            background: white;
-            border: 2px solid #cbd5e1;
-            border-bottom: 3px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 8px 2px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: #334155;
-            cursor: pointer;
-            transition: all 0.15s ease;
+            background: white; border: 2px solid #cbd5e1; border-bottom: 3px solid #cbd5e1;
+            border-radius: 10px; padding: 8px 2px; font-size: 0.85rem; font-weight: bold;
+            color: #334155; cursor: pointer;
         }
-
-        .btn-stage-action:hover {
-            border-color: var(--duo-blue);
-            color: var(--duo-blue);
-        }
-
-        .btn-stage-action.btn-grammar-stage:hover {
-            border-color: var(--duo-purple);
-            color: var(--duo-purple);
-        }
-
-        .btn-stage-action.btn-dialogue-stage:hover {
-            border-color: var(--duo-orange);
-            color: var(--duo-orange);
-        }
-
-        .btn-stage-action.btn-vocab-stage:hover {
-            border-color: #10b981;
-            color: #10b981;
-        }
+        .btn-stage-action:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
 
         .btn-confirm {
-            width: 100%;
-            background: var(--duo-green);
-            color: white;
-            border: none;
-            border-bottom: 4px solid #46a302;
-            padding: 14px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border-radius: 14px;
-            cursor: pointer;
-            margin-top: 10px;
-            box-sizing: border-box;
+            width: 100%; background: var(--duo-green); color: white; border: none;
+            border-bottom: 4px solid var(--duo-green-shadow); padding: 12px;
+            font-size: 1.05rem; font-weight: bold; border-radius: 14px; cursor: pointer; box-sizing: border-box;
         }
+        .btn-confirm:active { transform: translateY(2px); border-bottom-width: 2px; }
 
-        .btn-confirm:active {
-            transform: translateY(2px);
-            border-bottom-width: 2px;
-        }
-
-        .btn-sync-refresh {
-            background: none;
-            border: none;
-            color: var(--duo-blue);
-            font-size: 0.85rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 15px;
-            text-decoration: underline;
-        }
-
-        .top-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .btn-back-step {
-            background: none;
-            border: none;
-            color: #6b7280;
-            font-size: 0.95rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: bold;
+            background: none; border: none; color: #6b7280; font-size: 0.95rem;
+            cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: bold;
         }
-
         .btn-back-step:hover { color: var(--duo-blue); }
 
-        .target-text {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #1f2937;
-            margin: 15px 0 5px 0;
-            min-height: 2.5rem;
-            word-break: break-word;
-        }
-
-        .translation-text {
-            font-size: 1.1rem;
-            color: #6b7280;
-            margin-bottom: 8px;
-            min-height: 1.5rem;
-        }
-
+        .target-text { font-size: 1.6rem; font-weight: bold; color: #1f2937; margin: 15px 0 5px 0; min-height: 2.2rem; }
+        .translation-text { font-size: 1rem; color: #6b7280; margin-bottom: 8px; min-height: 1.4rem; }
         .hint-text {
-            font-size: 0.9rem;
-            color: #f59e0b;
-            background-color: #fef3c7;
-            padding: 6px 12px;
-            border-radius: 10px;
-            display: inline-block;
-            margin-bottom: 20px;
+            font-size: 0.85rem; color: #f59e0b; background-color: #fef3c7;
+            padding: 6px 12px; border-radius: 10px; display: inline-block; margin-bottom: 15px;
         }
 
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
+        .controls { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
         .btn-circle {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            font-size: 1.2rem;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
+            width: 52px; height: 52px; border-radius: 50%; border: none;
+            cursor: pointer; font-size: 1.2rem; color: white; display: flex;
+            align-items: center; justify-content: center; transition: all 0.2s;
         }
-
-        .btn-listen { background: var(--duo-blue); box-shadow: 0 4px 0 #1899d6; }
-        .btn-record { background: var(--duo-red); box-shadow: 0 4px 0 #ea2b2b; }
+        .btn-listen { background: var(--duo-blue); box-shadow: 0 4px 0 var(--duo-blue-shadow); }
+        .btn-record { background: var(--duo-red); box-shadow: 0 4px 0 var(--duo-red-shadow); }
         .btn-record.recording { animation: pulse 1s infinite; background: #dc2626; }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.08); }
-            100% { transform: scale(1); }
-        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
 
-        .result-box {
-            background: #f3f4f6;
-            border-radius: 12px;
-            padding: 12px;
-            margin-top: 10px;
-            font-size: 0.95rem;
-        }
+        .result-box { background: #f3f4f6; border-radius: 12px; padding: 12px; margin-top: 10px; font-size: 0.95rem; }
+        .score-badge { font-size: 1.05rem; font-weight: bold; color: var(--duo-green); margin-top: 4px; }
 
-        .score-badge {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: var(--duo-green);
-            margin-top: 4px;
-        }
-
-        .nav-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-        }
-
+        .nav-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
         .btn-nav {
-            background: #f3f4f6;
-            border: 1px solid #d1d5db;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            color: #374151;
+            background: #f3f4f6; border: 1px solid #d1d5db; padding: 8px 14px;
+            border-radius: 8px; cursor: pointer; font-weight: bold; color: #374151;
         }
-
         .btn-nav:hover:not(:disabled) { background: #e5e7eb; }
         .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* ⚙️ 右上角齒輪選單樣式 */
-        .challenge-top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            position: relative;
-        }
-
-        .gear-menu-container {
-            position: relative;
-        }
-
-        .btn-gear {
-            background: #f3f4f6;
-            border: 1px solid #d1d5db;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            color: #4b5563;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .btn-gear:hover {
-            background: #e5e7eb;
-            color: var(--duo-blue);
-        }
-
-        .gear-dropdown {
-            display: none;
-            position: absolute;
-            top: 42px;
-            right: 0;
-            background: white;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            padding: 6px;
-            z-index: 100;
-            min-width: 120px;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .gear-dropdown.show {
-            display: flex;
-        }
-
-        .gear-dropdown-item {
-            background: none;
-            border: none;
-            padding: 8px 12px;
-            text-align: left;
-            font-size: 0.88rem;
-            font-weight: bold;
-            color: #374151;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .gear-dropdown-item:hover {
-            background: #ddf4ff;
-            color: var(--duo-blue);
-        }
-
         .block-zone {
-            min-height: 70px;
-            border-bottom: 2px dashed #cbd5e1;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            padding: 10px;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
+            min-height: 60px; border-bottom: 2px dashed #cbd5e1; display: flex;
+            flex-wrap: wrap; gap: 8px; padding: 10px; justify-content: center;
+            align-items: center; margin-bottom: 15px;
         }
-
         .block-chip {
-            background: white;
-            border: 2px solid #cbd5e1;
-            border-bottom: 4px solid #cbd5e1;
-            border-radius: 12px;
-            padding: 8px 14px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: var(--duo-dark);
-            cursor: pointer;
-            user-select: none;
-            transition: transform 0.1s;
+            background: white; border: 2px solid #cbd5e1; border-bottom: 4px solid #cbd5e1;
+            border-radius: 12px; padding: 8px 12px; font-size: 1rem; font-weight: bold;
+            color: var(--duo-dark); cursor: pointer; user-select: none;
         }
+        .block-chip.used { opacity: 0.3; pointer-events: none; background: #f3f4f6; }
 
-        .block-chip:active {
-            transform: translateY(2px);
-            border-bottom-width: 2px;
-        }
-
-        .block-chip.used {
-            opacity: 0.3;
-            pointer-events: none;
-            background: #f3f4f6;
-        }
-
-        .vocab-input {
-            width: 80%;
-            padding: 12px;
-            font-size: 1.2rem;
-            border: 2px solid #cbd5e1;
-            border-radius: 12px;
-            text-align: center;
-            outline: none;
-            margin: 15px 0;
-            font-weight: bold;
-        }
-        .vocab-input:focus { border-color: var(--duo-blue); }
-
-        .vocab-choice-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .btn-vocab-choice {
-            background: white;
-            border: 2px solid #e5e7eb;
-            border-bottom: 3px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 12px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: var(--duo-dark);
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-        .btn-vocab-choice:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
-
-        /* ---------------- 對話聊天視窗樣式 ---------------- */
-        .dialogue-sub-nav {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 10px;
-            justify-content: center;
-        }
-        .btn-dialogue-mode {
-            padding: 6px 12px;
-            font-size: 0.8rem;
-            border-radius: 8px;
-            border: 1px solid #d1d5db;
-            background: #f9fafb;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .btn-dialogue-mode.active {
-            background: var(--duo-orange);
-            color: white;
-            border-color: #d97706;
-        }
-
-        .role-switch-box {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .btn-role {
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 2px solid #e5e7eb;
-            background: white;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-        .btn-role.active {
-            border-color: var(--duo-blue);
-            background: #ddf4ff;
-            color: var(--duo-blue);
-        }
-
+        /* 聊天視窗樣式 */
         .chat-window {
-            background: #f0f2f5;
-            border: 2px solid #e5e7eb;
-            border-radius: 16px;
-            height: 320px;
-            overflow-y: auto;
-            padding: 12px;
-            margin-bottom: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            text-align: left;
-            scroll-behavior: smooth;
+            background: #f0f2f5; border: 2px solid #e5e7eb; border-radius: 16px;
+            height: 280px; overflow-y: auto; padding: 12px; margin-bottom: 12px;
+            display: flex; flex-direction: column; gap: 10px; text-align: left;
         }
-
-        .chat-bubble-row {
-            display: flex;
-            flex-direction: column;
-            max-width: 82%;
-            animation: popIn 0.25s ease-out;
-        }
-
-        @keyframes popIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        .chat-bubble-row { display: flex; flex-direction: column; max-width: 85%; }
         .chat-bubble-row.speaker-A { align-self: flex-start; }
         .chat-bubble-row.speaker-B { align-self: flex-end; }
-
-        .chat-speaker-label {
-            font-size: 0.72rem;
-            color: #6b7280;
-            margin-bottom: 3px;
-            font-weight: bold;
-            padding: 0 4px;
-        }
+        .chat-speaker-label { font-size: 0.7rem; color: #6b7280; margin-bottom: 2px; font-weight: bold; }
         .chat-bubble-row.speaker-B .chat-speaker-label { text-align: right; }
-
         .chat-bubble {
-            padding: 10px 14px;
-            border-radius: 16px;
-            font-size: 1.05rem;
-            line-height: 1.4;
-            position: relative;
-            word-break: break-word;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-            font-weight: 600;
+            padding: 8px 12px; border-radius: 14px; font-size: 0.95rem; font-weight: 600;
         }
+        .chat-bubble-row.speaker-A .chat-bubble { background: #ffffff; color: #1f2937; border: 1px solid #e5e7eb; }
+        .chat-bubble-row.speaker-B .chat-bubble { background: #0084ff; color: #ffffff; }
 
-        .chat-bubble-row.speaker-A .chat-bubble {
-            background-color: #ffffff;
-            color: #1f2937;
-            border-bottom-left-radius: 4px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .chat-bubble-row.speaker-B .chat-bubble {
-            background-color: #0084ff;
-            color: #ffffff;
-            border-bottom-right-radius: 4px;
-        }
-
-        .chat-bubble.active-target { outline: 2.5px solid var(--duo-blue); }
-        .chat-bubble-row.speaker-B .chat-bubble.active-target { outline: 2.5px solid var(--duo-green); }
-
-        .chat-bubble .btn-bubble-play {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.08);
-            border: none;
-            border-radius: 50%;
-            width: 26px;
-            height: 26px;
-            font-size: 0.75rem;
-            margin-left: 6px;
-            cursor: pointer;
-            color: inherit;
-            vertical-align: middle;
-        }
-
-        /* 語法與常規樣式 */
-        .grammar-dialog-box {
-            background: #eef2ff;
-            border: 2px solid #818cf8;
-            border-radius: 16px;
-            padding: 20px;
-            padding-bottom: 35px;
-            font-size: 1.1rem;
-            color: #312e81;
-            text-align: left;
-            margin-bottom: 15px;
-            min-height: 90px;
-            line-height: 1.6;
-            position: relative;
-            cursor: pointer;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
-        .btn-gram2-audio {
-            position: absolute;
-            bottom: 8px;
-            right: 12px;
-            background: #818cf8;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 4px 10px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .blank-slot {
-            display: inline-block;
-            min-width: 80px;
-            border-bottom: 3px solid var(--duo-blue);
-            color: var(--duo-blue);
-            text-align: center;
-            padding: 0 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .grammar-nav-btns {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .btn-grammar-sub {
-            flex: 1;
-            background: #f3f4f6;
-            border: 1px solid #d1d5db;
-            border-bottom: 3px solid #d1d5db;
-            padding: 10px;
-            font-size: 0.95rem;
-            font-weight: bold;
-            color: #4b5563;
-            border-radius: 12px;
-            cursor: pointer;
-        }
-
-        .dialog-history-list {
-            text-align: left;
-            max-height: 250px;
-            overflow-y: auto;
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 15px;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
-        .dialog-history-item {
-            padding: 8px 10px;
-            border-bottom: 1px solid #f3f4f6;
-            font-size: 0.95rem;
-            color: #374151;
-            line-height: 1.5;
-        }
-
-        .dialog-history-item:last-child { border-bottom: none; }
-        .dialog-history-item span.num {
-            font-weight: bold;
-            color: var(--duo-blue);
-            margin-right: 6px;
+        /* 個人中心卡片 */
+        .profile-avatar-large {
+            width: 72px; height: 72px; border-radius: 50%;
+            border: 3px solid var(--duo-blue); margin: 0 auto 10px auto; object-fit: cover;
         }
     </style>
 </head>
 <body>
 
-<div class="shadowing-card">
-
-    <!-- 步驟 1：選擇母語 -->
-    <div id="step-user-lang" class="step-page active">
-        <h2 class="step-title"><i class="fa-solid fa-earth-americas"></i> 請選擇你的母語</h2>
-        
-        <div class="option-grid grid-1">
-            <button class="btn-option selected" id="btn-lang-zh" onclick="setUserLang('zh')">繁體中文</button>
-            <button class="btn-option" id="btn-lang-en" onclick="setUserLang('en')">English</button>
-            <button class="btn-option" id="btn-lang-kr" onclick="setUserLang('kr')">한국어</button>
-        </div>
-
-        <button class="btn-confirm" onclick="goToStep('step-learn-lang')">下一步 <i class="fa-solid fa-arrow-right"></i></button>
-    </div>
-
-    <!-- 步驟 2：選擇要學習的語言 -->
-    <div id="step-learn-lang" class="step-page">
-        <div class="top-nav">
-            <button class="btn-back-step" onclick="goToStep('step-user-lang')"><i class="fa-solid fa-arrow-left"></i> 回母語選擇</button>
-        </div>
-
-        <h2 class="step-title"><i class="fa-solid fa-language"></i> 請選擇要學習的語言</h2>
-        
-        <div class="option-grid grid-1">
-            <button class="btn-option selected" id="btn-cat-korean" onclick="selectCategory('korean')">🇰🇷 韓文</button>
-            <button class="btn-option" id="btn-cat-japanese" onclick="selectCategory('japanese')">🇯🇵 日文</button>
-            <button class="btn-option" id="btn-cat-english" onclick="selectCategory('english')">🇺🇸 英文</button>
-        </div>
-
-        <button class="btn-confirm" id="btn-confirm-learn-lang" onclick="confirmLearnLang()"><i class="fa-solid fa-arrow-right"></i> 下一步（選擇程度）</button>
-
-        <div style="margin-top: 15px; border-top: 1px dashed #e5e7eb; padding-top: 10px;">
-            <button class="btn-sync-refresh" onclick="forceClearAndSync()"><i class="fa-solid fa-arrows-rotate"></i> 強制更新試算表資料</button>
-            <div id="cache-status" style="font-size: 0.75rem; color: #6b7280; margin-top: 8px;"></div>
-        </div>
-    </div>
-
-    <!-- 步驟 3：選擇課程程度 -->
-    <div id="step-level" class="step-page">
-        <div class="top-nav">
-            <button class="btn-back-step" onclick="goToStep('step-learn-lang')"><i class="fa-solid fa-arrow-left"></i> 回學習語言</button>
-        </div>
-        
-        <h2 class="step-title"><i class="fa-solid fa-layer-group"></i> 選擇課程程度</h2>
-        <div id="container-levels" class="option-grid grid-2"></div>
-    </div>
-
-    <!-- 步驟 4：選擇單元 (Unit) -->
-    <div id="step-unit" class="step-page">
-        <div class="top-nav">
-            <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
-            <span id="lbl-unit-level" style="font-weight: bold; color: var(--duo-blue);">0A 認識字母</span>
-        </div>
-        
-        <h2 class="step-title"><i class="fa-solid fa-book-open"></i> 請選擇單元 (Unit)</h2>
-        <div id="container-units" class="option-grid grid-3"></div>
-    </div>
-
-    <!-- 步驟 5：選擇關卡 (Stage) 與挑戰模式 -->
-    <div id="step-stage" class="step-page">
-        <div class="top-nav">
-            <button class="btn-back-step" onclick="goToStep('step-unit')"><i class="fa-solid fa-arrow-left"></i> 回單元選擇</button>
-            <span id="lbl-stage-unit" style="font-weight: bold; color: var(--duo-blue);">單元 1</span>
-        </div>
-
-        <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇關卡挑戰</h2>
-        <div id="container-stages"></div>
-    </div>
-
-    <!-- 步驟 5.5：語法說明頁面 -->
-    <div id="step-grammar" class="step-page">
-        <div class="top-nav">
-            <button class="btn-back-step" onclick="goToStep('step-stage')"><i class="fa-solid fa-arrow-left"></i> 回關卡選擇</button>
-            <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-purple);">語法教室</span>
-        </div>
-
-        <div id="area-grammar-dialog">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <h3 style="margin: 0; color: #4338ca;"><i class="fa-solid fa-lightbulb"></i> 觀念小教室</h3>
-                <span id="lbl-dialog-counter" style="font-size: 0.85rem; color: #6b7280; font-weight: bold;">1 / 1</span>
-            </div>
-
-            <div class="grammar-dialog-box" onclick="completeTypewriterImmediately()">
-                <span id="lbl-grammar-dialog">...</span>
-                <button class="btn-gram2-audio" id="btn-gram2-audio" style="display: none;"><i class="fa-solid fa-volume-high"></i> 播放聲音</button>
-            </div>
-
-            <button class="btn-confirm" id="btn-next-dialog" onclick="nextGrammarDialog()">下一步 <i class="fa-solid fa-arrow-right"></i></button>
-
-            <div class="grammar-nav-btns">
-                <button class="btn-grammar-sub" id="btn-prev-dialog" onclick="prevGrammarDialog()"><i class="fa-solid fa-arrow-left"></i> 上一步</button>
-                <button class="btn-grammar-sub" onclick="skipGrammarDialog()"><i class="fa-solid fa-forward-step"></i> 跳過對話</button>
-            </div>
-        </div>
-
-        <div id="area-grammar-example" style="display: none;">
-            <h3 style="margin-top: 10px; color: #4338ca; text-align: left;"><i class="fa-solid fa-book-bookmark"></i> 例句練習</h3>
-            <div id="container-example-list" style="text-align: left; margin-bottom: 20px;"></div>
-            <button class="btn-confirm" onclick="goToReadyPage()"><i class="fa-solid fa-arrow-right"></i> 繼續</button>
-        </div>
-
-        <div id="area-grammar-ready" style="display: none; text-align: center; padding: 20px 10px;">
-            <i class="fa-solid fa-flag-checkered" style="font-size: 3rem; color: #818cf8; margin-bottom: 15px;"></i>
-            <div id="lbl-ready-text" style="font-size: 1.3rem; font-weight: bold; color: var(--duo-dark); margin-bottom: 25px; line-height: 1.6;"></div>
-            <button class="btn-confirm" onclick="enterGrammarQuizFromReady()"><i class="fa-solid fa-pen-to-square"></i> 開始測驗</button>
-        </div>
-
-        <div id="area-grammar-quiz" style="display: none; margin-top: 15px;">
-            <h3 style="margin-top: 0; color: var(--duo-dark);"><i class="fa-solid fa-pen-to-square"></i> 語法測驗</h3>
-            <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
+    <!-- 🔑 1. 登入 / 註冊彈窗 -->
+    <div class="custom-modal" id="login-modal">
+        <div class="custom-modal-card">
+            <div style="font-size: 2.2rem; color: var(--duo-blue); margin-bottom: 8px;"><i class="fa-solid fa-graduation-cap"></i></div>
+            <h3 style="margin: 0 0 6px 0;">登入學習系統</h3>
+            <p style="font-size: 0.82rem; color:#6b7280; margin-bottom: 16px;">登入以同步學習進度與積分排行</p>
             
-            <div id="container-grammar-questions"></div>
+            <button class="btn-google" id="btn-google-login">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="Google">
+                使用 Google 帳號登入
+            </button>
 
-            <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin: 15px 0 5px 0;">選項：</p>
-            <div id="container-grammar-choices" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;"></div>
-
-            <button class="btn-confirm btn-grammar-action-narrow" id="btn-check-grammar" onclick="checkGrammarQuiz()"><i class="fa-solid fa-check"></i> 送出答案</button>
-
-            <div class="result-box" id="box-grammar-result" style="display: none; margin-top: 15px;">
-                <div id="lbl-grammar-result-text" style="font-size: 1.1rem; font-weight: bold;"></div>
-                <button class="btn-confirm" id="btn-grammar-action"></button>
+            <div style="display:flex; align-items:center; gap:8px; margin: 14px 0;">
+                <div style="flex:1; height:1px; background:#e5e7eb;"></div>
+                <span style="font-size:0.75rem; color:#9ca3af;">或使用 Email</span>
+                <div style="flex:1; height:1px; background:#e5e7eb;"></div>
             </div>
-        </div>
 
-        <div id="area-grammar-all-history" style="display: none; margin-top: 20px;">
-            <h3 style="margin-top: 15px; margin-bottom: 10px; color: #4338ca; text-align: left;"><i class="fa-solid fa-list-check"></i> 觀念總覽</h3>
-            <div class="dialog-history-list" id="container-dialog-history"></div>
+            <div style="display:flex; gap:6px; background:#f3f4f6; padding:4px; border-radius:12px; margin-bottom: 8px;">
+                <button class="btn-3d btn-3d-secondary" id="tab-login" style="flex:1; padding:6px;">登入</button>
+                <button class="btn-3d btn-3d-secondary" id="tab-register" style="flex:1; padding:6px;">註冊</button>
+            </div>
+
+            <input type="email" id="email-input" placeholder="電子信箱">
+            <input type="password" id="password-input" placeholder="密碼">
+            <button class="btn-3d btn-3d-primary" id="btn-auth-submit" style="width:100%; padding:10px; margin-top: 6px;">登入</button>
+
+            <div style="margin-top: 10px;">
+                <button id="btn-forgot-password" style="border:none; background:none; color:var(--duo-blue); cursor:pointer; font-size:0.8rem;">忘記密碼？</button>
+            </div>
+
+            <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.8rem; margin-top: 10px;" class="hidden"></div>
         </div>
     </div>
 
-    <!-- 步驟 6-A：跟讀挑戰畫面 -->
-    <div id="step-quiz-shadow" class="step-page">
-        <div class="challenge-top-bar">
-            <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
-            <div class="gear-menu-container">
-                <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-shadow')" title="選單"><i class="fa-solid fa-gear"></i></button>
-                <div class="gear-dropdown" id="gear-dropdown-shadow">
-                    <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-                    <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-                    <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+    <!-- 🔑 忘記密碼 Modal -->
+    <div id="modal-forgot-password" class="custom-modal hidden">
+        <div class="custom-modal-card">
+            <h3 style="margin-top:0;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
+            <p style="font-size: 0.82rem; color: #6b7280; margin-bottom: 8px;">輸入您的註冊 Email，系統將發送重設密碼信件：</p>
+            <input type="email" id="input-forgot-email" placeholder="電子信箱">
+            <div style="display:flex; gap:10px; margin-top:12px;">
+                <button id="btn-send-reset-email" class="btn-3d btn-3d-primary" style="flex:1; padding:8px;">寄送信件</button>
+                <button id="btn-cancel-forgot-password" class="btn-3d btn-3d-secondary" style="flex:1; padding:8px;">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 👤 首次登入設定暱稱與母語 -->
+    <div id="modal-setup-nickname" class="custom-modal hidden">
+        <div class="custom-modal-card">
+            <h3 style="margin-top:0;"><i class="fa-solid fa-user-gear" style="color:var(--duo-blue);"></i> 設定學習檔案</h3>
+            <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 8px;">請設定排行榜顯示的暱稱 (2~12字，30秒限改一次)</p>
+            <input type="text" id="input-setup-nickname" placeholder="例如：韓語小霸王" maxlength="12" />
+            <p style="font-size: 0.82rem; color: #6b7280; margin: 10px 0 4px; text-align:left;">選擇母語（題意翻譯將以此呈現）</p>
+            <select id="select-native-language">
+                <option value="zh">繁體中文</option>
+                <option value="en">English</option>
+                <option value="kr">한국어</option>
+            </select>
+            <div id="setup-nickname-error" style="color: var(--duo-red); font-size: 0.8rem; margin-top: 6px;" class="hidden"></div>
+            <button id="btn-save-initial-nickname" class="btn-3d btn-3d-primary" style="width:100%; padding:10px; margin-top:12px;">完成設定</button>
+        </div>
+    </div>
+
+    <!-- ✏️ 修改暱稱 Modal (含 30 秒冷卻) -->
+    <div id="modal-edit-nickname" class="custom-modal hidden">
+        <div class="custom-modal-card">
+            <h3 style="margin-top:0;">修改公開暱稱</h3>
+            <p style="font-size: 0.8rem; color: var(--duo-orange); margin-bottom: 8px;">⚠️ 注意：暱稱每 30 秒僅能修改一次</p>
+            <input type="text" id="input-edit-nickname" placeholder="輸入新暱稱 (2~12字)" maxlength="12" />
+            <div id="edit-nickname-error-msg" style="color: var(--duo-red); font-size: 0.8rem; text-align: center; margin-top: 4px;" class="hidden"></div>
+            <div style="display:flex; gap:10px; margin-top:12px;">
+                <button id="btn-save-nickname" class="btn-3d btn-3d-primary" style="flex:1; padding:8px;">儲存修改</button>
+                <button id="btn-cancel-nickname" class="btn-3d btn-3d-secondary" style="flex:1; padding:8px;">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 👤 個人中心頁面 (Profile View) -->
+    <div id="modal-profile-view" class="custom-modal hidden">
+        <div class="custom-modal-card" style="text-align: left;">
+            <div class="close-icon-circle" id="btn-close-profile"><i class="fa-solid fa-xmark"></i></div>
+            <div style="text-align: center; margin-bottom: 12px;">
+                <img id="profile-user-avatar" src="https://lh3.googleusercontent.com/a/default-user" class="profile-avatar-large" alt="User Avatar">
+                <h3 style="margin: 0; color: #1f2937;">
+                    <span id="profile-nickname">學生</span>
+                    <button id="btn-open-edit-nickname" style="border:none; background:none; color:var(--duo-blue); cursor:pointer;"><i class="fa-solid fa-pen-to-square"></i></button>
+                </h3>
+                <p style="font-size: 0.8rem; color: #6b7280; margin: 2px 0 0 0;" id="profile-email">email@example.com</p>
+            </div>
+
+            <div style="font-size: 0.88rem; display: flex; flex-direction: column; gap: 8px;">
+                <div style="display:flex; justify-content: space-between;">
+                    <span style="color: #6b7280;">身份別：</span>
+                    <span id="profile-role" style="font-weight:bold; color:var(--duo-blue);">Student</span>
+                </div>
+                <div style="display:flex; justify-content: space-between;">
+                    <span style="color: #6b7280;">會員狀態：</span>
+                    <span id="profile-status" style="font-weight:bold; color:var(--duo-green);">開通中</span>
+                </div>
+                <div style="display:flex; justify-content: space-between;">
+                    <span style="color: #6b7280;">累積 XP 經驗值：</span>
+                    <span style="font-weight:bold; color:var(--duo-gold);"><i class="fa-solid fa-star"></i> <span id="profile-xp">0</span></span>
+                </div>
+                <hr style="border: none; border-top: 1px dashed #e5e7eb; margin: 4px 0;">
+                <div>
+                    <span style="font-weight: bold; color: #374151; display: block; margin-bottom: 4px;">開通課程與到期日：</span>
+                    <div id="profile-memberships-list" style="display:flex; flex-direction:column; gap:4px; font-size:0.82rem; color:#4b5563;">
+                        <span>尚無已開通課程</span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="target-text" id="lbl-target-text">載入中...</div>
-        <div class="translation-text" id="lbl-translation">...</div>
-        <div id="lbl-hint" class="hint-text" style="display: none;"></div>
-
-        <div class="controls">
-            <button class="btn-circle btn-listen" id="btn-play-audio" onclick="playAudio()" title="聽示範音">
-                <i class="fa-solid fa-volume-high"></i>
+            <button id="btn-trigger-logout" class="btn-3d" style="width: 100%; padding: 10px; margin-top: 15px; background: var(--duo-red); color: white; box-shadow: 0 3px 0 var(--duo-red-shadow);">
+                <i class="fa-solid fa-right-from-bracket"></i> 登出
             </button>
-            <button class="btn-circle btn-record" id="btn-start-record" onclick="toggleRecording()" title="開始跟讀">
-                <i class="fa-solid fa-microphone"></i>
-            </button>
-        </div>
-
-        <div class="result-box">
-            <div>辨識結果：<span id="lbl-recognized-text" style="font-weight: bold; color: #374151;">-</span></div>
-            <div class="score-badge" id="lbl-score">得分：--</div>
-        </div>
-
-        <div class="nav-controls">
-            <button class="btn-nav" id="btn-prev" onclick="prevQuestion()">上一題</button>
-            <span class="lbl-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
-            <button class="btn-nav" id="btn-next" onclick="nextQuestion()">下一題</button>
         </div>
     </div>
 
-    <!-- 步驟 6-B：聽音重組字塊畫面 -->
-    <div id="step-quiz-blocks" class="step-page">
-        <div class="challenge-top-bar">
-            <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
-            <div class="gear-menu-container">
-                <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-blocks')" title="選單"><i class="fa-solid fa-gear"></i></button>
-                <div class="gear-dropdown" id="gear-dropdown-blocks">
-                    <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-                    <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-                    <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
-                </div>
+    <!-- 📱 主應用區域 -->
+    <div class="app-container" id="main-app">
+        <!-- 頂端導航列 -->
+        <div class="user-meta-bar">
+            <div class="user-meta-item" id="btn-profile-trigger">
+                <i class="fa-solid fa-user" style="color: var(--duo-blue);"></i>
+                <span id="lbl-username">訪客</span>
+            </div>
+            <div class="user-meta-item">
+                <i class="fa-solid fa-star" style="color: var(--duo-gold);"></i>
+                <span id="lbl-xp">0</span> XP
+            </div>
+            <div class="user-meta-item" id="lbl-current-level" style="color: var(--duo-blue);">
+                1A
             </div>
         </div>
 
-        <div style="margin: 15px 0;">
-            <button class="btn-circle btn-listen" onclick="playBlockAudio()" style="margin: 0 auto;">
-                <i class="fa-solid fa-volume-high"></i>
-            </button>
+        <!-- 步驟 1：選擇母語 -->
+        <div id="step-user-lang" class="step-page active">
+            <h2 class="step-title"><i class="fa-solid fa-earth-americas"></i> 請確認母語</h2>
+            <div class="option-grid grid-1">
+                <button class="btn-option selected" id="btn-lang-zh" onclick="setUserLang('zh')">繁體中文</button>
+                <button class="btn-option" id="btn-lang-en" onclick="setUserLang('en')">English</button>
+                <button class="btn-option" id="btn-lang-kr" onclick="setUserLang('kr')">한국어</button>
+            </div>
+            <button class="btn-confirm" onclick="goToStep('step-learn-lang')">下一步 <i class="fa-solid fa-arrow-right"></i></button>
         </div>
 
-        <div class="translation-text" id="lbl-block-translation">...</div>
-
-        <p style="font-size: 0.8rem; color: #9ca3af; text-align: left; margin: 0;">排列結果：</p>
-        <div id="zone-answer" class="block-zone"></div>
-
-        <p style="font-size: 0.8rem; color: #9ca3af; text-align: left; margin: 0;">點擊字塊組句：</p>
-        <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
-
-        <button class="btn-confirm" onclick="checkBlockAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
-
-        <div class="result-box" style="margin-top: 15px;">
-            <div class="score-badge" id="lbl-block-score">等待回答...</div>
+        <!-- 步驟 2：選擇學習語言 -->
+        <div id="step-learn-lang" class="step-page">
+            <div class="top-nav">
+                <button class="btn-back-step" onclick="goToStep('step-user-lang')"><i class="fa-solid fa-arrow-left"></i> 回母語</button>
+            </div>
+            <h2 class="step-title"><i class="fa-solid fa-language"></i> 請選擇學習語言</h2>
+            <div class="option-grid grid-1">
+                <button class="btn-option selected" id="btn-cat-korean" onclick="selectCategory('korean')">🇰🇷 韓文</button>
+                <button class="btn-option" id="btn-cat-japanese" onclick="selectCategory('japanese')">🇯🇵 日文</button>
+                <button class="btn-option" id="btn-cat-english" onclick="selectCategory('english')">🇺🇸 英文</button>
+            </div>
+            <button class="btn-confirm" id="btn-confirm-learn-lang" onclick="confirmLearnLang()"><i class="fa-solid fa-arrow-right"></i> 載入課程資料</button>
+            <div id="cache-status" style="font-size: 0.75rem; color: #6b7280; margin-top: 10px;"></div>
         </div>
 
-        <div class="nav-controls">
-            <button class="btn-nav" id="btn-block-prev" onclick="prevQuestion()">上一題</button>
-            <span class="lbl-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
-            <button class="btn-nav" id="btn-block-next" onclick="nextQuestion()">下一題</button>
+        <!-- 步驟 3：選擇程度 -->
+        <div id="step-level" class="step-page">
+            <div class="top-nav">
+                <button class="btn-back-step" onclick="goToStep('step-learn-lang')"><i class="fa-solid fa-arrow-left"></i> 回語言選擇</button>
+            </div>
+            <h2 class="step-title"><i class="fa-solid fa-layer-group"></i> 選擇程度</h2>
+            <div id="container-levels" class="option-grid grid-2"></div>
         </div>
-    </div>
 
-    <!-- 步驟 6-C：聊天視窗風對話練習畫面 -->
-    <div id="step-quiz-dialogue" class="step-page">
-        <div class="challenge-top-bar">
-            <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
-            <div class="gear-menu-container">
-                <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-dialogue')" title="選單"><i class="fa-solid fa-gear"></i></button>
-                <div class="gear-dropdown" id="gear-dropdown-dialogue">
-                    <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-                    <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-                    <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
-                </div>
+        <!-- 步驟 4：選擇單元 -->
+        <div id="step-unit" class="step-page">
+            <div class="top-nav">
+                <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度</button>
+                <span id="lbl-unit-level" style="font-weight: bold; color: var(--duo-blue);">1A</span>
+            </div>
+            <h2 class="step-title"><i class="fa-solid fa-book-open"></i> 選擇單元 (Unit)</h2>
+            <div id="container-units" class="option-grid grid-3"></div>
+        </div>
+
+        <!-- 步驟 5：選擇關卡 -->
+        <div id="step-stage" class="step-page">
+            <div class="top-nav">
+                <button class="btn-back-step" onclick="goToStep('step-unit')"><i class="fa-solid fa-arrow-left"></i> 回單元</button>
+                <span id="lbl-stage-unit" style="font-weight: bold; color: var(--duo-blue);">單元 1</span>
+            </div>
+            <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 選擇關卡模式</h2>
+            <div id="container-stages"></div>
+        </div>
+
+        <!-- 步驟 6-A：句子跟讀測驗 -->
+        <div id="step-quiz-shadow" class="step-page">
+            <div class="top-nav">
+                <button class="btn-back-step" onclick="goToStep('step-stage')"><i class="fa-solid fa-arrow-left"></i> 回關卡</button>
+            </div>
+            <div class="target-text" id="lbl-target-text">載入中...</div>
+            <div class="translation-text" id="lbl-translation">...</div>
+            <div id="lbl-hint" class="hint-text" style="display: none;"></div>
+
+            <div class="controls">
+                <button class="btn-circle btn-listen" id="btn-play-audio" onclick="playAudio()"><i class="fa-solid fa-volume-high"></i></button>
+                <button class="btn-circle btn-record" id="btn-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
+            </div>
+            <div class="result-box">
+                <div>辨識結果：<span id="lbl-recognized-text" style="font-weight: bold;">-</span></div>
+                <div class="score-badge" id="lbl-score">得分：--</div>
+            </div>
+            <div class="nav-controls">
+                <button class="btn-nav" id="btn-prev" onclick="prevQuestion()">上一題</button>
+                <span class="lbl-progress">0 / 0</span>
+                <button class="btn-nav" id="btn-next" onclick="nextQuestion()">下一題</button>
             </div>
         </div>
 
-        <!-- 對話三模式切換 -->
-        <div class="dialogue-sub-nav">
-            <button class="btn-dialogue-mode active" id="btn-mode-basic" onclick="switchDialogueMode('basic')">基礎對話</button>
-            <button class="btn-dialogue-mode" id="btn-mode-fill" onclick="switchDialogueMode('fill')">挖空填空</button>
-            <button class="btn-dialogue-mode" id="btn-mode-blind" onclick="switchDialogueMode('blind')">盲測聽力</button>
-        </div>
-
-        <!-- 角色選擇 -->
-        <div class="role-switch-box">
-            <button class="btn-role active" id="btn-role-a" onclick="switchUserRole('A')">扮演 Speaker A</button>
-            <button class="btn-role" id="btn-role-b" onclick="switchUserRole('B')">扮演 Speaker B</button>
-        </div>
-
-        <!-- 💬 聊天氣泡視窗 (Chat Window) -->
-        <div class="chat-window" id="chat-window"></div>
-
-        <!-- 盲測模式手動解鎖按鈕 -->
-        <div id="box-blind-unlock" style="display: none; margin-bottom: 8px;">
-            <button class="btn-sub-nav" style="width: 100%; border-color: var(--duo-orange); color: var(--duo-orange);" onclick="unlockBlindTextManually()">
-                <i class="fa-solid fa-eye"></i> 解鎖當前句子內容
-            </button>
-        </div>
-
-        <!-- 操作控制器 -->
-        <div class="controls">
-            <button class="btn-circle btn-listen" id="btn-dialogue-play" onclick="playDialogueAudio()" title="聽示範發音">
-                <i class="fa-solid fa-volume-high"></i>
-            </button>
-            <button class="btn-circle btn-record" id="btn-dialogue-record" onclick="toggleRecording()" title="語音對話">
-                <i class="fa-solid fa-microphone"></i>
-            </button>
-        </div>
-
-        <div class="nav-controls">
-            <button class="btn-nav" id="btn-dialogue-prev" onclick="prevDialogueSentence()">上一句</button>
-            <span class="lbl-progress" id="lbl-dialogue-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
-            <button class="btn-nav" id="btn-dialogue-next" onclick="nextDialogueSentence()">下一句</button>
-        </div>
-    </div>
-
-    <!-- 步驟 6-D：單字跟讀挑戰畫面 -->
-    <div id="step-quiz-vocab-shadow" class="step-page">
-        <div class="challenge-top-bar">
-            <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
-            <div class="gear-menu-container">
-                <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-shadow')" title="選單"><i class="fa-solid fa-gear"></i></button>
-                <div class="gear-dropdown" id="gear-dropdown-vocab-shadow">
-                    <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-                    <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-                    <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
-                </div>
+        <!-- 步驟 6-B：字塊重組測驗 -->
+        <div id="step-quiz-blocks" class="step-page">
+            <div class="top-nav">
+                <button class="btn-back-step" onclick="goToStep('step-stage')"><i class="fa-solid fa-arrow-left"></i> 回關卡</button>
+            </div>
+            <div style="margin: 10px 0;">
+                <button class="btn-circle btn-listen" onclick="playBlockAudio()" style="margin: 0 auto;"><i class="fa-solid fa-volume-high"></i></button>
+            </div>
+            <div class="translation-text" id="lbl-block-translation">...</div>
+            <div id="zone-answer" class="block-zone"></div>
+            <div id="zone-options" class="block-zone" style="border-bottom:none; background:#f9fafb; border-radius:12px;"></div>
+            <button class="btn-confirm" onclick="checkBlockAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
+            <div class="result-box"><div class="score-badge" id="lbl-block-score">請點擊字塊組句</div></div>
+            <div class="nav-controls">
+                <button class="btn-nav" id="btn-block-prev" onclick="prevQuestion()">上一題</button>
+                <span class="lbl-progress">0 / 0</span>
+                <button class="btn-nav" id="btn-block-next" onclick="nextQuestion()">下一題</button>
             </div>
         </div>
 
-        <div class="target-text" id="lbl-vocab-target-text">載入中...</div>
-        <div class="translation-text" id="lbl-vocab-translation" style="min-height: 1.5rem;"></div>
-
-        <div class="controls">
-            <button class="btn-circle btn-listen" id="btn-vocab-play-audio" onclick="playVocabAudio()" title="聽示範音">
-                <i class="fa-solid fa-volume-high"></i>
-            </button>
-            <button class="btn-circle btn-record" id="btn-vocab-start-record" onclick="toggleRecording()" title="開始跟讀">
-                <i class="fa-solid fa-microphone"></i>
-            </button>
-        </div>
-
-        <div class="result-box">
-            <div>辨識結果：<span id="lbl-vocab-recognized-text" style="font-weight: bold; color: #374151;">-</span></div>
-            <div class="score-badge" id="lbl-vocab-score">得分：--</div>
-        </div>
-
-        <div class="nav-controls">
-            <button class="btn-nav" id="btn-vocab-prev" onclick="prevVocabQuestion()">上一題</button>
-            <span class="lbl-progress" id="lbl-vocab-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
-            <button class="btn-nav" id="btn-vocab-next" onclick="nextVocabQuestion()">下一題</button>
-        </div>
-    </div>
-
-    <!-- 步驟 6-E：單字聽打挑戰畫面 -->
-    <div id="step-quiz-vocab-type" class="step-page">
-        <div class="challenge-top-bar">
-            <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
-            <div class="gear-menu-container">
-                <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-type')" title="選單"><i class="fa-solid fa-gear"></i></button>
-                <div class="gear-dropdown" id="gear-dropdown-vocab-type">
-                    <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-                    <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-                    <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
-                </div>
+        <!-- 步驟 6-C：聊天視窗對話練習 -->
+        <div id="step-quiz-dialogue" class="step-page">
+            <div class="top-nav">
+                <button class="btn-back-step" onclick="goToStep('step-stage')"><i class="fa-solid fa-arrow-left"></i> 回關卡</button>
+            </div>
+            <div class="chat-window" id="chat-window"></div>
+            <div class="controls">
+                <button class="btn-circle btn-listen" onclick="playDialogueAudio()"><i class="fa-solid fa-volume-high"></i></button>
+                <button class="btn-circle btn-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
+            </div>
+            <div class="nav-controls">
+                <button class="btn-nav" id="btn-dialogue-prev" onclick="prevDialogueSentence()">上一句</button>
+                <span class="lbl-progress" id="lbl-dialogue-progress">0 / 0</span>
+                <button class="btn-nav" id="btn-dialogue-next" onclick="nextDialogueSentence()">下一句</button>
             </div>
         </div>
-
-        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 25px 0 15px 0;">
-            <!-- 題目預設隱藏，避免洩題 -->
-            <div class="target-text" id="lbl-vocab-type-text" style="margin: 0; min-height: auto; display: none;">...</div>
-            <button class="btn-circle btn-listen" onclick="playVocabAudio()" style="width: 65px; height: 65px; font-size: 1.5rem; flex-shrink: 0;" title="聽示範音">
-                <i class="fa-solid fa-volume-high"></i>
-            </button>
-        </div>
-
-        <input type="text" id="input-vocab-type" class="vocab-input" placeholder="請輸入聽到的單字" autocomplete="off" autocorrect="off" autocapitalize="none">
-
-        <button class="btn-confirm" onclick="checkVocabTypeAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
-
-        <div class="translation-text" id="lbl-vocab-type-translation" style="margin-top: 15px; font-size: 1.2rem; font-weight: bold;"></div>
-
-        <div class="result-box" style="margin-top: 10px;">
-            <div class="score-badge" id="lbl-vocab-type-score">等待輸入...</div>
-        </div>
-
-        <div class="nav-controls">
-            <button class="btn-nav" id="btn-vocab-type-prev" onclick="prevVocabQuestion()">上一題</button>
-            <span class="lbl-progress" id="lbl-vocab-type-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
-            <button class="btn-nav" id="btn-vocab-type-next" onclick="nextVocabQuestion()">下一題</button>
-        </div>
     </div>
 
-    <!-- 步驟 6-F：單字意思選擇題畫面 -->
-    <div id="step-quiz-vocab-choice" class="step-page">
-        <div class="challenge-top-bar">
-            <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
-            <div class="gear-menu-container">
-                <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-choice')" title="選單"><i class="fa-solid fa-gear"></i></button>
-                <div class="gear-dropdown" id="gear-dropdown-vocab-choice">
-                    <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-                    <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-                    <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
-                </div>
-            </div>
-        </div>
+    <!-- 核心邏輯腳本 -->
+    <script>
+        // API 服務設定
+        const API_URLS = {
+            korean: "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
+            japanese: "https://script.google.com/macros/s/AKfycbQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
+            english: ""
+        };
 
-        <div class="target-text" id="lbl-vocab-choice-text">載入中...</div>
+        let currentUser = null;
+        let currentUserData = null;
 
-        <div class="vocab-choice-list" id="container-vocab-choices"></div>
+        let currentConfig = {
+            mode: 'shadow',
+            category: 'korean',
+            level: '1A',
+            unit_id: '1',
+            stage: '1',
+            lang: 'zh'
+        };
 
-        <div class="result-box" style="margin-top: 15px;">
-            <div class="score-badge" id="lbl-vocab-choice-score">請選擇正確意思</div>
-        </div>
+        let rawShadowData = [];  
+        let rawBlocksData = [];  
+        let rawDialogueData = [];
+        let questions = [];
+        let currentIndex = 0;
+        let selectedBlockIndices = [];
+        let recognition = null;
+        let isRecording = false;
 
-        <div class="nav-controls">
-            <button class="btn-nav" id="btn-vocab-choice-prev" onclick="prevVocabQuestion()">上一題</button>
-            <span class="lbl-progress" id="lbl-vocab-choice-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
-            <button class="btn-nav" id="btn-vocab-choice-next" onclick="nextVocabQuestion()">下一題</button>
-        </div>
-    </div>
-
-</div>
-
-<script>
-    const API_URLS = {
-        korean: "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
-        japanese: "https://script.google.com/macros/s/AKfycbQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
-        english: ""
-    };
-
-    let currentConfig = {
-        mode: 'shadow',
-        category: 'korean',
-        level: '',
-        unit_id: '1',
-        stage: '1',
-        lang: 'zh'
-    };
-
-    let rawShadowData = [];  
-    let rawBlocksData = [];  
-    let globalGrammarData = []; 
-    let rawDialogueData = []; 
-    let rawVocabData = [];
-
-    let questions = [];
-    let currentIndex = 0;
-    let recognition = null;
-    let isRecording = false;
-    let isToggling = false; 
-    let selectedBlockIndices = [];
-
-    // 對話練習專用狀態
-    let currentDialogueItem = null;
-    let dialogueList = []; 
-    let dialogueIndex = 0;
-    let dialogueSubMode = 'basic'; 
-    let userRole = 'A'; 
-    let isBlindUnlocked = false;
-
-    // 單字練習專用狀態
-    let vocabQuestions = [];
-    let vocabIndex = 0;
-
-    let currentGrammarItem = null;
-    let currentDialogIndex = 0;
-    let userGrammarAnswers = [];
-    let activeBlankIndex = 0;
-
-    let typewriterTimer = null;
-    let isTypewriterTyping = false;
-    let currentFullDialogText = "";
-
-    // 💡 齒輪下拉選單控制
-    function toggleGearDropdown(dropdownId) {
-        const dropdown = document.getElementById(dropdownId);
-        const allDropdowns = document.querySelectorAll('.gear-dropdown');
+        // --- 1. Firebase 驗證與會員系統邏輯 ---
         
-        allDropdowns.forEach(d => {
-            if (d.id !== dropdownId) d.classList.remove('show');
+        let authMode = 'login';
+        const tabLogin = document.getElementById('tab-login');
+        const tabRegister = document.getElementById('tab-register');
+        const btnAuthSubmit = document.getElementById('btn-auth-submit');
+        const loginErrorMsg = document.getElementById('login-error-msg');
+
+        tabLogin.onclick = () => {
+            authMode = 'login';
+            tabLogin.classList.replace('btn-3d-secondary', 'btn-3d-primary');
+            tabRegister.classList.replace('btn-3d-primary', 'btn-3d-secondary');
+            btnAuthSubmit.innerText = '登入';
+        };
+
+        tabRegister.onclick = () => {
+            authMode = 'register';
+            tabRegister.classList.replace('btn-3d-secondary', 'btn-3d-primary');
+            tabLogin.classList.replace('btn-3d-primary', 'btn-3d-secondary');
+            btnAuthSubmit.innerText = '註冊帳號';
+        };
+
+        // 監聽登入狀態改變
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('login-modal').classList.add('hidden');
+                await syncUserProfile(user);
+            } else {
+                currentUser = null;
+                currentUserData = null;
+                document.getElementById('login-modal').classList.remove('hidden');
+                document.getElementById('lbl-username').innerText = "訪客";
+                document.getElementById('lbl-xp').innerText = "0";
+            }
         });
 
-        if (dropdown) {
-            dropdown.classList.toggle('show');
-        }
-    }
-
-    // 點擊頁面其他地方時自動關閉齒輪選單
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.gear-menu-container')) {
-            document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
-        }
-    });
-
-    // 💡 iOS 專屬修復：徹底解綁事件並強制銷毀實體
-    function stopSpeechRecognition() {
-        if (recognition) {
-            try { 
-                recognition.onstart = null;
-                recognition.onend = null;
-                recognition.onerror = null;
-                recognition.onresult = null;
-                recognition.abort(); 
-            } catch (e) {}
-            recognition = null;
-        }
-        isRecording = false;
-        document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
-    }
-
-    function goToStep(stepId) {
-        stopSpeechRecognition();
-        document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show')); // 關閉選單
-        document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
-        document.getElementById(stepId).classList.add('active');
-    }
-
-    function setUserLang(lang) {
-        currentConfig.lang = lang;
-        ['zh', 'en', 'kr'].forEach(l => {
-            const btn = document.getElementById(`btn-lang-${l}`);
-            if (btn) btn.classList.remove('selected');
-        });
-        const activeBtn = document.getElementById(`btn-lang-${lang}`);
-        if (activeBtn) activeBtn.classList.add('selected');
-    }
-
-    function selectCategory(category) {
-        stopSpeechRecognition();
-        currentConfig.category = category;
-        ['korean', 'japanese', 'english'].forEach(c => {
-            const btn = document.getElementById(`btn-cat-${c}`);
-            if (btn) btn.classList.remove('selected');
-        });
-        document.getElementById(`btn-cat-${category}`).classList.add('selected');
-        checkCacheStatus();
-    }
-
-    function checkCacheStatus() {
-        const cacheKey = `all_data_${currentConfig.category}`;
-        const cached = localStorage.getItem(cacheKey);
-        const statusDiv = document.getElementById('cache-status');
-
-        if (cached) {
-            statusDiv.innerText = "⚡ 已備有本機快取（若試算表有更新請按連線更新）";
-            statusDiv.style.color = "#10b981";
-        } else {
-            statusDiv.innerText = "☁ 首次載入需連線同步（約 1~2 秒）";
-            statusDiv.style.color = "#6b7280";
-        }
-    }
-
-    async function forceClearAndSync() {
-        localStorage.removeItem(`all_data_${currentConfig.category}`);
-        localStorage.removeItem(`grammar_data_${currentConfig.category}`);
-        localStorage.removeItem(`dialogue_data_${currentConfig.category}`);
-        localStorage.removeItem(`vocab_data_${currentConfig.category}`);
-        
-        const langName = currentConfig.category === 'korean' ? '韓文' : (currentConfig.category === 'japanese' ? '日文' : '英文');
-        alert(`已清除 ${langName} 的快取！請繼續點擊下一步。`);
-        checkCacheStatus();
-    }
-
-    function loadDataViaJSONP(apiUrl, actionName) {
-        return new Promise((resolve, reject) => {
-            const callbackName = 'gas_cb_' + Date.now() + Math.floor(Math.random()*1000);
-            const script = document.createElement('script');
-
-            window[callbackName] = function(data) {
-                delete window[callbackName];
-                if (document.body.contains(script)) {
-                    document.body.removeChild(script);
-                }
-                resolve(data);
-            };
-
-            script.onerror = function() {
-                delete window[callbackName];
-                if (document.body.contains(script)) {
-                    document.body.removeChild(script);
-                }
-                reject(new Error("JSONP 連線失敗"));
-            };
-
-            const connector = apiUrl.includes('?') ? '&' : '?';
-            script.src = `${apiUrl}${connector}action=${actionName}&prefix=${callbackName}&t=${Date.now()}`;
-            document.body.appendChild(script);
-        });
-    }
-
-    async function confirmLearnLang() {
-        const targetApi = API_URLS[currentConfig.category];
-        const langName = currentConfig.category === 'korean' ? '韓文' : (currentConfig.category === 'japanese' ? '日文' : '英文');
-
-        if (!targetApi) {
-            alert(`該語言 (${langName}) 的 API 網址尚未設定！`);
-            return;
-        }
-
-        const cacheKey = `all_data_${currentConfig.category}`;
-        const grammarCacheKey = `grammar_data_${currentConfig.category}`;
-        const dialogueCacheKey = `dialogue_data_${currentConfig.category}`;
-        const vocabCacheKey = `vocab_data_${currentConfig.category}`;
-
-        const cachedData = localStorage.getItem(cacheKey);
-        const cachedGrammar = localStorage.getItem(grammarCacheKey);
-        const cachedDialogue = localStorage.getItem(dialogueCacheKey);
-        const cachedVocab = localStorage.getItem(vocabCacheKey);
-
-        if (cachedData) {
+        // Google 登入
+        document.getElementById('btn-google-login').onclick = async () => {
+            const provider = new firebase.auth.GoogleAuthProvider();
             try {
-                const parsed = JSON.parse(cachedData);
-                if (parsed && (parsed.shadow || parsed.blocks)) {
-                    rawShadowData = parsed.shadow || [];
-                    rawBlocksData = parsed.blocks || [];
-                    if (cachedGrammar) try { globalGrammarData = JSON.parse(cachedGrammar); } catch(e) {}
-                    if (cachedDialogue) try { rawDialogueData = JSON.parse(cachedDialogue); } catch(e) {}
-                    if (cachedVocab) try { rawVocabData = JSON.parse(cachedVocab); } catch(e) {}
-                    renderLevelMenu();
-                    goToStep('step-level');
-                    return;
+                await auth.signInWithPopup(provider);
+            } catch (err) {
+                showLoginError(err.message);
+            }
+        };
+
+        // Email 登入/註冊
+        btnAuthSubmit.onclick = async () => {
+            const email = document.getElementById('email-input').value.trim();
+            const password = document.getElementById('password-input').value;
+            if (!email || !password) return showLoginError("請輸入信箱與密碼！");
+
+            try {
+                if (authMode === 'login') {
+                    await auth.signInWithEmailAndPassword(email, password);
+                } else {
+                    await auth.createUserWithEmailAndPassword(email, password);
                 }
-            } catch(e) {}
+            } catch (err) {
+                showLoginError(err.message);
+            }
+        };
+
+        function showLoginError(msg) {
+            loginErrorMsg.innerText = msg;
+            loginErrorMsg.classList.remove('hidden');
         }
 
-        const btnConfirm = document.getElementById('btn-confirm-learn-lang');
-        btnConfirm.disabled = true;
-        btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 同步最新試算表中...`;
-
-        try {
-            const [shadowRes, blocksRes, grammarRes, dialogueRes, vocabRes] = await Promise.all([
-                loadDataViaJSONP(targetApi, 'getLanguageData').catch(()=>null),
-                loadDataViaJSONP(targetApi, 'getBlocksData').catch(()=>null),
-                loadDataViaJSONP(targetApi, 'getGrammarData').catch(()=>null),
-                loadDataViaJSONP(targetApi, 'getDialogueData').catch(()=>null),
-                loadDataViaJSONP(targetApi, 'getVocabularyData').catch(()=>null)
-            ]);
-
-            if (shadowRes && shadowRes.status === 'success') rawShadowData = shadowRes.data || [];
-            if (blocksRes && blocksRes.status === 'success') rawBlocksData = blocksRes.data || [];
-            if (grammarRes && grammarRes.status === 'success') {
-                globalGrammarData = grammarRes.data || [];
-                try { localStorage.setItem(grammarCacheKey, JSON.stringify(grammarRes.data)); } catch(e){}
+        // 忘記密碼
+        document.getElementById('btn-forgot-password').onclick = () => {
+            document.getElementById('modal-forgot-password').classList.remove('hidden');
+        };
+        document.getElementById('btn-cancel-forgot-password').onclick = () => {
+            document.getElementById('modal-forgot-password').classList.add('hidden');
+        };
+        document.getElementById('btn-send-reset-email').onclick = async () => {
+            const email = document.getElementById('input-forgot-email').value.trim();
+            if (!email) return alert("請輸入電子郵件！");
+            try {
+                await auth.sendPasswordResetEmail(email);
+                alert("密碼重設信件已發送，請檢查收件匣！");
+                document.getElementById('modal-forgot-password').classList.add('hidden');
+            } catch (err) {
+                alert("寄送失敗：" + err.message);
             }
-            if (dialogueRes && dialogueRes.status === 'success') {
-                rawDialogueData = dialogueRes.data || [];
-                try { localStorage.setItem(dialogueCacheKey, JSON.stringify(dialogueRes.data)); } catch(e){}
+        };
+
+        // 首次登入判斷與個人資料讀取
+        async function syncUserProfile(user) {
+            const userRef = db.collection('users').doc(user.uid);
+            const doc = await userRef.get();
+
+            if (!doc.exists) {
+                // 首次註冊/登入
+                document.getElementById('modal-setup-nickname').classList.remove('hidden');
+            } else {
+                currentUserData = doc.data();
+                renderUserInfo();
             }
-            if (vocabRes && vocabRes.status === 'success') {
-                rawVocabData = vocabRes.data || [];
-                try { localStorage.setItem(vocabCacheKey, JSON.stringify(vocabRes.data)); } catch(e){}
+        }
+
+        // 完成首次暱稱與母語設定
+        document.getElementById('btn-save-initial-nickname').onclick = async () => {
+            const nickname = document.getElementById('input-setup-nickname').value.trim();
+            const nativeLang = document.getElementById('select-native-language').value;
+            const errDiv = document.getElementById('setup-nickname-error');
+
+            if (nickname.length < 2 || nickname.length > 12) {
+                errDiv.innerText = "暱稱需介於 2 到 12 個字元！";
+                errDiv.classList.remove('hidden');
+                return;
+            }
+
+            const initialData = {
+                email: currentUser.email,
+                displayName: nickname,
+                nativeLanguage: nativeLang,
+                xp: 0,
+                role: 'Student',
+                status: '開通中',
+                courses: [{ name: "韓文初級 1A", expireDate: "2027-12-31" }],
+                lastNicknameUpdatedAt: 0
+            };
+
+            await db.collection('users').doc(currentUser.uid).set(initialData);
+            currentUserData = initialData;
+            document.getElementById('modal-setup-nickname').classList.add('hidden');
+            setUserLang(nativeLang);
+            renderUserInfo();
+        };
+
+        // 渲染使用者資訊到 UI
+        function renderUserInfo() {
+            if (!currentUserData) return;
+            document.getElementById('lbl-username').innerText = currentUserData.displayName || "學生";
+            document.getElementById('lbl-xp').innerText = currentUserData.xp || 0;
+            document.getElementById('profile-nickname').innerText = currentUserData.displayName || "學生";
+            document.getElementById('profile-email').innerText = currentUser.email || "";
+            document.getElementById('profile-role').innerText = currentUserData.role || "Student";
+            document.getElementById('profile-status').innerText = currentUserData.status || "開通中";
+            document.getElementById('profile-xp').innerText = currentUserData.xp || 0;
+
+            const courseContainer = document.getElementById('profile-memberships-list');
+            courseContainer.innerHTML = "";
+            if (currentUserData.courses && currentUserData.courses.length > 0) {
+                currentUserData.courses.forEach(c => {
+                    const row = document.createElement('div');
+                    row.style.cssText = "display:flex; justify-content:space-between; padding:4px 0;";
+                    row.innerHTML = `<span><i class="fa-solid fa-book"></i> ${c.name}</span> <span style="color:#6b7280;">到期日：${c.expireDate}</span>`;
+                    courseContainer.appendChild(row);
+                });
+            } else {
+                courseContainer.innerHTML = "<span>尚無已開通課程</span>";
+            }
+        }
+
+        // 修改暱稱（30 秒修改冷卻機制）
+        document.getElementById('btn-open-edit-nickname').onclick = () => {
+            document.getElementById('modal-edit-nickname').classList.remove('hidden');
+        };
+        document.getElementById('btn-cancel-nickname').onclick = () => {
+            document.getElementById('modal-edit-nickname').classList.add('hidden');
+        };
+        document.getElementById('btn-save-nickname').onclick = async () => {
+            const newName = document.getElementById('input-edit-nickname').value.trim();
+            const errDiv = document.getElementById('edit-nickname-error-msg');
+            const now = Date.now();
+
+            if (newName.length < 2 || newName.length > 12) {
+                errDiv.innerText = "暱稱需介於 2 到 12 個字元！";
+                errDiv.classList.remove('hidden');
+                return;
+            }
+
+            const lastUpdated = currentUserData.lastNicknameUpdatedAt || 0;
+            const diffSeconds = Math.floor((now - lastUpdated) / 1000);
+
+            if (diffSeconds < 30) {
+                errDiv.innerText = `冷卻中！請等待 ${30 - diffSeconds} 秒後再修改。`;
+                errDiv.classList.remove('hidden');
+                return;
             }
 
             try {
-                localStorage.setItem(cacheKey, JSON.stringify({
-                    shadow: rawShadowData,
-                    blocks: rawBlocksData
-                }));
-            } catch(err) {}
+                await db.collection('users').doc(currentUser.uid).update({
+                    displayName: newName,
+                    lastNicknameUpdatedAt: now
+                });
+                currentUserData.displayName = newName;
+                currentUserData.lastNicknameUpdatedAt = now;
+                renderUserInfo();
+                document.getElementById('modal-edit-nickname').classList.add('hidden');
+                alert("暱稱修改成功！");
+            } catch (e) {
+                errDiv.innerText = "修改失敗：" + e.message;
+                errDiv.classList.remove('hidden');
+            }
+        };
 
-            renderLevelMenu();
-            goToStep('step-level');
+        // 個人中心彈窗顯隱
+        document.getElementById('btn-profile-trigger').onclick = () => {
+            document.getElementById('modal-profile-view').classList.remove('hidden');
+        };
+        document.getElementById('btn-close-profile').onclick = () => {
+            document.getElementById('modal-profile-view').classList.add('hidden');
+        };
 
-        } catch(jsonpErr) {
-            alert(`無法連線至 ${langName} API！\n請確認 API 狀態。`);
-        } finally {
-            btnConfirm.disabled = false;
-            btnConfirm.innerHTML = `<i class="fa-solid fa-arrow-right"></i> 下一步（選擇程度）`;
+        // 登出
+        document.getElementById('btn-trigger-logout').onclick = () => {
+            if (confirm("確定要登出嗎？")) {
+                auth.signOut();
+                document.getElementById('modal-profile-view').classList.add('hidden');
+            }
+        };
+
+        // XP 加分與雲端回傳
+        async function addXP(amount) {
+            if (!currentUser || !currentUserData) return;
+            const newXP = (currentUserData.xp || 0) + amount;
+            currentUserData.xp = newXP;
+            renderUserInfo();
+            try {
+                await db.collection('users').doc(currentUser.uid).update({
+                    xp: firebase.firestore.FieldValue.increment(amount)
+                });
+            } catch (e) {
+                console.error("更新 XP 失敗:", e);
+            }
         }
-    }
 
-    function renderLevelMenu() {
-        const container = document.getElementById('container-levels');
-        container.innerHTML = "";
+        // --- 2. 測驗與導覽切換 (原程式碼整合) ---
 
-        if (currentConfig.category === 'japanese') {
-            const jpLevels = [
-                { code: 'beginner', title: '初心者' },
-                { code: 'N5', title: 'N5初級' },
-                { code: 'N4', title: 'N4初級' },
-                { code: 'N3', title: 'N3中級' },
-                { code: 'N2', title: 'N2高級' },
-                { code: 'N1', title: 'N1高級' },
-                { code: 'JLPT/TOPIK', title: '檢定課程' }
-            ];
+        function goToStep(stepId) {
+            stopSpeechRecognition();
+            document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
+            document.getElementById(stepId).classList.add('active');
+        }
 
-            jpLevels.forEach(item => {
-                const btn = document.createElement('button');
-                btn.className = "btn-option";
-                btn.innerText = `${item.title}`;
-                btn.onclick = () => selectLevel(item.code, item.title);
-                container.appendChild(btn);
+        function setUserLang(lang) {
+            currentConfig.lang = lang;
+            ['zh', 'en', 'kr'].forEach(l => {
+                const btn = document.getElementById(`btn-lang-${l}`);
+                if (btn) btn.classList.remove('selected');
             });
-        } else {
+            const activeBtn = document.getElementById(`btn-lang-${lang}`);
+            if (activeBtn) activeBtn.classList.add('selected');
+        }
+
+        function selectCategory(category) {
+            stopSpeechRecognition();
+            currentConfig.category = category;
+            ['korean', 'japanese', 'english'].forEach(c => {
+                const btn = document.getElementById(`btn-cat-${c}`);
+                if (btn) btn.classList.remove('selected');
+            });
+            document.getElementById(`btn-cat-${category}`).classList.add('selected');
+        }
+
+        function loadDataViaJSONP(apiUrl, actionName) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'gas_cb_' + Date.now() + Math.floor(Math.random()*1000);
+                const script = document.createElement('script');
+                window[callbackName] = function(data) {
+                    delete window[callbackName];
+                    if (document.body.contains(script)) document.body.removeChild(script);
+                    resolve(data);
+                };
+                script.onerror = function() {
+                    delete window[callbackName];
+                    if (document.body.contains(script)) document.body.removeChild(script);
+                    reject(new Error("連線失敗"));
+                };
+                const connector = apiUrl.includes('?') ? '&' : '?';
+                script.src = `${apiUrl}${connector}action=${actionName}&prefix=${callbackName}&t=${Date.now()}`;
+                document.body.appendChild(script);
+            });
+        }
+
+        async function confirmLearnLang() {
+            const targetApi = API_URLS[currentConfig.category];
+            if (!targetApi) return alert("該語言的 API 尚未設定！");
+
+            const btnConfirm = document.getElementById('btn-confirm-learn-lang');
+            btnConfirm.disabled = true;
+            btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 同步資料中...`;
+
+            try {
+                const [shadowRes, blocksRes, dialogueRes] = await Promise.all([
+                    loadDataViaJSONP(targetApi, 'getLanguageData').catch(()=>null),
+                    loadDataViaJSONP(targetApi, 'getBlocksData').catch(()=>null),
+                    loadDataViaJSONP(targetApi, 'getDialogueData').catch(()=>null)
+                ]);
+
+                if (shadowRes && shadowRes.status === 'success') rawShadowData = shadowRes.data || [];
+                if (blocksRes && blocksRes.status === 'success') rawBlocksData = blocksRes.data || [];
+                if (dialogueRes && dialogueRes.status === 'success') rawDialogueData = dialogueRes.data || [];
+
+                renderLevelMenu();
+                goToStep('step-level');
+            } catch(e) {
+                alert("資料讀取失敗，請確認網路！");
+            } finally {
+                btnConfirm.disabled = false;
+                btnConfirm.innerHTML = `<i class="fa-solid fa-arrow-right"></i> 選擇程度`;
+            }
+        }
+
+        function renderLevelMenu() {
+            const container = document.getElementById('container-levels');
+            container.innerHTML = "";
             const krLevels = [
                 { code: '0A', title: '0A 認識字母' },
                 { code: '1A', title: '1A 基礎級' },
                 { code: '1B', title: '1B 初級' },
                 { code: '2A', title: '2A 中初級' },
                 { code: '2B', title: '2B 中級' },
-                { code: '3A', title: '3A 中高級' },
-                { code: '3B', title: '3B 高級' },
-                { code: '4A', title: '4A 精通級' },
-                { code: 'JLPT/TOPIK', title: '檢定課程' }
+                { code: '3A', title: '3A 中高級' }
             ];
-
             krLevels.forEach(item => {
                 const btn = document.createElement('button');
                 btn.className = "btn-option";
-                btn.innerText = `${item.title}`;
+                btn.innerText = item.title;
                 btn.onclick = () => selectLevel(item.code, item.title);
                 container.appendChild(btn);
             });
         }
-    }
 
-    function selectLevel(levelCode, levelTitle) {
-        stopSpeechRecognition();
-        currentConfig.level = levelCode;
-        document.getElementById('lbl-unit-level').innerText = levelTitle;
-        renderUnits(currentConfig.level);
-        goToStep('step-unit');
-    }
-
-    function normalizeLevelStr(val) {
-        if (!val) return "";
-        let s = String(val).trim().toUpperCase().replace(/[\s_\-\/]/g, '');
-        if (s === 'JLPT' || s === 'TOPIK' || s === 'JLPTTOPIK') return 'JLPTTOPIK';
-        return s;
-    }
-
-    function renderUnits(level) {
-        const container = document.getElementById('container-units');
-        container.innerHTML = "";
-
-        const combinedData = [...rawShadowData, ...rawBlocksData, ...rawDialogueData, ...rawVocabData];
-        const targetLevelNormalized = normalizeLevelStr(level);
-
-        const filtered = combinedData.filter(i => {
-            const l = Array.isArray(i) ? i[1] : i.level;
-            return normalizeLevelStr(l) === targetLevelNormalized;
-        });
-        const units = [...new Set(filtered.map(i => Array.isArray(i) ? i[2] : i.unit_id))].filter(Boolean).sort((a,b) => a - b);
-
-        if (units.length > 0) {
-            units.forEach(u => {
-                const btn = document.createElement('button');
-                btn.className = "btn-option";
-                btn.innerText = `第 ${u} 單元`;
-                btn.onclick = () => selectUnit(u);
-                container.appendChild(btn);
-            });
-        } else {
-            container.innerHTML = `<div style="color: #6b7280; grid-column: span 3; padding: 20px 0;">此程度 (${level}) 尚無資料</div>`;
+        function selectLevel(levelCode, levelTitle) {
+            currentConfig.level = levelCode;
+            document.getElementById('lbl-unit-level').innerText = levelTitle;
+            document.getElementById('lbl-current-level').innerText = levelCode;
+            renderUnits(levelCode);
+            goToStep('step-unit');
         }
-    }
 
-    function selectUnit(unitId) {
-        stopSpeechRecognition();
-        currentConfig.unit_id = unitId;
-        document.getElementById('lbl-stage-unit').innerText = `Level ${currentConfig.level} | 第 ${unitId} 單元`;
+        function renderUnits(level) {
+            const container = document.getElementById('container-units');
+            container.innerHTML = "";
+            const combinedData = [...rawShadowData, ...rawBlocksData];
+            const filtered = combinedData.filter(i => String(i[1]).trim().toUpperCase() === level.toUpperCase());
+            const units = [...new Set(filtered.map(i => i[2]))].filter(Boolean).sort((a,b) => a - b);
 
-        const container = document.getElementById('container-stages');
-        container.innerHTML = "";
+            if (units.length > 0) {
+                units.forEach(u => {
+                    const btn = document.createElement('button');
+                    btn.className = "btn-option";
+                    btn.innerText = `第 ${u} 單元`;
+                    btn.onclick = () => selectUnit(u);
+                    container.appendChild(btn);
+                });
+            } else {
+                container.innerHTML = `<div style="grid-column: span 3; color:#6b7280; padding:15px;">此程度尚無單元資料</div>`;
+            }
+        }
 
-        const combinedData = [...rawShadowData, ...rawBlocksData, ...rawDialogueData, ...rawVocabData];
-        const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+        function selectUnit(unitId) {
+            currentConfig.unit_id = unitId;
+            document.getElementById('lbl-stage-unit').innerText = `Level ${currentConfig.level} | 單元 ${unitId}`;
+            const container = document.getElementById('container-stages');
+            container.innerHTML = "";
 
-        const filtered = combinedData.filter(i => {
-            const l = Array.isArray(i) ? i[1] : i.level;
-            const u = Array.isArray(i) ? i[2] : i.unit_id;
-            return normalizeLevelStr(l) === targetLevelNormalized && String(u) === String(unitId);
-        });
-        const stages = [...new Set(filtered.map(i => Array.isArray(i) ? i[3] : i.stage))].filter(Boolean).sort((a,b) => a - b);
+            const combinedData = [...rawShadowData, ...rawBlocksData];
+            const filtered = combinedData.filter(i => 
+                String(i[1]).trim().toUpperCase() === currentConfig.level.toUpperCase() &&
+                String(i[2]) === String(unitId)
+            );
+            const stages = [...new Set(filtered.map(i => i[3]))].filter(Boolean).sort((a,b) => a - b);
 
-        if (stages.length > 0) {
             stages.forEach(s => {
                 const card = document.createElement('div');
                 card.className = "stage-card-item";
-
-                const title = document.createElement('div');
-                title.className = "stage-card-title";
-                title.innerText = `第 ${s} 關卡 (${currentConfig.unit_id}-${s})`;
-
+                card.innerHTML = `<div class="stage-card-title">關卡 ${currentConfig.unit_id}-${s}</div>`;
                 const btnGroup = document.createElement('div');
                 btnGroup.className = "stage-btn-group";
 
-                const btnGrammar = document.createElement('button');
-                btnGrammar.className = "btn-stage-action btn-grammar-stage";
-                btnGrammar.innerHTML = `<i class="fa-solid fa-book"></i> 📖 語法`;
-                btnGrammar.onclick = () => selectStageAndMode(s, 'grammar');
-
                 const btnShadow = document.createElement('button');
                 btnShadow.className = "btn-stage-action";
-                btnShadow.innerHTML = `<i class="fa-solid fa-microphone"></i> 🎙️ 跟讀`;
-                btnShadow.onclick = () => selectStageAndMode(s, 'shadow');
+                btnShadow.innerHTML = `<i class="fa-solid fa-microphone"></i> 跟讀模式`;
+                btnShadow.onclick = () => startQuiz(s, 'shadow');
 
                 const btnBlocks = document.createElement('button');
                 btnBlocks.className = "btn-stage-action";
-                btnBlocks.innerHTML = `<i class="fa-solid fa-puzzle-piece"></i> 🧩 重組`;
-                btnBlocks.onclick = () => selectStageAndMode(s, 'blocks');
+                btnBlocks.innerHTML = `<i class="fa-solid fa-puzzle-piece"></i> 字塊重組`;
+                btnBlocks.onclick = () => startQuiz(s, 'blocks');
 
-                const btnDialogue = document.createElement('button');
-                btnDialogue.className = "btn-stage-action btn-dialogue-stage";
-                btnDialogue.innerHTML = `<i class="fa-solid fa-comments"></i> 💬 對話`;
-                btnDialogue.onclick = () => selectStageAndMode(s, 'dialogue');
-
-                const btnVocabShadow = document.createElement('button');
-                btnVocabShadow.className = "btn-stage-action btn-vocab-stage";
-                btnVocabShadow.innerHTML = `<i class="fa-solid fa-font"></i> 🗣️ 單字跟讀`;
-                btnVocabShadow.onclick = () => selectStageAndMode(s, 'vocab_shadow');
-
-                const btnVocabType = document.createElement('button');
-                btnVocabType.className = "btn-stage-action btn-vocab-stage";
-                btnVocabType.innerHTML = `<i class="fa-solid fa-keyboard"></i> ⌨ 單字聽打`;
-                btnVocabType.onclick = () => selectStageAndMode(s, 'vocab_type');
-
-                const btnVocabChoice = document.createElement('button');
-                btnVocabChoice.className = "btn-stage-action btn-vocab-stage";
-                btnVocabChoice.innerHTML = `<i class="fa-solid fa-list-check"></i> 🎯 單字選擇`;
-                btnVocabChoice.onclick = () => selectStageAndMode(s, 'vocab_choice');
-
-                btnGroup.appendChild(btnGrammar);
                 btnGroup.appendChild(btnShadow);
                 btnGroup.appendChild(btnBlocks);
-                btnGroup.appendChild(btnDialogue);
-                btnGroup.appendChild(btnVocabShadow);
-                btnGroup.appendChild(btnVocabType);
-                btnGroup.appendChild(btnVocabChoice);
-
-                card.appendChild(title);
                 card.appendChild(btnGroup);
-
                 container.appendChild(card);
             });
-        } else {
-            container.innerHTML = `<div style="color: #6b7280; padding: 20px 0;">此單元尚無關卡資料</div>`;
-        }
-
-        goToStep('step-stage');
-    }
-
-    function selectStageAndMode(stage, mode) {
-        stopSpeechRecognition(); 
-        currentConfig.stage = stage;
-        currentConfig.mode = mode;
-
-        if (mode === 'grammar') {
-            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-
-            const matchGrammar = globalGrammarData.find(g => 
-                normalizeLevelStr(g.level) === targetLevelNormalized &&
-                String(g.unit_id) === String(currentConfig.unit_id) &&
-                String(g.stage) === String(stage)
-            );
-
-            if (matchGrammar && (
-                (matchGrammar.dialogs && matchGrammar.dialogs.length > 0) || 
-                (matchGrammar.example && matchGrammar.example.trim() !== '') ||
-                (matchGrammar.ready && matchGrammar.ready.trim() !== '') ||
-                (matchGrammar.question && matchGrammar.question.trim() !== '')
-            )) {
-                startGrammarChallenge(matchGrammar);
-            } else {
-                alert("此關卡目前沒有設定獨立語法觀念喔！");
-            }
-        } else if (mode === 'dialogue') {
-            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-
-            const matchDialogue = rawDialogueData.find(d => 
-                normalizeLevelStr(d.level) === targetLevelNormalized &&
-                String(d.unit_id) === String(currentConfig.unit_id) &&
-                String(d.stage) === String(stage)
-            );
-
-            if (matchDialogue) {
-                startDialogueChallenge(matchDialogue);
-            } else {
-                alert("此關卡目前沒有設定對話練習喔！");
-            }
-        } else if (mode.startsWith('vocab_')) {
-            startVocabChallenge(mode);
-        } else {
-            startMainQuiz();
-        }
-    }
-
-    // --- 全新單字挑戰 (Vocabulary Challenge) 邏輯 ---
-
-    function getTranslationByLang(item) {
-        if (!item) return "";
-        if (currentConfig.lang === 'en') return item.en || item.zh_tw || "";
-        if (currentConfig.lang === 'kr' || currentConfig.lang === 'ja') return item.ja || item.zh_tw || "";
-        return item.zh_tw || "";
-    }
-
-    function startVocabChallenge(vocabMode) {
-        stopSpeechRecognition();
-        const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-
-        vocabQuestions = rawVocabData.filter(v => 
-            normalizeLevelStr(v.level) === targetLevelNormalized &&
-            String(v.unit_id) === String(currentConfig.unit_id) &&
-            String(v.stage) === String(currentConfig.stage)
-        );
-
-        if (vocabQuestions.length === 0) {
-            alert("此關卡目前沒有設定單字練習喔！");
-            return;
-        }
-
-        vocabIndex = 0;
-        const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
-        const modeTitleMap = {
-            'vocab_shadow': '🗣️ 單字跟讀',
-            'vocab_type': '⌨️ 單字聽打',
-            'vocab_choice': '🎯 單字選擇'
-        };
-
-        const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - 關卡 ${currentConfig.stage} (${modeTitleMap[vocabMode]})`;
-        document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
-
-        if (vocabMode === 'vocab_shadow') {
-            goToStep('step-quiz-vocab-shadow');
-        } else if (vocabMode === 'vocab_type') {
-            goToStep('step-quiz-vocab-type');
-        } else if (vocabMode === 'vocab_choice') {
-            goToStep('step-quiz-vocab-choice');
-        }
-
-        displayVocabQuestion();
-    }
-
-    function displayVocabQuestion() {
-        stopSpeechRecognition();
-        if (!vocabQuestions || vocabQuestions.length === 0) return;
-
-        const currentVocab = vocabQuestions[vocabIndex];
-        const total = vocabQuestions.length;
-
-        if (currentConfig.mode === 'vocab_shadow') {
-            document.getElementById('lbl-vocab-progress').innerText = `${vocabIndex + 1} / ${total}`;
-            document.getElementById('lbl-vocab-target-text').innerText = currentVocab.text || "";
-            document.getElementById('lbl-vocab-translation').innerText = "";
-            document.getElementById('lbl-vocab-recognized-text').innerText = "-";
-            document.getElementById('lbl-vocab-score').innerText = "得分：--";
-
-            document.getElementById('btn-vocab-prev').disabled = vocabIndex === 0;
-            document.getElementById('btn-vocab-next').disabled = vocabIndex === total - 1;
-
-        } else if (currentConfig.mode === 'vocab_type') {
-            document.getElementById('lbl-vocab-type-progress').innerText = `${vocabIndex + 1} / ${total}`;
-            
-            // 💡 單字聽打題目預設隱藏
-            const typeTextElem = document.getElementById('lbl-vocab-type-text');
-            typeTextElem.innerText = currentVocab.text || "";
-            typeTextElem.style.display = 'none';
-
-            document.getElementById('input-vocab-type').value = "";
-            document.getElementById('lbl-vocab-type-translation').innerText = "";
-            document.getElementById('lbl-vocab-type-score').innerText = "等待輸入...";
-            document.getElementById('lbl-vocab-type-score').style.color = "#58cc02";
-
-            document.getElementById('btn-vocab-type-prev').disabled = vocabIndex === 0;
-            document.getElementById('btn-vocab-type-next').disabled = vocabIndex === total - 1;
-
-            playVocabAudio();
-
-        } else if (currentConfig.mode === 'vocab_choice') {
-            document.getElementById('lbl-vocab-choice-progress').innerText = `${vocabIndex + 1} / ${total}`;
-            document.getElementById('lbl-vocab-choice-text').innerText = currentVocab.text || "";
-            document.getElementById('lbl-vocab-choice-score').innerText = "請選擇正確意思";
-            document.getElementById('lbl-vocab-choice-score').style.color = "#58cc02";
-
-            const container = document.getElementById('container-vocab-choices');
-            container.innerHTML = "";
-
-            let choices = (currentVocab.choice || '').split('/').map(s => s.trim()).filter(Boolean);
-            const correctAns = currentVocab.zh_tw.trim();
-            if (correctAns && !choices.includes(correctAns)) {
-                choices.push(correctAns);
-            }
-
-            choices.sort(() => Math.random() - 0.5);
-
-            choices.forEach(cText => {
-                const btn = document.createElement('button');
-                btn.className = 'btn-vocab-choice';
-                btn.innerText = cText;
-                btn.onclick = () => checkVocabChoiceAnswer(cText);
-                container.appendChild(btn);
-            });
-
-            document.getElementById('btn-vocab-choice-prev').disabled = vocabIndex === 0;
-            document.getElementById('btn-vocab-choice-next').disabled = vocabIndex === total - 1;
-        }
-    }
-
-    function playVocabAudio() {
-        stopSpeechRecognition();
-        const currentVocab = vocabQuestions[vocabIndex];
-        if (!currentVocab) return;
-
-        if (currentVocab.audio_url && currentVocab.audio_url.trim() !== '') {
-            new Audio(currentVocab.audio_url).play().catch(() => speakTTS(currentVocab.text));
-        } else {
-            speakTTS(currentVocab.text);
-        }
-    }
-
-    function checkVocabTypeAnswer() {
-        const currentVocab = vocabQuestions[vocabIndex];
-        const userText = cleanStringForCompare(document.getElementById('input-vocab-type').value);
-        const targetText = cleanStringForCompare(currentVocab.text);
-
-        const scoreBadge = document.getElementById('lbl-vocab-type-score');
-        const transLbl = document.getElementById('lbl-vocab-type-translation');
-        const typeTextElem = document.getElementById('lbl-vocab-type-text');
-
-        if (userText === targetText) {
-            scoreBadge.innerText = "🎉 完全正確！太棒了！";
-            scoreBadge.style.color = "#58cc02";
-            
-            // 💡 答對後顯示單字文字與翻譯
-            typeTextElem.style.display = 'block';
-            transLbl.innerText = `💡 翻譯：${getTranslationByLang(currentVocab)}`;
-            playVocabAudio();
-        } else {
-            scoreBadge.innerText = "❌ 答案不太對喔，再試試看！";
-            scoreBadge.style.color = "#ff4b4b";
-        }
-    }
-
-    function checkVocabChoiceAnswer(selectedText) {
-        const currentVocab = vocabQuestions[vocabIndex];
-        const correctAns = currentVocab.zh_tw.trim();
-        const scoreBadge = document.getElementById('lbl-vocab-choice-score');
-
-        if (selectedText.trim() === correctAns) {
-            scoreBadge.innerText = "🎉 正確答案！太棒了！";
-            scoreBadge.style.color = "#58cc02";
-            playVocabAudio();
-        } else {
-            scoreBadge.innerText = `❌ 選錯囉！正確答案是：${correctAns}`;
-            scoreBadge.style.color = "#ff4b4b";
-        }
-    }
-
-    function prevVocabQuestion() {
-        stopSpeechRecognition();
-        if (vocabIndex > 0) {
-            vocabIndex--;
-            displayVocabQuestion();
-        }
-    }
-
-    function nextVocabQuestion() {
-        stopSpeechRecognition();
-        if (vocabIndex < vocabQuestions.length - 1) {
-            vocabIndex++;
-            displayVocabQuestion();
-        }
-    }
-
-    // --- 聊天氣泡對話 (Dialogue Challenge) 邏輯 ---
-
-    function startDialogueChallenge(dialogueItem) {
-        stopSpeechRecognition();
-        currentDialogueItem = dialogueItem;
-        dialogueList = [];
-
-        for (let i = 1; i <= 8; i++) {
-            const aKey = `a${i}`;
-            const bKey = `b${i}`;
-            const axKey = `a${i}x`;
-            const bxKey = `b${i}x`;
-
-            const aText = (dialogueItem[aKey] || '').trim();
-            const bText = (dialogueItem[bKey] || '').trim();
-            const axText = (dialogueItem[axKey] || '').trim();
-            const bxText = (dialogueItem[bxKey] || '').trim();
-
-            if (aText) {
-                dialogueList.push({
-                    speaker: 'A',
-                    targetText: aText,
-                    fillText: axText || aText,
-                    audioUrl: dialogueItem.audio_url || ''
-                });
-            }
-            if (bText) {
-                dialogueList.push({
-                    speaker: 'B',
-                    targetText: bText,
-                    fillText: bxText || bText,
-                    audioUrl: dialogueItem.audio_url || ''
-                });
-            }
-        }
-
-        if (dialogueList.length === 0) {
-            alert("此關卡對話資料為空！");
-            return;
-        }
-
-        dialogueIndex = 0;
-        dialogueSubMode = 'basic';
-        userRole = 'A';
-        
-        switchDialogueMode('basic');
-        switchUserRole('A');
-
-        const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
-        document.querySelectorAll('.lbl-quiz-info').forEach(e => {
-            e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - 關卡 ${currentConfig.stage} (💬 對話挑戰)`;
-        });
-
-        goToStep('step-quiz-dialogue');
-        renderChatWindow();
-    }
-
-    function switchDialogueMode(mode) {
-        stopSpeechRecognition();
-        dialogueSubMode = mode;
-        dialogueIndex = 0;
-        ['basic', 'fill', 'blind'].forEach(m => {
-            const btn = document.getElementById(`btn-mode-${m}`);
-            if (btn) btn.classList.remove('active');
-        });
-        document.getElementById(`btn-mode-${mode}`).classList.add('active');
-
-        isBlindUnlocked = false;
-        renderChatWindow();
-    }
-
-    function switchUserRole(role) {
-        stopSpeechRecognition();
-        userRole = role;
-        dialogueIndex = 0;
-        ['a', 'b'].forEach(r => {
-            const btn = document.getElementById(`btn-role-${r.toLowerCase()}`);
-            if (btn) btn.classList.remove('active');
-        });
-        document.getElementById(`btn-role-${role.toLowerCase()}`).classList.add('active');
-
-        renderChatWindow();
-    }
-
-    function renderChatWindow() {
-        stopSpeechRecognition();
-        if (!dialogueList || dialogueList.length === 0) return;
-
-        const chatWin = document.getElementById('chat-window');
-        chatWin.innerHTML = '';
-
-        for (let idx = 0; idx <= dialogueIndex; idx++) {
-            const item = dialogueList[idx];
-            const isCurrentTarget = (idx === dialogueIndex);
-
-            const row = document.createElement('div');
-            row.className = `chat-bubble-row speaker-${item.speaker}`;
-
-            const label = document.createElement('div');
-            label.className = 'chat-speaker-label';
-            const isUser = (item.speaker === userRole);
-            label.innerText = `Speaker ${item.speaker}${isUser ? ' (你)' : ''}`;
-
-            const bubble = document.createElement('div');
-            bubble.className = 'chat-bubble';
-            if (isCurrentTarget) {
-                bubble.classList.add('active-target');
-            }
-
-            let bubbleText = item.targetText;
-
-            if (dialogueSubMode === 'fill' && isCurrentTarget && !isBlindUnlocked) {
-                bubbleText = item.fillText;
-            } else if (dialogueSubMode === 'blind' && isCurrentTarget && !isBlindUnlocked) {
-                bubbleText = "??? (聽音或對話解鎖)";
-            }
-
-            const textSpan = document.createElement('span');
-            textSpan.innerText = bubbleText;
-            bubble.appendChild(textSpan);
-
-            const playBtn = document.createElement('button');
-            playBtn.className = 'btn-bubble-play';
-            playBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
-            playBtn.onclick = (e) => {
-                e.stopPropagation();
-                playSpecificDialogueAudio(idx);
-            };
-            bubble.appendChild(playBtn);
-
-            row.appendChild(label);
-            row.appendChild(bubble);
-            chatWin.appendChild(row);
-        }
-
-        setTimeout(() => {
-            chatWin.scrollTop = chatWin.scrollHeight;
-        }, 50);
-
-        const blindBox = document.getElementById('box-blind-unlock');
-        if (dialogueSubMode === 'blind' && !isBlindUnlocked) {
-            blindBox.style.display = 'block';
-        } else {
-            blindBox.style.display = 'none';
-        }
-
-        document.getElementById('lbl-dialogue-progress').innerText = `${dialogueIndex + 1} / ${dialogueList.length}`;
-        document.getElementById('btn-dialogue-prev').disabled = dialogueIndex === 0;
-        document.getElementById('btn-dialogue-next').disabled = dialogueIndex === dialogueList.length - 1;
-
-        const currentItem = dialogueList[dialogueIndex];
-        if (currentItem && currentItem.speaker !== userRole) {
-            playDialogueAudio();
-        }
-    }
-
-    function unlockBlindTextManually() {
-        isBlindUnlocked = true;
-        renderChatWindow();
-    }
-
-    function playSpecificDialogueAudio(idx) {
-        stopSpeechRecognition();
-        if (!dialogueList || !dialogueList[idx]) return;
-        const target = dialogueList[idx];
-        if (target.audioUrl && target.audioUrl.trim() !== '') {
-            new Audio(target.audioUrl).play().catch(() => speakTTS(target.targetText));
-        } else {
-            speakTTS(target.targetText);
-        }
-    }
-
-    function playDialogueAudio() {
-        playSpecificDialogueAudio(dialogueIndex);
-    }
-
-    function prevDialogueSentence() {
-        stopSpeechRecognition();
-        if (dialogueIndex > 0) {
-            dialogueIndex--;
-            isBlindUnlocked = false;
-            renderChatWindow();
-        }
-    }
-
-    function nextDialogueSentence() {
-        stopSpeechRecognition();
-        if (dialogueIndex < dialogueList.length - 1) {
-            dialogueIndex++;
-            isBlindUnlocked = false;
-            renderChatWindow();
-        }
-    }
-
-    // --- 語法小教室相關邏輯 ---
-
-    function startGrammarChallenge(grammarData) {
-        stopSpeechRecognition();
-        currentGrammarItem = grammarData;
-        currentDialogIndex = 0;
-        
-        document.getElementById('lbl-grammar-info').innerText = `語法教室 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Stage ${currentConfig.stage}`;
-        document.getElementById('area-grammar-all-history').style.display = 'none';
-        document.getElementById('area-grammar-example').style.display = 'none';
-        document.getElementById('area-grammar-ready').style.display = 'none';
-        document.getElementById('area-grammar-quiz').style.display = 'none';
-
-        if (grammarData.dialogs && grammarData.dialogs.length > 0) {
-            document.getElementById('area-grammar-dialog').style.display = 'block';
-            showCurrentGrammarDialog();
-        } else if (grammarData.example && grammarData.example.trim() !== '') {
-            showExampleArea();
-        } else if (grammarData.ready && grammarData.ready.trim() !== '') {
-            showReadyArea();
-        } else {
-            showGrammarQuizArea();
-        }
-
-        goToStep('step-grammar');
-    }
-
-    function playGrammarAudio(dialogIdx) {
-        stopSpeechRecognition();
-        if (!currentGrammarItem) return;
-
-        let audioUrl = "";
-        if (dialogIdx === 1) audioUrl = currentGrammarItem.gram2_audio;
-        else if (dialogIdx === 2) audioUrl = currentGrammarItem.gram3_audio;
-
-        const textToSpeak = (currentGrammarItem.dialogs && currentGrammarItem.dialogs[dialogIdx])
-            ? currentGrammarItem.dialogs[dialogIdx].replace(/^[\s\r\n\u3000]+/g, '').trim()
-            : "";
-
-        if (audioUrl && audioUrl.trim() !== '') {
-            new Audio(audioUrl).play().catch(() => {
-                if (textToSpeak) speakTTS(textToSpeak);
-            });
-        } else if (textToSpeak) {
-            speakTTS(textToSpeak);
-        }
-    }
-
-    function showCurrentGrammarDialog() {
-        if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
-
-        const total = currentGrammarItem.dialogs.length;
-        document.getElementById('lbl-dialog-counter').innerText = `${currentDialogIndex + 1} / ${total}`;
-
-        document.getElementById('btn-prev-dialog').disabled = currentDialogIndex === 0;
-
-        const nextBtn = document.getElementById('btn-next-dialog');
-        if (currentDialogIndex === total - 1) {
-            if (currentGrammarItem.example && currentGrammarItem.example.trim() !== '') {
-                nextBtn.innerHTML = `看例句 <i class="fa-solid fa-arrow-right"></i>`;
-            } else if (currentGrammarItem.ready && currentGrammarItem.ready.trim() !== '') {
-                nextBtn.innerHTML = `準備測驗 <i class="fa-solid fa-arrow-right"></i>`;
-            } else if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') {
-                nextBtn.innerHTML = `進入測驗 <i class="fa-solid fa-pen-to-square"></i>`;
-            } else {
-                nextBtn.innerHTML = `完成關卡 <i class="fa-solid fa-check"></i>`;
-            }
-        } else {
-            nextBtn.innerHTML = `下一步 <i class="fa-solid fa-arrow-right"></i>`;
-        }
-
-        const rawStr = currentGrammarItem.dialogs[currentDialogIndex] || "";
-        currentFullDialogText = rawStr
-            .replace(/^[\s\r\n\u3000]+/g, '')
-            .replace(/\r/g, '')
-            .trim();
-
-        const audioBtn = document.getElementById('btn-gram2-audio');
-        if (currentDialogIndex === 1 || currentDialogIndex === 2) {
-            audioBtn.style.display = 'block';
-            audioBtn.onclick = (e) => {
-                e.stopPropagation();
-                playGrammarAudio(currentDialogIndex);
-            };
-            playGrammarAudio(currentDialogIndex);
-        } else {
-            audioBtn.style.display = 'none';
-        }
-
-        startTypewriter(currentFullDialogText);
-    }
-
-    function startTypewriter(text) {
-        if (typewriterTimer) clearInterval(typewriterTimer);
-        const box = document.getElementById('lbl-grammar-dialog');
-        box.textContent = "";
-        isTypewriterTyping = true;
-        
-        let charIndex = 0;
-        typewriterTimer = setInterval(() => {
-            if (charIndex < text.length) {
-                box.textContent = text.substring(0, charIndex + 1);
-                charIndex++;
-            } else {
-                clearInterval(typewriterTimer);
-                isTypewriterTyping = false;
-            }
-        }, 35);
-    }
-
-    function completeTypewriterImmediately() {
-        if (isTypewriterTyping) {
-            clearInterval(typewriterTimer);
-            document.getElementById('lbl-grammar-dialog').textContent = currentFullDialogText;
-            isTypewriterTyping = false;
-        }
-    }
-
-    function nextGrammarDialog() {
-        if (isTypewriterTyping) {
-            completeTypewriterImmediately();
-            return;
-        }
-
-        if (!currentGrammarItem) return;
-
-        if (currentGrammarItem.dialogs && currentDialogIndex < currentGrammarItem.dialogs.length - 1) {
-            currentDialogIndex++;
-            showCurrentGrammarDialog();
-        } else {
-            processAfterDialogs();
-        }
-    }
-
-    function prevGrammarDialog() {
-        if (isTypewriterTyping) completeTypewriterImmediately();
-
-        if (currentDialogIndex > 0) {
-            currentDialogIndex--;
-            showCurrentGrammarDialog();
-        }
-    }
-
-    function skipGrammarDialog() {
-        if (typewriterTimer) clearInterval(typewriterTimer);
-        isTypewriterTyping = false;
-        processAfterDialogs();
-    }
-
-    function processAfterDialogs() {
-        renderGrammarHistoryList();
-        document.getElementById('area-grammar-dialog').style.display = 'none';
-
-        if (currentGrammarItem.example && currentGrammarItem.example.trim() !== '') {
-            showExampleArea();
-        } else if (currentGrammarItem.ready && currentGrammarItem.ready.trim() !== '') {
-            showReadyArea();
-        } else if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') {
-            showGrammarQuizArea();
-        } else {
             goToStep('step-stage');
         }
-    }
 
-    function showExampleArea() {
-        document.getElementById('area-grammar-dialog').style.display = 'none';
-        document.getElementById('area-grammar-example').style.display = 'block';
+        function startQuiz(stage, mode) {
+            currentConfig.stage = stage;
+            currentConfig.mode = mode;
 
-        const container = document.getElementById('container-example-list');
-        container.innerHTML = '';
-
-        const examples = currentGrammarItem.example.split('/').map(s => s.trim()).filter(Boolean);
-        const audioUrls = (currentGrammarItem.example_audio || '').split('/').map(s => s.trim());
-
-        examples.forEach((exText, idx) => {
-            const row = document.createElement('div');
-            row.style.cssText = "display: flex; justify-content: space-between; align-items: center; background: #f3f4f6; padding: 12px 16px; border-radius: 12px; margin-bottom: 10px; font-size: 1.1rem; font-weight: bold;";
-            
-            const textSpan = document.createElement('span');
-            textSpan.innerText = `${idx + 1}. ${exText}`;
-
-            const playBtn = document.createElement('button');
-            playBtn.className = 'btn-circle btn-listen';
-            playBtn.style.cssText = "width: 40px; height: 40px; font-size: 0.9rem; flex-shrink: 0;";
-            playBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
-            
-            const audioUrl = audioUrls[idx] || '';
-            playBtn.onclick = () => {
-                stopSpeechRecognition();
-                if (audioUrl) {
-                    new Audio(audioUrl).play().catch(() => speakTTS(exText));
-                } else {
-                    speakTTS(exText);
-                }
-            };
-
-            row.appendChild(textSpan);
-            row.appendChild(playBtn);
-            container.appendChild(row);
-        });
-    }
-
-    function goToReadyPage() {
-        document.getElementById('area-grammar-example').style.display = 'none';
-        if (currentGrammarItem.ready && currentGrammarItem.ready.trim() !== '') {
-            showReadyArea();
-        } else if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') {
-            showGrammarQuizArea();
-        } else {
-            goToStep('step-stage');
-        }
-    }
-
-    function showReadyArea() {
-        document.getElementById('area-grammar-dialog').style.display = 'none';
-        document.getElementById('area-grammar-example').style.display = 'none';
-        document.getElementById('area-grammar-ready').style.display = 'block';
-
-        document.getElementById('lbl-ready-text').innerText = (currentGrammarItem.ready || "準備好進行測驗了嗎？").trim();
-    }
-
-    function enterGrammarQuizFromReady() {
-        document.getElementById('area-grammar-ready').style.display = 'none';
-        if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') {
-            showGrammarQuizArea();
-        } else {
-            goToStep('step-stage');
-        }
-    }
-
-    function renderGrammarHistoryList() {
-        const container = document.getElementById('container-dialog-history');
-        container.innerHTML = "";
-
-        if (currentGrammarItem && currentGrammarItem.dialogs && currentGrammarItem.dialogs.length > 0) {
-            let listToRender = [...currentGrammarItem.dialogs];
-
-            if (listToRender.length > 1) {
-                listToRender.pop();
-            }
-
-            listToRender.forEach((dText, idx) => {
-                const item = document.createElement('div');
-                item.className = 'dialog-history-item';
-                const cleanText = dText.replace(/^[\s\r\n\u3000]+/g, '').replace(/\r/g, '').trim();
-                item.innerHTML = `<span class="num">${idx + 1}.</span> ${cleanText}`;
-                container.appendChild(item);
-            });
-            document.getElementById('area-grammar-all-history').style.display = 'block';
-        }
-    }
-
-    function showGrammarQuizArea() {
-        document.getElementById('area-grammar-dialog').style.display = 'none';
-        document.getElementById('area-grammar-example').style.display = 'none';
-        document.getElementById('area-grammar-ready').style.display = 'none';
-        document.getElementById('area-grammar-quiz').style.display = 'block';
-        document.getElementById('box-grammar-result').style.display = 'none';
-
-        renderGrammarHistoryList();
-
-        const rawQuestions = currentGrammarItem.question.split('/').map(s => s.trim()).filter(Boolean);
-        userGrammarAnswers = new Array(rawQuestions.length).fill('');
-        activeBlankIndex = 0;
-
-        const qContainer = document.getElementById('container-grammar-questions');
-        qContainer.innerHTML = '';
-
-        rawQuestions.forEach((qStr, idx) => {
-            const div = document.createElement('div');
-            div.className = 'grammar-q-item';
-            
-            const formattedText = qStr.replace(/__/g, `<span class="blank-slot" id="blank-slot-${idx}" onclick="setActiveBlank(${idx})">___</span>`);
-            div.innerHTML = `${idx + 1}. ${formattedText}`;
-            qContainer.appendChild(div);
-        });
-
-        const cContainer = document.getElementById('container-grammar-choices');
-        cContainer.innerHTML = '';
-
-        const choices = currentGrammarItem.choice.split('/').map(s => s.trim()).filter(Boolean);
-        choices.forEach(opt => {
-            const btn = document.createElement('div');
-            btn.className = 'block-chip';
-            btn.innerText = opt;
-            btn.onclick = () => fillGrammarAnswer(opt);
-            cContainer.appendChild(btn);
-        });
-    }
-
-    function setActiveBlank(index) {
-        activeBlankIndex = index;
-    }
-
-    function fillGrammarAnswer(optionText) {
-        userGrammarAnswers[activeBlankIndex] = optionText;
-        const slot = document.getElementById(`blank-slot-${activeBlankIndex}`);
-        if (slot) {
-            slot.innerText = optionText;
-        }
-
-        const nextBlank = userGrammarAnswers.findIndex(a => a === '');
-        if (nextBlank !== -1) {
-            activeBlankIndex = nextBlank;
-        }
-    }
-
-    function checkGrammarQuiz() {
-        const rawQuestions = currentGrammarItem.question.split('/').map(s => s.trim()).filter(Boolean);
-        const correctAnswers = currentGrammarItem.answer.split('/').map(s => s.trim().replace(/\s+/g, ''));
-
-        let isAllCorrect = true;
-
-        if (userGrammarAnswers.includes('')) {
-            alert('請填寫完所有空格後再送出！');
-            return;
-        }
-
-        rawQuestions.forEach((qStr, idx) => {
-            const builtSentence = qStr.replace(/__/g, userGrammarAnswers[idx]).replace(/\s+/g, '');
-            const targetSentence = correctAnswers[idx];
-
-            if (builtSentence !== targetSentence) {
-                isAllCorrect = false;
-            }
-        });
-
-        const resultBox = document.getElementById('box-grammar-result');
-        const resultText = document.getElementById('lbl-grammar-result-text');
-        const actionBtn = document.getElementById('btn-grammar-action');
-
-        resultBox.style.display = 'block';
-
-        if (isAllCorrect) {
-            resultText.innerText = currentGrammarItem.correct || "🎉 完全正確！通關成功！";
-            resultText.style.color = "#58cc02";
-            actionBtn.innerHTML = `<i class="fa-solid fa-flag-checkered"></i> 完成關卡`;
-            actionBtn.style.background = "#58cc02";
-            actionBtn.onclick = () => goToStep('step-stage');
-        } else {
-            resultText.innerText = currentGrammarItem.incorrect || "❌ 答案不太對喔，再試一次！";
-            resultText.style.color = "#ff4b4b";
-            actionBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> 再來一次`;
-            actionBtn.style.background = "#ff4b4b";
-            actionBtn.onclick = () => showGrammarQuizArea();
-        }
-    }
-
-    // --- 常規跟讀 / 重組測驗邏輯 ---
-
-    function startMainQuiz() {
-        stopSpeechRecognition();
-
-        const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
-        const modeTitle = currentConfig.mode === 'shadow' ? '跟讀挑戰' : '重組挑戰';
-        const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - 關卡 ${currentConfig.stage} (${modeTitle})`;
-        document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
-
-        const langIndexMap = { 'zh': 5, 'en': 6, 'kr': 7, 'ja': 7 };
-        const langIdx = langIndexMap[currentConfig.lang] !== undefined ? langIndexMap[currentConfig.lang] : 5;
-        const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-
-        if (currentConfig.mode === 'shadow') {
-            goToStep('step-quiz-shadow');
-
-            questions = rawShadowData.filter(i => 
-                normalizeLevelStr(i[1]) === targetLevelNormalized &&
-                String(i[2]) === String(currentConfig.unit_id) &&
-                String(i[3]) === String(currentConfig.stage)
-            ).map(i => ({
-                id: i[0],
-                text: i[4],
-                translation: i[langIdx] || i[5] || '',
-                audioUrl: i[8],
-                hint: i[9] || ''
-            }));
-        } else {
-            goToStep('step-quiz-blocks');
-            
-            const blockLangIndexMap = { 'zh': 6, 'en': 7, 'kr': 8, 'ja': 8 };
-            const bLangIdx = blockLangIndexMap[currentConfig.lang] !== undefined ? blockLangIndexMap[currentConfig.lang] : 6;
-
-            questions = rawBlocksData.filter(i => 
-                normalizeLevelStr(i[1]) === targetLevelNormalized &&
-                String(i[2]) === String(currentConfig.unit_id) &&
-                String(i[3]) === String(currentConfig.stage)
-            ).map(i => {
-                let rawOptions = (i[5] || '').split(',').map(s => s.trim()).filter(Boolean);
-                let shuffled = [...rawOptions].sort(() => Math.random() - 0.5);
-
-                return {
-                    id: i[0],
+            if (mode === 'shadow') {
+                goToStep('step-quiz-shadow');
+                questions = rawShadowData.filter(i => 
+                    String(i[1]).trim().toUpperCase() === currentConfig.level.toUpperCase() &&
+                    String(i[2]) === String(currentConfig.unit_id) &&
+                    String(i[3]) === String(stage)
+                ).map(i => ({
+                    text: i[4],
+                    translation: i[5] || '',
+                    audioUrl: i[8],
+                    hint: i[9] || ''
+                }));
+            } else {
+                goToStep('step-quiz-blocks');
+                questions = rawBlocksData.filter(i => 
+                    String(i[1]).trim().toUpperCase() === currentConfig.level.toUpperCase() &&
+                    String(i[2]) === String(currentConfig.unit_id) &&
+                    String(i[3]) === String(stage)
+                ).map(i => ({
                     fullText: i[4],
-                    options: shuffled,
-                    translation: i[bLangIdx] || i[6] || '',
+                    options: (i[5] || '').split(',').map(s => s.trim()).filter(Boolean).sort(() => Math.random() - 0.5),
+                    translation: i[6] || '',
                     audioUrl: i[9] || ''
-                };
+                }));
+            }
+
+            currentIndex = 0;
+            if (questions.length > 0) {
+                displayQuestion();
+            } else {
+                alert("該關卡尚無題目！");
+            }
+        }
+
+        function displayQuestion() {
+            stopSpeechRecognition();
+            const q = questions[currentIndex];
+            document.querySelectorAll('.lbl-progress').forEach(e => e.innerText = `${currentIndex + 1} / ${questions.length}`);
+
+            if (currentConfig.mode === 'shadow') {
+                document.getElementById('lbl-target-text').innerText = q.text;
+                document.getElementById('lbl-translation').innerText = q.translation;
+                document.getElementById('lbl-recognized-text').innerText = "-";
+                document.getElementById('lbl-score').innerText = "得分：--";
+            } else {
+                document.getElementById('lbl-block-translation').innerText = q.translation;
+                document.getElementById('lbl-block-score').innerText = "請點擊字塊組句";
+                selectedBlockIndices = [];
+                renderBlocks();
+                playBlockAudio();
+            }
+        }
+
+        function renderBlocks() {
+            const q = questions[currentIndex];
+            const zoneOptions = document.getElementById('zone-options');
+            const zoneAnswer = document.getElementById('zone-answer');
+            zoneOptions.innerHTML = "";
+            zoneAnswer.innerHTML = "";
+
+            q.options.forEach((optText, idx) => {
+                const btn = document.createElement('div');
+                btn.className = 'block-chip' + (selectedBlockIndices.includes(idx) ? ' used' : '');
+                btn.innerText = optText;
+                btn.onclick = () => { selectedBlockIndices.push(idx); renderBlocks(); };
+                zoneOptions.appendChild(btn);
+            });
+
+            selectedBlockIndices.forEach(idx => {
+                const btn = document.createElement('div');
+                btn.className = 'block-chip';
+                btn.innerText = q.options[idx];
+                btn.onclick = () => { selectedBlockIndices = selectedBlockIndices.filter(i => i !== idx); renderBlocks(); };
+                zoneAnswer.appendChild(btn);
             });
         }
 
-        currentIndex = 0;
-        if (questions.length > 0) {
-            displayQuestion();
-        } else {
-            alert("該關卡尚無練習題目！");
-        }
-    }
+        function checkBlockAnswer() {
+            const q = questions[currentIndex];
+            const userSentence = selectedBlockIndices.map(i => q.options[i]).join('');
+            const targetSentence = q.fullText.replace(/\s+/g, '');
+            const scoreBadge = document.getElementById('lbl-block-score');
 
-    function displayQuestion() {
-        stopSpeechRecognition();
-
-        if (!questions || questions.length === 0) return;
-        const q = questions[currentIndex];
-
-        document.querySelectorAll('.lbl-progress').forEach(e => e.innerText = `${currentIndex + 1} / ${questions.length}`);
-        
-        if (currentConfig.mode === 'shadow') {
-            document.getElementById('lbl-target-text').innerText = q.text || "";
-            document.getElementById('lbl-translation').innerText = q.translation || "";
-            const hintElem = document.getElementById('lbl-hint');
-            if (q.hint && q.hint.trim() !== '') {
-                hintElem.innerText = `💡 提示：${q.hint.trim()}`;
-                hintElem.style.display = "inline-block";
+            if (userSentence === targetSentence) {
+                scoreBadge.innerText = "🎉 完全正確！+10 XP";
+                scoreBadge.style.color = "var(--duo-green)";
+                playBlockAudio();
+                addXP(10); // 答對增加 10 XP
             } else {
-                hintElem.style.display = "none";
-            }
-            document.getElementById('lbl-recognized-text').innerText = "-";
-            document.getElementById('lbl-score').innerText = "得分：--";
-            document.getElementById('btn-prev').disabled = currentIndex === 0;
-            document.getElementById('btn-next').disabled = currentIndex === questions.length - 1;
-        } else {
-            document.getElementById('lbl-block-translation').innerText = q.translation || "";
-            document.getElementById('lbl-block-score').innerText = "請選取字塊組合句子";
-            document.getElementById('lbl-block-score').style.color = "#58cc02";
-            document.getElementById('btn-block-prev').disabled = currentIndex === 0;
-            document.getElementById('btn-block-next').disabled = currentIndex === questions.length - 1;
-
-            selectedBlockIndices = [];
-            renderBlocks();
-            playBlockAudio();
-        }
-    }
-
-    function renderBlocks() {
-        const q = questions[currentIndex];
-        const zoneOptions = document.getElementById('zone-options');
-        const zoneAnswer = document.getElementById('zone-answer');
-
-        zoneOptions.innerHTML = "";
-        zoneAnswer.innerHTML = "";
-
-        q.options.forEach((optText, idx) => {
-            const btn = document.createElement('div');
-            btn.className = 'block-chip';
-            if (selectedBlockIndices.includes(idx)) {
-                btn.classList.add('used');
-            }
-            btn.innerText = optText;
-            btn.onclick = () => selectBlock(idx);
-            zoneOptions.appendChild(btn);
-        });
-
-        selectedBlockIndices.forEach(idx => {
-            const btn = document.createElement('div');
-            btn.className = 'block-chip';
-            btn.innerText = q.options[idx];
-            btn.onclick = () => deselectBlock(idx);
-            zoneAnswer.appendChild(btn);
-        });
-    }
-
-    function selectBlock(idx) {
-        selectedBlockIndices.push(idx);
-        renderBlocks();
-    }
-
-    function deselectBlock(idx) {
-        selectedBlockIndices = selectedBlockIndices.filter(i => i !== idx);
-        renderBlocks();
-    }
-
-    function checkBlockAnswer() {
-        const q = questions[currentIndex];
-        const userSentence = selectedBlockIndices.map(i => q.options[i]).join('');
-        const targetSentence = q.fullText.replace(/\s+/g, '');
-
-        const scoreBadge = document.getElementById('lbl-block-score');
-
-        if (userSentence === targetSentence) {
-            scoreBadge.innerText = "🎉 完全正確！太棒了！";
-            scoreBadge.style.color = "#58cc02";
-            playBlockAudio();
-        } else {
-            scoreBadge.innerText = "❌ 答案不太對喔，再試試看！";
-            scoreBadge.style.color = "#ff4b4b";
-        }
-    }
-
-    function playBlockAudio() {
-        stopSpeechRecognition();
-        const q = questions[currentIndex];
-        if (!q) return;
-        if (q.audioUrl && q.audioUrl.trim() !== '') {
-            new Audio(q.audioUrl).play().catch(() => speakTTS(q.fullText));
-        } else {
-            speakTTS(q.fullText);
-        }
-    }
-
-    function nextQuestion() {
-        stopSpeechRecognition();
-        if (currentIndex < questions.length - 1) {
-            currentIndex++;
-            displayQuestion();
-        }
-    }
-
-    function prevQuestion() {
-        stopSpeechRecognition();
-        if (currentIndex > 0) {
-            currentIndex--;
-            displayQuestion();
-        }
-    }
-
-    function playAudio() {
-        stopSpeechRecognition();
-        if (!questions[currentIndex]) return;
-        const q = questions[currentIndex];
-        if (q.audioUrl && q.audioUrl.trim() !== "") {
-            new Audio(q.audioUrl).play().catch(() => speakTTS(q.text));
-        } else {
-            speakTTS(q.text);
-        }
-    }
-
-    function speakTTS(text) {
-        if (!text) return;
-        stopSpeechRecognition();
-        const synth = window.speechSynthesis;
-        synth.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
-        utterance.lang = langMap[currentConfig.category] || 'ko-KR';
-        synth.speak(utterance);
-    }
-
-    function cleanStringForCompare(str) {
-        if (!str) return "";
-        return str.replace(/[.,?!~\s\r\n]/g, '').toLowerCase();
-    }
-
-    function calculateSimilarity(str1, str2) {
-        const s1 = cleanStringForCompare(str1);
-        const s2 = cleanStringForCompare(str2);
-        if (!s1 || !s2) return 0;
-        if (s1 === s2) return 100;
-        
-        let track = Array(s2.length + 1).fill(null).map(() => Array(s1.length + 1).fill(null));
-        for (let i = 0; i <= s1.length; i += 1) track[0][i] = i;
-        for (let j = 1; j <= s2.length; j += 1) track[j][0] = j;
-
-        for (let j = 1; j <= s2.length; j += 1) {
-            for (let i = 1; i <= s1.length; i += 1) {
-                const indicator = s1[i - 1] === s2[j - 1] ? 0 : 1;
-                track[j][i] = Math.min(
-                    track[j][i - 1] + 1,
-                    track[j - 1][i] + 1,
-                    track[j - 1][i - 1] + indicator
-                );
+                scoreBadge.innerText = "❌ 不太對喔，再試試看！";
+                scoreBadge.style.color = "var(--duo-red)";
             }
         }
-        
-        const distance = track[s2.length][s1.length];
-        const maxLength = Math.max(s1.length, s2.length);
-        const score = Math.round((1 - distance / maxLength) * 100);
-        return score < 0 ? 0 : score;
-    }
 
-    function initSpeechRecognition() {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            alert("您的瀏覽器不支援語音辨識功能，請使用 iPhone 的 Safari 或 Chrome 瀏覽器。");
-            return;
+        function playAudio() {
+            const q = questions[currentIndex];
+            if (q && q.audioUrl) new Audio(q.audioUrl).play().catch(() => speakTTS(q.text));
+            else if (q) speakTTS(q.text);
         }
 
-        stopSpeechRecognition();
+        function playBlockAudio() {
+            const q = questions[currentIndex];
+            if (q && q.audioUrl) new Audio(q.audioUrl).play().catch(() => speakTTS(q.fullText));
+            else if (q) speakTTS(q.fullText);
+        }
 
-        recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = false;
+        function speakTTS(text) {
+            const synth = window.speechSynthesis;
+            synth.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = currentConfig.category === 'korean' ? 'ko-KR' : (currentConfig.category === 'japanese' ? 'ja-JP' : 'en-US');
+            synth.speak(utterance);
+        }
 
-        const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
-        recognition.lang = langMap[currentConfig.category] || 'ko-KR';
+        function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; displayQuestion(); } }
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; displayQuestion(); } }
 
-        recognition.onstart = () => {
-            isRecording = true;
-            document.querySelectorAll('.btn-record').forEach(b => b.classList.add('recording'));
-            if (currentConfig.mode === 'vocab_shadow') {
-                document.getElementById('lbl-vocab-recognized-text').innerText = "聆聽中...";
-            } else if (currentConfig.mode !== 'dialogue') {
-                document.getElementById('lbl-recognized-text').innerText = "聆聽中...";
+        function stopSpeechRecognition() {
+            if (recognition) {
+                try { recognition.abort(); } catch(e){}
+                recognition = null;
             }
-        };
+            isRecording = false;
+            document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
+        }
 
-        recognition.onend = () => {
-            stopSpeechRecognition();
-        };
+        function toggleRecording() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) return alert("您的瀏覽器不支援語音辨識功能！");
 
-        recognition.onresult = (event) => {
-            if (!event.results || !event.results[0] || !event.results[0][0]) {
-                if (currentConfig.mode === 'vocab_shadow') {
-                    document.getElementById('lbl-vocab-recognized-text').innerText = "未接收到聲音，請再試一次";
-                } else if (currentConfig.mode !== 'dialogue') {
-                    document.getElementById('lbl-recognized-text').innerText = "未接收到聲音，請再試一次";
-                }
+            if (isRecording) {
                 stopSpeechRecognition();
-                return;
-            }
-
-            const userSpeech = event.results[0][0].transcript;
-
-            if (currentConfig.mode === 'vocab_shadow') {
-                document.getElementById('lbl-vocab-recognized-text').innerText = userSpeech;
-                const currentVocab = vocabQuestions[vocabIndex];
-                const targetText = currentVocab ? (currentVocab.text || "") : "";
-                const score = calculateSimilarity(targetText, userSpeech);
-                document.getElementById('lbl-vocab-score').innerText = `得分：${score}分`;
-
-                if (score >= 60) {
-                    document.getElementById('lbl-vocab-translation').innerText = `💡 翻譯：${getTranslationByLang(currentVocab)}`;
-                }
-
-            } else if (currentConfig.mode === 'dialogue') {
-                const currentSentence = dialogueList[dialogueIndex];
-                if (currentSentence) {
-                    const targetText = currentSentence.targetText || "";
-                    const score = calculateSimilarity(targetText, userSpeech);
-
-                    if (score >= 60 || dialogueSubMode === 'basic') {
-                        isBlindUnlocked = true;
-                        renderChatWindow();
-                    }
-                }
             } else {
-                document.getElementById('lbl-recognized-text').innerText = userSpeech;
-                const currentQ = questions[currentIndex];
-                const targetText = currentQ ? (currentQ.text || "") : "";
-                const score = calculateSimilarity(targetText, userSpeech);
-                document.getElementById('lbl-score').innerText = `得分：${score}分`;
-            }
-
-            stopSpeechRecognition();
-        };
-
-        recognition.onerror = (e) => {
-            stopSpeechRecognition();
-
-            if (e.error === 'aborted') {
-                console.log("辨識被正常中斷");
-                return;
-            }
-
-            console.error("語音辨識發生錯誤：", e.error);
-
-            let msg = "錄音錯誤：";
-            if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
-                msg += "麥克風權限被拒絕，請開啟存取權限！";
-            } else if (e.error === 'no-speech') {
-                msg += "沒有收到聲音，請確定說話聲音足夠大聲。";
-            } else if (e.error === 'network') {
-                msg += "網路異常，無法連線至 Google 辨識服務。";
-            } else {
-                msg += e.error;
-            }
-            
-            if (currentConfig.mode === 'vocab_shadow') {
-                document.getElementById('lbl-vocab-recognized-text').innerText = msg;
-            } else if (currentConfig.mode !== 'dialogue') {
-                document.getElementById('lbl-recognized-text').innerText = msg;
-            }
-        };
-    }
-
-    function toggleRecording() {
-        if (isToggling) return;
-        isToggling = true;
-
-        if (window.speechSynthesis) {
-            window.speechSynthesis.cancel();
-        }
-
-        if (isRecording) {
-            stopSpeechRecognition();
-            setTimeout(() => { isToggling = false; }, 300);
-        } else {
-            stopSpeechRecognition();
-
-            setTimeout(() => {
-                try {
-                    initSpeechRecognition();
-                    if (currentConfig.mode === 'vocab_shadow') {
-                        document.getElementById('lbl-vocab-recognized-text').innerText = "麥克風啟動中...";
-                    } else if (currentConfig.mode !== 'dialogue') {
-                        document.getElementById('lbl-recognized-text').innerText = "麥克風啟動中...";
+                recognition = new SpeechRecognition();
+                recognition.lang = currentConfig.category === 'korean' ? 'ko-KR' : (currentConfig.category === 'japanese' ? 'ja-JP' : 'en-US');
+                recognition.onstart = () => {
+                    isRecording = true;
+                    document.querySelectorAll('.btn-record').forEach(b => b.classList.add('recording'));
+                    document.getElementById('lbl-recognized-text').innerText = "聆聽中...";
+                };
+                recognition.onresult = (e) => {
+                    const speech = e.results[0][0].transcript;
+                    document.getElementById('lbl-recognized-text').innerText = speech;
+                    const target = questions[currentIndex].text.replace(/[.,?!~\s]/g, '').toLowerCase();
+                    const cleanSpeech = speech.replace(/[.,?!~\s]/g, '').toLowerCase();
+                    
+                    if (cleanSpeech === target || cleanSpeech.includes(target) || target.includes(cleanSpeech)) {
+                        document.getElementById('lbl-score').innerText = "🎉 辨識合格！+10 XP";
+                        document.getElementById('lbl-score').style.color = "var(--duo-green)";
+                        addXP(10);
+                    } else {
+                        document.getElementById('lbl-score').innerText = "⚠️ 發音未達標，請再試一次";
+                        document.getElementById('lbl-score').style.color = "var(--duo-red)";
                     }
-
-                    recognition.start();
-                } catch(err) {
-                    console.error("啟動錄音失敗:", err);
                     stopSpeechRecognition();
-                } finally {
-                    setTimeout(() => { isToggling = false; }, 400);
-                }
-            }, 250);
+                };
+                recognition.onerror = () => stopSpeechRecognition();
+                recognition.onend = () => stopSpeechRecognition();
+                recognition.start();
+            }
         }
-    }
-
-    window.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-            stopSpeechRecognition();
-        }
-    });
-
-    window.addEventListener('pagehide', () => {
-        stopSpeechRecognition();
-    });
-
-    window.onload = () => {
-        setUserLang('zh');
-        selectCategory('korean');
-    };
-</script>
-
+    </script>
 </body>
 </html>
