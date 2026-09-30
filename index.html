@@ -815,11 +815,6 @@
             </button>
         </div>
 
-        <div class="result-box">
-            <div>辨識結果：<span id="lbl-dialogue-recognized" style="font-weight: bold; color: #374151;">-</span></div>
-            <div class="score-badge" id="lbl-dialogue-score">得分：--</div>
-        </div>
-
         <div class="nav-controls">
             <button class="btn-nav" id="btn-dialogue-prev" onclick="prevDialogueSentence()">上一句</button>
             <span class="lbl-progress" id="lbl-dialogue-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
@@ -1374,9 +1369,6 @@
             blindBox.style.display = 'none';
         }
 
-        document.getElementById('lbl-dialogue-recognized').innerText = "-";
-        document.getElementById('lbl-dialogue-score').innerText = "得分：--";
-
         document.getElementById('lbl-dialogue-progress').innerText = `${dialogueIndex + 1} / ${dialogueList.length}`;
         document.getElementById('btn-dialogue-prev').disabled = dialogueIndex === 0;
         document.getElementById('btn-dialogue-next').disabled = dialogueIndex === dialogueList.length - 1;
@@ -1393,7 +1385,7 @@
     }
 
     function playSpecificDialogueAudio(idx) {
-        stopSpeechRecognition(); // 💡 播放語音時，務必先切斷錄音，防止衝突發出 aborted 錯誤
+        stopSpeechRecognition();
         if (!dialogueList || !dialogueList[idx]) return;
         const target = dialogueList[idx];
         if (target.audioUrl && target.audioUrl.trim() !== '') {
@@ -1958,7 +1950,7 @@
 
     function speakTTS(text) {
         if (!text) return;
-        stopSpeechRecognition(); // 💡 確保發音前關閉麥克風，防止中斷錯誤
+        stopSpeechRecognition();
         const synth = window.speechSynthesis;
         synth.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
@@ -2006,7 +1998,7 @@
             return;
         }
 
-        stopSpeechRecognition(); // 徹底釋放舊的辨識物件
+        stopSpeechRecognition();
 
         recognition = new SpeechRecognition();
         recognition.continuous = false;
@@ -2018,10 +2010,7 @@
         recognition.onstart = () => {
             isRecording = true;
             document.querySelectorAll('.btn-record').forEach(b => b.classList.add('recording'));
-            
-            if (currentConfig.mode === 'dialogue') {
-                document.getElementById('lbl-dialogue-recognized').innerText = "聆聽中...";
-            } else {
+            if (currentConfig.mode !== 'dialogue') {
                 document.getElementById('lbl-recognized-text').innerText = "聆聽中...";
             }
         };
@@ -2033,9 +2022,7 @@
 
         recognition.onresult = (event) => {
             if (!event.results || !event.results[0] || !event.results[0][0]) {
-                if (currentConfig.mode === 'dialogue') {
-                    document.getElementById('lbl-dialogue-recognized').innerText = "未接收到聲音，請再試一次";
-                } else {
+                if (currentConfig.mode !== 'dialogue') {
                     document.getElementById('lbl-recognized-text').innerText = "未接收到聲音，請再試一次";
                 }
                 return;
@@ -2044,14 +2031,11 @@
             const userSpeech = event.results[0][0].transcript;
 
             if (currentConfig.mode === 'dialogue') {
-                document.getElementById('lbl-dialogue-recognized').innerText = userSpeech;
-
                 const currentSentence = dialogueList[dialogueIndex];
                 
                 if (currentSentence) {
                     const targetText = currentSentence.targetText || "";
                     const score = calculateSimilarity(targetText, userSpeech);
-                    document.getElementById('lbl-dialogue-score').innerText = `得分：${score}分`;
 
                     if (score >= 60 || dialogueSubMode === 'basic') {
                         isBlindUnlocked = true;
@@ -2072,7 +2056,6 @@
             isRecording = false;
             document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
 
-            // 忽略正常暫停引發的中斷
             if (e.error === 'aborted') {
                 console.log("辨識被使用者或系統正常中斷");
                 return;
@@ -2091,9 +2074,7 @@
                 msg += e.error;
             }
             
-            if (currentConfig.mode === 'dialogue') {
-                document.getElementById('lbl-dialogue-recognized').innerText = msg;
-            } else {
+            if (currentConfig.mode !== 'dialogue') {
                 document.getElementById('lbl-recognized-text').innerText = msg;
             }
         };
@@ -2103,7 +2084,6 @@
         if (isToggling) return;
         isToggling = true;
 
-        // 💡 錄音前，先切斷所有正在播放的 TTS 語音
         if (window.speechSynthesis) {
             window.speechSynthesis.cancel();
         }
@@ -2117,10 +2097,7 @@
             setTimeout(() => {
                 try {
                     initSpeechRecognition();
-                    
-                    if (currentConfig.mode === 'dialogue') {
-                        document.getElementById('lbl-dialogue-recognized').innerText = "麥克風啟動中...";
-                    } else {
+                    if (currentConfig.mode !== 'dialogue') {
                         document.getElementById('lbl-recognized-text').innerText = "麥克風啟動中...";
                     }
 
