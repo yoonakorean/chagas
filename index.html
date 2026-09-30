@@ -1238,7 +1238,6 @@
         currentDialogueItem = dialogueItem;
         dialogueList = [];
 
-        // 動態解析 a1~a8 及 b1~b8 句數
         for (let i = 1; i <= 8; i++) {
             const aKey = `a${i}`;
             const bKey = `b${i}`;
@@ -1319,7 +1318,6 @@
         const chatWin = document.getElementById('chat-window');
         chatWin.innerHTML = '';
 
-        // 逐句渲染截至 dialogueIndex 的對話紀錄
         for (let idx = 0; idx <= dialogueIndex; idx++) {
             const item = dialogueList[idx];
             const isCurrentTarget = (idx === dialogueIndex);
@@ -1338,7 +1336,6 @@
                 bubble.classList.add('active-target');
             }
 
-            // 設定氣泡顯示文字
             let bubbleText = item.targetText;
 
             if (dialogueSubMode === 'fill' && isCurrentTarget && !isBlindUnlocked) {
@@ -1351,7 +1348,6 @@
             textSpan.innerText = bubbleText;
             bubble.appendChild(textSpan);
 
-            // 加上音檔播放小按鈕
             const playBtn = document.createElement('button');
             playBtn.className = 'btn-bubble-play';
             playBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
@@ -1366,12 +1362,10 @@
             chatWin.appendChild(row);
         }
 
-        // 滾動條自動保持在最底部
         setTimeout(() => {
             chatWin.scrollTop = chatWin.scrollHeight;
         }, 50);
 
-        // 盲測解鎖按鈕顯隱控制
         const blindBox = document.getElementById('box-blind-unlock');
         if (dialogueSubMode === 'blind' && !isBlindUnlocked) {
             blindBox.style.display = 'block';
@@ -1382,12 +1376,10 @@
         document.getElementById('lbl-dialogue-recognized').innerText = "-";
         document.getElementById('lbl-dialogue-score').innerText = "得分：--";
 
-        // 進度與導覽狀態
         document.getElementById('lbl-dialogue-progress').innerText = `${dialogueIndex + 1} / ${dialogueList.length}`;
         document.getElementById('btn-dialogue-prev').disabled = dialogueIndex === 0;
         document.getElementById('btn-dialogue-next').disabled = dialogueIndex === dialogueList.length - 1;
 
-        // 若當前句子是對方（系統角色）且剛進入該句，自動發聲
         const currentItem = dialogueList[dialogueIndex];
         if (currentItem && currentItem.speaker !== userRole) {
             playDialogueAudio();
@@ -1400,7 +1392,7 @@
     }
 
     function playSpecificDialogueAudio(idx) {
-        stopSpeechRecognition(); // 播放時先停止麥克風，避免音訊衝突
+        stopSpeechRecognition();
         if (!dialogueList || !dialogueList[idx]) return;
         const target = dialogueList[idx];
         if (target.audioUrl && target.audioUrl.trim() !== '') {
@@ -2008,7 +2000,7 @@
     function initSpeechRecognition() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) {
-            alert("您的瀏覽器不支援語音辨識功能，請使用 Chrome 瀏覽器。");
+            alert("您的瀏覽器不支援語音辨識功能，請使用電腦版或 Android 的 Chrome 瀏覽器。");
             return;
         }
 
@@ -2022,6 +2014,12 @@
         recognition.onstart = () => {
             isRecording = true;
             document.querySelectorAll('.btn-record').forEach(b => b.classList.add('recording'));
+            
+            if (currentConfig.mode === 'dialogue') {
+                document.getElementById('lbl-dialogue-recognized').innerText = "聆聽中...";
+            } else {
+                document.getElementById('lbl-recognized-text').innerText = "聆聽中...";
+            }
         };
 
         recognition.onend = () => {
@@ -2030,6 +2028,15 @@
         };
 
         recognition.onresult = (event) => {
+            if (!event.results || !event.results[0] || !event.results[0][0]) {
+                if (currentConfig.mode === 'dialogue') {
+                    document.getElementById('lbl-dialogue-recognized').innerText = "未接收到聲音，請再試一次";
+                } else {
+                    document.getElementById('lbl-recognized-text').innerText = "未接收到聲音，請再試一次";
+                }
+                return;
+            }
+
             const userSpeech = event.results[0][0].transcript;
 
             if (currentConfig.mode === 'dialogue') {
@@ -2060,7 +2067,24 @@
         recognition.onerror = (e) => {
             isRecording = false;
             document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
-            console.log("語音辨識錯誤：", e.error);
+            console.error("語音辨識發生錯誤：", e.error);
+
+            let msg = "錄音錯誤：";
+            if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+                msg += "麥克風權限被拒絕，請開啟存取權限！";
+            } else if (e.error === 'no-speech') {
+                msg += "沒有收到聲音，請確定說話聲音足夠大聲。";
+            } else if (e.error === 'network') {
+                msg += "網路異常，無法連線至 Google 辨識服務。";
+            } else {
+                msg += e.error;
+            }
+            
+            if (currentConfig.mode === 'dialogue') {
+                document.getElementById('lbl-dialogue-recognized').innerText = msg;
+            } else {
+                document.getElementById('lbl-recognized-text').innerText = msg;
+            }
         };
     }
 
