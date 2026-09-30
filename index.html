@@ -993,7 +993,7 @@
     let isTypewriterTyping = false;
     let currentFullDialogText = "";
 
-    // 💡 強化版的麥克風關閉函式（完整摧毀與重置）
+    // 💡 iOS 專屬修復：徹底解綁事件並強制銷毀實體
     function stopSpeechRecognition() {
         if (recognition) {
             try { 
@@ -1010,7 +1010,7 @@
     }
 
     function goToStep(stepId) {
-        stopSpeechRecognition(); // 💡 切換頁面時強制關閉錄音
+        stopSpeechRecognition(); // 💡 頁面切換強制銷毀麥克風
         document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
         document.getElementById(stepId).classList.add('active');
     }
@@ -1341,7 +1341,7 @@
     }
 
     function selectStageAndMode(stage, mode) {
-        stopSpeechRecognition(); // 💡 選擇關卡模式時關閉錄音
+        stopSpeechRecognition(); 
         currentConfig.stage = stage;
         currentConfig.mode = mode;
 
@@ -1432,7 +1432,7 @@
     }
 
     function displayVocabQuestion() {
-        stopSpeechRecognition(); // 💡 題目切換時關閉錄音
+        stopSpeechRecognition();
         if (!vocabQuestions || vocabQuestions.length === 0) return;
 
         const currentVocab = vocabQuestions[vocabIndex];
@@ -1611,7 +1611,7 @@
     }
 
     function switchDialogueMode(mode) {
-        stopSpeechRecognition(); // 💡 切換對話模式時關閉錄音
+        stopSpeechRecognition();
         dialogueSubMode = mode;
         dialogueIndex = 0;
         ['basic', 'fill', 'blind'].forEach(m => {
@@ -1625,7 +1625,7 @@
     }
 
     function switchUserRole(role) {
-        stopSpeechRecognition(); // 💡 切換扮演角色時關閉錄音
+        stopSpeechRecognition();
         userRole = role;
         dialogueIndex = 0;
         ['a', 'b'].forEach(r => {
@@ -1638,7 +1638,7 @@
     }
 
     function renderChatWindow() {
-        stopSpeechRecognition(); // 💡 重新渲染對話視窗時關閉錄音
+        stopSpeechRecognition();
         if (!dialogueList || dialogueList.length === 0) return;
 
         const chatWin = document.getElementById('chat-window');
@@ -1730,7 +1730,7 @@
     }
 
     function prevDialogueSentence() {
-        stopSpeechRecognition(); // 💡 上一句切換時關閉錄音
+        stopSpeechRecognition(); // 💡 切換對話上一句關閉麥克風
         if (dialogueIndex > 0) {
             dialogueIndex--;
             isBlindUnlocked = false;
@@ -1739,7 +1739,7 @@
     }
 
     function nextDialogueSentence() {
-        stopSpeechRecognition(); // 💡 下一句切換時關閉錄音
+        stopSpeechRecognition(); // 💡 切換對話下一句關閉麥克風
         if (dialogueIndex < dialogueList.length - 1) {
             dialogueIndex++;
             isBlindUnlocked = false;
@@ -2156,7 +2156,7 @@
     }
 
     function displayQuestion() {
-        stopSpeechRecognition(); // 💡 切換題目時強制關閉錄音
+        stopSpeechRecognition(); // 💡 題目切換時關閉麥克風
 
         if (!questions || questions.length === 0) return;
         const q = questions[currentIndex];
@@ -2257,7 +2257,7 @@
     }
 
     function nextQuestion() {
-        stopSpeechRecognition(); // 💡 下一題關閉錄音
+        stopSpeechRecognition(); // 💡 按下一題立刻摧毀麥克風
         if (currentIndex < questions.length - 1) {
             currentIndex++;
             displayQuestion();
@@ -2265,7 +2265,7 @@
     }
 
     function prevQuestion() {
-        stopSpeechRecognition(); // 💡 上一題關閉錄音
+        stopSpeechRecognition(); // 💡 按上一題立刻摧毀麥克風
         if (currentIndex > 0) {
             currentIndex--;
             displayQuestion();
@@ -2329,7 +2329,7 @@
     function initSpeechRecognition() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) {
-            alert("您的瀏覽器不支援語音辨識功能，請使用電腦版或 Android 的 Chrome 瀏覽器。");
+            alert("您的瀏覽器不支援語音辨識功能，請使用 iPhone 的 Safari 或 Chrome 瀏覽器。");
             return;
         }
 
@@ -2353,8 +2353,7 @@
         };
 
         recognition.onend = () => {
-            isRecording = false;
-            document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
+            stopSpeechRecognition(); // 💡 辨識完畢自動徹底關閉，避免 iOS 持續掛著
         };
 
         recognition.onresult = (event) => {
@@ -2364,6 +2363,7 @@
                 } else if (currentConfig.mode !== 'dialogue') {
                     document.getElementById('lbl-recognized-text').innerText = "未接收到聲音，請再試一次";
                 }
+                stopSpeechRecognition();
                 return;
             }
 
@@ -2398,14 +2398,15 @@
                 const score = calculateSimilarity(targetText, userSpeech);
                 document.getElementById('lbl-score').innerText = `得分：${score}分`;
             }
+
+            stopSpeechRecognition(); // 💡 iOS 防護：產出結果後立刻切斷 session
         };
 
         recognition.onerror = (e) => {
-            isRecording = false;
-            document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
+            stopSpeechRecognition();
 
             if (e.error === 'aborted') {
-                console.log("辨識被使用者或系統正常中斷");
+                console.log("辨識被正常中斷");
                 return;
             }
 
@@ -2464,7 +2465,7 @@
         }
     }
 
-    // 💡 行動裝置防護：跳出頁面/縮小瀏覽器/關閉螢幕時立刻關閉麥克風
+    // 💡 iPhone/iOS 防護：視窗背景/關閉螢幕/離開分頁時立刻切斷
     window.addEventListener('visibilitychange', () => {
         if (document.hidden) {
             stopSpeechRecognition();
