@@ -453,7 +453,6 @@
         }
 
         .chat-bubble.active-target {
-            ring: 3px;
             outline: 2.5px solid var(--duo-blue);
         }
 
@@ -859,7 +858,7 @@
 
     // 對話練習專用狀態
     let currentDialogueItem = null;
-    let dialogueList = []; // 解析後的單句列表 [{ speaker: 'A', text: '...', fillText: '...', fullAudio: '...' }]
+    let dialogueList = []; 
     let dialogueIndex = 0;
     let dialogueSubMode = 'basic'; // basic, fill, blind
     let userRole = 'A'; // A, B
@@ -1401,6 +1400,7 @@
     }
 
     function playSpecificDialogueAudio(idx) {
+        stopSpeechRecognition(); // 播放時先停止麥克風，避免音訊衝突
         if (!dialogueList || !dialogueList[idx]) return;
         const target = dialogueList[idx];
         if (target.audioUrl && target.audioUrl.trim() !== '') {
@@ -1457,6 +1457,7 @@
     }
 
     function playGrammarAudio(dialogIdx) {
+        stopSpeechRecognition();
         if (!currentGrammarItem) return;
 
         let audioUrl = "";
@@ -1616,6 +1617,7 @@
             
             const audioUrl = audioUrls[idx] || '';
             playBtn.onclick = () => {
+                stopSpeechRecognition();
                 if (audioUrl) {
                     new Audio(audioUrl).play().catch(() => speakTTS(exText));
                 } else {
@@ -1926,6 +1928,7 @@
     }
 
     function playBlockAudio() {
+        stopSpeechRecognition();
         const q = questions[currentIndex];
         if (!q) return;
         if (q.audioUrl && q.audioUrl.trim() !== '') {
@@ -1950,6 +1953,7 @@
     }
 
     function playAudio() {
+        stopSpeechRecognition();
         if (!questions[currentIndex]) return;
         const q = questions[currentIndex];
         if (q.audioUrl && q.audioUrl.trim() !== "") {
@@ -1969,9 +1973,15 @@
         synth.speak(utterance);
     }
 
+    function cleanStringForCompare(str) {
+        if (!str) return "";
+        return str.replace(/[.,?!~\s\r\n]/g, '').toLowerCase();
+    }
+
     function calculateSimilarity(str1, str2) {
-        const s1 = str1.replace(/\s+/g, '').toLowerCase();
-        const s2 = str2.replace(/\s+/g, '').toLowerCase();
+        const s1 = cleanStringForCompare(str1);
+        const s2 = cleanStringForCompare(str2);
+        if (!s1 || !s2) return 0;
         if (s1 === s2) return 100;
         
         let track = Array(s2.length + 1).fill(null).map(() => Array(s1.length + 1).fill(null));
@@ -2026,15 +2036,16 @@
                 document.getElementById('lbl-dialogue-recognized').innerText = userSpeech;
 
                 const currentSentence = dialogueList[dialogueIndex];
-                const targetText = currentSentence ? currentSentence.targetText : "";
+                
+                if (currentSentence) {
+                    const targetText = currentSentence.targetText || "";
+                    const score = calculateSimilarity(targetText, userSpeech);
+                    document.getElementById('lbl-dialogue-score').innerText = `得分：${score}分`;
 
-                const score = calculateSimilarity(targetText, userSpeech);
-                document.getElementById('lbl-dialogue-score').innerText = `得分：${score}分`;
-
-                // 盲測或挖空模式下得分高於 60 分自動解鎖顯示當前完整句子
-                if (score >= 60) {
-                    isBlindUnlocked = true;
-                    renderChatWindow();
+                    if (score >= 60 || dialogueSubMode === 'basic') {
+                        isBlindUnlocked = true;
+                        renderChatWindow();
+                    }
                 }
             } else {
                 document.getElementById('lbl-recognized-text').innerText = userSpeech;
@@ -2049,6 +2060,7 @@
         recognition.onerror = (e) => {
             isRecording = false;
             document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
+            console.log("語音辨識錯誤：", e.error);
         };
     }
 
@@ -2057,18 +2069,26 @@
             initSpeechRecognition();
         }
 
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+
         if (isRecording) {
             stopSpeechRecognition();
         } else {
             try {
-                const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
-                recognition.lang = langMap[currentConfig.category] || 'ko-KR';
-                recognition.start();
-            } catch(e) {
                 stopSpeechRecognition();
                 setTimeout(() => {
-                    try { recognition.start(); } catch(err){}
-                }, 200);
+                    try {
+                        const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
+                        recognition.lang = langMap[currentConfig.category] || 'ko-KR';
+                        recognition.start();
+                    } catch(err) {
+                        console.log("語音辨識重試啟動失敗:", err);
+                    }
+                }, 150);
+            } catch(e) {
+                stopSpeechRecognition();
             }
         }
     }
