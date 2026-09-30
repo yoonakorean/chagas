@@ -854,6 +854,7 @@
     let currentIndex = 0;
     let recognition = null;
     let isRecording = false;
+    let isToggling = false; // 防連點鎖定狀態
     let selectedBlockIndices = [];
 
     // 對話練習專用狀態
@@ -875,10 +876,15 @@
 
     function stopSpeechRecognition() {
         if (recognition) {
-            try { recognition.abort(); } catch (e) {
-                try { recognition.stop(); } catch(err) {}
-            }
+            try { 
+                recognition.onstart = null;
+                recognition.onend = null;
+                recognition.onerror = null;
+                recognition.onresult = null;
+                recognition.abort(); 
+            } catch (e) {}
         }
+        recognition = null; // 徹底清空物件實例，避免狀態殘留
         isRecording = false;
         document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
     }
@@ -906,11 +912,6 @@
             if (btn) btn.classList.remove('selected');
         });
         document.getElementById(`btn-cat-${category}`).classList.add('selected');
-        
-        if (recognition) {
-            const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
-            recognition.lang = langMap[category] || 'ko-KR';
-        }
         
         checkCacheStatus();
     }
@@ -2089,9 +2090,8 @@
     }
 
     function toggleRecording() {
-        if (!recognition) {
-            initSpeechRecognition();
-        }
+        if (isToggling) return; // 避免快速重複連點
+        isToggling = true;
 
         if (window.speechSynthesis) {
             window.speechSynthesis.cancel();
@@ -2099,21 +2099,28 @@
 
         if (isRecording) {
             stopSpeechRecognition();
+            setTimeout(() => { isToggling = false; }, 300);
         } else {
-            try {
-                stopSpeechRecognition();
-                setTimeout(() => {
-                    try {
-                        const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
-                        recognition.lang = langMap[currentConfig.category] || 'ko-KR';
-                        recognition.start();
-                    } catch(err) {
-                        console.log("語音辨識重試啟動失敗:", err);
+            stopSpeechRecognition(); // 先清理舊實例
+
+            setTimeout(() => {
+                try {
+                    initSpeechRecognition();
+                    
+                    if (currentConfig.mode === 'dialogue') {
+                        document.getElementById('lbl-dialogue-recognized').innerText = "麥克風啟動中...";
+                    } else {
+                        document.getElementById('lbl-recognized-text').innerText = "麥克風啟動中...";
                     }
-                }, 150);
-            } catch(e) {
-                stopSpeechRecognition();
-            }
+
+                    recognition.start();
+                } catch(err) {
+                    console.error("啟動錄音失敗:", err);
+                    stopSpeechRecognition();
+                } finally {
+                    setTimeout(() => { isToggling = false; }, 400);
+                }
+            }, 200); // 給予緩衝時間釋放麥克風
         }
     }
 
@@ -2131,7 +2138,6 @@
     });
 
     window.onload = () => {
-        initSpeechRecognition();
         setUserLang('zh');
         selectCategory('korean');
     };
