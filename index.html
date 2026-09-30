@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多語種語言學習關卡</title>
+    <title>優娜多語島</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -892,7 +892,6 @@
 
         <div style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 10px;" class="lbl-quiz-info"></div>
 
-        <!-- 💡 題目與播放按鈕併排顯示區塊 -->
         <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 15px 0;">
             <div class="target-text" id="lbl-vocab-type-text" style="margin: 0; min-height: auto;">...</div>
             <button class="btn-circle btn-listen" onclick="playVocabAudio()" style="width: 45px; height: 45px; font-size: 1rem; flex-shrink: 0;" title="聽示範音">
@@ -1009,7 +1008,7 @@
     }
 
     function goToStep(stepId) {
-        stopSpeechRecognition();
+        stopSpeechRecognition(); // 💡 畫面/頁面切換時強制關閉錄音
         document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
         document.getElementById(stepId).classList.add('active');
     }
@@ -1308,7 +1307,7 @@
 
                 const btnVocabType = document.createElement('button');
                 btnVocabType.className = "btn-stage-action btn-vocab-stage";
-                btnVocabType.innerHTML = `<i class="fa-solid fa-keyboard"></i> ⌨️ 單字聽打`;
+                btnVocabType.innerHTML = `<i class="fa-solid fa-keyboard"></i> ⌨️️ 單字聽打`;
                 btnVocabType.onclick = () => selectStageAndMode(s, 'vocab_type');
 
                 const btnVocabChoice = document.createElement('button');
@@ -1390,7 +1389,7 @@
     }
 
     function startVocabChallenge(vocabMode) {
-        stopSpeechRecognition();
+        stopSpeechRecognition(); // 💡 確保關閉錄音
         const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
         vocabQuestions = rawVocabData.filter(v => 
@@ -1427,7 +1426,7 @@
     }
 
     function displayVocabQuestion() {
-        stopSpeechRecognition();
+        stopSpeechRecognition(); // 💡 題目切換時關閉錄音
         if (!vocabQuestions || vocabQuestions.length === 0) return;
 
         const currentVocab = vocabQuestions[vocabIndex];
@@ -1445,7 +1444,7 @@
 
         } else if (currentConfig.mode === 'vocab_type') {
             document.getElementById('lbl-vocab-type-progress').innerText = `${vocabIndex + 1} / ${total}`;
-            document.getElementById('lbl-vocab-type-text').innerText = currentVocab.text || ""; // 💡 顯示單字題目
+            document.getElementById('lbl-vocab-type-text').innerText = currentVocab.text || "";
             document.getElementById('input-vocab-type').value = "";
             document.getElementById('lbl-vocab-type-translation').innerText = "";
             document.getElementById('lbl-vocab-type-score').innerText = "等待輸入...";
@@ -1533,6 +1532,7 @@
     }
 
     function prevVocabQuestion() {
+        stopSpeechRecognition(); // 💡 上一題切換時關閉錄音
         if (vocabIndex > 0) {
             vocabIndex--;
             displayVocabQuestion();
@@ -1540,6 +1540,7 @@
     }
 
     function nextVocabQuestion() {
+        stopSpeechRecognition(); // 💡 下一題切換時關閉錄音
         if (vocabIndex < vocabQuestions.length - 1) {
             vocabIndex++;
             displayVocabQuestion();
@@ -1549,6 +1550,7 @@
     // --- 聊天氣泡對話 (Dialogue Challenge) 邏輯 ---
 
     function startDialogueChallenge(dialogueItem) {
+        stopSpeechRecognition();
         currentDialogueItem = dialogueItem;
         dialogueList = [];
 
@@ -1603,6 +1605,7 @@
     }
 
     function switchDialogueMode(mode) {
+        stopSpeechRecognition(); // 💡 切換對話模式時關閉錄音
         dialogueSubMode = mode;
         dialogueIndex = 0;
         ['basic', 'fill', 'blind'].forEach(m => {
@@ -1616,6 +1619,7 @@
     }
 
     function switchUserRole(role) {
+        stopSpeechRecognition(); // 💡 切換扮演角色時關閉錄音
         userRole = role;
         dialogueIndex = 0;
         ['a', 'b'].forEach(r => {
@@ -1628,7 +1632,7 @@
     }
 
     function renderChatWindow() {
-        stopSpeechRecognition();
+        stopSpeechRecognition(); // 💡 重新渲染對話視窗時關閉錄音
         if (!dialogueList || dialogueList.length === 0) return;
 
         const chatWin = document.getElementById('chat-window');
@@ -1720,6 +1724,7 @@
     }
 
     function prevDialogueSentence() {
+        stopSpeechRecognition(); // 💡 上一句切換時關閉錄音
         if (dialogueIndex > 0) {
             dialogueIndex--;
             isBlindUnlocked = false;
@@ -1728,6 +1733,7 @@
     }
 
     function nextDialogueSentence() {
+        stopSpeechRecognition(); // 💡 下一句切換時關閉錄音
         if (dialogueIndex < dialogueList.length - 1) {
             dialogueIndex++;
             isBlindUnlocked = false;
@@ -1738,6 +1744,7 @@
     // --- 語法小教室相關邏輯 ---
 
     function startGrammarChallenge(grammarData) {
+        stopSpeechRecognition();
         currentGrammarItem = grammarData;
         currentDialogIndex = 0;
         
@@ -2143,7 +2150,7 @@
     }
 
     function displayQuestion() {
-        stopSpeechRecognition();
+        stopSpeechRecognition(); // 💡 切換題目時關閉錄音
 
         if (!questions || questions.length === 0) return;
         const q = questions[currentIndex];
@@ -2244,6 +2251,7 @@
     }
 
     function nextQuestion() {
+        stopSpeechRecognition(); // 💡 下一題關閉錄音
         if (currentIndex < questions.length - 1) {
             currentIndex++;
             displayQuestion();
@@ -2251,6 +2259,7 @@
     }
 
     function prevQuestion() {
+        stopSpeechRecognition(); // 💡 上一題關閉錄音
         if (currentIndex > 0) {
             currentIndex--;
             displayQuestion();
@@ -2449,6 +2458,7 @@
         }
     }
 
+    // 💡 行動裝置防護：跳出頁面/縮小瀏覽器/關閉螢幕時立刻關閉麥克風
     window.addEventListener('visibilitychange', () => {
         if (document.hidden) {
             stopSpeechRecognition();
