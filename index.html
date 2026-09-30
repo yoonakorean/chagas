@@ -343,7 +343,6 @@
             background: #f3f4f6;
         }
 
-        /* 輸入框通用樣式 */
         .vocab-input {
             width: 80%;
             padding: 12px;
@@ -357,7 +356,6 @@
         }
         .vocab-input:focus { border-color: var(--duo-blue); }
 
-        /* 選項按鈕列表通用樣式 */
         .vocab-choice-list {
             display: flex;
             flex-direction: column;
@@ -894,8 +892,10 @@
 
         <div style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 10px;" class="lbl-quiz-info"></div>
 
-        <div style="margin: 15px 0;">
-            <button class="btn-circle btn-listen" onclick="playVocabAudio()" style="margin: 0 auto;" title="聽示範音">
+        <!-- 💡 題目與播放按鈕併排顯示區塊 -->
+        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 15px 0;">
+            <div class="target-text" id="lbl-vocab-type-text" style="margin: 0; min-height: auto;">...</div>
+            <button class="btn-circle btn-listen" onclick="playVocabAudio()" style="width: 45px; height: 45px; font-size: 1rem; flex-shrink: 0;" title="聽示範音">
                 <i class="fa-solid fa-volume-high"></i>
             </button>
         </div>
@@ -1445,6 +1445,7 @@
 
         } else if (currentConfig.mode === 'vocab_type') {
             document.getElementById('lbl-vocab-type-progress').innerText = `${vocabIndex + 1} / ${total}`;
+            document.getElementById('lbl-vocab-type-text').innerText = currentVocab.text || ""; // 💡 顯示單字題目
             document.getElementById('input-vocab-type').value = "";
             document.getElementById('lbl-vocab-type-translation').innerText = "";
             document.getElementById('lbl-vocab-type-score').innerText = "等待輸入...";
