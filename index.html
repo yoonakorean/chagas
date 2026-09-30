@@ -993,6 +993,7 @@
     let isTypewriterTyping = false;
     let currentFullDialogText = "";
 
+    // 💡 強化版的麥克風關閉函式（完整摧毀與重置）
     function stopSpeechRecognition() {
         if (recognition) {
             try { 
@@ -1002,13 +1003,14 @@
                 recognition.onresult = null;
                 recognition.abort(); 
             } catch (e) {}
+            recognition = null;
         }
         isRecording = false;
         document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
     }
 
     function goToStep(stepId) {
-        stopSpeechRecognition(); // 💡 畫面/頁面切換時強制關閉錄音
+        stopSpeechRecognition(); // 💡 切換頁面時強制關閉錄音
         document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
         document.getElementById(stepId).classList.add('active');
     }
@@ -1024,6 +1026,7 @@
     }
 
     function selectCategory(category) {
+        stopSpeechRecognition();
         currentConfig.category = category;
         ['korean', 'japanese', 'english'].forEach(c => {
             const btn = document.getElementById(`btn-cat-${c}`);
@@ -1212,6 +1215,7 @@
     }
 
     function selectLevel(levelCode, levelTitle) {
+        stopSpeechRecognition();
         currentConfig.level = levelCode;
         document.getElementById('lbl-unit-level').innerText = levelTitle;
         renderUnits(currentConfig.level);
@@ -1252,6 +1256,7 @@
     }
 
     function selectUnit(unitId) {
+        stopSpeechRecognition();
         currentConfig.unit_id = unitId;
         document.getElementById('lbl-stage-unit').innerText = `Level ${currentConfig.level} | 第 ${unitId} 單元`;
 
@@ -1307,7 +1312,7 @@
 
                 const btnVocabType = document.createElement('button');
                 btnVocabType.className = "btn-stage-action btn-vocab-stage";
-                btnVocabType.innerHTML = `<i class="fa-solid fa-keyboard"></i> ⌨️️ 單字聽打`;
+                btnVocabType.innerHTML = `<i class="fa-solid fa-keyboard"></i> ⌨ 單字聽打`;
                 btnVocabType.onclick = () => selectStageAndMode(s, 'vocab_type');
 
                 const btnVocabChoice = document.createElement('button');
@@ -1336,6 +1341,7 @@
     }
 
     function selectStageAndMode(stage, mode) {
+        stopSpeechRecognition(); // 💡 選擇關卡模式時關閉錄音
         currentConfig.stage = stage;
         currentConfig.mode = mode;
 
@@ -1389,7 +1395,7 @@
     }
 
     function startVocabChallenge(vocabMode) {
-        stopSpeechRecognition(); // 💡 確保關閉錄音
+        stopSpeechRecognition();
         const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
         vocabQuestions = rawVocabData.filter(v => 
@@ -2150,7 +2156,7 @@
     }
 
     function displayQuestion() {
-        stopSpeechRecognition(); // 💡 切換題目時關閉錄音
+        stopSpeechRecognition(); // 💡 切換題目時強制關閉錄音
 
         if (!questions || questions.length === 0) return;
         const q = questions[currentIndex];
