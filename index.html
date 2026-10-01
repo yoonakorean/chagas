@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>優娜多語島</title>
+    <title>多語種雲端遊戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -53,7 +53,6 @@
             box-sizing: border-box;
         }
 
-        /* 頂端使用者資訊列 */
         .user-meta-bar {
             display: flex;
             justify-content: space-between;
@@ -76,7 +75,6 @@
         }
         .user-meta-item:hover { background: #f3f4f6; }
 
-        /* Modal 彈窗系統 */
         .custom-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.55); display: flex; justify-content: center;
@@ -117,17 +115,9 @@
         }
         .btn-google:active { transform: translateY(2px); box-shadow: 0 1px 0 #e5e7eb; }
 
-        /* 步驟畫面控制 */
         .step-page { display: none; }
         .step-page.active { display: block; }
-
-        h2.step-title {
-            color: var(--duo-dark);
-            font-size: 1.3rem;
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
-
+        h2.step-title { color: var(--duo-dark); font-size: 1.3rem; margin-top: 0; margin-bottom: 20px; }
         .option-grid { display: grid; gap: 12px; margin-bottom: 20px; }
         .grid-1 { grid-template-columns: 1fr; }
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
@@ -146,14 +136,16 @@
             background-color: #ddf4ff !important;
             color: var(--duo-blue) !important;
         }
+        .btn-option.locked {
+            opacity: 0.55; background-color: #f3f4f6; border-color: #d1d5db; color: #9ca3af;
+            cursor: not-allowed;
+        }
 
         .stage-card-item {
             background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 14px;
             padding: 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;
         }
-        .stage-card-title {
-            font-weight: bold; color: var(--duo-dark); text-align: left; font-size: 1rem; margin-bottom: 4px;
-        }
+        .stage-card-title { font-weight: bold; color: var(--duo-dark); text-align: left; font-size: 1rem; margin-bottom: 4px; }
         .stage-btn-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
         .btn-stage-action {
             background: white; border: 2px solid #cbd5e1; border-bottom: 3px solid #cbd5e1;
@@ -217,7 +209,6 @@
         .btn-nav:hover:not(:disabled) { background: #e5e7eb; }
         .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* 齒輪選單 */
         .challenge-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; position: relative; }
         .gear-menu-container { position: relative; }
         .btn-gear {
@@ -238,7 +229,6 @@
         }
         .gear-dropdown-item:hover { background: #ddf4ff; color: var(--duo-blue); }
 
-        /* 字塊與單字題 */
         .block-zone {
             min-height: 70px; border-bottom: 2px dashed #cbd5e1; display: flex;
             flex-wrap: wrap; gap: 8px; padding: 10px; justify-content: center;
@@ -265,7 +255,6 @@
         }
         .btn-vocab-choice:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
 
-        /* 對話聊天視窗 */
         .dialogue-sub-nav { display: flex; gap: 6px; margin-bottom: 10px; justify-content: center; }
         .btn-dialogue-mode {
             padding: 6px 12px; font-size: 0.8rem; border-radius: 8px; border: 1px solid #d1d5db;
@@ -304,7 +293,6 @@
             cursor: pointer; color: inherit; vertical-align: middle;
         }
 
-        /* 語法教室樣式 */
         .grammar-dialog-box {
             background: #eef2ff; border: 2px solid #818cf8; border-radius: 16px;
             padding: 20px; padding-bottom: 35px; font-size: 1.1rem; color: #312e81;
@@ -345,8 +333,8 @@
     <div class="custom-modal" id="login-modal">
         <div class="custom-modal-card">
             <div style="font-size: 2.2rem; color: var(--duo-blue); margin-bottom: 8px;"><i class="fa-solid fa-graduation-cap"></i></div>
-            <h3 style="margin: 0 0 6px 0;">登入多語大冒險</h3>
-            <p style="font-size: 0.82rem; color:#6b7280; margin-bottom: 16px;">請登入以同步關卡進度與排行榜</p>
+            <h3 style="margin: 0 0 6px 0;">登入多語學習系統</h3>
+            <p style="font-size: 0.82rem; color:#6b7280; margin-bottom: 16px;">需為已開通白名單之學員方可登入</p>
             
             <button class="btn-google" id="btn-google-login">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="Google">
@@ -392,7 +380,7 @@
     <div id="modal-setup-nickname" class="custom-modal hidden">
         <div class="custom-modal-card">
             <h3 style="margin-top:0;"><i class="fa-solid fa-user-gear" style="color:var(--duo-blue);"></i> 設定學習檔案</h3>
-            <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 8px;">請設定排行榜顯示暱稱 (2~12字，30秒限改一次)</p>
+            <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 8px;">請設定排行榜公開暱稱 (2~12字，30秒限改一次)</p>
             <input type="text" id="input-setup-nickname" placeholder="例如：韓語小霸王" maxlength="12" />
             <p style="font-size: 0.82rem; color: #6b7280; margin: 10px 0 4px; text-align:left;">選擇母語（題意翻譯將以此呈現）</p>
             <select id="select-native-language">
@@ -405,7 +393,7 @@
         </div>
     </div>
 
-    <!-- ✏️ 修改暱稱 Modal (含 30 秒冷卻) -->
+    <!-- ✏️ 修改暱稱 Modal -->
     <div id="modal-edit-nickname" class="custom-modal hidden">
         <div class="custom-modal-card">
             <h3 style="margin-top:0;">修改公開暱稱</h3>
@@ -434,6 +422,10 @@
 
             <div style="font-size: 0.88rem; display: flex; flex-direction: column; gap: 8px;">
                 <div style="display:flex; justify-content: space-between;">
+                    <span style="color: #6b7280;">真實姓名：</span>
+                    <span id="profile-realname" style="font-weight:bold; color:#1f2937;">-</span>
+                </div>
+                <div style="display:flex; justify-content: space-between;">
                     <span style="color: #6b7280;">身份別：</span>
                     <span id="profile-role" style="font-weight:bold; color:var(--duo-blue);">Student</span>
                 </div>
@@ -449,7 +441,7 @@
                 <div>
                     <span style="font-weight: bold; color: #374151; display: block; margin-bottom: 4px;">開通課程與到期日：</span>
                     <div id="profile-memberships-list" style="display:flex; flex-direction:column; gap:4px; font-size:0.82rem; color:#4b5563;">
-                        <span>尚無已開通課程</span>
+                        <span>載入中...</span>
                     </div>
                 </div>
             </div>
@@ -462,12 +454,11 @@
 
     <!-- 📱 主卡片視圖 -->
     <div class="shadowing-card">
-
         <!-- 頂端資訊條 -->
         <div class="user-meta-bar">
             <div class="user-meta-item" id="btn-profile-trigger">
                 <i class="fa-solid fa-user" style="color: var(--duo-blue);"></i>
-                <span id="lbl-username">訪客</span>
+                <span id="lbl-username">驗證中...</span>
             </div>
             <div class="user-meta-item">
                 <i class="fa-solid fa-star" style="color: var(--duo-gold);"></i>
@@ -770,20 +761,22 @@
                 <button class="btn-nav" id="btn-vocab-choice-next" onclick="nextVocabQuestion()">下一題</button>
             </div>
         </div>
-
     </div>
 
     <!-- 邏輯腳本 -->
     <script>
+        // ⚠️ 請填寫您的 Google Apps Script 部署 URL
+        const GAS_AUTH_API = "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec";
+
         const API_URLS = {
-            korean: "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
-            japanese: "https://script.google.com/macros/s/AKfycbQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
+            korean: GAS_AUTH_API,
+            japanese: "",
             english: ""
         };
 
         // 登入會員狀態
         let currentUser = null;
-        let currentUserData = null;
+        window.currentUserData = null;
 
         // 當前配置
         let currentConfig = {
@@ -829,7 +822,42 @@
         let isTypewriterTyping = false;
         let currentFullDialogText = "";
 
-        // ==================== 1. Firebase 認證與會員中心 ====================
+        // ==================== ProgressModel 模組化整合 ====================
+        const ProgressModel = {
+            loadProgress: async (uid) => {
+                try {
+                    const doc = await db.collection("users").doc(uid).get();
+                    if (doc.exists) return doc.data();
+                    return null;
+                } catch (error) {
+                    console.error("載入進度失敗:", error);
+                    return null;
+                }
+            },
+            saveProgress: async (uid, data) => {
+                try {
+                    await db.collection("users").doc(uid).update(data);
+                } catch (error) {
+                    console.error("儲存進度失敗:", error);
+                }
+            },
+            updateUnitProgress: async (uid, unit, stage) => {
+                try {
+                    if (!window.currentUserData.unitProgress) window.currentUserData.unitProgress = {};
+                    window.currentUserData.unitProgress[`unit_${unit}`] = {
+                        maxStage: stage,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+                    await db.collection("users").doc(uid).update({
+                        "unitProgress": window.currentUserData.unitProgress
+                    });
+                } catch (error) {
+                    console.error("更新單元解鎖狀態失敗:", error);
+                }
+            }
+        };
+
+        // ==================== 1. Firebase 認證與 Members 白名單檢驗 ====================
 
         let authMode = 'login';
         const tabLogin = document.getElementById('tab-login');
@@ -851,19 +879,174 @@
             btnAuthSubmit.innerText = '註冊帳號';
         };
 
+        // 登入狀態監聽
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 currentUser = user;
-                document.getElementById('login-modal').classList.add('hidden');
-                await syncUserProfile(user);
+                await verifyAndSyncUser(user);
             } else {
                 currentUser = null;
-                currentUserData = null;
+                window.currentUserData = null;
                 document.getElementById('login-modal').classList.remove('hidden');
                 document.getElementById('lbl-username').innerText = "訪客";
                 document.getElementById('lbl-xp').innerText = "0";
             }
         });
+
+        // 核心白名單驗證（呼叫 GAS）
+        async function verifyAndSyncUser(user) {
+            document.getElementById('lbl-username').innerText = "驗證權限中...";
+            try {
+                // 1. 向 GAS 查詢 Members 與 Memberships
+                const gasResult = await loadDataViaJSONP(GAS_AUTH_API, '', `&email=${encodeURIComponent(user.email)}`);
+
+                if (!gasResult || gasResult.status !== "success") {
+                    alert("您不在系統白名單內或帳號已被停權！\n請聯繫管理員開通。");
+                    await auth.signOut();
+                    return;
+                }
+
+                // 2. 取得 GAS 中的權限
+                const memberInfo = gasResult.member || {};
+                const memberships = gasResult.memberships || [];
+
+                // 提煉出已開通的程度列表 (CourseId 如 '0A', '1A')
+                const unlockedLevels = memberships
+                    .filter(m => m.status.toLowerCase() === 'active')
+                    .map(m => m.courseId.toUpperCase());
+
+                // 3. 透過 ProgressModel 載入 Firestore 記錄
+                const firestoreData = await ProgressModel.loadProgress(user.uid);
+
+                if (!firestoreData) {
+                    // 首次登入，開啟暱稱填寫彈窗
+                    window.tempMemberInfo = memberInfo;
+                    window.tempMemberships = memberships;
+                    window.tempUnlockedLevels = unlockedLevels;
+                    document.getElementById('login-modal').classList.add('hidden');
+                    document.getElementById('modal-setup-nickname').classList.remove('hidden');
+                } else {
+                    // 舊學員登入，即時同步試算表最新權限
+                    window.currentUserData = firestoreData;
+                    window.currentUserData.realName = memberInfo.realName || firestoreData.realName || "";
+                    window.currentUserData.role = memberInfo.role || firestoreData.role || "student";
+                    window.currentUserData.status = memberInfo.status || firestoreData.status || "active";
+                    window.currentUserData.memberships = memberships;
+                    window.currentUserData.unlockedLevels = unlockedLevels;
+
+                    document.getElementById('login-modal').classList.add('hidden');
+                    renderUserInfo();
+                }
+
+            } catch (err) {
+                console.error("驗證失敗:", err);
+                alert("伺服器連線驗證失敗：" + err.message);
+                await auth.signOut();
+            }
+        }
+
+        // 完成首次註冊暱稱儲存
+        document.getElementById('btn-save-initial-nickname').onclick = async () => {
+            const nickname = document.getElementById('input-setup-nickname').value.trim();
+            const nativeLang = document.getElementById('select-native-language').value;
+            const errDiv = document.getElementById('setup-nickname-error');
+
+            if (nickname.length < 2 || nickname.length > 12) {
+                errDiv.innerText = "暱稱需介於 2 到 12 個字元！";
+                errDiv.classList.remove('hidden');
+                return;
+            }
+
+            const initialData = {
+                email: currentUser.email,
+                displayName: nickname,
+                realName: window.tempMemberInfo.realName || "",
+                role: window.tempMemberInfo.role || "student",
+                status: window.tempMemberInfo.status || "active",
+                nativeLanguage: nativeLang,
+                xp: 0,
+                unlockedLevels: window.tempUnlockedLevels || [],
+                memberships: window.tempMemberships || [],
+                lastNicknameUpdatedAt: 0,
+                unitProgress: {}
+            };
+
+            await db.collection('users').doc(currentUser.uid).set(initialData);
+            window.currentUserData = initialData;
+            document.getElementById('modal-setup-nickname').classList.add('hidden');
+            setUserLang(nativeLang);
+            renderUserInfo();
+        };
+
+        // 渲染使用者資料至個人中心與資訊條
+        function renderUserInfo() {
+            if (!window.currentUserData) return;
+            document.getElementById('lbl-username').innerText = window.currentUserData.displayName || "學生";
+            document.getElementById('lbl-xp').innerText = window.currentUserData.xp || 0;
+            document.getElementById('profile-nickname').innerText = window.currentUserData.displayName || "學生";
+            document.getElementById('profile-email').innerText = currentUser.email || "";
+            document.getElementById('profile-realname').innerText = window.currentUserData.realName || "-";
+            document.getElementById('profile-role').innerText = window.currentUserData.role || "Student";
+            document.getElementById('profile-status').innerText = window.currentUserData.status || "開通中";
+            document.getElementById('profile-xp').innerText = window.currentUserData.xp || 0;
+
+            const courseContainer = document.getElementById('profile-memberships-list');
+            courseContainer.innerHTML = "";
+            const list = window.currentUserData.memberships || [];
+            if (list.length > 0) {
+                list.forEach(c => {
+                    const row = document.createElement('div');
+                    row.style.cssText = "display:flex; justify-content:space-between; padding:4px 0;";
+                    row.innerHTML = `<span><i class="fa-solid fa-book"></i> 課程：${c.courseId}</span> <span style="color:#6b7280;">到期日：${c.expireDate}</span>`;
+                    courseContainer.appendChild(row);
+                });
+            } else {
+                courseContainer.innerHTML = "<span>尚無已開通課程</span>";
+            }
+        }
+
+        // 修改暱稱（30秒冷卻限制）
+        document.getElementById('btn-open-edit-nickname').onclick = () => {
+            document.getElementById('modal-edit-nickname').classList.remove('hidden');
+        };
+        document.getElementById('btn-cancel-nickname').onclick = () => {
+            document.getElementById('modal-edit-nickname').classList.add('hidden');
+        };
+        document.getElementById('btn-save-nickname').onclick = async () => {
+            const newName = document.getElementById('input-edit-nickname').value.trim();
+            const errDiv = document.getElementById('edit-nickname-error-msg');
+            const now = Date.now();
+
+            if (newName.length < 2 || newName.length > 12) {
+                errDiv.innerText = "暱稱需介於 2 到 12 個字元！";
+                errDiv.classList.remove('hidden');
+                return;
+            }
+
+            const lastUpdated = window.currentUserData.lastNicknameUpdatedAt || 0;
+            const diffSeconds = Math.floor((now - lastUpdated) / 1000);
+
+            if (diffSeconds < 30) {
+                errDiv.innerText = `冷卻中！請等待 ${30 - diffSeconds} 秒後再修改。`;
+                errDiv.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                await ProgressModel.saveProgress(currentUser.uid, {
+                    displayName: newName,
+                    lastNicknameUpdatedAt: now
+                });
+                window.currentUserData.displayName = newName;
+                window.currentUserData.lastNicknameUpdatedAt = now;
+                renderUserInfo();
+                document.getElementById('modal-edit-nickname').classList.add('hidden');
+                alert("暱稱修改成功！");
+            } catch (e) {
+                errDiv.innerText = "修改失敗：" + e.message;
+                errDiv.classList.remove('hidden');
+            }
+        };
 
         document.getElementById('btn-google-login').onclick = async () => {
             try {
@@ -912,112 +1095,6 @@
             }
         };
 
-        async function syncUserProfile(user) {
-            const doc = await db.collection('users').doc(user.uid).get();
-            if (!doc.exists) {
-                document.getElementById('modal-setup-nickname').classList.remove('hidden');
-            } else {
-                currentUserData = doc.data();
-                renderUserInfo();
-            }
-        }
-
-        document.getElementById('btn-save-initial-nickname').onclick = async () => {
-            const nickname = document.getElementById('input-setup-nickname').value.trim();
-            const nativeLang = document.getElementById('select-native-language').value;
-            const errDiv = document.getElementById('setup-nickname-error');
-
-            if (nickname.length < 2 || nickname.length > 12) {
-                errDiv.innerText = "暱稱需介於 2 到 12 個字元！";
-                errDiv.classList.remove('hidden');
-                return;
-            }
-
-            const initialData = {
-                email: currentUser.email,
-                displayName: nickname,
-                nativeLanguage: nativeLang,
-                xp: 0,
-                role: 'Student',
-                status: '開通中',
-                courses: [{ name: "韓文基礎課程", expireDate: "2027-12-31" }],
-                lastNicknameUpdatedAt: 0
-            };
-
-            await db.collection('users').doc(currentUser.uid).set(initialData);
-            currentUserData = initialData;
-            document.getElementById('modal-setup-nickname').classList.add('hidden');
-            setUserLang(nativeLang);
-            renderUserInfo();
-        };
-
-        function renderUserInfo() {
-            if (!currentUserData) return;
-            document.getElementById('lbl-username').innerText = currentUserData.displayName || "學生";
-            document.getElementById('lbl-xp').innerText = currentUserData.xp || 0;
-            document.getElementById('profile-nickname').innerText = currentUserData.displayName || "學生";
-            document.getElementById('profile-email').innerText = currentUser.email || "";
-            document.getElementById('profile-role').innerText = currentUserData.role || "Student";
-            document.getElementById('profile-status').innerText = currentUserData.status || "開通中";
-            document.getElementById('profile-xp').innerText = currentUserData.xp || 0;
-
-            const courseContainer = document.getElementById('profile-memberships-list');
-            courseContainer.innerHTML = "";
-            if (currentUserData.courses && currentUserData.courses.length > 0) {
-                currentUserData.courses.forEach(c => {
-                    const row = document.createElement('div');
-                    row.style.cssText = "display:flex; justify-content:space-between; padding:4px 0;";
-                    row.innerHTML = `<span><i class="fa-solid fa-book"></i> ${c.name}</span> <span style="color:#6b7280;">到期日：${c.expireDate}</span>`;
-                    courseContainer.appendChild(row);
-                });
-            } else {
-                courseContainer.innerHTML = "<span>尚無已開通課程</span>";
-            }
-        }
-
-        // 修改暱稱 (30秒限制)
-        document.getElementById('btn-open-edit-nickname').onclick = () => {
-            document.getElementById('modal-edit-nickname').classList.remove('hidden');
-        };
-        document.getElementById('btn-cancel-nickname').onclick = () => {
-            document.getElementById('modal-edit-nickname').classList.add('hidden');
-        };
-        document.getElementById('btn-save-nickname').onclick = async () => {
-            const newName = document.getElementById('input-edit-nickname').value.trim();
-            const errDiv = document.getElementById('edit-nickname-error-msg');
-            const now = Date.now();
-
-            if (newName.length < 2 || newName.length > 12) {
-                errDiv.innerText = "暱稱需介於 2 到 12 個字元！";
-                errDiv.classList.remove('hidden');
-                return;
-            }
-
-            const lastUpdated = currentUserData.lastNicknameUpdatedAt || 0;
-            const diffSeconds = Math.floor((now - lastUpdated) / 1000);
-
-            if (diffSeconds < 30) {
-                errDiv.innerText = `冷卻中！請等待 ${30 - diffSeconds} 秒後再修改。`;
-                errDiv.classList.remove('hidden');
-                return;
-            }
-
-            try {
-                await db.collection('users').doc(currentUser.uid).update({
-                    displayName: newName,
-                    lastNicknameUpdatedAt: now
-                });
-                currentUserData.displayName = newName;
-                currentUserData.lastNicknameUpdatedAt = now;
-                renderUserInfo();
-                document.getElementById('modal-edit-nickname').classList.add('hidden');
-                alert("暱稱修改成功！");
-            } catch (e) {
-                errDiv.innerText = "修改失敗：" + e.message;
-                errDiv.classList.remove('hidden');
-            }
-        };
-
         document.getElementById('btn-profile-trigger').onclick = () => {
             document.getElementById('modal-profile-view').classList.remove('hidden');
         };
@@ -1031,10 +1108,9 @@
             }
         };
 
-        // 加分與上傳 XP
         async function addXP(amount) {
-            if (!currentUser || !currentUserData) return;
-            currentUserData.xp = (currentUserData.xp || 0) + amount;
+            if (!currentUser || !window.currentUserData) return;
+            window.currentUserData.xp = (window.currentUserData.xp || 0) + amount;
             renderUserInfo();
             try {
                 await db.collection('users').doc(currentUser.uid).update({
@@ -1125,7 +1201,7 @@
             checkCacheStatus();
         }
 
-        function loadDataViaJSONP(apiUrl, actionName) {
+        function loadDataViaJSONP(apiUrl, actionName, extraParams = '') {
             return new Promise((resolve, reject) => {
                 const callbackName = 'gas_cb_' + Date.now() + Math.floor(Math.random()*1000);
                 const script = document.createElement('script');
@@ -1140,7 +1216,8 @@
                     reject(new Error("JSONP 連線失敗"));
                 };
                 const connector = apiUrl.includes('?') ? '&' : '?';
-                script.src = `${apiUrl}${connector}action=${actionName}&prefix=${callbackName}&t=${Date.now()}`;
+                const actionPart = actionName ? `action=${actionName}&` : '';
+                script.src = `${apiUrl}${connector}${actionPart}prefix=${callbackName}&t=${Date.now()}${extraParams}`;
                 document.body.appendChild(script);
             });
         }
@@ -1220,9 +1297,16 @@
             }
         }
 
+        // 依據 Memberships 權限動態渲染解鎖 / 鎖定程度選單
         function renderLevelMenu() {
             const container = document.getElementById('container-levels');
             container.innerHTML = "";
+
+            // 取得當前學員解鎖的程度代碼陣列 (如 ['0A'])
+            const userUnlocked = (window.currentUserData && window.currentUserData.unlockedLevels)
+                ? window.currentUserData.unlockedLevels.map(l => l.toUpperCase())
+                : [];
+
             const krLevels = [
                 { code: '0A', title: '0A 認識字母' },
                 { code: '1A', title: '1A 基礎級' },
@@ -1237,9 +1321,19 @@
 
             krLevels.forEach(item => {
                 const btn = document.createElement('button');
-                btn.className = "btn-option";
-                btn.innerText = item.title;
-                btn.onclick = () => selectLevel(item.code, item.title);
+                const isUnlocked = userUnlocked.includes(item.code.toUpperCase());
+
+                if (isUnlocked) {
+                    btn.className = "btn-option";
+                    btn.innerText = item.title;
+                    btn.onclick = () => selectLevel(item.code, item.title);
+                } else {
+                    btn.className = "btn-option locked";
+                    btn.innerHTML = `<i class="fa-solid fa-lock"></i> ${item.title}`;
+                    btn.onclick = () => {
+                        alert(`「${item.title}」未開通！\n請聯繫管理員購買該程度課程。`);
+                    };
+                }
                 container.appendChild(btn);
             });
         }
@@ -1375,6 +1469,11 @@
             currentConfig.stage = stage;
             currentConfig.mode = mode;
 
+            // 記錄關卡解鎖進度至 Firestore
+            if (currentUser) {
+                ProgressModel.updateUnitProgress(currentUser.uid, currentConfig.unit_id, stage);
+            }
+
             if (mode === 'grammar') {
                 const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
                 const matchGrammar = globalGrammarData.find(g => 
@@ -1432,16 +1531,13 @@
                 String(v.stage) === String(currentConfig.stage)
             );
 
-            if (vocabQuestions.length === 0) {
-                alert("此關卡目前沒有設定單字練習喔！");
-                return;
-            }
+            if (vocabQuestions.length === 0) return alert("此關卡目前沒有設定單字練習喔！");
 
             vocabIndex = 0;
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
             const modeTitleMap = {
                 'vocab_shadow': '🗣️ 單字跟讀',
-                'vocab_type': '⌨️ 單字聽打',
+                'vocab_type': '⌨️️ 單字聽打',
                 'vocab_choice': '🎯 單字選擇'
             };
 
@@ -1497,9 +1593,7 @@
 
                 let choices = (currentVocab.choice || '').split('/').map(s => s.trim()).filter(Boolean);
                 const correctAns = currentVocab.zh_tw.trim();
-                if (correctAns && !choices.includes(correctAns)) {
-                    choices.push(correctAns);
-                }
+                if (correctAns && !choices.includes(correctAns)) choices.push(correctAns);
                 choices.sort(() => Math.random() - 0.5);
 
                 choices.forEach(cText => {
@@ -1564,12 +1658,8 @@
             }
         }
 
-        function prevVocabQuestion() {
-            if (vocabIndex > 0) { vocabIndex--; displayVocabQuestion(); }
-        }
-        function nextVocabQuestion() {
-            if (vocabIndex < vocabQuestions.length - 1) { vocabIndex++; displayVocabQuestion(); }
-        }
+        function prevVocabQuestion() { if (vocabIndex > 0) { vocabIndex--; displayVocabQuestion(); } }
+        function nextVocabQuestion() { if (vocabIndex < vocabQuestions.length - 1) { vocabIndex++; displayVocabQuestion(); } }
 
         // ==================== 4. 對話練習邏輯 ====================
 
@@ -1686,15 +1776,10 @@
             document.getElementById('btn-dialogue-next').disabled = dialogueIndex === dialogueList.length - 1;
 
             const currentItem = dialogueList[dialogueIndex];
-            if (currentItem && currentItem.speaker !== userRole) {
-                playDialogueAudio();
-            }
+            if (currentItem && currentItem.speaker !== userRole) playDialogueAudio();
         }
 
-        function unlockBlindTextManually() {
-            isBlindUnlocked = true;
-            renderChatWindow();
-        }
+        function unlockBlindTextManually() { isBlindUnlocked = true; renderChatWindow(); }
 
         function playSpecificDialogueAudio(idx) {
             stopSpeechRecognition();
@@ -1707,16 +1792,9 @@
             }
         }
 
-        function playDialogueAudio() {
-            playSpecificDialogueAudio(dialogueIndex);
-        }
-
-        function prevDialogueSentence() {
-            if (dialogueIndex > 0) { dialogueIndex--; isBlindUnlocked = false; renderChatWindow(); }
-        }
-        function nextDialogueSentence() {
-            if (dialogueIndex < dialogueList.length - 1) { dialogueIndex++; isBlindUnlocked = false; renderChatWindow(); }
-        }
+        function playDialogueAudio() { playSpecificDialogueAudio(dialogueIndex); }
+        function prevDialogueSentence() { if (dialogueIndex > 0) { dialogueIndex--; isBlindUnlocked = false; renderChatWindow(); } }
+        function nextDialogueSentence() { if (dialogueIndex < dialogueList.length - 1) { dialogueIndex++; isBlindUnlocked = false; renderChatWindow(); } }
 
         // ==================== 5. 語法小教室邏輯 ====================
 
@@ -2158,7 +2236,6 @@
             return str.replace(/[.,?!~\s\r\n]/g, '').toLowerCase();
         }
 
-        // 語音合格與否判定（不打分數）
         function isSpeechPass(str1, str2) {
             const s1 = cleanStringForCompare(str1);
             const s2 = cleanStringForCompare(str2);
@@ -2238,7 +2315,7 @@
                         document.getElementById('lbl-score').style.color = "#58cc02";
                         addXP(10);
                     } else {
-                        document.getElementById('lbl-score').innerText = "⚠️️ 發音未達標，請再念一次！";
+                        document.getElementById('lbl-score').innerText = "⚠ 發音未達標，請再念一次！";
                         document.getElementById('lbl-score').style.color = "#ff4b4b";
                     }
                 }
