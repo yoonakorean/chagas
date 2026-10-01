@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>優娜多語島</title>
+    <title>多語種雲端遊戲化學習系統６６</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -842,7 +842,7 @@
                 </div>
             </div>
 
-            <!-- 步驟 6-D：句型/單字跟讀挑戰畫面 -->
+            <!-- 步驟 6-D：單字跟讀挑戰畫面 -->
             <div id="step-quiz-sentence-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -862,7 +862,7 @@
                 </div>
                 <div class="result-box">
                     <div>辨識結果：<span id="lbl-sentence-recognized-text" style="font-weight: bold; color: #374151;">-</span></div>
-                    <div class="score-badge" id="lbl-score">判定結果：--</div>
+                    <div class="score-badge" id="lbl-sentence-score">判定結果：--</div>
                 </div>
                 <div class="nav-controls">
                     <button class="btn-nav" id="btn-sentence-prev" onclick="prevSentenceQuestion()">上一題</button>
@@ -871,7 +871,7 @@
                 </div>
             </div>
 
-            <!-- 步驟 6-E：句型/單字聽打挑戰畫面 -->
+            <!-- 步驟 6-E：單字聽打挑戰畫面 -->
             <div id="step-quiz-sentence-type" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -898,7 +898,7 @@
                 </div>
             </div>
 
-            <!-- 步驟 6-F：句型/單字意思選擇題畫面 -->
+            <!-- 步驟 6-F：單字意思選擇題畫面 -->
             <div id="step-quiz-sentence-choice" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1039,7 +1039,7 @@
         let userRole = 'A'; 
         let isBlindUnlocked = false;
 
-        // 句子 / 題庫專用
+        // 單字 / 題庫專用
         let sentenceQuestions = [];
         let sentenceIndex = 0;
 
@@ -1956,19 +1956,20 @@
                     btnDialogue.innerHTML = `<i class="fa-solid fa-comments"></i> 💬 對話`;
                     btnDialogue.onclick = () => selectLessonAndMode(s, 'dialogue');
 
+                    // 🎯 保持單字挑戰原有標籤與命名
                     const btnSentenceShadow = document.createElement('button');
                     btnSentenceShadow.className = "btn-stage-action btn-sentence-stage";
-                    btnSentenceShadow.innerHTML = `<i class="fa-solid fa-font"></i> 🗣️ 句子跟讀`;
+                    btnSentenceShadow.innerHTML = `<i class="fa-solid fa-font"></i> 🗣️ 單字跟讀`;
                     btnSentenceShadow.onclick = () => selectLessonAndMode(s, 'sentence_shadow');
 
                     const btnSentenceType = document.createElement('button');
                     btnSentenceType.className = "btn-stage-action btn-sentence-stage";
-                    btnSentenceType.innerHTML = `<i class="fa-solid fa-keyboard"></i> ⌨ 句子聽打`;
+                    btnSentenceType.innerHTML = `<i class="fa-solid fa-keyboard"></i> ⌨ 單字聽打`;
                     btnSentenceType.onclick = () => selectLessonAndMode(s, 'sentence_type');
 
                     const btnSentenceChoice = document.createElement('button');
                     btnSentenceChoice.className = "btn-stage-action btn-sentence-stage";
-                    btnSentenceChoice.innerHTML = `<i class="fa-solid fa-list-check"></i> 🎯 句子選擇`;
+                    btnSentenceChoice.innerHTML = `<i class="fa-solid fa-list-check"></i> 🎯 單字選擇`;
                     btnSentenceChoice.onclick = () => selectLessonAndMode(s, 'sentence_choice');
 
                     btnGroup.appendChild(btnGrammar);
@@ -2037,7 +2038,7 @@
             }
         }
 
-        // ==================== 3. 句子/題庫測驗邏輯 ====================
+        // ==================== 3. 單字測驗邏輯 ====================
 
         function getTranslationByLang(item) {
             if (!item) return "";
@@ -2056,14 +2057,14 @@
                 String(v.lesson !== undefined ? v.lesson : v.stage) === String(currentConfig.lesson)
             );
 
-            if (sentenceQuestions.length === 0) return alert("此關卡目前沒有設定句子練習喔！");
+            if (sentenceQuestions.length === 0) return alert("此關卡目前沒有設定單字練習喔！");
 
             sentenceIndex = 0;
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
             const modeTitleMap = {
-                'sentence_shadow': '🗣️ 句子跟讀',
-                'sentence_type': '⌨ 句子聽打',
-                'sentence_choice': '🎯 句子選擇'
+                'sentence_shadow': '🗣️ 單字跟讀',
+                'sentence_type': '⌨ 單字聽打',
+                'sentence_choice': '🎯 單字選擇'
             };
 
             const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - 關卡 ${currentConfig.lesson} (${modeTitleMap[sentenceMode]})`;
