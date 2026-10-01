@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多語種雲端遊戲化學習系統</title>
+    <title>gram23戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -54,7 +54,6 @@
             box-sizing: border-box;
         }
 
-        /* 頂部資訊列樣式 */
         .user-meta-bar {
             display: flex;
             justify-content: space-between;
@@ -78,15 +77,12 @@
         }
         .user-meta-item:hover { background: #f3f4f6; }
 
-        /* 彈窗樣式 */
         .custom-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.55); display: none; justify-content: center;
             align-items: center; z-index: 999999;
         }
-        .custom-modal.show {
-            display: flex !important;
-        }
+        .custom-modal.show { display: flex !important; }
         .custom-modal-card {
             background: white; border-radius: 24px; padding: 24px 20px;
             width: 88%; max-width: 380px; text-align: center;
@@ -109,7 +105,6 @@
 
         .hidden { display: none !important; }
 
-        /* 輸入框與下拉選單大小統一 */
         input, select {
             width: 100%; padding: 10px 12px; margin: 6px 0; border-radius: 12px;
             border: 2px solid #e5e7eb; box-sizing: border-box; font-size: 0.95rem;
@@ -149,7 +144,6 @@
             font-size: 1rem; font-weight: bold; border-radius: 14px; cursor: pointer;
         }
 
-        /* 學習成就月曆樣式 */
         .calendar-header-ctrl {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 10px; font-weight: bold; color: #374151; font-size: 0.9rem;
@@ -172,7 +166,6 @@
             border-color: #86efac !important; font-weight: 900;
         }
 
-        /* 會員中心與排行榜視圖專用樣式 */
         .profile-container-card {
             background: #ffffff;
             border: 2px solid #e5e7eb;
@@ -198,9 +191,7 @@
             flex: 1; padding: 8px 12px; border: none; background: transparent; font-weight: bold;
             color: #64748b; border-radius: 10px; cursor: pointer; font-size: 0.9rem;
         }
-        .tab-segmented-item.active {
-            background: var(--duo-blue); color: white;
-        }
+        .tab-segmented-item.active { background: var(--duo-blue); color: white; }
 
         .course-pill {
             background: #e0f2fe; color: #0369a1; border: 1.5px solid #bae6fd;
@@ -602,29 +593,23 @@
 
     <!-- 📱 主介面容器 -->
     <div class="shadowing-card">
-        <!-- 頂端導航資訊列 -->
         <div class="user-meta-bar" id="app-user-meta-bar">
-            <!-- 1. 使用者名稱（點擊進入個人中心/排行榜頁面） -->
             <div class="user-meta-item" id="btn-profile-trigger" onclick="openProfileView()">
                 <i class="fa-solid fa-user" style="color: var(--duo-blue);"></i>
                 <span id="lbl-username">訪客</span>
             </div>
-            <!-- 2. 連續登入天數 (點擊直接開啟成就月曆彈窗) -->
             <div class="user-meta-item" id="btn-streak-trigger" onclick="openStreakDashboard()">
                 <i class="fa-solid fa-fire" style="color: var(--duo-red);"></i>
                 <span id="lbl-streak-days">1</span> 天
             </div>
-            <!-- 3. XP 星星 -->
             <div class="user-meta-item">
                 <i class="fa-solid fa-star" style="color: var(--duo-gold);"></i>
                 <span id="lbl-xp">0</span>
             </div>
-            <!-- 4. 閃電能量 -->
             <div class="user-meta-item">
                 <i class="fa-solid fa-bolt-lightning" style="color: var(--duo-purple);"></i>
                 <span>100</span>
             </div>
-            <!-- 5. 右上角程度觸發按鈕 -->
             <div class="user-meta-item" id="btn-level-trigger" onclick="triggerLevelSelectionModal()" style="color: var(--duo-blue); border: 1.5px solid #e0f2fe; border-radius: 10px;">
                 <span id="lbl-user-level">1A</span>
                 <i class="fa-solid fa-caret-down" style="font-size: 0.75rem; color: #9ca3af;"></i>
@@ -1004,11 +989,9 @@
             english: ""
         };
 
-        // 登入會員狀態
         let currentUser = null;
         window.currentUserData = null;
 
-        // 當前配置 (stage 已改為 lesson)
         let currentConfig = {
             mode: 'shadow',
             category: 'korean',
@@ -1031,7 +1014,6 @@
         let isToggling = false; 
         let selectedBlockIndices = [];
 
-        // 對話專用
         let currentDialogueItem = null;
         let dialogueList = []; 
         let dialogueIndex = 0;
@@ -1039,11 +1021,9 @@
         let userRole = 'A'; 
         let isBlindUnlocked = false;
 
-        // 單字專用
         let vocabQuestions = [];
         let vocabIndex = 0;
 
-        // 語法專用
         let currentGrammarItem = null;
         let currentDialogIndex = 0;
         let userGrammarAnswers = [];
@@ -1052,7 +1032,6 @@
         let isTypewriterTyping = false;
         let currentFullDialogText = "";
 
-        // ==================== Firestore ProgressModel ====================
         const ProgressModel = {
             loadProgress: async (uid) => {
                 try {
@@ -1091,7 +1070,7 @@
                     if (!window.currentUserData.unitProgress) window.currentUserData.unitProgress = {};
                     window.currentUserData.unitProgress[`unit_${unit}`] = {
                         maxLesson: lesson,
-                        maxStage: lesson, // 雙重相容
+                        maxStage: lesson,
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     };
                     await db.collection("users").doc(uid).update({
@@ -1103,7 +1082,6 @@
             }
         };
 
-        // ==================== 全功能 GAS 請求處理器 (支援純 JSON 與 JSONP) ====================
         async function requestGAS(apiUrl, actionName = '', extraParams = '') {
             let url = new URL(apiUrl);
             if (actionName) url.searchParams.set('action', actionName);
@@ -1153,8 +1131,6 @@
                 document.body.appendChild(script);
             });
         }
-
-        // ==================== 1. Firebase 認證與 Members 白名單檢驗 ====================
 
         let authMode = 'login';
         const tabLogin = document.getElementById('tab-login');
@@ -1301,19 +1277,16 @@
             const xp = window.currentUserData.xp || 0;
             const displayName = window.currentUserData.displayName || "學生";
 
-            // 頂部導航更新
             document.getElementById('lbl-username').innerText = displayName;
             document.getElementById('lbl-streak-days').innerText = streakDays;
             document.getElementById('lbl-xp').innerText = xp;
             document.getElementById('lbl-user-level').innerText = currentConfig.level || "1A";
             
-            // 打卡月曆更新
             const dashDays = document.getElementById('dash-streak-days');
             const dashHours = document.getElementById('dash-focus-hours');
             if (dashDays) dashDays.innerText = streakDays;
             if (dashHours) dashHours.innerText = Number(focusHours).toFixed(1);
 
-            // 我的帳號頁面更新
             document.getElementById('myaccount-nickname').innerText = displayName;
             document.getElementById('myaccount-email').innerText = currentUser ? currentUser.email : "";
             document.getElementById('myaccount-xp').innerText = xp;
@@ -1334,7 +1307,6 @@
             }
         }
 
-        // 修改暱稱
         document.getElementById('btn-save-nickname').onclick = async () => {
             const newName = document.getElementById('input-edit-nickname').value.trim();
             const errDiv = document.getElementById('edit-nickname-error-msg');
@@ -1371,7 +1343,6 @@
             }
         };
 
-        // 登入功能
         document.getElementById('btn-google-login').onclick = async () => {
             try {
                 await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
@@ -1422,7 +1393,6 @@
             }
         }
 
-        // ==================== 彈窗通用控制輔助函式 ====================
         function openModal(modalId) {
             const m = document.getElementById(modalId);
             if (m) {
@@ -1438,7 +1408,6 @@
             }
         }
 
-        // ==================== 會員中心與排行榜視圖切換 ====================
         function openProfileView() {
             document.getElementById('learning-content-view').classList.add('hidden');
             document.getElementById('profile-view').classList.remove('hidden');
@@ -1538,7 +1507,6 @@
             }
         }
 
-        // ==================== 🔥 學習成就統計 Dashboard 月曆邏輯 ====================
         let calendarCurrentDate = new Date(2026, 9, 1);
 
         function renderStreakCalendar(dateObj) {
@@ -1590,7 +1558,6 @@
             renderStreakCalendar(calendarCurrentDate);
         };
 
-        // ==================== 🎯 程度切換彈窗的邏輯 ====================
         const initialLevelSelect = document.getElementById('initial-level-select');
 
         function triggerLevelSelectionModal() {
@@ -1639,7 +1606,6 @@
             selectLevel(selectedVal, selectedText);
         };
 
-        // ==================== 退出挑戰二次確認功能 ====================
         function promptQuitChallenge() {
             document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
             openModal('modal-quit-challenge');
@@ -1664,7 +1630,6 @@
             }
         }
 
-        // ==================== 下拉選單與輔助函式 ====================
         function toggleGearDropdown(dropdownId) {
             const dropdown = document.getElementById(dropdownId);
             document.querySelectorAll('.gear-dropdown').forEach(d => {
@@ -1924,7 +1889,6 @@
                 const u = Array.isArray(i) ? i[2] : i.unit_id;
                 return normalizeLevelStr(l) === targetLevelNormalized && String(u) === String(unitId);
             });
-            // 抓取 lesson (或相容 stage)
             const lessons = [...new Set(filtered.map(i => Array.isArray(i) ? i[3] : (i.lesson || i.stage)))].filter(Boolean).sort((a,b) => a - b);
 
             if (lessons.length > 0) {
@@ -2337,13 +2301,15 @@
             document.getElementById('area-grammar-ready').style.display = 'none';
             document.getElementById('area-grammar-quiz').style.display = 'none';
 
-            // 將 dialogs 轉換為攜帶原始 gram 編號的結構，相容純字串與物件
+            // 結構化語法對話，嚴格保留 gramNum
             if (grammarData.dialogs && grammarData.dialogs.length > 0) {
                 currentGrammarItem.structuredDialogs = grammarData.dialogs.map((d, idx) => {
                     if (typeof d === 'object' && d !== null && d.text !== undefined) {
-                        return d;
+                        return {
+                            gramNum: Number(d.gramNum) || (idx + 1),
+                            text: String(d.text).trim()
+                        };
                     }
-                    // 若後端僅回傳純字串陣列，檢查原始物件中對應的 gram1 ~ gram10
                     let matchedGramNum = null;
                     const dClean = String(d).trim();
                     for (let g = 1; g <= 10; g++) {
@@ -2422,7 +2388,7 @@
             const audioBtn = document.getElementById('btn-gram2-audio');
             const targetGramNum = currentDialogObj.gramNum;
 
-            // 嚴格判定：只有當前句子真正是 gram2 或 gram3 時，才顯示音檔按鈕與播放
+            // 🎯 核心判定：只有真正的 gram2 或 gram3 才有音檔功能，空值不順延至 gram4
             if (targetGramNum === 2 || targetGramNum === 3) {
                 audioBtn.style.display = 'block';
                 audioBtn.onclick = (e) => { 
@@ -2466,7 +2432,7 @@
             if (isTypewriterTyping) { completeTypewriterImmediately(); return; }
             if (!currentGrammarItem) return;
 
-            if (currentGrammarItem.dialogs && currentDialogIndex < currentGrammarItem.dialogs.length - 1) {
+            if (currentGrammarItem.structuredDialogs && currentDialogIndex < currentGrammarItem.structuredDialogs.length - 1) {
                 currentDialogIndex++;
                 showCurrentGrammarDialog();
             } else {
@@ -2802,7 +2768,6 @@
             return str.replace(/[.,?!~\s\r\n]/g, '').toLowerCase();
         }
 
-        // 發音檢驗邏輯
         function isSpeechPass(str1, str2) {
             const s1 = cleanStringForCompare(str1);
             const s2 = cleanStringForCompare(str2);
