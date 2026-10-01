@@ -388,16 +388,34 @@
             cursor: pointer; color: inherit; vertical-align: middle;
         }
 
+        /* 💡 語法介紹小教室：嚴格靠左並修復第一行縮排問題 */
         .grammar-dialog-box {
             background: #eef2ff; border: 2px solid #818cf8; border-radius: 16px;
             padding: 20px; padding-bottom: 35px; font-size: 1.1rem; color: #312e81;
-            text-align: left; margin-bottom: 15px; min-height: 90px; line-height: 1.6;
+            text-align: left !important; margin-bottom: 15px; min-height: 90px; line-height: 1.6;
             position: relative; cursor: pointer; white-space: pre-wrap; word-break: break-word;
         }
         .btn-gram2-audio {
             position: absolute; bottom: 8px; right: 12px; background: #818cf8; color: white;
             border: none; border-radius: 8px; padding: 4px 10px; font-size: 0.85rem; font-weight: bold; cursor: pointer;
         }
+
+        /* 💡 語法測驗題目區塊：明確靠左對齊 */
+        #container-grammar-questions {
+            text-align: left !important;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .grammar-q-item {
+            text-align: left !important;
+            font-size: 1.05rem;
+            color: var(--duo-dark);
+            line-height: 1.8;
+            font-weight: 600;
+        }
+
         .blank-slot {
             display: inline-block; min-width: 80px; border-bottom: 3px solid var(--duo-blue);
             color: var(--duo-blue); text-align: center; padding: 0 6px; cursor: pointer; font-weight: bold;
@@ -412,7 +430,7 @@
             border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; margin-bottom: 15px;
             white-space: pre-wrap; word-break: break-word;
         }
-        .dialog-history-item { padding: 8px 10px; border-bottom: 1px solid #f3f4f6; font-size: 0.95rem; color: #374151; line-height: 1.5; }
+        .dialog-history-item { padding: 8px 10px; border-bottom: 1px solid #f3f4f6; font-size: 0.95rem; color: #374151; line-height: 1.5; text-align: left; }
         .dialog-history-item:last-child { border-bottom: none; }
         .dialog-history-item span.num { font-weight: bold; color: var(--duo-blue); margin-right: 6px; }
 
@@ -688,10 +706,8 @@
                         <h3 style="margin: 0; color: #4338ca;"><i class="fa-solid fa-lightbulb"></i> 觀念小教室</h3>
                         <span id="lbl-dialog-counter" style="font-size: 0.85rem; color: #6b7280; font-weight: bold;">1 / 1</span>
                     </div>
-                    <div class="grammar-dialog-box" onclick="completeTypewriterImmediately()">
-                        <span id="lbl-grammar-dialog">...</span>
-                        <button class="btn-gram2-audio" id="btn-gram2-audio" style="display: none;"><i class="fa-solid fa-volume-high"></i> 播放聲音</button>
-                    </div>
+                    <!-- 避免 pre-wrap 抓到 HTML 內縮排，span 緊密貼齊標籤內壁 -->
+                    <div class="grammar-dialog-box" onclick="completeTypewriterImmediately()"><span id="lbl-grammar-dialog">...</span><button class="btn-gram2-audio" id="btn-gram2-audio" style="display: none;"><i class="fa-solid fa-volume-high"></i> 播放聲音</button></div>
                     <button class="btn-confirm" id="btn-next-dialog" onclick="nextGrammarDialog()">下一步 <i class="fa-solid fa-arrow-right"></i></button>
                     <div class="grammar-nav-btns">
                         <button class="btn-grammar-sub" id="btn-prev-dialog" onclick="prevGrammarDialog()"><i class="fa-solid fa-arrow-left"></i> 上一步</button>
@@ -712,7 +728,7 @@
                 </div>
 
                 <div id="area-grammar-quiz" style="display: none; margin-top: 15px;">
-                    <h3 style="margin-top: 0; color: var(--duo-dark);"><i class="fa-solid fa-pen-to-square"></i> 語法測驗</h3>
+                    <h3 style="margin-top: 0; color: var(--duo-dark); text-align: center;"><i class="fa-solid fa-pen-to-square"></i> 語法測驗</h3>
                     <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
                     <div id="container-grammar-questions"></div>
                     <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin: 15px 0 5px 0;">選項：</p>
@@ -827,7 +843,7 @@
                 </div>
             </div>
 
-            <!-- 步驟 6-D：單字跟讀挑戰畫面 (獨立單字庫，完全不受 sentence 影響) -->
+            <!-- 步驟 6-D：單字跟讀挑戰畫面 -->
             <div id="step-quiz-vocab-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1001,7 +1017,7 @@
         let rawBlocksData = [];  
         let globalGrammarData = []; 
         let rawDialogueData = []; 
-        let rawVocabData = []; // 單字獨立陣列，嚴格不受 sentence 影響
+        let rawVocabData = [];
 
         let questions = [];
         let currentIndex = 0;
@@ -1748,7 +1764,6 @@
             btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 同步最新試算表中...`;
 
             try {
-                // getLanguageData 同步 sentence 資料；getVocabularyData 獨立取得單字庫
                 const [shadowRes, blocksRes, grammarRes, dialogueRes, vocabRes] = await Promise.all([
                     requestGAS(targetApi, 'getLanguageData').catch(()=>null),
                     requestGAS(targetApi, 'getBlocksData').catch(()=>null),
@@ -1830,7 +1845,7 @@
 
         function normalizeLevelStr(val) {
             if (!val) return "";
-            let s = String(val).trim().toUpperCase().replace(/[\s_\-\/]/g, '');
+            let s = String(val).trim().toUpperCase().replace(/[\s_\-]/g, '');
             if (s === 'JLPT' || s === 'TOPIK' || s === 'JLPTTOPIK') return 'JLPTTOPIK';
             return s;
         }
@@ -1995,14 +2010,13 @@
                     alert("此課堂目前沒有設定對話練習喔！");
                 }
             } else if (mode.startsWith('vocab_')) {
-                // 單字模式獨立進入，使用 rawVocabData
                 startVocabChallenge(mode);
             } else {
                 startMainQuiz();
             }
         }
 
-        // ==================== 3. 單字測驗邏輯 (維持獨立讀取 vocabulary) ====================
+        // ==================== 3. 單字測驗邏輯 ====================
 
         function getTranslationByLang(item) {
             if (!item) return "";
@@ -2026,7 +2040,7 @@
             vocabIndex = 0;
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
             const modeTitleMap = {
-                'vocab_shadow': '🗣️ 單字跟讀',
+                'vocab_shadow': '🗣️️ 單字跟讀',
                 'vocab_type': '⌨ 單字聽打',
                 'vocab_choice': '🎯 單字選擇'
             };
@@ -2304,7 +2318,7 @@
                     if (typeof d === 'object' && d !== null && d.text !== undefined) {
                         return {
                             gramNum: Number(d.gramNum) || (idx + 1),
-                            text: String(d.text).trim()
+                            text: cleanInitialWhitespace(String(d.text))
                         };
                     }
                     let matchedGramNum = null;
@@ -2318,7 +2332,7 @@
                     }
                     return {
                         gramNum: matchedGramNum !== null ? matchedGramNum : (idx + 1),
-                        text: dClean
+                        text: cleanInitialWhitespace(dClean)
                     };
                 });
             } else {
@@ -2339,6 +2353,12 @@
             goToStep('step-grammar');
         }
 
+        // 徹底清除文字最前端全形空白、半形空白、換行或定位字元
+        function cleanInitialWhitespace(str) {
+            if (!str) return "";
+            return str.replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
+        }
+
         function playGrammarAudio(gramNum, dialogText) {
             stopSpeechRecognition();
             if (!currentGrammarItem) return;
@@ -2349,7 +2369,7 @@
                 audioUrl = currentGrammarItem.gram3_audio || "";
             }
 
-            const textToSpeak = dialogText ? dialogText.replace(/^[\s\r\n\u3000]+/g, '').trim() : "";
+            const textToSpeak = dialogText ? cleanInitialWhitespace(dialogText) : "";
 
             if (audioUrl && audioUrl.trim() !== '') {
                 new Audio(audioUrl).play().catch(() => { if (textToSpeak) speakTTS(textToSpeak); });
@@ -2380,7 +2400,7 @@
             }
 
             const currentDialogObj = currentGrammarItem.structuredDialogs[currentDialogIndex];
-            currentFullDialogText = (currentDialogObj.text || "").replace(/^[\s\r\n\u3000]+/g, '').replace(/\r/g, '').trim();
+            currentFullDialogText = cleanInitialWhitespace(currentDialogObj.text || "");
 
             const audioBtn = document.getElementById('btn-gram2-audio');
             const targetGramNum = currentDialogObj.gramNum;
@@ -2467,7 +2487,7 @@
 
             examples.forEach((exText, idx) => {
                 const row = document.createElement('div');
-                row.style.cssText = "display: flex; justify-content: space-between; align-items: center; background: #f3f4f6; padding: 12px 16px; border-radius: 12px; margin-bottom: 10px; font-size: 1.1rem; font-weight: bold;";
+                row.style.cssText = "display: flex; justify-content: space-between; align-items: center; background: #f3f4f6; padding: 12px 16px; border-radius: 12px; margin-bottom: 10px; font-size: 1.1rem; font-weight: bold; text-align: left;";
                 const textSpan = document.createElement('span');
                 textSpan.innerText = `${idx + 1}. ${exText}`;
 
@@ -2520,7 +2540,7 @@
                     const text = typeof itemObj === 'object' && itemObj !== null ? (itemObj.text || '') : String(itemObj);
                     const item = document.createElement('div');
                     item.className = 'dialog-history-item';
-                    item.innerHTML = `<span class="num">${idx + 1}.</span> ${text.replace(/^[\s\r\n\u3000]+/g, '').replace(/\r/g, '').trim()}`;
+                    item.innerHTML = `<span class="num">${idx + 1}.</span> ${cleanInitialWhitespace(text)}`;
                     container.appendChild(item);
                 });
                 document.getElementById('area-grammar-all-history').style.display = 'block';
@@ -2620,7 +2640,6 @@
 
             if (currentConfig.mode === 'shadow') {
                 goToStep('step-quiz-shadow');
-                // 抓取 sentence 資料
                 questions = rawShadowData.filter(i => 
                     normalizeLevelStr(i[1]) === targetLevelNormalized &&
                     String(i[2]) === String(currentConfig.unit_id) &&
