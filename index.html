@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多語種雲端遊戲化學習系統</title>
+    <title>好友功能加入版</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -204,6 +204,10 @@
             padding: 10px 12px; border-radius: 14px; background: #ffffff;
             border: 1px solid #f1f5f9; margin-bottom: 8px;
         }
+        .rank-item-row.me-row {
+            background: #f0fdf4;
+            border: 1.5px solid #86efac;
+        }
         .rank-num { font-size: 1.15rem; font-weight: 900; width: 28px; text-align: center; }
         .rank-num.rank-1 { color: #f59e0b; }
         .rank-num.rank-2 { color: #94a3b8; }
@@ -388,7 +392,6 @@
             cursor: pointer; color: inherit; vertical-align: middle;
         }
 
-        /* 💡 語法介紹小教室：嚴格靠左並修復第一行縮排問題 */
         .grammar-dialog-box {
             background: #eef2ff; border: 2px solid #818cf8; border-radius: 16px;
             padding: 20px; padding-bottom: 35px; font-size: 1.1rem; color: #312e81;
@@ -400,7 +403,6 @@
             border: none; border-radius: 8px; padding: 4px 10px; font-size: 0.85rem; font-weight: bold; cursor: pointer;
         }
 
-        /* 💡 語法測驗題目區塊：明確靠左對齊 */
         #container-grammar-questions {
             text-align: left !important;
             margin-bottom: 15px;
@@ -504,6 +506,21 @@
             </select>
             <div id="setup-nickname-error" style="color: var(--duo-red); font-size: 0.8rem; margin-top: 6px;" class="hidden"></div>
             <button id="btn-save-initial-nickname" class="btn-3d btn-3d-primary" style="width:100%; padding:10px; margin-top:12px;">完成設定並開始學習</button>
+        </div>
+    </div>
+
+    <!-- 👥 ➕ 新增好友 Modal -->
+    <div id="modal-add-friend" class="custom-modal">
+        <div class="custom-modal-card">
+            <div class="close-icon-circle" onclick="closeModal('modal-add-friend')"><i class="fa-solid fa-xmark"></i></div>
+            <h3 style="margin-top:0; font-size: 1.2rem; color: var(--duo-blue);"><i class="fa-solid fa-user-plus"></i> 新增好友</h3>
+            <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 10px;">輸入好友的登入 Email，將其加入好友排行榜中互相比較進度：</p>
+            <input type="email" id="input-friend-email" placeholder="好友的電子信箱 (Email)">
+            <div id="add-friend-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 6px;" class="hidden"></div>
+            <div style="display:flex; gap:10px; margin-top:14px;">
+                <button id="btn-confirm-add-friend" class="btn-3d btn-3d-primary" style="flex:1; padding:10px;">確認新增</button>
+                <button class="btn-3d btn-3d-secondary" onclick="closeModal('modal-add-friend')" style="flex:1; padding:10px;">取消</button>
+            </div>
         </div>
     </div>
 
@@ -706,7 +723,6 @@
                         <h3 style="margin: 0; color: #4338ca;"><i class="fa-solid fa-lightbulb"></i> 觀念小教室</h3>
                         <span id="lbl-dialog-counter" style="font-size: 0.85rem; color: #6b7280; font-weight: bold;">1 / 1</span>
                     </div>
-                    <!-- 避免 pre-wrap 抓到 HTML 內縮排，span 緊密貼齊標籤內壁 -->
                     <div class="grammar-dialog-box" onclick="completeTypewriterImmediately()"><span id="lbl-grammar-dialog">...</span><button class="btn-gram2-audio" id="btn-gram2-audio" style="display: none;"><i class="fa-solid fa-volume-high"></i> 播放聲音</button></div>
                     <button class="btn-confirm" id="btn-next-dialog" onclick="nextGrammarDialog()">下一步 <i class="fa-solid fa-arrow-right"></i></button>
                     <div class="grammar-nav-btns">
@@ -746,7 +762,7 @@
                 </div>
             </div>
 
-            <!-- 步驟 6-A：跟讀挑戰畫面 (Sentence 跟讀) -->
+            <!-- 步驟 6-A：Sentence 跟讀畫面 -->
             <div id="step-quiz-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -938,10 +954,18 @@
                 </div>
             </div>
 
+            <!-- 分頁 1：學習排行榜 -->
             <div id="sub-page-leaderboard" class="profile-container-card">
-                <h3 style="margin: 0 0 14px 0; color: #1e293b; font-size: 1.2rem; font-weight: 800;">
-                    <i class="fa-solid fa-trophy" style="color: var(--duo-gold);"></i> 學習排行榜
-                </h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <h3 style="margin: 0; color: #1e293b; font-size: 1.2rem; font-weight: 800;">
+                        <i class="fa-solid fa-trophy" style="color: var(--duo-gold);"></i> 學習排行榜
+                    </h3>
+                    <!-- 👥 加好友按鈕 (僅在好友榜模式時顯示) -->
+                    <button id="btn-open-add-friend" class="btn-3d btn-3d-primary" onclick="openModal('modal-add-friend')" style="display: none; padding: 6px 12px; font-size: 0.82rem;">
+                        <i class="fa-solid fa-user-plus"></i> 加好友
+                    </button>
+                </div>
+
                 <div class="tab-segmented">
                     <button class="tab-segmented-item" id="tab-rank-friends" onclick="switchRankSubTab('friends')">好友榜</button>
                     <button class="tab-segmented-item active" id="tab-rank-global" onclick="switchRankSubTab('global')">全球總榜</button>
@@ -951,6 +975,7 @@
                 </div>
             </div>
 
+            <!-- 分頁 2：我的帳號 -->
             <div id="sub-page-myaccount" class="profile-container-card hidden">
                 <div style="text-align: center; border-bottom: 1.5px dashed #e2e8f0; padding-bottom: 16px; margin-bottom: 16px;">
                     <img id="myaccount-avatar" src="https://lh3.googleusercontent.com/a/default-user" class="profile-avatar-large" alt="User Avatar">
@@ -1043,6 +1068,8 @@
         let typewriterTimer = null;
         let isTypewriterTyping = false;
         let currentFullDialogText = "";
+
+        let currentRankSubTab = 'global';
 
         const ProgressModel = {
             loadProgress: async (uid) => {
@@ -1232,6 +1259,7 @@
                     window.currentUserData.status = "開通中";
                     window.currentUserData.memberships = memberships;
                     window.currentUserData.unlockedLevels = unlockedLevels;
+                    if (!window.currentUserData.friends) window.currentUserData.friends = [];
 
                     if (!unlockedLevels.includes(currentConfig.level)) {
                         currentConfig.level = unlockedLevels[0];
@@ -1272,7 +1300,8 @@
                 unlockedLevels: window.tempUnlockedLevels || ['0A'],
                 memberships: window.tempMemberships || [],
                 lastNicknameUpdatedAt: 0,
-                unitProgress: {}
+                unitProgress: {},
+                friends: []
             };
 
             await db.collection('users').doc(currentUser.uid).set(initialData);
@@ -1443,7 +1472,7 @@
                 btnMyAccount.classList.remove('active');
                 pageLeaderboard.classList.remove('hidden');
                 pageMyAccount.classList.add('hidden');
-                loadLeaderboardData();
+                switchRankSubTab(currentRankSubTab);
             } else {
                 btnMyAccount.classList.add('active');
                 btnLeaderboard.classList.remove('active');
@@ -1453,20 +1482,25 @@
         }
 
         function switchRankSubTab(subTab) {
+            currentRankSubTab = subTab;
             const btnFriends = document.getElementById('tab-rank-friends');
             const btnGlobal = document.getElementById('tab-rank-global');
+            const btnAddFriend = document.getElementById('btn-open-add-friend');
+
             if (subTab === 'global') {
                 btnGlobal.classList.add('active');
                 btnFriends.classList.remove('active');
+                if (btnAddFriend) btnAddFriend.style.display = 'none';
                 loadLeaderboardData();
             } else {
                 btnFriends.classList.add('active');
                 btnGlobal.classList.remove('active');
-                const container = document.getElementById('leaderboard-list-container');
-                container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>尚無好友排名數據</div>";
+                if (btnAddFriend) btnAddFriend.style.display = 'inline-block';
+                loadFriendsLeaderboardData();
             }
         }
 
+        // 全球總榜
         async function loadLeaderboardData() {
             const container = document.getElementById('leaderboard-list-container');
             container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>載入排行榜中...</div>";
@@ -1486,8 +1520,9 @@
                 let rank = 1;
                 snapshot.forEach(doc => {
                     const data = doc.data();
+                    const isMe = currentUser && doc.id === currentUser.uid;
                     const row = document.createElement('div');
-                    row.className = "rank-item-row";
+                    row.className = "rank-item-row" + (isMe ? " me-row" : "");
 
                     let rankClass = rank === 1 ? "rank-1" : (rank === 2 ? "rank-2" : (rank === 3 ? "rank-3" : ""));
 
@@ -1496,7 +1531,9 @@
                             <div class="rank-num ${rankClass}">${rank}</div>
                             <img src="https://lh3.googleusercontent.com/a/default-user" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
                             <div>
-                                <div style="font-weight: 800; color: #1e293b; font-size: 0.95rem;">${data.displayName || '學生'}</div>
+                                <div style="font-weight: 800; color: #1e293b; font-size: 0.95rem;">
+                                    ${data.displayName || '學生'}${isMe ? ' <span style="font-size:0.75rem; color:var(--duo-green);">(你)</span>' : ''}
+                                </div>
                                 <div style="font-size: 0.78rem; color: #94a3b8;">${data.unlockedLevels ? data.unlockedLevels[0] : '1A'}</div>
                             </div>
                         </div>
@@ -1516,6 +1553,180 @@
             } catch (e) {
                 console.error("載入排行榜失敗:", e);
                 container.innerHTML = "<div style='text-align:center; color:#ef4444; padding:20px 0;'>載入失敗，請確認網路！</div>";
+            }
+        }
+
+        // 👥 好友排行榜 (包含自己與所有已加好友，不論排名第幾都列出並以 XP 排序)
+        async function loadFriendsLeaderboardData() {
+            const container = document.getElementById('leaderboard-list-container');
+            container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>載入好友排行中...</div>";
+
+            if (!currentUser || !window.currentUserData) {
+                container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>請先登入後查看好友</div>";
+                return;
+            }
+
+            const friendsEmails = window.currentUserData.friends || [];
+            let targetUsers = [];
+
+            // 把自己加入比較清單
+            targetUsers.push({
+                email: currentUser.email,
+                displayName: window.currentUserData.displayName || "我",
+                xp: window.currentUserData.xp || 0,
+                streakDays: window.currentUserData.streakDays || 1,
+                level: window.currentUserData.unlockedLevels ? window.currentUserData.unlockedLevels[0] : '1A',
+                isMe: true
+            });
+
+            try {
+                if (friendsEmails.length > 0) {
+                    // 分批查詢好友資料（避免 Firestore where in 超過限制）
+                    for (let i = 0; i < friendsEmails.length; i += 10) {
+                        const chunk = friendsEmails.slice(i, i + 10);
+                        const snap = await db.collection("users").where("email", "in", chunk).get();
+                        snap.forEach(doc => {
+                            const d = doc.data();
+                            targetUsers.push({
+                                email: d.email,
+                                displayName: d.displayName || "好友",
+                                xp: d.xp || 0,
+                                streakDays: d.streakDays || 1,
+                                level: d.unlockedLevels ? d.unlockedLevels[0] : '1A',
+                                isMe: false
+                            });
+                        });
+                    }
+                }
+
+                // 依經驗值從大到小排序
+                targetUsers.sort((a, b) => (b.xp || 0) - (a.xp || 0));
+
+                container.innerHTML = "";
+                let rank = 1;
+                targetUsers.forEach(u => {
+                    const row = document.createElement('div');
+                    row.className = "rank-item-row" + (u.isMe ? " me-row" : "");
+
+                    let rankClass = rank === 1 ? "rank-1" : (rank === 2 ? "rank-2" : (rank === 3 ? "rank-3" : ""));
+
+                    row.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="rank-num ${rankClass}">${rank}</div>
+                            <img src="https://lh3.googleusercontent.com/a/default-user" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                            <div>
+                                <div style="font-weight: 800; color: #1e293b; font-size: 0.95rem;">
+                                    ${u.displayName}${u.isMe ? ' <span style="font-size:0.75rem; color:var(--duo-green);">(你)</span>' : ''}
+                                </div>
+                                <div style="font-size: 0.78rem; color: #94a3b8;">${u.email}</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="text-align: right;">
+                                <div style="font-weight: 800; color: var(--duo-gold); font-size: 0.95rem;">
+                                    <i class="fa-solid fa-star"></i> ${u.xp || 0}
+                                </div>
+                                <div style="font-size: 0.78rem; color: var(--duo-fire-red); font-weight: bold;">
+                                    <i class="fa-solid fa-fire"></i> ${u.streakDays || 1} 天
+                                </div>
+                            </div>
+                            ${!u.isMe ? `<button onclick="removeFriend('${u.email}')" title="刪除好友" style="background:none; border:none; color:#9ca3af; cursor:pointer; padding:4px;"><i class="fa-solid fa-user-xmark"></i></button>` : ''}
+                        </div>
+                    `;
+                    container.appendChild(row);
+                    rank++;
+                });
+
+                if (friendsEmails.length === 0) {
+                    const notice = document.createElement('div');
+                    notice.style.cssText = "text-align:center; color:#6b7280; font-size:0.85rem; padding:15px 0;";
+                    notice.innerHTML = `目前只有你一人喔！點擊右上角「<strong>+ 加好友</strong>」與好友一同切磋！`;
+                    container.appendChild(notice);
+                }
+
+            } catch (err) {
+                console.error("載入好友榜失敗:", err);
+                container.innerHTML = "<div style='text-align:center; color:#ef4444; padding:20px 0;'>載入好友資料失敗，請確認網路！</div>";
+            }
+        }
+
+        // 👥 加好友送出邏輯
+        document.getElementById('btn-confirm-add-friend').onclick = async () => {
+            const input = document.getElementById('input-friend-email');
+            const errDiv = document.getElementById('add-friend-error-msg');
+            const targetEmail = input.value.trim().toLowerCase();
+
+            if (!targetEmail) {
+                errDiv.innerText = "請輸入好友的電子信箱！";
+                errDiv.classList.remove('hidden');
+                return;
+            }
+
+            if (targetEmail === currentUser.email.toLowerCase()) {
+                errDiv.innerText = "不能將自己加為好友喔！";
+                errDiv.classList.remove('hidden');
+                return;
+            }
+
+            const currentFriends = window.currentUserData.friends || [];
+            if (currentFriends.map(e => e.toLowerCase()).includes(targetEmail)) {
+                errDiv.innerText = "此使用者已經在您的好友名單中囉！";
+                errDiv.classList.remove('hidden');
+                return;
+            }
+
+            const btnConfirm = document.getElementById('btn-confirm-add-friend');
+            btnConfirm.disabled = true;
+            btnConfirm.innerText = "驗證中...";
+
+            try {
+                // 檢查該好友是否存在於 users 集合中
+                const querySnap = await db.collection("users").where("email", "==", targetEmail).limit(1).get();
+                if (querySnap.empty) {
+                    errDiv.innerText = "找不到此帳號！請確認對方是否已登入系統建立角色。";
+                    errDiv.classList.remove('hidden');
+                    btnConfirm.disabled = false;
+                    btnConfirm.innerText = "確認新增";
+                    return;
+                }
+
+                currentFriends.push(targetEmail);
+                await db.collection("users").doc(currentUser.uid).update({
+                    friends: currentFriends
+                });
+
+                window.currentUserData.friends = currentFriends;
+                input.value = "";
+                errDiv.classList.add('hidden');
+                closeModal('modal-add-friend');
+                alert("已成功加入好友！");
+                loadFriendsLeaderboardData();
+
+            } catch (e) {
+                errDiv.innerText = "新增好友失敗：" + e.message;
+                errDiv.classList.remove('hidden');
+            } finally {
+                btnConfirm.disabled = false;
+                btnConfirm.innerText = "確認新增";
+            }
+        };
+
+        // 👥 刪除好友邏輯
+        async function removeFriend(email) {
+            if (!confirm(`確定要將 ${email} 從好友名單中移除嗎？`)) return;
+
+            try {
+                let currentFriends = window.currentUserData.friends || [];
+                currentFriends = currentFriends.filter(e => e.toLowerCase() !== email.toLowerCase());
+
+                await db.collection("users").doc(currentUser.uid).update({
+                    friends: currentFriends
+                });
+
+                window.currentUserData.friends = currentFriends;
+                loadFriendsLeaderboardData();
+            } catch (e) {
+                alert("移除好友失敗：" + e.message);
             }
         }
 
@@ -1845,7 +2056,7 @@
 
         function normalizeLevelStr(val) {
             if (!val) return "";
-            let s = String(val).trim().toUpperCase().replace(/[\s_\-]/g, '');
+            let s = String(val).trim().toUpperCase().replace(/[\s_\-\/]/g, '');
             if (s === 'JLPT' || s === 'TOPIK' || s === 'JLPTTOPIK') return 'JLPTTOPIK';
             return s;
         }
@@ -2040,7 +2251,7 @@
             vocabIndex = 0;
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
             const modeTitleMap = {
-                'vocab_shadow': '🗣️️ 單字跟讀',
+                'vocab_shadow': '🗣️ 單字跟讀',
                 'vocab_type': '⌨ 單字聽打',
                 'vocab_choice': '🎯 單字選擇'
             };
@@ -2353,7 +2564,6 @@
             goToStep('step-grammar');
         }
 
-        // 徹底清除文字最前端全形空白、半形空白、換行或定位字元
         function cleanInitialWhitespace(str) {
             if (!str) return "";
             return str.replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
