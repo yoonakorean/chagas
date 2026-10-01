@@ -2,8 +2,8 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>好友功能加入版</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>多語種雲端遊戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -31,13 +31,18 @@
             --duo-fire-red: #ef4444;
         }
 
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: #f9fafb;
             display: flex;
             justify-content: center;
-            padding: 15px 10px;
+            padding: 12px 8px;
             margin: 0;
+            min-height: 100vh;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -45,50 +50,60 @@
             background: white;
             border: 2px solid #e5e7eb;
             border-radius: 20px;
-            padding: 20px;
+            padding: 18px 14px;
             width: 100%;
             max-width: 480px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             text-align: center;
             position: relative;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
         }
 
+        /* 📱 頂部資訊列自適應排版 */
         .user-meta-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 12px;
-            margin-bottom: 15px;
+            padding-bottom: 10px;
+            margin-bottom: 14px;
             border-bottom: 2px solid #e5e7eb;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 800;
+            gap: 4px;
+            flex-wrap: wrap;
         }
         .user-meta-item {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             color: #374151;
             cursor: pointer;
-            padding: 6px 10px;
+            padding: 5px 8px;
             border-radius: 10px;
             user-select: none;
             transition: all 0.15s ease;
+            white-space: nowrap;
+            font-size: 0.88rem;
         }
         .user-meta-item:hover { background: #f3f4f6; }
 
+        /* 彈窗自適應：支援螢幕滾動、防破版 */
         .custom-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.55); display: none; justify-content: center;
             align-items: center; z-index: 999999;
+            padding: 16px;
         }
         .custom-modal.show { display: flex !important; }
         .custom-modal-card {
-            background: white; border-radius: 24px; padding: 24px 20px;
-            width: 88%; max-width: 380px; text-align: center;
+            background: white; border-radius: 24px; padding: 22px 18px;
+            width: 100%; max-width: 380px; text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.25); position: relative;
-            box-sizing: border-box;
             animation: modalPopIn 0.18s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         @keyframes modalPopIn {
             from { transform: scale(0.92); opacity: 0; }
@@ -141,7 +156,7 @@
             background: #ffffff; color: #374151; border: 2px solid #e5e7eb;
             box-shadow: 0 4px 0 #e5e7eb; display: flex; align-items: center;
             justify-content: center; gap: 10px; width: 100%; padding: 12px;
-            font-size: 1rem; font-weight: bold; border-radius: 14px; cursor: pointer;
+            font-size: 0.95rem; font-weight: bold; border-radius: 14px; cursor: pointer;
         }
 
         .calendar-header-ctrl {
@@ -153,11 +168,11 @@
             display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: #4b5563;
         }
         .calendar-grid {
-            display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; text-align: center;
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; text-align: center;
         }
         .calendar-day-header { font-size: 0.75rem; color: #9ca3af; font-weight: bold; padding-bottom: 4px; }
         .calendar-day {
-            font-size: 0.85rem; padding: 8px 0; border-radius: 10px; background: #f9fafb;
+            font-size: 0.8rem; padding: 7px 0; border-radius: 8px; background: #f9fafb;
             border: 1px solid #f3f4f6; color: #4b5563; font-weight: bold;
         }
         .calendar-day.empty { background: transparent; border: none; }
@@ -169,14 +184,14 @@
         .profile-container-card {
             background: #ffffff;
             border: 2px solid #e5e7eb;
-            border-radius: 24px;
-            padding: 24px 20px;
+            border-radius: 20px;
+            padding: 18px 14px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.03);
             text-align: left;
             margin-top: 10px;
         }
         .nav-pill-btn {
-            padding: 8px 16px; border-radius: 12px; font-size: 0.9rem; font-weight: bold;
+            padding: 7px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: bold;
             border: 2px solid #e5e7eb; background: #ffffff; color: #64748b; cursor: pointer;
             transition: all 0.15s ease;
         }
@@ -185,47 +200,47 @@
         }
 
         .tab-segmented {
-            display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 16px;
+            display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 14px;
         }
         .tab-segmented-item {
-            flex: 1; padding: 8px 12px; border: none; background: transparent; font-weight: bold;
-            color: #64748b; border-radius: 10px; cursor: pointer; font-size: 0.9rem;
+            flex: 1; padding: 8px 10px; border: none; background: transparent; font-weight: bold;
+            color: #64748b; border-radius: 10px; cursor: pointer; font-size: 0.88rem;
         }
         .tab-segmented-item.active { background: var(--duo-blue); color: white; }
 
         .course-pill {
             background: #e0f2fe; color: #0369a1; border: 1.5px solid #bae6fd;
-            border-radius: 25px; padding: 10px 16px; font-weight: bold; font-size: 0.9rem;
+            border-radius: 25px; padding: 8px 14px; font-weight: bold; font-size: 0.85rem;
             margin-bottom: 8px; display: block;
         }
 
         .rank-item-row {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 10px 12px; border-radius: 14px; background: #ffffff;
-            border: 1px solid #f1f5f9; margin-bottom: 8px;
+            padding: 9px 10px; border-radius: 12px; background: #ffffff;
+            border: 1px solid #f1f5f9; margin-bottom: 6px; gap: 8px;
         }
         .rank-item-row.me-row {
             background: #f0fdf4;
             border: 1.5px solid #86efac;
         }
-        .rank-num { font-size: 1.15rem; font-weight: 900; width: 28px; text-align: center; }
+        .rank-num { font-size: 1.1rem; font-weight: 900; width: 24px; text-align: center; flex-shrink: 0; }
         .rank-num.rank-1 { color: #f59e0b; }
         .rank-num.rank-2 { color: #94a3b8; }
         .rank-num.rank-3 { color: #d97706; }
 
         .step-page { display: none; }
         .step-page.active { display: block; }
-        h2.step-title { color: var(--duo-dark); font-size: 1.3rem; margin-top: 0; margin-bottom: 20px; }
-        .option-grid { display: grid; gap: 12px; margin-bottom: 20px; }
+        h2.step-title { color: var(--duo-dark); font-size: 1.25rem; margin-top: 0; margin-bottom: 16px; }
+        .option-grid { display: grid; gap: 10px; margin-bottom: 16px; }
         .grid-1 { grid-template-columns: 1fr; }
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
         .grid-3 { grid-template-columns: repeat(3, 1fr); }
 
         .btn-option {
             background: white; border: 2px solid #e5e7eb; border-bottom: 4px solid #e5e7eb;
-            border-radius: 14px; padding: 14px 10px; font-size: 1rem; font-weight: bold;
+            border-radius: 14px; padding: 12px 8px; font-size: 0.95rem; font-weight: bold;
             color: var(--duo-dark); cursor: pointer; transition: all 0.15s ease;
-            text-align: center; white-space: nowrap;
+            text-align: center; word-break: break-word;
         }
         .btn-option:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
         .btn-option.selected {
@@ -241,14 +256,15 @@
 
         .lesson-card-item {
             background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 14px;
-            padding: 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;
+            padding: 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 6px;
         }
-        .lesson-card-title { font-weight: bold; color: var(--duo-dark); text-align: left; font-size: 1rem; margin-bottom: 4px; }
+        .lesson-card-title { font-weight: bold; color: var(--duo-dark); text-align: left; font-size: 0.95rem; margin-bottom: 2px; }
         .lesson-btn-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
         .btn-lesson-action {
             background: white; border: 2px solid #cbd5e1; border-bottom: 3px solid #cbd5e1;
-            border-radius: 10px; padding: 8px 2px; font-size: 0.85rem; font-weight: bold;
+            border-radius: 10px; padding: 8px 4px; font-size: 0.82rem; font-weight: bold;
             color: #334155; cursor: pointer; transition: all 0.15s ease;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .btn-lesson-action:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
         .btn-lesson-action.btn-grammar-lesson:hover { border-color: var(--duo-purple); color: var(--duo-purple); }
@@ -257,128 +273,128 @@
 
         .btn-confirm {
             width: 100%; background: var(--duo-green); color: white; border: none;
-            border-bottom: 4px solid #46a302; padding: 14px; font-size: 1.1rem;
-            font-weight: bold; border-radius: 14px; cursor: pointer; margin-top: 10px;
-            box-sizing: border-box;
+            border-bottom: 4px solid #46a302; padding: 13px; font-size: 1.05rem;
+            font-weight: bold; border-radius: 14px; cursor: pointer; margin-top: 8px;
         }
         .btn-confirm:active { transform: translateY(2px); border-bottom-width: 2px; }
 
         .btn-sync-refresh {
             background: none; border: none; color: var(--duo-blue); font-size: 0.85rem;
-            font-weight: bold; cursor: pointer; margin-top: 15px; text-decoration: underline;
+            font-weight: bold; cursor: pointer; margin-top: 12px; text-decoration: underline;
         }
 
-        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .btn-back-step {
-            background: none; border: none; color: #6b7280; font-size: 0.95rem;
-            cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: bold;
+            background: none; border: none; color: #6b7280; font-size: 0.9rem;
+            cursor: pointer; display: flex; align-items: center; gap: 5px; font-weight: bold;
         }
         .btn-back-step:hover { color: var(--duo-blue); }
 
         .target-text {
-            font-size: 1.8rem; font-weight: bold; color: #1f2937; margin: 15px 0 5px 0;
-            min-height: 2.5rem; word-break: break-word;
+            font-size: 1.6rem; font-weight: bold; color: #1f2937; margin: 12px 0 5px 0;
+            min-height: 2.2rem; word-break: break-word; line-height: 1.3;
         }
-        .translation-text { font-size: 1.1rem; color: #6b7280; margin-bottom: 8px; min-height: 1.5rem; }
+        .translation-text { font-size: 1rem; color: #6b7280; margin-bottom: 8px; min-height: 1.4rem; word-break: break-word; }
         .hint-text {
-            font-size: 0.9rem; color: #f59e0b; background-color: #fef3c7;
-            padding: 6px 12px; border-radius: 10px; display: inline-block; margin-bottom: 20px;
+            font-size: 0.85rem; color: #f59e0b; background-color: #fef3c7;
+            padding: 5px 10px; border-radius: 10px; display: inline-block; margin-bottom: 16px;
         }
 
-        .controls { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
+        .controls { display: flex; justify-content: center; gap: 14px; margin-bottom: 12px; }
         .btn-circle {
-            width: 55px; height: 55px; border-radius: 50%; border: none; cursor: pointer;
-            font-size: 1.2rem; color: white; display: flex; align-items: center;
-            justify-content: center; transition: all 0.2s;
+            width: 52px; height: 52px; border-radius: 50%; border: none; cursor: pointer;
+            font-size: 1.15rem; color: white; display: flex; align-items: center;
+            justify-content: center; transition: all 0.2s; flex-shrink: 0;
         }
         .btn-listen { background: var(--duo-blue); box-shadow: 0 4px 0 #1899d6; }
         .btn-record { background: var(--duo-red); box-shadow: 0 4px 0 #ea2b2b; }
         .btn-record.recording { animation: pulse 1s infinite; background: #dc2626; }
         @keyframes pulse { 0%{transform: scale(1);} 50%{transform: scale(1.08);} 100%{transform: scale(1);} }
 
-        .result-box { background: #f3f4f6; border-radius: 12px; padding: 12px; margin-top: 10px; font-size: 0.95rem; }
-        .score-badge { font-size: 1.1rem; font-weight: bold; color: var(--duo-green); margin-top: 4px; }
+        .result-box { background: #f3f4f6; border-radius: 12px; padding: 10px; margin-top: 10px; font-size: 0.9rem; }
+        .score-badge { font-size: 1.05rem; font-weight: bold; color: var(--duo-green); margin-top: 4px; }
 
-        .nav-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+        .nav-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
         .btn-nav {
-            background: #f3f4f6; border: 1px solid #d1d5db; padding: 8px 16px;
-            border-radius: 8px; cursor: pointer; font-weight: bold; color: #374151;
+            background: #f3f4f6; border: 1px solid #d1d5db; padding: 8px 14px;
+            border-radius: 8px; cursor: pointer; font-weight: bold; color: #374151; font-size: 0.88rem;
         }
         .btn-nav:hover:not(:disabled) { background: #e5e7eb; }
         .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        .challenge-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; position: relative; }
+        .challenge-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; position: relative; }
         .gear-menu-container { position: relative; }
         .btn-gear {
-            background: #f3f4f6; border: 1px solid #d1d5db; width: 36px; height: 36px;
-            border-radius: 50%; cursor: pointer; color: #4b5563; font-size: 1rem;
+            background: #f3f4f6; border: 1px solid #d1d5db; width: 34px; height: 34px;
+            border-radius: 50%; cursor: pointer; color: #4b5563; font-size: 0.95rem;
             display: flex; align-items: center; justify-content: center; transition: all 0.2s;
         }
         .gear-dropdown {
-            display: none; position: absolute; top: 42px; right: 0; background: white;
+            display: none; position: absolute; top: 40px; right: 0; background: white;
             border: 2px solid #e5e7eb; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             padding: 6px; z-index: 100; min-width: 130px; flex-direction: column; gap: 4px;
         }
         .gear-dropdown.show { display: flex; }
         .gear-dropdown-item {
             background: none; border: none; padding: 8px 12px; text-align: left;
-            font-size: 0.88rem; font-weight: bold; color: #374151; border-radius: 8px;
+            font-size: 0.85rem; font-weight: bold; color: #374151; border-radius: 8px;
             cursor: pointer; display: flex; align-items: center; gap: 8px; width: 100%; box-sizing: border-box;
         }
         .gear-dropdown-item:hover { background: #ddf4ff; color: var(--duo-blue); }
         .gear-dropdown-item.quit-item:hover { background: #fee2e2; color: var(--duo-red); }
 
         .block-zone {
-            min-height: 70px; border-bottom: 2px dashed #cbd5e1; display: flex;
-            flex-wrap: wrap; gap: 8px; padding: 10px; justify-content: center;
-            align-items: center; margin-bottom: 20px;
+            min-height: 65px; border-bottom: 2px dashed #cbd5e1; display: flex;
+            flex-wrap: wrap; gap: 6px; padding: 8px; justify-content: center;
+            align-items: center; margin-bottom: 16px;
         }
         .block-chip {
-            background: white; border: 2px solid #cbd5e1; border-bottom: 4px solid #cbd5e1;
-            border-radius: 12px; padding: 8px 14px; font-size: 1.1rem; font-weight: bold;
+            background: white; border: 2px solid #cbd5e1; border-bottom: 3.5px solid #cbd5e1;
+            border-radius: 12px; padding: 7px 12px; font-size: 0.95rem; font-weight: bold;
             color: var(--duo-dark); cursor: pointer; user-select: none; transition: transform 0.1s;
         }
         .block-chip:active { transform: translateY(2px); border-bottom-width: 2px; }
         .block-chip.used { opacity: 0.3; pointer-events: none; background: #f3f4f6; }
 
         .vocab-input {
-            width: 80%; padding: 12px; font-size: 1.2rem; border: 2px solid #cbd5e1;
-            border-radius: 12px; text-align: center; outline: none; margin: 15px 0; font-weight: bold;
+            width: 88%; max-width: 320px; padding: 10px; font-size: 1.1rem; border: 2px solid #cbd5e1;
+            border-radius: 12px; text-align: center; outline: none; margin: 12px auto; font-weight: bold;
+            display: block;
         }
         .vocab-input:focus { border-color: var(--duo-blue); }
-        .vocab-choice-list { display: flex; flex-direction: column; gap: 10px; margin: 15px 0; }
+        .vocab-choice-list { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
         .btn-vocab-choice {
             background: white; border: 2px solid #e5e7eb; border-bottom: 3px solid #e5e7eb;
-            border-radius: 12px; padding: 12px; font-size: 1rem; font-weight: bold;
+            border-radius: 12px; padding: 11px; font-size: 0.95rem; font-weight: bold;
             color: var(--duo-dark); cursor: pointer; transition: all 0.15s ease;
         }
         .btn-vocab-choice:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
 
-        .dialogue-sub-nav { display: flex; gap: 6px; margin-bottom: 10px; justify-content: center; }
+        .dialogue-sub-nav { display: flex; gap: 6px; margin-bottom: 8px; justify-content: center; flex-wrap: wrap; }
         .btn-dialogue-mode {
-            padding: 6px 12px; font-size: 0.8rem; border-radius: 8px; border: 1px solid #d1d5db;
+            padding: 5px 10px; font-size: 0.78rem; border-radius: 8px; border: 1px solid #d1d5db;
             background: #f9fafb; cursor: pointer; font-weight: bold;
         }
         .btn-dialogue-mode.active { background: var(--duo-orange); color: white; border-color: #d97706; }
-        .role-switch-box { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        .role-switch-box { display: flex; justify-content: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
         .btn-role {
-            padding: 6px 14px; border-radius: 20px; border: 2px solid #e5e7eb; background: white;
-            font-weight: bold; cursor: pointer; font-size: 0.85rem;
+            padding: 5px 12px; border-radius: 20px; border: 2px solid #e5e7eb; background: white;
+            font-weight: bold; cursor: pointer; font-size: 0.8rem;
         }
         .btn-role.active { border-color: var(--duo-blue); background: #ddf4ff; color: var(--duo-blue); }
         .chat-window {
-            background: #f0f2f5; border: 2px solid #e5e7eb; border-radius: 16px; height: 300px;
-            overflow-y: auto; padding: 12px; margin-bottom: 12px; display: flex;
-            flex-direction: column; gap: 12px; text-align: left; scroll-behavior: smooth;
+            background: #f0f2f5; border: 2px solid #e5e7eb; border-radius: 16px; height: 280px;
+            overflow-y: auto; padding: 10px; margin-bottom: 10px; display: flex;
+            flex-direction: column; gap: 10px; text-align: left; scroll-behavior: smooth;
         }
-        .chat-bubble-row { display: flex; flex-direction: column; max-width: 82%; animation: popIn 0.25s ease-out; }
+        .chat-bubble-row { display: flex; flex-direction: column; max-width: 86%; animation: popIn 0.25s ease-out; }
         @keyframes popIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         .chat-bubble-row.speaker-A { align-self: flex-start; }
         .chat-bubble-row.speaker-B { align-self: flex-end; }
-        .chat-speaker-label { font-size: 0.72rem; color: #6b7280; margin-bottom: 3px; font-weight: bold; padding: 0 4px; }
+        .chat-speaker-label { font-size: 0.7rem; color: #6b7280; margin-bottom: 2px; font-weight: bold; padding: 0 4px; }
         .chat-bubble-row.speaker-B .chat-speaker-label { text-align: right; }
         .chat-bubble {
-            padding: 10px 14px; border-radius: 16px; font-size: 1.05rem; line-height: 1.4;
+            padding: 9px 12px; border-radius: 16px; font-size: 0.98rem; line-height: 1.4;
             position: relative; word-break: break-word; box-shadow: 0 2px 4px rgba(0,0,0,0.04); font-weight: 600;
         }
         .chat-bubble-row.speaker-A .chat-bubble { background-color: #ffffff; color: #1f2937; border-bottom-left-radius: 4px; border: 1px solid #e5e7eb; }
@@ -388,58 +404,80 @@
         .chat-bubble .btn-bubble-play {
             display: inline-flex; align-items: center; justify-content: center;
             background: rgba(0, 0, 0, 0.08); border: none; border-radius: 50%;
-            width: 26px; height: 26px; font-size: 0.75rem; margin-left: 6px;
+            width: 24px; height: 24px; font-size: 0.7rem; margin-left: 6px;
             cursor: pointer; color: inherit; vertical-align: middle;
         }
 
+        /* 📱 語法小教室響應式：靠左且完全自適應不同尺寸 */
         .grammar-dialog-box {
             background: #eef2ff; border: 2px solid #818cf8; border-radius: 16px;
-            padding: 20px; padding-bottom: 35px; font-size: 1.1rem; color: #312e81;
-            text-align: left !important; margin-bottom: 15px; min-height: 90px; line-height: 1.6;
+            padding: 16px 14px; padding-bottom: 35px; font-size: 1.05rem; color: #312e81;
+            text-align: left !important; margin-bottom: 12px; min-height: 85px; line-height: 1.6;
             position: relative; cursor: pointer; white-space: pre-wrap; word-break: break-word;
         }
         .btn-gram2-audio {
-            position: absolute; bottom: 8px; right: 12px; background: #818cf8; color: white;
-            border: none; border-radius: 8px; padding: 4px 10px; font-size: 0.85rem; font-weight: bold; cursor: pointer;
+            position: absolute; bottom: 8px; right: 10px; background: #818cf8; color: white;
+            border: none; border-radius: 8px; padding: 4px 9px; font-size: 0.8rem; font-weight: bold; cursor: pointer;
         }
 
+        /* 📱 語法測驗響應式排版 */
         #container-grammar-questions {
             text-align: left !important;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
         .grammar-q-item {
             text-align: left !important;
-            font-size: 1.05rem;
+            font-size: 1rem;
             color: var(--duo-dark);
-            line-height: 1.8;
+            line-height: 1.7;
             font-weight: 600;
+            word-break: break-word;
+        }
+        .blank-slot {
+            display: inline-block; min-width: 60px; border-bottom: 2.5px solid var(--duo-blue);
+            color: var(--duo-blue); text-align: center; padding: 0 4px; cursor: pointer; font-weight: bold;
+            margin: 0 2px;
         }
 
-        .blank-slot {
-            display: inline-block; min-width: 80px; border-bottom: 3px solid var(--duo-blue);
-            color: var(--duo-blue); text-align: center; padding: 0 6px; cursor: pointer; font-weight: bold;
-        }
-        .grammar-nav-btns { display: flex; gap: 8px; margin-top: 10px; }
+        .grammar-nav-btns { display: flex; gap: 8px; margin-top: 8px; }
         .btn-grammar-sub {
             flex: 1; background: #f3f4f6; border: 1px solid #d1d5db; border-bottom: 3px solid #d1d5db;
-            padding: 10px; font-size: 0.95rem; font-weight: bold; color: #4b5563; border-radius: 12px; cursor: pointer;
+            padding: 9px; font-size: 0.88rem; font-weight: bold; color: #4b5563; border-radius: 12px; cursor: pointer;
         }
         .dialog-history-list {
-            text-align: left; max-height: 250px; overflow-y: auto; background: #ffffff;
-            border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; margin-bottom: 15px;
+            text-align: left; max-height: 220px; overflow-y: auto; background: #ffffff;
+            border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; margin-bottom: 12px;
             white-space: pre-wrap; word-break: break-word;
         }
-        .dialog-history-item { padding: 8px 10px; border-bottom: 1px solid #f3f4f6; font-size: 0.95rem; color: #374151; line-height: 1.5; text-align: left; }
+        .dialog-history-item { padding: 7px 8px; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151; line-height: 1.5; text-align: left; }
         .dialog-history-item:last-child { border-bottom: none; }
-        .dialog-history-item span.num { font-weight: bold; color: var(--duo-blue); margin-right: 6px; }
+        .dialog-history-item span.num { font-weight: bold; color: var(--duo-blue); margin-right: 4px; }
 
         .profile-avatar-large {
-            width: 78px; height: 78px; border-radius: 50%;
-            border: 3.5px solid var(--duo-blue); margin: 0 auto 10px auto; object-fit: cover;
+            width: 72px; height: 72px; border-radius: 50%;
+            border: 3px solid var(--duo-blue); margin: 0 auto 8px auto; object-fit: cover;
             display: block;
+        }
+
+        /* 📱 行動裝置專用微調 Media Queries (< 420px) */
+        @media (max-width: 420px) {
+            body { padding: 8px 4px; }
+            .shadowing-card { padding: 14px 10px; border-radius: 16px; }
+            .user-meta-bar { font-size: 0.82rem; padding-bottom: 8px; margin-bottom: 10px; }
+            .user-meta-item { padding: 4px 6px; font-size: 0.8rem; }
+            h2.step-title { font-size: 1.15rem; margin-bottom: 14px; }
+            .target-text { font-size: 1.35rem; }
+            .translation-text { font-size: 0.92rem; }
+            .btn-option { padding: 10px 6px; font-size: 0.88rem; border-radius: 12px; }
+            .lesson-btn-group { grid-template-columns: repeat(2, 1fr); gap: 4px; }
+            .btn-lesson-action { font-size: 0.78rem; padding: 7px 2px; }
+            .block-chip { padding: 6px 10px; font-size: 0.88rem; }
+            .grammar-dialog-box { font-size: 0.98rem; padding: 14px 12px 32px 12px; }
+            .grammar-q-item { font-size: 0.94rem; }
+            .chat-window { height: 250px; }
         }
     </style>
 </head>
@@ -581,7 +619,7 @@
     <div id="modal-quit-challenge" class="custom-modal">
         <div class="custom-modal-card" style="padding: 26px 20px;">
             <div style="margin-bottom: 14px;">
-                <svg width="110" height="110" viewBox="0 0 120 120" style="margin: 0 auto; display: block;">
+                <svg width="100" height="100" viewBox="0 0 120 120" style="margin: 0 auto; display: block;">
                     <rect x="25" y="20" width="70" height="78" rx="35" fill="#58cc02"/>
                     <path d="M50 68 Q60 74 70 68" stroke="#46a302" stroke-width="3" fill="none" stroke-linecap="round"/>
                     <path d="M52 76 Q60 82 68 76" stroke="#46a302" stroke-width="3" fill="none" stroke-linecap="round"/>
@@ -598,14 +636,14 @@
                     <path d="M85 55 C88 68, 72 70, 72 60 C72 55, 84 52, 85 55 Z" fill="#38bdf8" opacity="0.9"/>
                 </svg>
             </div>
-            <h3 style="margin: 0 0 18px 0; color: #1e293b; font-size: 1.15rem; font-weight: 800; line-height: 1.5;">
+            <h3 style="margin: 0 0 16px 0; color: #1e293b; font-size: 1.1rem; font-weight: 800; line-height: 1.5;">
                 別走，只差 1 分鐘就能完成這個挑戰了！
             </h3>
             <button class="btn-3d btn-3d-blue" onclick="closeModal('modal-quit-challenge')" style="width: 100%; padding: 12px; font-size: 1.05rem;">
                 繼續努力
             </button>
             <div style="margin-top: 14px;">
-                <button onclick="confirmExitChallenge()" style="background: none; border: none; color: var(--duo-red); font-size: 1rem; font-weight: 800; cursor: pointer; padding: 6px 12px;">
+                <button onclick="confirmExitChallenge()" style="background: none; border: none; color: var(--duo-red); font-size: 0.95rem; font-weight: 800; cursor: pointer; padding: 6px 12px;">
                     退出
                 </button>
             </div>
@@ -720,7 +758,7 @@
 
                 <div id="area-grammar-dialog">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <h3 style="margin: 0; color: #4338ca;"><i class="fa-solid fa-lightbulb"></i> 觀念小教室</h3>
+                        <h3 style="margin: 0; color: #4338ca; font-size: 1.1rem;"><i class="fa-solid fa-lightbulb"></i> 觀念小教室</h3>
                         <span id="lbl-dialog-counter" style="font-size: 0.85rem; color: #6b7280; font-weight: bold;">1 / 1</span>
                     </div>
                     <div class="grammar-dialog-box" onclick="completeTypewriterImmediately()"><span id="lbl-grammar-dialog">...</span><button class="btn-gram2-audio" id="btn-gram2-audio" style="display: none;"><i class="fa-solid fa-volume-high"></i> 播放聲音</button></div>
@@ -732,32 +770,32 @@
                 </div>
 
                 <div id="area-grammar-example" style="display: none;">
-                    <h3 style="margin-top: 10px; color: #4338ca; text-align: left;"><i class="fa-solid fa-book-bookmark"></i> 例句練習</h3>
+                    <h3 style="margin-top: 10px; color: #4338ca; text-align: left; font-size: 1.1rem;"><i class="fa-solid fa-book-bookmark"></i> 例句練習</h3>
                     <div id="container-example-list" style="text-align: left; margin-bottom: 20px;"></div>
                     <button class="btn-confirm" onclick="goToReadyPage()"><i class="fa-solid fa-arrow-right"></i> 繼續</button>
                 </div>
 
                 <div id="area-grammar-ready" style="display: none; text-align: center; padding: 20px 10px;">
                     <i class="fa-solid fa-flag-checkered" style="font-size: 3rem; color: #818cf8; margin-bottom: 15px;"></i>
-                    <div id="lbl-ready-text" style="font-size: 1.3rem; font-weight: bold; color: var(--duo-dark); margin-bottom: 25px; line-height: 1.6;"></div>
+                    <div id="lbl-ready-text" style="font-size: 1.25rem; font-weight: bold; color: var(--duo-dark); margin-bottom: 25px; line-height: 1.6;"></div>
                     <button class="btn-confirm" onclick="enterGrammarQuizFromReady()"><i class="fa-solid fa-pen-to-square"></i> 開始測驗</button>
                 </div>
 
                 <div id="area-grammar-quiz" style="display: none; margin-top: 15px;">
-                    <h3 style="margin-top: 0; color: var(--duo-dark); text-align: center;"><i class="fa-solid fa-pen-to-square"></i> 語法測驗</h3>
+                    <h3 style="margin-top: 0; color: var(--duo-dark); text-align: center; font-size: 1.15rem;"><i class="fa-solid fa-pen-to-square"></i> 語法測驗</h3>
                     <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
                     <div id="container-grammar-questions"></div>
                     <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin: 15px 0 5px 0;">選項：</p>
-                    <div id="container-grammar-choices" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;"></div>
+                    <div id="container-grammar-choices" style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;"></div>
                     <button class="btn-confirm btn-grammar-action-narrow" id="btn-check-grammar" onclick="checkGrammarQuiz()"><i class="fa-solid fa-check"></i> 送出答案</button>
                     <div class="result-box" id="box-grammar-result" style="display: none; margin-top: 15px;">
-                        <div id="lbl-grammar-result-text" style="font-size: 1.1rem; font-weight: bold;"></div>
+                        <div id="lbl-grammar-result-text" style="font-size: 1.05rem; font-weight: bold;"></div>
                         <button class="btn-confirm" id="btn-grammar-action"></button>
                     </div>
                 </div>
 
                 <div id="area-grammar-all-history" style="display: none; margin-top: 20px;">
-                    <h3 style="margin-top: 15px; margin-bottom: 10px; color: #4338ca; text-align: left;"><i class="fa-solid fa-list-check"></i> 觀念總覽</h3>
+                    <h3 style="margin-top: 15px; margin-bottom: 10px; color: #4338ca; text-align: left; font-size: 1.1rem;"><i class="fa-solid fa-list-check"></i> 觀念總覽</h3>
                     <div class="dialog-history-list" id="container-dialog-history"></div>
                 </div>
             </div>
@@ -765,7 +803,7 @@
             <!-- 步驟 6-A：Sentence 跟讀畫面 -->
             <div id="step-quiz-shadow" class="step-page">
                 <div class="challenge-top-bar">
-                    <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
                     <div class="gear-menu-container">
                         <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-shadow')"><i class="fa-solid fa-gear"></i></button>
                         <div class="gear-dropdown" id="gear-dropdown-shadow">
@@ -787,7 +825,7 @@
                 </div>
                 <div class="nav-controls">
                     <button class="btn-nav" id="btn-prev" onclick="prevQuestion()">上一題</button>
-                    <span class="lbl-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
+                    <span class="lbl-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
                     <button class="btn-nav" id="btn-next" onclick="nextQuestion()">下一題</button>
                 </div>
             </div>
@@ -795,7 +833,7 @@
             <!-- 步驟 6-B：字塊重組畫面 -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
-                    <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
                     <div class="gear-menu-container">
                         <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-blocks')"><i class="fa-solid fa-gear"></i></button>
                         <div class="gear-dropdown" id="gear-dropdown-blocks">
@@ -804,7 +842,7 @@
                         </div>
                     </div>
                 </div>
-                <div style="margin: 15px 0;">
+                <div style="margin: 12px 0;">
                     <button class="btn-circle btn-listen" onclick="playBlockAudio()" style="margin: 0 auto;"><i class="fa-solid fa-volume-high"></i></button>
                 </div>
                 <div class="translation-text" id="lbl-block-translation">...</div>
@@ -813,10 +851,10 @@
                 <p style="font-size: 0.8rem; color: #9ca3af; text-align: left; margin: 0;">點擊字塊組句：</p>
                 <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
                 <button class="btn-confirm" onclick="checkBlockAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
-                <div class="result-box" style="margin-top: 15px;"><div class="score-badge" id="lbl-block-score">等待回答...</div></div>
+                <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-block-score">等待回答...</div></div>
                 <div class="nav-controls">
                     <button class="btn-nav" id="btn-block-prev" onclick="prevQuestion()">上一題</button>
-                    <span class="lbl-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
+                    <span class="lbl-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
                     <button class="btn-nav" id="btn-block-next" onclick="nextQuestion()">下一題</button>
                 </div>
             </div>
@@ -824,7 +862,7 @@
             <!-- 步驟 6-C：聊天視窗風對話練習 -->
             <div id="step-quiz-dialogue" class="step-page">
                 <div class="challenge-top-bar">
-                    <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
                     <div class="gear-menu-container">
                         <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-dialogue')"><i class="fa-solid fa-gear"></i></button>
                         <div class="gear-dropdown" id="gear-dropdown-dialogue">
@@ -854,7 +892,7 @@
                 </div>
                 <div class="nav-controls">
                     <button class="btn-nav" id="btn-dialogue-prev" onclick="prevDialogueSentence()">上一句</button>
-                    <span class="lbl-progress" id="lbl-dialogue-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
+                    <span class="lbl-progress" id="lbl-dialogue-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
                     <button class="btn-nav" id="btn-dialogue-next" onclick="nextDialogueSentence()">下一句</button>
                 </div>
             </div>
@@ -862,7 +900,7 @@
             <!-- 步驟 6-D：單字跟讀挑戰畫面 -->
             <div id="step-quiz-vocab-shadow" class="step-page">
                 <div class="challenge-top-bar">
-                    <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
                     <div class="gear-menu-container">
                         <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-shadow')"><i class="fa-solid fa-gear"></i></button>
                         <div class="gear-dropdown" id="gear-dropdown-vocab-shadow">
@@ -883,7 +921,7 @@
                 </div>
                 <div class="nav-controls">
                     <button class="btn-nav" id="btn-vocab-prev" onclick="prevVocabQuestion()">上一題</button>
-                    <span class="lbl-progress" id="lbl-vocab-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
+                    <span class="lbl-progress" id="lbl-vocab-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
                     <button class="btn-nav" id="btn-vocab-next" onclick="nextVocabQuestion()">下一題</button>
                 </div>
             </div>
@@ -891,7 +929,7 @@
             <!-- 步驟 6-E：單字聽打挑戰畫面 -->
             <div id="step-quiz-vocab-type" class="step-page">
                 <div class="challenge-top-bar">
-                    <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
                     <div class="gear-menu-container">
                         <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-type')"><i class="fa-solid fa-gear"></i></button>
                         <div class="gear-dropdown" id="gear-dropdown-vocab-type">
@@ -900,17 +938,17 @@
                         </div>
                     </div>
                 </div>
-                <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 25px 0 15px 0;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 18px 0 10px 0;">
                     <div class="target-text" id="lbl-vocab-type-text" style="margin: 0; min-height: auto; display: none;">...</div>
-                    <button class="btn-circle btn-listen" onclick="playVocabAudio()" style="width: 65px; height: 65px; font-size: 1.5rem; flex-shrink: 0;"><i class="fa-solid fa-volume-high"></i></button>
+                    <button class="btn-circle btn-listen" onclick="playVocabAudio()" style="width: 58px; height: 58px; font-size: 1.35rem; flex-shrink: 0;"><i class="fa-solid fa-volume-high"></i></button>
                 </div>
                 <input type="text" id="input-vocab-type" class="vocab-input" placeholder="請輸入聽到的單字" autocomplete="off" autocorrect="off" autocapitalize="none">
                 <button class="btn-confirm" onclick="checkVocabTypeAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
-                <div class="translation-text" id="lbl-vocab-type-translation" style="margin-top: 15px; font-size: 1.2rem; font-weight: bold;"></div>
-                <div class="result-box" style="margin-top: 10px;"><div class="score-badge" id="lbl-vocab-type-score">等待輸入...</div></div>
+                <div class="translation-text" id="lbl-vocab-type-translation" style="margin-top: 12px; font-size: 1.05rem; font-weight: bold;"></div>
+                <div class="result-box" style="margin-top: 8px;"><div class="score-badge" id="lbl-vocab-type-score">等待輸入...</div></div>
                 <div class="nav-controls">
                     <button class="btn-nav" id="btn-vocab-type-prev" onclick="prevVocabQuestion()">上一題</button>
-                    <span class="lbl-progress" id="lbl-vocab-type-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
+                    <span class="lbl-progress" id="lbl-vocab-type-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
                     <button class="btn-nav" id="btn-vocab-type-next" onclick="nextVocabQuestion()">下一題</button>
                 </div>
             </div>
@@ -918,7 +956,7 @@
             <!-- 步驟 6-F：單字意思選擇題畫面 -->
             <div id="step-quiz-vocab-choice" class="step-page">
                 <div class="challenge-top-bar">
-                    <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
                     <div class="gear-menu-container">
                         <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-choice')"><i class="fa-solid fa-gear"></i></button>
                         <div class="gear-dropdown" id="gear-dropdown-vocab-choice">
@@ -929,10 +967,10 @@
                 </div>
                 <div class="target-text" id="lbl-vocab-choice-text">載入中...</div>
                 <div class="vocab-choice-list" id="container-vocab-choices"></div>
-                <div class="result-box" style="margin-top: 15px;"><div class="score-badge" id="lbl-vocab-choice-score">請選擇正確意思</div></div>
+                <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-vocab-choice-score">請選擇正確意思</div></div>
                 <div class="nav-controls">
                     <button class="btn-nav" id="btn-vocab-choice-prev" onclick="prevVocabQuestion()">上一題</button>
-                    <span class="lbl-progress" id="lbl-vocab-choice-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
+                    <span class="lbl-progress" id="lbl-vocab-choice-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
                     <button class="btn-nav" id="btn-vocab-choice-next" onclick="nextVocabQuestion()">下一題</button>
                 </div>
             </div>
@@ -940,11 +978,11 @@
 
         <!-- 🌟 視圖 B：會員中心與排行榜大視圖 -->
         <div id="profile-view" class="hidden" style="text-align: left;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                <button class="btn-3d btn-3d-secondary" onclick="closeProfileView()" style="padding: 8px 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px;">
+                <button class="btn-3d btn-3d-secondary" onclick="closeProfileView()" style="padding: 7px 12px; font-size: 0.85rem;">
                     <i class="fa-solid fa-arrow-left"></i> 返回地圖
                 </button>
-                <div style="display: flex; gap: 8px;">
+                <div style="display: flex; gap: 6px;">
                     <button class="nav-pill-btn active" id="btn-nav-leaderboard" onclick="switchProfileTab('leaderboard')">
                         <i class="fa-solid fa-trophy"></i> 排行榜
                     </button>
@@ -956,12 +994,11 @@
 
             <!-- 分頁 1：學習排行榜 -->
             <div id="sub-page-leaderboard" class="profile-container-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                    <h3 style="margin: 0; color: #1e293b; font-size: 1.2rem; font-weight: 800;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h3 style="margin: 0; color: #1e293b; font-size: 1.15rem; font-weight: 800;">
                         <i class="fa-solid fa-trophy" style="color: var(--duo-gold);"></i> 學習排行榜
                     </h3>
-                    <!-- 👥 加好友按鈕 (僅在好友榜模式時顯示) -->
-                    <button id="btn-open-add-friend" class="btn-3d btn-3d-primary" onclick="openModal('modal-add-friend')" style="display: none; padding: 6px 12px; font-size: 0.82rem;">
+                    <button id="btn-open-add-friend" class="btn-3d btn-3d-primary" onclick="openModal('modal-add-friend')" style="display: none; padding: 6px 10px; font-size: 0.8rem;">
                         <i class="fa-solid fa-user-plus"></i> 加好友
                     </button>
                 </div>
@@ -970,30 +1007,30 @@
                     <button class="tab-segmented-item" id="tab-rank-friends" onclick="switchRankSubTab('friends')">好友榜</button>
                     <button class="tab-segmented-item active" id="tab-rank-global" onclick="switchRankSubTab('global')">全球總榜</button>
                 </div>
-                <div id="leaderboard-list-container" style="display: flex; flex-direction: column; gap: 6px;">
+                <div id="leaderboard-list-container" style="display: flex; flex-direction: column; gap: 5px;">
                     <div style="text-align: center; color: #94a3b8; padding: 20px 0;">載入排行榜中...</div>
                 </div>
             </div>
 
             <!-- 分頁 2：我的帳號 -->
             <div id="sub-page-myaccount" class="profile-container-card hidden">
-                <div style="text-align: center; border-bottom: 1.5px dashed #e2e8f0; padding-bottom: 16px; margin-bottom: 16px;">
+                <div style="text-align: center; border-bottom: 1.5px dashed #e2e8f0; padding-bottom: 14px; margin-bottom: 14px;">
                     <img id="myaccount-avatar" src="https://lh3.googleusercontent.com/a/default-user" class="profile-avatar-large" alt="User Avatar">
-                    <h3 style="margin: 0; color: #1e293b; font-size: 1.25rem;">
+                    <h3 style="margin: 0; color: #1e293b; font-size: 1.2rem;">
                         <span id="myaccount-nickname">UWEI</span>
-                        <button onclick="openModal('modal-edit-nickname')" style="border:none; background:none; color:var(--duo-blue); cursor:pointer; font-size:1rem;"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="openModal('modal-edit-nickname')" style="border:none; background:none; color:var(--duo-blue); cursor:pointer; font-size:0.95rem;"><i class="fa-solid fa-pen-to-square"></i></button>
                     </h3>
-                    <p style="font-size: 0.88rem; color: #64748b; margin: 4px 0 0 0;" id="myaccount-email">email@example.com</p>
+                    <p style="font-size: 0.85rem; color: #64748b; margin: 4px 0 0 0;" id="myaccount-email">email@example.com</p>
                 </div>
 
-                <div style="margin-bottom: 18px;">
-                    <div style="font-size: 0.95rem; font-weight: 800; color: #1e293b; margin-bottom: 10px;">已開通課程與到期日：</div>
+                <div style="margin-bottom: 16px;">
+                    <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 8px;">已開通課程與到期日：</div>
                     <div id="myaccount-memberships-list">
                         <span class="course-pill">載入中...</span>
                     </div>
                 </div>
 
-                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.95rem; font-weight: bold; color: #475569; margin-bottom: 24px;">
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem; font-weight: bold; color: #475569; margin-bottom: 20px;">
                     <div style="display: flex; justify-content: space-between;">
                         <span>剩餘能量：</span>
                         <span style="color: var(--duo-purple); font-weight: 900;"><i class="fa-solid fa-bolt-lightning"></i> 100</span>
@@ -1008,7 +1045,7 @@
                     </div>
                 </div>
 
-                <button class="btn-3d" onclick="handleLogout()" style="width: 100%; padding: 14px; background: var(--duo-fire-red); color: white; box-shadow: 0 4px 0 #dc2626; font-size: 1.05rem;">
+                <button class="btn-3d" onclick="handleLogout()" style="width: 100%; padding: 12px; background: var(--duo-fire-red); color: white; box-shadow: 0 4px 0 #dc2626; font-size: 1rem;">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i> 登出系統
                 </button>
             </div>
@@ -1500,7 +1537,6 @@
             }
         }
 
-        // 全球總榜
         async function loadLeaderboardData() {
             const container = document.getElementById('leaderboard-list-container');
             container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>載入排行榜中...</div>";
@@ -1527,21 +1563,21 @@
                     let rankClass = rank === 1 ? "rank-1" : (rank === 2 ? "rank-2" : (rank === 3 ? "rank-3" : ""));
 
                     row.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
                             <div class="rank-num ${rankClass}">${rank}</div>
-                            <img src="https://lh3.googleusercontent.com/a/default-user" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
-                            <div>
-                                <div style="font-weight: 800; color: #1e293b; font-size: 0.95rem;">
+                            <img src="https://lh3.googleusercontent.com/a/default-user" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
+                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                <div style="font-weight: 800; color: #1e293b; font-size: 0.92rem; overflow: hidden; text-overflow: ellipsis;">
                                     ${data.displayName || '學生'}${isMe ? ' <span style="font-size:0.75rem; color:var(--duo-green);">(你)</span>' : ''}
                                 </div>
-                                <div style="font-size: 0.78rem; color: #94a3b8;">${data.unlockedLevels ? data.unlockedLevels[0] : '1A'}</div>
+                                <div style="font-size: 0.75rem; color: #94a3b8;">${data.unlockedLevels ? data.unlockedLevels[0] : '1A'}</div>
                             </div>
                         </div>
-                        <div style="text-align: right;">
-                            <div style="font-weight: 800; color: var(--duo-gold); font-size: 0.95rem;">
+                        <div style="text-align: right; flex-shrink: 0;">
+                            <div style="font-weight: 800; color: var(--duo-gold); font-size: 0.92rem;">
                                 <i class="fa-solid fa-star"></i> ${data.xp || 0}
                             </div>
-                            <div style="font-size: 0.78rem; color: var(--duo-fire-red); font-weight: bold;">
+                            <div style="font-size: 0.75rem; color: var(--duo-fire-red); font-weight: bold;">
                                 <i class="fa-solid fa-fire"></i> ${data.streakDays || 1} 天
                             </div>
                         </div>
@@ -1556,7 +1592,6 @@
             }
         }
 
-        // 👥 好友排行榜 (包含自己與所有已加好友，不論排名第幾都列出並以 XP 排序)
         async function loadFriendsLeaderboardData() {
             const container = document.getElementById('leaderboard-list-container');
             container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>載入好友排行中...</div>";
@@ -1569,7 +1604,6 @@
             const friendsEmails = window.currentUserData.friends || [];
             let targetUsers = [];
 
-            // 把自己加入比較清單
             targetUsers.push({
                 email: currentUser.email,
                 displayName: window.currentUserData.displayName || "我",
@@ -1581,7 +1615,6 @@
 
             try {
                 if (friendsEmails.length > 0) {
-                    // 分批查詢好友資料（避免 Firestore where in 超過限制）
                     for (let i = 0; i < friendsEmails.length; i += 10) {
                         const chunk = friendsEmails.slice(i, i + 10);
                         const snap = await db.collection("users").where("email", "in", chunk).get();
@@ -1599,7 +1632,6 @@
                     }
                 }
 
-                // 依經驗值從大到小排序
                 targetUsers.sort((a, b) => (b.xp || 0) - (a.xp || 0));
 
                 container.innerHTML = "";
@@ -1611,22 +1643,22 @@
                     let rankClass = rank === 1 ? "rank-1" : (rank === 2 ? "rank-2" : (rank === 3 ? "rank-3" : ""));
 
                     row.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
                             <div class="rank-num ${rankClass}">${rank}</div>
-                            <img src="https://lh3.googleusercontent.com/a/default-user" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
-                            <div>
-                                <div style="font-weight: 800; color: #1e293b; font-size: 0.95rem;">
+                            <img src="https://lh3.googleusercontent.com/a/default-user" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
+                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                <div style="font-weight: 800; color: #1e293b; font-size: 0.92rem; overflow: hidden; text-overflow: ellipsis;">
                                     ${u.displayName}${u.isMe ? ' <span style="font-size:0.75rem; color:var(--duo-green);">(你)</span>' : ''}
                                 </div>
-                                <div style="font-size: 0.78rem; color: #94a3b8;">${u.email}</div>
+                                <div style="font-size: 0.75rem; color: #94a3b8; overflow: hidden; text-overflow: ellipsis;">${u.email}</div>
                             </div>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                             <div style="text-align: right;">
-                                <div style="font-weight: 800; color: var(--duo-gold); font-size: 0.95rem;">
+                                <div style="font-weight: 800; color: var(--duo-gold); font-size: 0.92rem;">
                                     <i class="fa-solid fa-star"></i> ${u.xp || 0}
                                 </div>
-                                <div style="font-size: 0.78rem; color: var(--duo-fire-red); font-weight: bold;">
+                                <div style="font-size: 0.75rem; color: var(--duo-fire-red); font-weight: bold;">
                                     <i class="fa-solid fa-fire"></i> ${u.streakDays || 1} 天
                                 </div>
                             </div>
@@ -1650,7 +1682,6 @@
             }
         }
 
-        // 👥 加好友送出邏輯
         document.getElementById('btn-confirm-add-friend').onclick = async () => {
             const input = document.getElementById('input-friend-email');
             const errDiv = document.getElementById('add-friend-error-msg');
@@ -1680,7 +1711,6 @@
             btnConfirm.innerText = "驗證中...";
 
             try {
-                // 檢查該好友是否存在於 users 集合中
                 const querySnap = await db.collection("users").where("email", "==", targetEmail).limit(1).get();
                 if (querySnap.empty) {
                     errDiv.innerText = "找不到此帳號！請確認對方是否已登入系統建立角色。";
@@ -1711,7 +1741,6 @@
             }
         };
 
-        // 👥 刪除好友邏輯
         async function removeFriend(email) {
             if (!confirm(`確定要將 ${email} 從好友名單中移除嗎？`)) return;
 
@@ -2251,7 +2280,7 @@
             vocabIndex = 0;
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
             const modeTitleMap = {
-                'vocab_shadow': '🗣️ 單字跟讀',
+                'vocab_shadow': '🗣️️ 單字跟讀',
                 'vocab_type': '⌨ 單字聽打',
                 'vocab_choice': '🎯 單字選擇'
             };
@@ -2697,13 +2726,13 @@
 
             examples.forEach((exText, idx) => {
                 const row = document.createElement('div');
-                row.style.cssText = "display: flex; justify-content: space-between; align-items: center; background: #f3f4f6; padding: 12px 16px; border-radius: 12px; margin-bottom: 10px; font-size: 1.1rem; font-weight: bold; text-align: left;";
+                row.style.cssText = "display: flex; justify-content: space-between; align-items: center; background: #f3f4f6; padding: 10px 14px; border-radius: 12px; margin-bottom: 8px; font-size: 1rem; font-weight: bold; text-align: left;";
                 const textSpan = document.createElement('span');
                 textSpan.innerText = `${idx + 1}. ${exText}`;
 
                 const playBtn = document.createElement('button');
                 playBtn.className = 'btn-circle btn-listen';
-                playBtn.style.cssText = "width: 40px; height: 40px; font-size: 0.9rem; flex-shrink: 0;";
+                playBtn.style.cssText = "width: 38px; height: 38px; font-size: 0.85rem; flex-shrink: 0;";
                 playBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
                 
                 const audioUrl = audioUrls[idx] || '';
