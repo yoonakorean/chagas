@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多語種雲端遊戲化學習系統６６</title>
+    <title>優娜多語島</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -1014,7 +1014,7 @@
             category: 'korean',
             level: '1A',
             unit_id: '1',
-            stage: '1',
+            lesson: '1',
             lang: 'zh'
         };
 
@@ -1086,11 +1086,11 @@
                     console.error("更新進度失敗:", error);
                 }
             },
-            updateUnitProgress: async (uid, unit, stage) => {
+            updateUnitProgress: async (uid, unit, lesson) => {
                 try {
                     if (!window.currentUserData.unitProgress) window.currentUserData.unitProgress = {};
                     window.currentUserData.unitProgress[`unit_${unit}`] = {
-                        maxStage: stage,
+                        maxLesson: lesson,
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     };
                     await db.collection("users").doc(uid).update({
@@ -1922,10 +1922,10 @@
                 const u = Array.isArray(i) ? i[2] : i.unit_id;
                 return normalizeLevelStr(l) === targetLevelNormalized && String(u) === String(unitId);
             });
-            const stages = [...new Set(filtered.map(i => Array.isArray(i) ? i[3] : i.stage))].filter(Boolean).sort((a,b) => a - b);
+            const lessons = [...new Set(filtered.map(i => Array.isArray(i) ? i[3] : (i.lesson !== undefined ? i.lesson : i.stage)))].filter(Boolean).sort((a,b) => a - b);
 
-            if (stages.length > 0) {
-                stages.forEach(s => {
+            if (lessons.length > 0) {
+                lessons.forEach(s => {
                     const card = document.createElement('div');
                     card.className = "stage-card-item";
 
@@ -1939,37 +1939,37 @@
                     const btnGrammar = document.createElement('button');
                     btnGrammar.className = "btn-stage-action btn-grammar-stage";
                     btnGrammar.innerHTML = `<i class="fa-solid fa-book"></i> 📖 語法`;
-                    btnGrammar.onclick = () => selectStageAndMode(s, 'grammar');
+                    btnGrammar.onclick = () => selectLessonAndMode(s, 'grammar');
 
                     const btnShadow = document.createElement('button');
                     btnShadow.className = "btn-stage-action";
-                    btnShadow.innerHTML = `<i class="fa-solid fa-microphone"></i> 🎙️️ 跟讀`;
-                    btnShadow.onclick = () => selectStageAndMode(s, 'shadow');
+                    btnShadow.innerHTML = `<i class="fa-solid fa-microphone"></i> 🎙 跟讀`;
+                    btnShadow.onclick = () => selectLessonAndMode(s, 'shadow');
 
                     const btnBlocks = document.createElement('button');
                     btnBlocks.className = "btn-stage-action";
                     btnBlocks.innerHTML = `<i class="fa-solid fa-puzzle-piece"></i> 🧩 重組`;
-                    btnBlocks.onclick = () => selectStageAndMode(s, 'blocks');
+                    btnBlocks.onclick = () => selectLessonAndMode(s, 'blocks');
 
                     const btnDialogue = document.createElement('button');
                     btnDialogue.className = "btn-stage-action btn-dialogue-stage";
                     btnDialogue.innerHTML = `<i class="fa-solid fa-comments"></i> 💬 對話`;
-                    btnDialogue.onclick = () => selectStageAndMode(s, 'dialogue');
+                    btnDialogue.onclick = () => selectLessonAndMode(s, 'dialogue');
 
                     const btnSentenceShadow = document.createElement('button');
                     btnSentenceShadow.className = "btn-stage-action btn-sentence-stage";
                     btnSentenceShadow.innerHTML = `<i class="fa-solid fa-font"></i> 🗣️ 句子跟讀`;
-                    btnSentenceShadow.onclick = () => selectStageAndMode(s, 'sentence_shadow');
+                    btnSentenceShadow.onclick = () => selectLessonAndMode(s, 'sentence_shadow');
 
                     const btnSentenceType = document.createElement('button');
                     btnSentenceType.className = "btn-stage-action btn-sentence-stage";
                     btnSentenceType.innerHTML = `<i class="fa-solid fa-keyboard"></i> ⌨ 句子聽打`;
-                    btnSentenceType.onclick = () => selectStageAndMode(s, 'sentence_type');
+                    btnSentenceType.onclick = () => selectLessonAndMode(s, 'sentence_type');
 
                     const btnSentenceChoice = document.createElement('button');
                     btnSentenceChoice.className = "btn-stage-action btn-sentence-stage";
                     btnSentenceChoice.innerHTML = `<i class="fa-solid fa-list-check"></i> 🎯 句子選擇`;
-                    btnSentenceChoice.onclick = () => selectStageAndMode(s, 'sentence_choice');
+                    btnSentenceChoice.onclick = () => selectLessonAndMode(s, 'sentence_choice');
 
                     btnGroup.appendChild(btnGrammar);
                     btnGroup.appendChild(btnShadow);
@@ -1990,13 +1990,13 @@
             goToStep('step-stage');
         }
 
-        function selectStageAndMode(stage, mode) {
+        function selectLessonAndMode(lesson, mode) {
             stopSpeechRecognition(); 
-            currentConfig.stage = stage;
+            currentConfig.lesson = lesson;
             currentConfig.mode = mode;
 
             if (currentUser) {
-                ProgressModel.updateUnitProgress(currentUser.uid, currentConfig.unit_id, stage);
+                ProgressModel.updateUnitProgress(currentUser.uid, currentConfig.unit_id, lesson);
             }
 
             if (mode === 'grammar') {
@@ -2004,7 +2004,7 @@
                 const matchGrammar = globalGrammarData.find(g => 
                     normalizeLevelStr(g.level) === targetLevelNormalized &&
                     String(g.unit_id) === String(currentConfig.unit_id) &&
-                    String(g.stage) === String(stage)
+                    String(g.lesson !== undefined ? g.lesson : g.stage) === String(lesson)
                 );
 
                 if (matchGrammar && (
@@ -2022,7 +2022,7 @@
                 const matchDialogue = rawDialogueData.find(d => 
                     normalizeLevelStr(d.level) === targetLevelNormalized &&
                     String(d.unit_id) === String(currentConfig.unit_id) &&
-                    String(d.stage) === String(stage)
+                    String(d.lesson !== undefined ? d.lesson : d.stage) === String(lesson)
                 );
 
                 if (matchDialogue) {
@@ -2053,7 +2053,7 @@
             sentenceQuestions = rawSentenceData.filter(v => 
                 normalizeLevelStr(v.level) === targetLevelNormalized &&
                 String(v.unit_id) === String(currentConfig.unit_id) &&
-                String(v.stage) === String(currentConfig.stage)
+                String(v.lesson !== undefined ? v.lesson : v.stage) === String(currentConfig.lesson)
             );
 
             if (sentenceQuestions.length === 0) return alert("此關卡目前沒有設定句子練習喔！");
@@ -2066,7 +2066,7 @@
                 'sentence_choice': '🎯 句子選擇'
             };
 
-            const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - 關卡 ${currentConfig.stage} (${modeTitleMap[sentenceMode]})`;
+            const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - 關卡 ${currentConfig.lesson} (${modeTitleMap[sentenceMode]})`;
             document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
 
             if (sentenceMode === 'sentence_shadow') goToStep('step-quiz-sentence-shadow');
@@ -2211,7 +2211,7 @@
 
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
             document.querySelectorAll('.lbl-quiz-info').forEach(e => {
-                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - 關卡 ${currentConfig.stage} (💬 對話挑戰)`;
+                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - 關卡 ${currentConfig.lesson} (💬 對話挑戰)`;
             });
 
             goToStep('step-quiz-dialogue');
@@ -2328,7 +2328,7 @@
             currentGrammarItem = grammarData;
             currentDialogIndex = 0;
             
-            document.getElementById('lbl-grammar-info').innerText = `語法教室 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Stage ${currentConfig.stage}`;
+            document.getElementById('lbl-grammar-info').innerText = `語法教室 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Lesson ${currentConfig.lesson}`;
             document.getElementById('area-grammar-all-history').style.display = 'none';
             document.getElementById('area-grammar-example').style.display = 'none';
             document.getElementById('area-grammar-ready').style.display = 'none';
@@ -2608,7 +2608,7 @@
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
             const modeTitle = currentConfig.mode === 'shadow' ? '跟讀挑戰' : '重組挑戰';
             document.querySelectorAll('.lbl-quiz-info').forEach(e => {
-                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - 關卡 ${currentConfig.stage} (${modeTitle})`;
+                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - 關卡 ${currentConfig.lesson} (${modeTitle})`;
             });
 
             const langIndexMap = { 'zh': 5, 'en': 6, 'kr': 7, 'ja': 7 };
@@ -2620,7 +2620,7 @@
                 questions = rawShadowData.filter(i => 
                     normalizeLevelStr(i[1]) === targetLevelNormalized &&
                     String(i[2]) === String(currentConfig.unit_id) &&
-                    String(i[3]) === String(currentConfig.stage)
+                    String(Array.isArray(i) ? i[3] : (i.lesson !== undefined ? i.lesson : i.stage)) === String(currentConfig.lesson)
                 ).map(i => ({
                     id: i[0],
                     text: i[4],
@@ -2636,7 +2636,7 @@
                 questions = rawBlocksData.filter(i => 
                     normalizeLevelStr(i[1]) === targetLevelNormalized &&
                     String(i[2]) === String(currentConfig.unit_id) &&
-                    String(i[3]) === String(currentConfig.stage)
+                    String(Array.isArray(i) ? i[3] : (i.lesson !== undefined ? i.lesson : i.stage)) === String(currentConfig.lesson)
                 ).map(i => ({
                     id: i[0],
                     fullText: i[4],
