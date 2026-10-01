@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多語種雲端遊戲化學習系５５統</title>
+    <title>多語種雲端遊戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -78,7 +78,7 @@
         }
         .user-meta-item:hover { background: #f3f4f6; }
 
-        /* 彈窗樣式 - 統一規範 */
+        /* 彈窗樣式 */
         .custom-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.55); display: none; justify-content: center;
@@ -134,6 +134,11 @@
             box-shadow: 0 4px 0 var(--duo-green-shadow); 
         }
         .btn-3d-primary:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--duo-green-shadow); }
+        .btn-3d-blue { 
+            background: var(--duo-blue); color: white; 
+            box-shadow: 0 4px 0 var(--duo-blue-shadow); 
+        }
+        .btn-3d-blue:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--duo-blue-shadow); }
         .btn-3d-secondary { background: #ffffff; color: #4b5563; border: 2px solid #e5e7eb; box-shadow: 0 4px 0 #e5e7eb; }
         .btn-3d-secondary:active { transform: translateY(2px); box-shadow: 0 1px 0 #e5e7eb; }
 
@@ -271,7 +276,7 @@
         .gear-dropdown {
             display: none; position: absolute; top: 42px; right: 0; background: white;
             border: 2px solid #e5e7eb; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            padding: 6px; z-index: 100; min-width: 120px; flex-direction: column; gap: 4px;
+            padding: 6px; z-index: 100; min-width: 130px; flex-direction: column; gap: 4px;
         }
         .gear-dropdown.show { display: flex; }
         .gear-dropdown-item {
@@ -280,6 +285,7 @@
             cursor: pointer; display: flex; align-items: center; gap: 8px; width: 100%; box-sizing: border-box;
         }
         .gear-dropdown-item:hover { background: #ddf4ff; color: var(--duo-blue); }
+        .gear-dropdown-item.quit-item:hover { background: #fee2e2; color: var(--duo-red); }
 
         .block-zone {
             min-height: 70px; border-bottom: 2px dashed #cbd5e1; display: flex;
@@ -445,7 +451,7 @@
         </div>
     </div>
 
-    <!-- 🔥 學習成就統計 Dashboard Modal (截圖 13 的打卡與月曆彈窗) -->
+    <!-- 🔥 學習成就統計 Dashboard Modal -->
     <div id="modal-streak-dashboard" class="custom-modal">
         <div class="custom-modal-card">
             <div class="close-icon-circle" id="btn-close-streak-modal" onclick="closeModal('modal-streak-dashboard')"><i class="fa-solid fa-xmark"></i></div>
@@ -498,7 +504,57 @@
         </div>
     </div>
 
-    <!-- ✏ 修改暱稱 Modal -->
+    <!-- 😭 截圖 16：離開挑戰二次確認彈窗（Duolingo 風格哭泣小鳥） -->
+    <div id="modal-quit-challenge" class="custom-modal">
+        <div class="custom-modal-card" style="padding: 26px 20px;">
+            <!-- 哭泣小鳥 SVG 圖示 -->
+            <div style="margin-bottom: 14px;">
+                <svg width="110" height="110" viewBox="0 0 120 120" style="margin: 0 auto; display: block;">
+                    <!-- 身體 -->
+                    <rect x="25" y="20" width="70" height="78" rx="35" fill="#58cc02"/>
+                    <!-- 肚子羽毛紋理 -->
+                    <path d="M50 68 Q60 74 70 68" stroke="#46a302" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <path d="M52 76 Q60 82 68 76" stroke="#46a302" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <!-- 橘色小腳 -->
+                    <ellipse cx="45" cy="98" rx="8" ry="4" fill="#f97316"/>
+                    <ellipse cx="75" cy="98" rx="8" ry="4" fill="#f97316"/>
+                    <!-- 大眼睛 (眼眶) -->
+                    <ellipse cx="43" cy="46" rx="14" ry="15" fill="#ffffff"/>
+                    <ellipse cx="77" cy="46" rx="14" ry="15" fill="#ffffff"/>
+                    <!-- 瞳孔 (向下哭喪眼神) -->
+                    <circle cx="43" cy="48" r="9" fill="#1e293b"/>
+                    <circle cx="77" cy="48" r="9" fill="#1e293b"/>
+                    <!-- 眼神高光 -->
+                    <circle cx="40" cy="44" r="3" fill="#ffffff"/>
+                    <circle cx="74" cy="44" r="3" fill="#ffffff"/>
+                    <!-- 橘色鳥喙 (扁平三角形) -->
+                    <polygon points="54,54 66,54 60,63" fill="#f97316"/>
+                    <!-- 兩道藍色淚水 -->
+                    <path d="M35 55 C32 68, 48 70, 48 60 C48 55, 36 52, 35 55 Z" fill="#38bdf8" opacity="0.9"/>
+                    <path d="M85 55 C88 68, 72 70, 72 60 C72 55, 84 52, 85 55 Z" fill="#38bdf8" opacity="0.9"/>
+                </svg>
+            </div>
+
+            <!-- 提示文案 -->
+            <h3 style="margin: 0 0 18px 0; color: #1e293b; font-size: 1.15rem; font-weight: 800; line-height: 1.5;">
+                別走，只差 1 分鐘就能完成這個挑戰了！
+            </h3>
+
+            <!-- 藍色按鈕：繼續努力 -->
+            <button class="btn-3d btn-3d-blue" onclick="closeModal('modal-quit-challenge')" style="width: 100%; padding: 12px; font-size: 1.05rem;">
+                繼續努力
+            </button>
+
+            <!-- 紅色文字按鈕：退出 -->
+            <div style="margin-top: 14px;">
+                <button onclick="confirmExitChallenge()" style="background: none; border: none; color: var(--duo-red); font-size: 1rem; font-weight: 800; cursor: pointer; padding: 6px 12px;">
+                    退出
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✏️ 修改暱稱 Modal -->
     <div id="modal-edit-nickname" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;">修改公開暱稱</h3>
@@ -707,9 +763,8 @@
                 <div class="gear-menu-container">
                     <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-shadow')"><i class="fa-solid fa-gear"></i></button>
                     <div class="gear-dropdown" id="gear-dropdown-shadow">
-                        <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-                        <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-                        <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+                        <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-shadow')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                        <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
                     </div>
                 </div>
             </div>
@@ -738,9 +793,8 @@
                 <div class="gear-menu-container">
                     <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-blocks')"><i class="fa-solid fa-gear"></i></button>
                     <div class="gear-dropdown" id="gear-dropdown-blocks">
-                        <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-                        <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-                        <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+                        <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-blocks')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                        <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
                     </div>
                 </div>
             </div>
@@ -768,9 +822,8 @@
                 <div class="gear-menu-container">
                     <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-dialogue')"><i class="fa-solid fa-gear"></i></button>
                     <div class="gear-dropdown" id="gear-dropdown-dialogue">
-                        <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-                        <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-                        <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+                        <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-dialogue')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                        <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
                     </div>
                 </div>
             </div>
@@ -807,9 +860,8 @@
                 <div class="gear-menu-container">
                     <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-shadow')"><i class="fa-solid fa-gear"></i></button>
                     <div class="gear-dropdown" id="gear-dropdown-vocab-shadow">
-                        <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-                        <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-                        <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+                        <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-vocab-shadow')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                        <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
                     </div>
                 </div>
             </div>
@@ -837,9 +889,8 @@
                 <div class="gear-menu-container">
                     <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-type')"><i class="fa-solid fa-gear"></i></button>
                     <div class="gear-dropdown" id="gear-dropdown-vocab-type">
-                        <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-                        <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-                        <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+                        <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-vocab-type')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                        <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
                     </div>
                 </div>
             </div>
@@ -865,9 +916,8 @@
                 <div class="gear-menu-container">
                     <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-choice')"><i class="fa-solid fa-gear"></i></button>
                     <div class="gear-dropdown" id="gear-dropdown-vocab-choice">
-                        <button class="gear-dropdown-item" onclick="goToStep('step-level')"><i class="fa-solid fa-layer-group"></i> 換程度</button>
-                        <button class="gear-dropdown-item" onclick="goToStep('step-unit')"><i class="fa-solid fa-book-open"></i> 回單元</button>
-                        <button class="gear-dropdown-item" onclick="goToStep('step-stage')"><i class="fa-solid fa-flag-checkered"></i> 回關卡</button>
+                        <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-vocab-choice')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                        <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
                     </div>
                 </div>
             </div>
@@ -1194,8 +1244,10 @@
             document.getElementById('lbl-user-level').innerText = currentConfig.level || "1A";
             
             // 同步成就統計彈窗數據
-            document.getElementById('dash-streak-days').innerText = streakDays;
-            document.getElementById('dash-focus-hours').innerText = Number(focusHours).toFixed(1);
+            const dashDays = document.getElementById('dash-streak-days');
+            const dashHours = document.getElementById('dash-focus-hours');
+            if (dashDays) dashDays.innerText = streakDays;
+            if (dashHours) dashHours.innerText = Number(focusHours).toFixed(1);
 
             document.getElementById('profile-nickname').innerText = window.currentUserData.displayName || "學生";
             document.getElementById('profile-email').innerText = currentUser.email || "";
@@ -1219,7 +1271,7 @@
             }
         }
 
-        // 修改暱稱（30秒冷卻機制）
+        // 修改暱稱
         document.getElementById('btn-open-edit-nickname').onclick = () => {
             openModal('modal-edit-nickname');
         };
@@ -1262,7 +1314,7 @@
             }
         };
 
-        // 登入驗證處理
+        // 登入功能
         document.getElementById('btn-google-login').onclick = async () => {
             try {
                 await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
@@ -1310,6 +1362,12 @@
             }
         };
 
+        document.getElementById('btn-profile-trigger').onclick = () => {
+            openModal('modal-profile-view');
+        };
+        document.getElementById('btn-close-profile').onclick = () => {
+            closeModal('modal-profile-view');
+        };
         document.getElementById('btn-trigger-logout').onclick = () => {
             if (confirm("確定要登出嗎？")) {
                 auth.signOut();
@@ -1334,7 +1392,6 @@
         }
 
         // ==================== 🔥 截圖 13：學習成就統計 Dashboard 月曆邏輯 ====================
-        const modalStreakDashboard = document.getElementById('modal-streak-dashboard');
         let calendarCurrentDate = new Date(2026, 9, 1); // 2026年 10月
 
         function renderStreakCalendar(dateObj) {
@@ -1349,7 +1406,6 @@
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
 
-            // 前置空白格子
             for (let i = 0; i < firstDayIndex; i++) {
                 const emptyCell = document.createElement('div');
                 emptyCell.className = "calendar-day empty";
@@ -1357,13 +1413,11 @@
             }
 
             const today = new Date();
-            // 繪製日期格子
             for (let day = 1; day <= totalDays; day++) {
                 const dayCell = document.createElement('div');
                 dayCell.className = "calendar-day";
                 dayCell.innerText = day;
 
-                // 若為 2026年 10月 1日或今天，標註打卡樣式
                 if (day === 1 && month === 9 && year === 2026) {
                     dayCell.classList.add('checked');
                 } else if (today.getFullYear() === year && today.getMonth() === month && today.getDate() === day) {
@@ -1374,7 +1428,6 @@
             }
         }
 
-        // 點擊頂端連續天數觸發彈窗函式
         function openStreakDashboard() {
             renderStreakCalendar(calendarCurrentDate);
             openModal('modal-streak-dashboard');
@@ -1438,6 +1491,19 @@
             closeModal('modal-select-initial-level');
             selectLevel(selectedVal, selectedText);
         };
+
+        // ==================== 😭 退出挑戰二次確認功能 ====================
+        function promptQuitChallenge() {
+            // 關閉目前所有打開的齒輪選單
+            document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
+            openModal('modal-quit-challenge');
+        }
+
+        function confirmExitChallenge() {
+            closeModal('modal-quit-challenge');
+            stopSpeechRecognition();
+            goToStep('step-stage'); // 退回到關卡選擇頁面，頂部導航會自動恢復顯示
+        }
 
         async function addXP(amount) {
             if (!currentUser || !window.currentUserData) return;
