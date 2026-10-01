@@ -172,6 +172,52 @@
             border-color: #86efac !important; font-weight: 900;
         }
 
+        /* 截圖 17、18 會員中心與排行榜視圖專用樣式 */
+        .profile-container-card {
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 24px;
+            padding: 24px 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            text-align: left;
+            margin-top: 10px;
+        }
+        .nav-pill-btn {
+            padding: 8px 16px; border-radius: 12px; font-size: 0.9rem; font-weight: bold;
+            border: 2px solid #e5e7eb; background: #ffffff; color: #64748b; cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .nav-pill-btn.active {
+            background: var(--duo-blue); color: white; border-color: var(--duo-blue);
+        }
+
+        .tab-segmented {
+            display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 16px;
+        }
+        .tab-segmented-item {
+            flex: 1; padding: 8px 12px; border: none; background: transparent; font-weight: bold;
+            color: #64748b; border-radius: 10px; cursor: pointer; font-size: 0.9rem;
+        }
+        .tab-segmented-item.active {
+            background: var(--duo-blue); color: white;
+        }
+
+        .course-pill {
+            background: #e0f2fe; color: #0369a1; border: 1.5px solid #bae6fd;
+            border-radius: 25px; padding: 10px 16px; font-weight: bold; font-size: 0.9rem;
+            margin-bottom: 8px; display: block;
+        }
+
+        .rank-item-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 12px; border-radius: 14px; background: #ffffff;
+            border: 1px solid #f1f5f9; margin-bottom: 8px;
+        }
+        .rank-num { font-size: 1.15rem; font-weight: 900; width: 28px; text-align: center; }
+        .rank-num.rank-1 { color: #f59e0b; }
+        .rank-num.rank-2 { color: #94a3b8; }
+        .rank-num.rank-3 { color: #d97706; }
+
         .step-page { display: none; }
         .step-page.active { display: block; }
         h2.step-title { color: var(--duo-dark); font-size: 1.3rem; margin-top: 0; margin-bottom: 20px; }
@@ -380,8 +426,9 @@
         .dialog-history-item span.num { font-weight: bold; color: var(--duo-blue); margin-right: 6px; }
 
         .profile-avatar-large {
-            width: 72px; height: 72px; border-radius: 50%;
-            border: 3px solid var(--duo-blue); margin: 0 auto 10px auto; object-fit: cover;
+            width: 78px; height: 78px; border-radius: 50%;
+            border: 3.5px solid var(--duo-blue); margin: 0 auto 10px auto; object-fit: cover;
+            display: block;
         }
     </style>
 </head>
@@ -392,7 +439,7 @@
         <div class="custom-modal-card">
             <div style="font-size: 2.2rem; color: var(--duo-blue); margin-bottom: 8px;"><i class="fa-solid fa-graduation-cap"></i></div>
             <h3 style="margin: 0 0 6px 0; font-size: 1.2rem;">登入多語學習系統</h3>
-            <p style="font-size: 0.85rem; color:#6b7280; margin-bottom: 16px;">需為已開通白名單之學員方可登入</p>
+            <p style="font-size: 0.82rem; color:#6b7280; margin-bottom: 16px;">需為已開通白名單之學員方可登入</p>
             
             <button class="btn-google" id="btn-google-login">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="Google">
@@ -504,48 +551,33 @@
         </div>
     </div>
 
-    <!-- 😭 截圖 16：離開挑戰二次確認彈窗（Duolingo 風格哭泣小鳥） -->
+    <!-- 😭 截圖 16：離開挑戰二次確認彈窗 -->
     <div id="modal-quit-challenge" class="custom-modal">
         <div class="custom-modal-card" style="padding: 26px 20px;">
-            <!-- 哭泣小鳥 SVG 圖示 -->
             <div style="margin-bottom: 14px;">
                 <svg width="110" height="110" viewBox="0 0 120 120" style="margin: 0 auto; display: block;">
-                    <!-- 身體 -->
                     <rect x="25" y="20" width="70" height="78" rx="35" fill="#58cc02"/>
-                    <!-- 肚子羽毛紋理 -->
                     <path d="M50 68 Q60 74 70 68" stroke="#46a302" stroke-width="3" fill="none" stroke-linecap="round"/>
                     <path d="M52 76 Q60 82 68 76" stroke="#46a302" stroke-width="3" fill="none" stroke-linecap="round"/>
-                    <!-- 橘色小腳 -->
                     <ellipse cx="45" cy="98" rx="8" ry="4" fill="#f97316"/>
                     <ellipse cx="75" cy="98" rx="8" ry="4" fill="#f97316"/>
-                    <!-- 大眼睛 (眼眶) -->
                     <ellipse cx="43" cy="46" rx="14" ry="15" fill="#ffffff"/>
                     <ellipse cx="77" cy="46" rx="14" ry="15" fill="#ffffff"/>
-                    <!-- 瞳孔 (向下哭喪眼神) -->
                     <circle cx="43" cy="48" r="9" fill="#1e293b"/>
                     <circle cx="77" cy="48" r="9" fill="#1e293b"/>
-                    <!-- 眼神高光 -->
                     <circle cx="40" cy="44" r="3" fill="#ffffff"/>
                     <circle cx="74" cy="44" r="3" fill="#ffffff"/>
-                    <!-- 橘色鳥喙 (扁平三角形) -->
                     <polygon points="54,54 66,54 60,63" fill="#f97316"/>
-                    <!-- 兩道藍色淚水 -->
                     <path d="M35 55 C32 68, 48 70, 48 60 C48 55, 36 52, 35 55 Z" fill="#38bdf8" opacity="0.9"/>
                     <path d="M85 55 C88 68, 72 70, 72 60 C72 55, 84 52, 85 55 Z" fill="#38bdf8" opacity="0.9"/>
                 </svg>
             </div>
-
-            <!-- 提示文案 -->
             <h3 style="margin: 0 0 18px 0; color: #1e293b; font-size: 1.15rem; font-weight: 800; line-height: 1.5;">
                 別走，只差 1 分鐘就能完成這個挑戰了！
             </h3>
-
-            <!-- 藍色按鈕：繼續努力 -->
             <button class="btn-3d btn-3d-blue" onclick="closeModal('modal-quit-challenge')" style="width: 100%; padding: 12px; font-size: 1.05rem;">
                 繼續努力
             </button>
-
-            <!-- 紅色文字按鈕：退出 -->
             <div style="margin-top: 14px;">
                 <button onclick="confirmExitChallenge()" style="background: none; border: none; color: var(--duo-red); font-size: 1rem; font-weight: 800; cursor: pointer; padding: 6px 12px;">
                     退出
@@ -568,57 +600,12 @@
         </div>
     </div>
 
-    <!-- 👤 個人中心頁面 (Profile View) -->
-    <div id="modal-profile-view" class="custom-modal">
-        <div class="custom-modal-card" style="text-align: left;">
-            <div class="close-icon-circle" id="btn-close-profile" onclick="closeModal('modal-profile-view')"><i class="fa-solid fa-xmark"></i></div>
-            <div style="text-align: center; margin-bottom: 12px;">
-                <img id="profile-user-avatar" src="https://lh3.googleusercontent.com/a/default-user" class="profile-avatar-large" alt="User Avatar">
-                <h3 style="margin: 0; color: #1f2937; font-size: 1.15rem;">
-                    <span id="profile-nickname">學生</span>
-                    <button id="btn-open-edit-nickname" style="border:none; background:none; color:var(--duo-blue); cursor:pointer;"><i class="fa-solid fa-pen-to-square"></i></button>
-                </h3>
-                <p style="font-size: 0.82rem; color: #6b7280; margin: 2px 0 0 0;" id="profile-email">email@example.com</p>
-            </div>
-
-            <div style="font-size: 0.88rem; display: flex; flex-direction: column; gap: 8px;">
-                <div style="display:flex; justify-content: space-between;">
-                    <span style="color: #6b7280;">真實姓名：</span>
-                    <span id="profile-realname" style="font-weight:bold; color:#1f2937;">-</span>
-                </div>
-                <div style="display:flex; justify-content: space-between;">
-                    <span style="color: #6b7280;">身份別：</span>
-                    <span id="profile-role" style="font-weight:bold; color:var(--duo-blue);">Student</span>
-                </div>
-                <div style="display:flex; justify-content: space-between;">
-                    <span style="color: #6b7280;">會員狀態：</span>
-                    <span id="profile-status" style="font-weight:bold; color:var(--duo-green);">開通中</span>
-                </div>
-                <div style="display:flex; justify-content: space-between;">
-                    <span style="color: #6b7280;">累積 XP 經驗值：</span>
-                    <span style="font-weight:bold; color:var(--duo-gold);"><i class="fa-solid fa-star"></i> <span id="profile-xp">0</span></span>
-                </div>
-                <hr style="border: none; border-top: 1px dashed #e5e7eb; margin: 4px 0;">
-                <div>
-                    <span style="font-weight: bold; color: #374151; display: block; margin-bottom: 4px;">開通課程與到期日：</span>
-                    <div id="profile-memberships-list" style="display:flex; flex-direction:column; gap:4px; font-size:0.82rem; color:#4b5563;">
-                        <span>載入中...</span>
-                    </div>
-                </div>
-            </div>
-
-            <button id="btn-trigger-logout" class="btn-3d" style="width: 100%; padding: 10px; margin-top: 15px; background: var(--duo-red); color: white; box-shadow: 0 4px 0 var(--duo-red-shadow);">
-                <i class="fa-solid fa-right-from-bracket"></i> 登出
-            </button>
-        </div>
-    </div>
-
-    <!-- 📱 主卡片視圖 -->
+    <!-- 📱 主介面容器 -->
     <div class="shadowing-card">
         <!-- 頂端導航資訊列 -->
         <div class="user-meta-bar" id="app-user-meta-bar">
-            <!-- 1. 使用者名稱 -->
-            <div class="user-meta-item" id="btn-profile-trigger" onclick="openModal('modal-profile-view')">
+            <!-- 1. 使用者名稱（點擊進入個人中心/排行榜頁面） -->
+            <div class="user-meta-item" id="btn-profile-trigger" onclick="openProfileView()">
                 <i class="fa-solid fa-user" style="color: var(--duo-blue);"></i>
                 <span id="lbl-username">訪客</span>
             </div>
@@ -644,292 +631,365 @@
             </div>
         </div>
 
-        <!-- 步驟 1：選擇母語 -->
-        <div id="step-user-lang" class="step-page active">
-            <h2 class="step-title"><i class="fa-solid fa-earth-americas"></i> 請選擇你的母語</h2>
-            <div class="option-grid grid-1">
-                <button class="btn-option selected" id="btn-lang-zh" onclick="setUserLang('zh')">繁體中文</button>
-                <button class="btn-option" id="btn-lang-en" onclick="setUserLang('en')">English</button>
-                <button class="btn-option" id="btn-lang-kr" onclick="setUserLang('kr')">한국어</button>
-            </div>
-            <button class="btn-confirm" onclick="goToStep('step-learn-lang')">下一步 <i class="fa-solid fa-arrow-right"></i></button>
-        </div>
-
-        <!-- 步驟 2：選擇學習語言 -->
-        <div id="step-learn-lang" class="step-page">
-            <div class="top-nav">
-                <button class="btn-back-step" onclick="goToStep('step-user-lang')"><i class="fa-solid fa-arrow-left"></i> 回母語選擇</button>
-            </div>
-            <h2 class="step-title"><i class="fa-solid fa-language"></i> 請選擇要學習的語言</h2>
-            <div class="option-grid grid-1">
-                <button class="btn-option selected" id="btn-cat-korean" onclick="selectCategory('korean')">🇰🇷 韓文</button>
-                <button class="btn-option" id="btn-cat-japanese" onclick="selectCategory('japanese')">🇯🇵 日文</button>
-                <button class="btn-option" id="btn-cat-english" onclick="selectCategory('english')">🇺🇸 英文</button>
-            </div>
-            <button class="btn-confirm" id="btn-confirm-learn-lang" onclick="confirmLearnLang()"><i class="fa-solid fa-arrow-right"></i> 下一步（載入課程）</button>
-            <div style="margin-top: 15px; border-top: 1px dashed #e5e7eb; padding-top: 10px;">
-                <button class="btn-sync-refresh" onclick="forceClearAndSync()"><i class="fa-solid fa-arrows-rotate"></i> 強制更新試算表資料</button>
-                <div id="cache-status" style="font-size: 0.75rem; color: #6b7280; margin-top: 8px;"></div>
-            </div>
-        </div>
-
-        <!-- 步驟 3：選擇程度 -->
-        <div id="step-level" class="step-page">
-            <div class="top-nav">
-                <button class="btn-back-step" onclick="goToStep('step-learn-lang')"><i class="fa-solid fa-arrow-left"></i> 回學習語言</button>
-            </div>
-            <h2 class="step-title"><i class="fa-solid fa-layer-group"></i> 選擇課程程度</h2>
-            <div id="container-levels" class="option-grid grid-2"></div>
-        </div>
-
-        <!-- 步驟 4：選擇單元 -->
-        <div id="step-unit" class="step-page">
-            <div class="top-nav">
-                <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
-                <span id="lbl-unit-level" style="font-weight: bold; color: var(--duo-blue);">0A 認識字母</span>
-            </div>
-            <h2 class="step-title"><i class="fa-solid fa-book-open"></i> 請選擇單元 (Unit)</h2>
-            <div id="container-units" class="option-grid grid-3"></div>
-        </div>
-
-        <!-- 步驟 5：選擇關卡與模式 -->
-        <div id="step-stage" class="step-page">
-            <div class="top-nav">
-                <button class="btn-back-step" onclick="goToStep('step-unit')"><i class="fa-solid fa-arrow-left"></i> 回單元選擇</button>
-                <span id="lbl-stage-unit" style="font-weight: bold; color: var(--duo-blue);">單元 1</span>
-            </div>
-            <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇關卡挑戰</h2>
-            <div id="container-stages"></div>
-        </div>
-
-        <!-- 步驟 5.5：語法說明教室 -->
-        <div id="step-grammar" class="step-page">
-            <div class="top-nav">
-                <button class="btn-back-step" onclick="goToStep('step-stage')"><i class="fa-solid fa-arrow-left"></i> 回關卡選擇</button>
-                <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-purple);">語法教室</span>
-            </div>
-
-            <div id="area-grammar-dialog">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <h3 style="margin: 0; color: #4338ca;"><i class="fa-solid fa-lightbulb"></i> 觀念小教室</h3>
-                    <span id="lbl-dialog-counter" style="font-size: 0.85rem; color: #6b7280; font-weight: bold;">1 / 1</span>
+        <!-- 🌟 視圖 A：學習與題目挑戰區塊 -->
+        <div id="learning-content-view">
+            <!-- 步驟 1：選擇母語 -->
+            <div id="step-user-lang" class="step-page active">
+                <h2 class="step-title"><i class="fa-solid fa-earth-americas"></i> 請選擇你的母語</h2>
+                <div class="option-grid grid-1">
+                    <button class="btn-option selected" id="btn-lang-zh" onclick="setUserLang('zh')">繁體中文</button>
+                    <button class="btn-option" id="btn-lang-en" onclick="setUserLang('en')">English</button>
+                    <button class="btn-option" id="btn-lang-kr" onclick="setUserLang('kr')">한국어</button>
                 </div>
-                <div class="grammar-dialog-box" onclick="completeTypewriterImmediately()">
-                    <span id="lbl-grammar-dialog">...</span>
-                    <button class="btn-gram2-audio" id="btn-gram2-audio" style="display: none;"><i class="fa-solid fa-volume-high"></i> 播放聲音</button>
+                <button class="btn-confirm" onclick="goToStep('step-learn-lang')">下一步 <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+
+            <!-- 步驟 2：選擇學習語言 -->
+            <div id="step-learn-lang" class="step-page">
+                <div class="top-nav">
+                    <button class="btn-back-step" onclick="goToStep('step-user-lang')"><i class="fa-solid fa-arrow-left"></i> 回母語選擇</button>
                 </div>
-                <button class="btn-confirm" id="btn-next-dialog" onclick="nextGrammarDialog()">下一步 <i class="fa-solid fa-arrow-right"></i></button>
-                <div class="grammar-nav-btns">
-                    <button class="btn-grammar-sub" id="btn-prev-dialog" onclick="prevGrammarDialog()"><i class="fa-solid fa-arrow-left"></i> 上一步</button>
-                    <button class="btn-grammar-sub" onclick="skipGrammarDialog()"><i class="fa-solid fa-forward-step"></i> 跳過對話</button>
+                <h2 class="step-title"><i class="fa-solid fa-language"></i> 請選擇要學習的語言</h2>
+                <div class="option-grid grid-1">
+                    <button class="btn-option selected" id="btn-cat-korean" onclick="selectCategory('korean')">🇰🇷 韓文</button>
+                    <button class="btn-option" id="btn-cat-japanese" onclick="selectCategory('japanese')">🇯🇵 日文</button>
+                    <button class="btn-option" id="btn-cat-english" onclick="selectCategory('english')">🇺🇸 英文</button>
+                </div>
+                <button class="btn-confirm" id="btn-confirm-learn-lang" onclick="confirmLearnLang()"><i class="fa-solid fa-arrow-right"></i> 下一步（載入課程）</button>
+                <div style="margin-top: 15px; border-top: 1px dashed #e5e7eb; padding-top: 10px;">
+                    <button class="btn-sync-refresh" onclick="forceClearAndSync()"><i class="fa-solid fa-arrows-rotate"></i> 強制更新試算表資料</button>
+                    <div id="cache-status" style="font-size: 0.75rem; color: #6b7280; margin-top: 8px;"></div>
                 </div>
             </div>
 
-            <div id="area-grammar-example" style="display: none;">
-                <h3 style="margin-top: 10px; color: #4338ca; text-align: left;"><i class="fa-solid fa-book-bookmark"></i> 例句練習</h3>
-                <div id="container-example-list" style="text-align: left; margin-bottom: 20px;"></div>
-                <button class="btn-confirm" onclick="goToReadyPage()"><i class="fa-solid fa-arrow-right"></i> 繼續</button>
-            </div>
-
-            <div id="area-grammar-ready" style="display: none; text-align: center; padding: 20px 10px;">
-                <i class="fa-solid fa-flag-checkered" style="font-size: 3rem; color: #818cf8; margin-bottom: 15px;"></i>
-                <div id="lbl-ready-text" style="font-size: 1.3rem; font-weight: bold; color: var(--duo-dark); margin-bottom: 25px; line-height: 1.6;"></div>
-                <button class="btn-confirm" onclick="enterGrammarQuizFromReady()"><i class="fa-solid fa-pen-to-square"></i> 開始測驗</button>
-            </div>
-
-            <div id="area-grammar-quiz" style="display: none; margin-top: 15px;">
-                <h3 style="margin-top: 0; color: var(--duo-dark);"><i class="fa-solid fa-pen-to-square"></i> 語法測驗</h3>
-                <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
-                <div id="container-grammar-questions"></div>
-                <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin: 15px 0 5px 0;">選項：</p>
-                <div id="container-grammar-choices" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;"></div>
-                <button class="btn-confirm btn-grammar-action-narrow" id="btn-check-grammar" onclick="checkGrammarQuiz()"><i class="fa-solid fa-check"></i> 送出答案</button>
-                <div class="result-box" id="box-grammar-result" style="display: none; margin-top: 15px;">
-                    <div id="lbl-grammar-result-text" style="font-size: 1.1rem; font-weight: bold;"></div>
-                    <button class="btn-confirm" id="btn-grammar-action"></button>
+            <!-- 步驟 3：選擇程度 -->
+            <div id="step-level" class="step-page">
+                <div class="top-nav">
+                    <button class="btn-back-step" onclick="goToStep('step-learn-lang')"><i class="fa-solid fa-arrow-left"></i> 回學習語言</button>
                 </div>
+                <h2 class="step-title"><i class="fa-solid fa-layer-group"></i> 選擇課程程度</h2>
+                <div id="container-levels" class="option-grid grid-2"></div>
             </div>
 
-            <div id="area-grammar-all-history" style="display: none; margin-top: 20px;">
-                <h3 style="margin-top: 15px; margin-bottom: 10px; color: #4338ca; text-align: left;"><i class="fa-solid fa-list-check"></i> 觀念總覽</h3>
-                <div class="dialog-history-list" id="container-dialog-history"></div>
+            <!-- 步驟 4：選擇單元 -->
+            <div id="step-unit" class="step-page">
+                <div class="top-nav">
+                    <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
+                    <span id="lbl-unit-level" style="font-weight: bold; color: var(--duo-blue);">0A 認識字母</span>
+                </div>
+                <h2 class="step-title"><i class="fa-solid fa-book-open"></i> 請選擇單元 (Unit)</h2>
+                <div id="container-units" class="option-grid grid-3"></div>
             </div>
-        </div>
 
-        <!-- 步驟 6-A：跟讀挑戰畫面 -->
-        <div id="step-quiz-shadow" class="step-page">
-            <div class="challenge-top-bar">
-                <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
-                <div class="gear-menu-container">
-                    <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-shadow')"><i class="fa-solid fa-gear"></i></button>
-                    <div class="gear-dropdown" id="gear-dropdown-shadow">
-                        <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-shadow')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
-                        <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
+            <!-- 步驟 5：選擇關卡與模式 -->
+            <div id="step-stage" class="step-page">
+                <div class="top-nav">
+                    <button class="btn-back-step" onclick="goToStep('step-unit')"><i class="fa-solid fa-arrow-left"></i> 回單元選擇</button>
+                    <span id="lbl-stage-unit" style="font-weight: bold; color: var(--duo-blue);">單元 1</span>
+                </div>
+                <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇關卡挑戰</h2>
+                <div id="container-stages"></div>
+            </div>
+
+            <!-- 步驟 5.5：語法說明教室 -->
+            <div id="step-grammar" class="step-page">
+                <div class="top-nav">
+                    <button class="btn-back-step" onclick="goToStep('step-stage')"><i class="fa-solid fa-arrow-left"></i> 回關卡選擇</button>
+                    <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-purple);">語法教室</span>
+                </div>
+
+                <div id="area-grammar-dialog">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h3 style="margin: 0; color: #4338ca;"><i class="fa-solid fa-lightbulb"></i> 觀念小教室</h3>
+                        <span id="lbl-dialog-counter" style="font-size: 0.85rem; color: #6b7280; font-weight: bold;">1 / 1</span>
+                    </div>
+                    <div class="grammar-dialog-box" onclick="completeTypewriterImmediately()">
+                        <span id="lbl-grammar-dialog">...</span>
+                        <button class="btn-gram2-audio" id="btn-gram2-audio" style="display: none;"><i class="fa-solid fa-volume-high"></i> 播放聲音</button>
+                    </div>
+                    <button class="btn-confirm" id="btn-next-dialog" onclick="nextGrammarDialog()">下一步 <i class="fa-solid fa-arrow-right"></i></button>
+                    <div class="grammar-nav-btns">
+                        <button class="btn-grammar-sub" id="btn-prev-dialog" onclick="prevGrammarDialog()"><i class="fa-solid fa-arrow-left"></i> 上一步</button>
+                        <button class="btn-grammar-sub" onclick="skipGrammarDialog()"><i class="fa-solid fa-forward-step"></i> 跳過對話</button>
                     </div>
                 </div>
+
+                <div id="area-grammar-example" style="display: none;">
+                    <h3 style="margin-top: 10px; color: #4338ca; text-align: left;"><i class="fa-solid fa-book-bookmark"></i> 例句練習</h3>
+                    <div id="container-example-list" style="text-align: left; margin-bottom: 20px;"></div>
+                    <button class="btn-confirm" onclick="goToReadyPage()"><i class="fa-solid fa-arrow-right"></i> 繼續</button>
+                </div>
+
+                <div id="area-grammar-ready" style="display: none; text-align: center; padding: 20px 10px;">
+                    <i class="fa-solid fa-flag-checkered" style="font-size: 3rem; color: #818cf8; margin-bottom: 15px;"></i>
+                    <div id="lbl-ready-text" style="font-size: 1.3rem; font-weight: bold; color: var(--duo-dark); margin-bottom: 25px; line-height: 1.6;"></div>
+                    <button class="btn-confirm" onclick="enterGrammarQuizFromReady()"><i class="fa-solid fa-pen-to-square"></i> 開始測驗</button>
+                </div>
+
+                <div id="area-grammar-quiz" style="display: none; margin-top: 15px;">
+                    <h3 style="margin-top: 0; color: var(--duo-dark);"><i class="fa-solid fa-pen-to-square"></i> 語法測驗</h3>
+                    <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
+                    <div id="container-grammar-questions"></div>
+                    <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin: 15px 0 5px 0;">選項：</p>
+                    <div id="container-grammar-choices" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;"></div>
+                    <button class="btn-confirm btn-grammar-action-narrow" id="btn-check-grammar" onclick="checkGrammarQuiz()"><i class="fa-solid fa-check"></i> 送出答案</button>
+                    <div class="result-box" id="box-grammar-result" style="display: none; margin-top: 15px;">
+                        <div id="lbl-grammar-result-text" style="font-size: 1.1rem; font-weight: bold;"></div>
+                        <button class="btn-confirm" id="btn-grammar-action"></button>
+                    </div>
+                </div>
+
+                <div id="area-grammar-all-history" style="display: none; margin-top: 20px;">
+                    <h3 style="margin-top: 15px; margin-bottom: 10px; color: #4338ca; text-align: left;"><i class="fa-solid fa-list-check"></i> 觀念總覽</h3>
+                    <div class="dialog-history-list" id="container-dialog-history"></div>
+                </div>
             </div>
-            <div class="target-text" id="lbl-target-text">載入中...</div>
-            <div class="translation-text" id="lbl-translation">...</div>
-            <div id="lbl-hint" class="hint-text" style="display: none;"></div>
-            <div class="controls">
-                <button class="btn-circle btn-listen" id="btn-play-audio" onclick="playAudio()"><i class="fa-solid fa-volume-high"></i></button>
-                <button class="btn-circle btn-record" id="btn-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
+
+            <!-- 步驟 6-A：跟讀挑戰畫面 -->
+            <div id="step-quiz-shadow" class="step-page">
+                <div class="challenge-top-bar">
+                    <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div class="gear-menu-container">
+                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-shadow')"><i class="fa-solid fa-gear"></i></button>
+                        <div class="gear-dropdown" id="gear-dropdown-shadow">
+                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-shadow')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                            <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="target-text" id="lbl-target-text">載入中...</div>
+                <div class="translation-text" id="lbl-translation">...</div>
+                <div id="lbl-hint" class="hint-text" style="display: none;"></div>
+                <div class="controls">
+                    <button class="btn-circle btn-listen" id="btn-play-audio" onclick="playAudio()"><i class="fa-solid fa-volume-high"></i></button>
+                    <button class="btn-circle btn-record" id="btn-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
+                </div>
+                <div class="result-box">
+                    <div>辨識結果：<span id="lbl-recognized-text" style="font-weight: bold; color: #374151;">-</span></div>
+                    <div class="score-badge" id="lbl-score">判定結果：--</div>
+                </div>
+                <div class="nav-controls">
+                    <button class="btn-nav" id="btn-prev" onclick="prevQuestion()">上一題</button>
+                    <span class="lbl-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
+                    <button class="btn-nav" id="btn-next" onclick="nextQuestion()">下一題</button>
+                </div>
             </div>
-            <div class="result-box">
-                <div>辨識結果：<span id="lbl-recognized-text" style="font-weight: bold; color: #374151;">-</span></div>
-                <div class="score-badge" id="lbl-score">判定結果：--</div>
+
+            <!-- 步驟 6-B：字塊重組畫面 -->
+            <div id="step-quiz-blocks" class="step-page">
+                <div class="challenge-top-bar">
+                    <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div class="gear-menu-container">
+                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-blocks')"><i class="fa-solid fa-gear"></i></button>
+                        <div class="gear-dropdown" id="gear-dropdown-blocks">
+                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-blocks')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                            <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin: 15px 0;">
+                    <button class="btn-circle btn-listen" onclick="playBlockAudio()" style="margin: 0 auto;"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="translation-text" id="lbl-block-translation">...</div>
+                <p style="font-size: 0.8rem; color: #9ca3af; text-align: left; margin: 0;">排列結果：</p>
+                <div id="zone-answer" class="block-zone"></div>
+                <p style="font-size: 0.8rem; color: #9ca3af; text-align: left; margin: 0;">點擊字塊組句：</p>
+                <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
+                <button class="btn-confirm" onclick="checkBlockAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
+                <div class="result-box" style="margin-top: 15px;"><div class="score-badge" id="lbl-block-score">等待回答...</div></div>
+                <div class="nav-controls">
+                    <button class="btn-nav" id="btn-block-prev" onclick="prevQuestion()">上一題</button>
+                    <span class="lbl-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
+                    <button class="btn-nav" id="btn-block-next" onclick="nextQuestion()">下一題</button>
+                </div>
             </div>
-            <div class="nav-controls">
-                <button class="btn-nav" id="btn-prev" onclick="prevQuestion()">上一題</button>
-                <span class="lbl-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
-                <button class="btn-nav" id="btn-next" onclick="nextQuestion()">下一題</button>
+
+            <!-- 步驟 6-C：聊天視窗風對話練習 -->
+            <div id="step-quiz-dialogue" class="step-page">
+                <div class="challenge-top-bar">
+                    <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div class="gear-menu-container">
+                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-dialogue')"><i class="fa-solid fa-gear"></i></button>
+                        <div class="gear-dropdown" id="gear-dropdown-dialogue">
+                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-dialogue')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                            <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="dialogue-sub-nav">
+                    <button class="btn-dialogue-mode active" id="btn-mode-basic" onclick="switchDialogueMode('basic')">基礎對話</button>
+                    <button class="btn-dialogue-mode" id="btn-mode-fill" onclick="switchDialogueMode('fill')">挖空填空</button>
+                    <button class="btn-dialogue-mode" id="btn-mode-blind" onclick="switchDialogueMode('blind')">盲測聽力</button>
+                </div>
+                <div class="role-switch-box">
+                    <button class="btn-role active" id="btn-role-a" onclick="switchUserRole('A')">扮演 Speaker A</button>
+                    <button class="btn-role" id="btn-role-b" onclick="switchUserRole('B')">扮演 Speaker B</button>
+                </div>
+                <div class="chat-window" id="chat-window"></div>
+                <div id="box-blind-unlock" style="display: none; margin-bottom: 8px;">
+                    <button class="btn-stage-action" style="width: 100%; border-color: var(--duo-orange); color: var(--duo-orange);" onclick="unlockBlindTextManually()">
+                        <i class="fa-solid fa-eye"></i> 解鎖當前句子內容
+                    </button>
+                </div>
+                <div class="controls">
+                    <button class="btn-circle btn-listen" id="btn-dialogue-play" onclick="playDialogueAudio()"><i class="fa-solid fa-volume-high"></i></button>
+                    <button class="btn-circle btn-record" id="btn-dialogue-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
+                </div>
+                <div class="nav-controls">
+                    <button class="btn-nav" id="btn-dialogue-prev" onclick="prevDialogueSentence()">上一句</button>
+                    <span class="lbl-progress" id="lbl-dialogue-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
+                    <button class="btn-nav" id="btn-dialogue-next" onclick="nextDialogueSentence()">下一句</button>
+                </div>
+            </div>
+
+            <!-- 步驟 6-D：單字跟讀挑戰畫面 -->
+            <div id="step-quiz-vocab-shadow" class="step-page">
+                <div class="challenge-top-bar">
+                    <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div class="gear-menu-container">
+                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-shadow')"><i class="fa-solid fa-gear"></i></button>
+                        <div class="gear-dropdown" id="gear-dropdown-vocab-shadow">
+                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-vocab-shadow')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                            <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="target-text" id="lbl-vocab-target-text">載入中...</div>
+                <div class="translation-text" id="lbl-vocab-translation" style="min-height: 1.5rem;"></div>
+                <div class="controls">
+                    <button class="btn-circle btn-listen" id="btn-vocab-play-audio" onclick="playVocabAudio()"><i class="fa-solid fa-volume-high"></i></button>
+                    <button class="btn-circle btn-record" id="btn-vocab-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
+                </div>
+                <div class="result-box">
+                    <div>辨識結果：<span id="lbl-vocab-recognized-text" style="font-weight: bold; color: #374151;">-</span></div>
+                    <div class="score-badge" id="lbl-score">判定結果：--</div>
+                </div>
+                <div class="nav-controls">
+                    <button class="btn-nav" id="btn-vocab-prev" onclick="prevVocabQuestion()">上一題</button>
+                    <span class="lbl-progress" id="lbl-vocab-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
+                    <button class="btn-nav" id="btn-vocab-next" onclick="nextVocabQuestion()">下一題</button>
+                </div>
+            </div>
+
+            <!-- 步驟 6-E：單字聽打挑戰畫面 -->
+            <div id="step-quiz-vocab-type" class="step-page">
+                <div class="challenge-top-bar">
+                    <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div class="gear-menu-container">
+                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-type')"><i class="fa-solid fa-gear"></i></button>
+                        <div class="gear-dropdown" id="gear-dropdown-vocab-type">
+                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-vocab-type')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                            <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 25px 0 15px 0;">
+                    <div class="target-text" id="lbl-vocab-type-text" style="margin: 0; min-height: auto; display: none;">...</div>
+                    <button class="btn-circle btn-listen" onclick="playVocabAudio()" style="width: 65px; height: 65px; font-size: 1.5rem; flex-shrink: 0;"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <input type="text" id="input-vocab-type" class="vocab-input" placeholder="請輸入聽到的單字" autocomplete="off" autocorrect="off" autocapitalize="none">
+                <button class="btn-confirm" onclick="checkVocabTypeAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
+                <div class="translation-text" id="lbl-vocab-type-translation" style="margin-top: 15px; font-size: 1.2rem; font-weight: bold;"></div>
+                <div class="result-box" style="margin-top: 10px;"><div class="score-badge" id="lbl-vocab-type-score">等待輸入...</div></div>
+                <div class="nav-controls">
+                    <button class="btn-nav" id="btn-vocab-type-prev" onclick="prevVocabQuestion()">上一題</button>
+                    <span class="lbl-progress" id="lbl-vocab-type-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
+                    <button class="btn-nav" id="btn-vocab-type-next" onclick="nextVocabQuestion()">下一題</button>
+                </div>
+            </div>
+
+            <!-- 步驟 6-F：單字意思選擇題畫面 -->
+            <div id="step-quiz-vocab-choice" class="step-page">
+                <div class="challenge-top-bar">
+                    <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div class="gear-menu-container">
+                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-choice')"><i class="fa-solid fa-gear"></i></button>
+                        <div class="gear-dropdown" id="gear-dropdown-vocab-choice">
+                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-vocab-choice')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                            <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="target-text" id="lbl-vocab-choice-text">載入中...</div>
+                <div class="vocab-choice-list" id="container-vocab-choices"></div>
+                <div class="result-box" style="margin-top: 15px;"><div class="score-badge" id="lbl-vocab-choice-score">請選擇正確意思</div></div>
+                <div class="nav-controls">
+                    <button class="btn-nav" id="btn-vocab-choice-prev" onclick="prevVocabQuestion()">上一題</button>
+                    <span class="lbl-progress" id="lbl-vocab-choice-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
+                    <button class="btn-nav" id="btn-vocab-choice-next" onclick="nextVocabQuestion()">下一題</button>
+                </div>
             </div>
         </div>
 
-        <!-- 步驟 6-B：字塊重組畫面 -->
-        <div id="step-quiz-blocks" class="step-page">
-            <div class="challenge-top-bar">
-                <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
-                <div class="gear-menu-container">
-                    <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-blocks')"><i class="fa-solid fa-gear"></i></button>
-                    <div class="gear-dropdown" id="gear-dropdown-blocks">
-                        <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-blocks')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
-                        <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
-                    </div>
+        <!-- 🌟 視圖 B：截圖 17、18 的會員中心與排行榜大視圖 -->
+        <div id="profile-view" class="hidden" style="text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <button class="btn-3d btn-3d-secondary" onclick="closeProfileView()" style="padding: 8px 16px;">
+                    <i class="fa-solid fa-arrow-left"></i> 返回地圖
+                </button>
+                <div style="display: flex; gap: 8px;">
+                    <button class="nav-pill-btn active" id="btn-nav-leaderboard" onclick="switchProfileTab('leaderboard')">
+                        <i class="fa-solid fa-trophy"></i> 排行榜
+                    </button>
+                    <button class="nav-pill-btn" id="btn-nav-myaccount" onclick="switchProfileTab('myaccount')">
+                        <i class="fa-solid fa-id-card"></i> 我的帳號
+                    </button>
                 </div>
             </div>
-            <div style="margin: 15px 0;">
-                <button class="btn-circle btn-listen" onclick="playBlockAudio()" style="margin: 0 auto;"><i class="fa-solid fa-volume-high"></i></button>
-            </div>
-            <div class="translation-text" id="lbl-block-translation">...</div>
-            <p style="font-size: 0.8rem; color: #9ca3af; text-align: left; margin: 0;">排列結果：</p>
-            <div id="zone-answer" class="block-zone"></div>
-            <p style="font-size: 0.8rem; color: #9ca3af; text-align: left; margin: 0;">點擊字塊組句：</p>
-            <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
-            <button class="btn-confirm" onclick="checkBlockAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
-            <div class="result-box" style="margin-top: 15px;"><div class="score-badge" id="lbl-block-score">等待回答...</div></div>
-            <div class="nav-controls">
-                <button class="btn-nav" id="btn-block-prev" onclick="prevQuestion()">上一題</button>
-                <span class="lbl-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
-                <button class="btn-nav" id="btn-block-next" onclick="nextQuestion()">下一題</button>
-            </div>
-        </div>
 
-        <!-- 步驟 6-C：聊天視窗風對話練習 -->
-        <div id="step-quiz-dialogue" class="step-page">
-            <div class="challenge-top-bar">
-                <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
-                <div class="gear-menu-container">
-                    <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-dialogue')"><i class="fa-solid fa-gear"></i></button>
-                    <div class="gear-dropdown" id="gear-dropdown-dialogue">
-                        <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-dialogue')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
-                        <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
-                    </div>
+            <!-- 分頁 1：學習排行榜 (截圖 18) -->
+            <div id="sub-page-leaderboard" class="profile-container-card">
+                <h3 style="margin: 0 0 14px 0; color: #1e293b; font-size: 1.2rem; font-weight: 800;">
+                    <i class="fa-solid fa-trophy" style="color: var(--duo-gold);"></i> 學習排行榜
+                </h3>
+                <div class="tab-segmented">
+                    <button class="tab-segmented-item" id="tab-rank-friends" onclick="switchRankSubTab('friends')">好友榜</button>
+                    <button class="tab-segmented-item active" id="tab-rank-global" onclick="switchRankSubTab('global')">全球總榜</button>
+                </div>
+                <div id="leaderboard-list-container" style="display: flex; flex-direction: column; gap: 6px;">
+                    <div style="text-align: center; color: #94a3b8; padding: 20px 0;">載入排行榜中...</div>
                 </div>
             </div>
-            <div class="dialogue-sub-nav">
-                <button class="btn-dialogue-mode active" id="btn-mode-basic" onclick="switchDialogueMode('basic')">基礎對話</button>
-                <button class="btn-dialogue-mode" id="btn-mode-fill" onclick="switchDialogueMode('fill')">挖空填空</button>
-                <button class="btn-dialogue-mode" id="btn-mode-blind" onclick="switchDialogueMode('blind')">盲測聽力</button>
-            </div>
-            <div class="role-switch-box">
-                <button class="btn-role active" id="btn-role-a" onclick="switchUserRole('A')">扮演 Speaker A</button>
-                <button class="btn-role" id="btn-role-b" onclick="switchUserRole('B')">扮演 Speaker B</button>
-            </div>
-            <div class="chat-window" id="chat-window"></div>
-            <div id="box-blind-unlock" style="display: none; margin-bottom: 8px;">
-                <button class="btn-stage-action" style="width: 100%; border-color: var(--duo-orange); color: var(--duo-orange);" onclick="unlockBlindTextManually()">
-                    <i class="fa-solid fa-eye"></i> 解鎖當前句子內容
+
+            <!-- 分頁 2：我的帳號 (截圖 17) -->
+            <div id="sub-page-myaccount" class="profile-container-card hidden">
+                <div style="text-align: center; border-bottom: 1.5px dashed #e2e8f0; padding-bottom: 16px; margin-bottom: 16px;">
+                    <img id="myaccount-avatar" src="https://lh3.googleusercontent.com/a/default-user" class="profile-avatar-large" alt="User Avatar">
+                    <h3 style="margin: 0; color: #1e293b; font-size: 1.25rem;">
+                        <span id="myaccount-nickname">UWEI</span>
+                        <button onclick="openModal('modal-edit-nickname')" style="border:none; background:none; color:var(--duo-blue); cursor:pointer; font-size:1rem;"><i class="fa-solid fa-pen-to-square"></i></button>
+                    </h3>
+                    <p style="font-size: 0.88rem; color: #64748b; margin: 4px 0 0 0;" id="myaccount-email">email@example.com</p>
+                </div>
+
+                <div style="margin-bottom: 18px;">
+                    <div style="font-size: 0.95rem; font-weight: 800; color: #1e293b; margin-bottom: 10px;">已開通課程與到期日：</div>
+                    <div id="myaccount-memberships-list">
+                        <span class="course-pill">載入中...</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.95rem; font-weight: bold; color: #475569; margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>剩餘能量：</span>
+                        <span style="color: var(--duo-purple); font-weight: 900;"><i class="fa-solid fa-bolt-lightning"></i> 100</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>累積經驗 (XP)：</span>
+                        <span style="color: var(--duo-gold); font-weight: 900;"><i class="fa-solid fa-star"></i> <span id="myaccount-xp">0</span></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>連續簽到：</span>
+                        <span style="color: var(--duo-fire-red); font-weight: 900;"><i class="fa-solid fa-fire"></i> <span id="myaccount-streak">1</span> 天</span>
+                    </div>
+                </div>
+
+                <button class="btn-3d" onclick="handleLogout()" style="width: 100%; padding: 14px; background: var(--duo-fire-red); color: white; box-shadow: 0 4px 0 #dc2626; font-size: 1.05rem;">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> 登出系統
                 </button>
             </div>
-            <div class="controls">
-                <button class="btn-circle btn-listen" id="btn-dialogue-play" onclick="playDialogueAudio()"><i class="fa-solid fa-volume-high"></i></button>
-                <button class="btn-circle btn-record" id="btn-dialogue-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
-            </div>
-            <div class="nav-controls">
-                <button class="btn-nav" id="btn-dialogue-prev" onclick="prevDialogueSentence()">上一句</button>
-                <span class="lbl-progress" id="lbl-dialogue-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
-                <button class="btn-nav" id="btn-dialogue-next" onclick="nextDialogueSentence()">下一句</button>
-            </div>
         </div>
 
-        <!-- 步驟 6-D：單字跟讀挑戰畫面 -->
-        <div id="step-quiz-vocab-shadow" class="step-page">
-            <div class="challenge-top-bar">
-                <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
-                <div class="gear-menu-container">
-                    <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-shadow')"><i class="fa-solid fa-gear"></i></button>
-                    <div class="gear-dropdown" id="gear-dropdown-vocab-shadow">
-                        <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-vocab-shadow')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
-                        <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
-                    </div>
-                </div>
-            </div>
-            <div class="target-text" id="lbl-vocab-target-text">載入中...</div>
-            <div class="translation-text" id="lbl-vocab-translation" style="min-height: 1.5rem;"></div>
-            <div class="controls">
-                <button class="btn-circle btn-listen" id="btn-vocab-play-audio" onclick="playVocabAudio()"><i class="fa-solid fa-volume-high"></i></button>
-                <button class="btn-circle btn-record" id="btn-vocab-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
-            </div>
-            <div class="result-box">
-                <div>辨識結果：<span id="lbl-vocab-recognized-text" style="font-weight: bold; color: #374151;">-</span></div>
-                <div class="score-badge" id="lbl-score">判定結果：--</div>
-            </div>
-            <div class="nav-controls">
-                <button class="btn-nav" id="btn-vocab-prev" onclick="prevVocabQuestion()">上一題</button>
-                <span class="lbl-progress" id="lbl-vocab-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
-                <button class="btn-nav" id="btn-vocab-next" onclick="nextVocabQuestion()">下一題</button>
-            </div>
-        </div>
-
-        <!-- 步驟 6-E：單字聽打挑戰畫面 -->
-        <div id="step-quiz-vocab-type" class="step-page">
-            <div class="challenge-top-bar">
-                <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
-                <div class="gear-menu-container">
-                    <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-type')"><i class="fa-solid fa-gear"></i></button>
-                    <div class="gear-dropdown" id="gear-dropdown-vocab-type">
-                        <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-vocab-type')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
-                        <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
-                    </div>
-                </div>
-            </div>
-            <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 25px 0 15px 0;">
-                <div class="target-text" id="lbl-vocab-type-text" style="margin: 0; min-height: auto; display: none;">...</div>
-                <button class="btn-circle btn-listen" onclick="playVocabAudio()" style="width: 65px; height: 65px; font-size: 1.5rem; flex-shrink: 0;"><i class="fa-solid fa-volume-high"></i></button>
-            </div>
-            <input type="text" id="input-vocab-type" class="vocab-input" placeholder="請輸入聽到的單字" autocomplete="off" autocorrect="off" autocapitalize="none">
-            <button class="btn-confirm" onclick="checkVocabTypeAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
-            <div class="translation-text" id="lbl-vocab-type-translation" style="margin-top: 15px; font-size: 1.2rem; font-weight: bold;"></div>
-            <div class="result-box" style="margin-top: 10px;"><div class="score-badge" id="lbl-vocab-type-score">等待輸入...</div></div>
-            <div class="nav-controls">
-                <button class="btn-nav" id="btn-vocab-type-prev" onclick="prevVocabQuestion()">上一題</button>
-                <span class="lbl-progress" id="lbl-vocab-type-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
-                <button class="btn-nav" id="btn-vocab-type-next" onclick="nextVocabQuestion()">下一題</button>
-            </div>
-        </div>
-
-        <!-- 步驟 6-F：單字意思選擇題畫面 -->
-        <div id="step-quiz-vocab-choice" class="step-page">
-            <div class="challenge-top-bar">
-                <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
-                <div class="gear-menu-container">
-                    <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-choice')"><i class="fa-solid fa-gear"></i></button>
-                    <div class="gear-dropdown" id="gear-dropdown-vocab-choice">
-                        <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-vocab-choice')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
-                        <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
-                    </div>
-                </div>
-            </div>
-            <div class="target-text" id="lbl-vocab-choice-text">載入中...</div>
-            <div class="vocab-choice-list" id="container-vocab-choices"></div>
-            <div class="result-box" style="margin-top: 15px;"><div class="score-badge" id="lbl-vocab-choice-score">請選擇正確意思</div></div>
-            <div class="nav-controls">
-                <button class="btn-nav" id="btn-vocab-choice-prev" onclick="prevVocabQuestion()">上一題</button>
-                <span class="lbl-progress" id="lbl-vocab-choice-progress" style="color: #6b7280; font-size: 0.9rem;">0 / 0</span>
-                <button class="btn-nav" id="btn-vocab-choice-next" onclick="nextVocabQuestion()">下一題</button>
-            </div>
-        </div>
     </div>
 
     <!-- 核心邏輯腳本 -->
@@ -1042,7 +1102,7 @@
             }
         };
 
-        // ==================== 全功能 GAS 請求處理器 ====================
+        // ==================== 全功能 GAS 請求處理器 (支援純 JSON 與 JSONP) ====================
         async function requestGAS(apiUrl, actionName = '', extraParams = '') {
             let url = new URL(apiUrl);
             if (actionName) url.searchParams.set('action', actionName);
@@ -1237,47 +1297,44 @@
             if (!window.currentUserData) return;
             const streakDays = window.currentUserData.streakDays || 1;
             const focusHours = window.currentUserData.focusHours || 0.0;
+            const xp = window.currentUserData.xp || 0;
+            const displayName = window.currentUserData.displayName || "學生";
 
-            document.getElementById('lbl-username').innerText = window.currentUserData.displayName || "學生";
+            // 頂部導航更新
+            document.getElementById('lbl-username').innerText = displayName;
             document.getElementById('lbl-streak-days').innerText = streakDays;
-            document.getElementById('lbl-xp').innerText = window.currentUserData.xp || 0;
+            document.getElementById('lbl-xp').innerText = xp;
             document.getElementById('lbl-user-level').innerText = currentConfig.level || "1A";
             
-            // 同步成就統計彈窗數據
+            // 打卡月曆更新
             const dashDays = document.getElementById('dash-streak-days');
             const dashHours = document.getElementById('dash-focus-hours');
             if (dashDays) dashDays.innerText = streakDays;
             if (dashHours) dashHours.innerText = Number(focusHours).toFixed(1);
 
-            document.getElementById('profile-nickname').innerText = window.currentUserData.displayName || "學生";
-            document.getElementById('profile-email').innerText = currentUser.email || "";
-            document.getElementById('profile-realname').innerText = window.currentUserData.realName || "-";
-            document.getElementById('profile-role').innerText = window.currentUserData.role || "Student";
-            document.getElementById('profile-status').innerText = window.currentUserData.status || "開通中";
-            document.getElementById('profile-xp').innerText = window.currentUserData.xp || 0;
+            // 我的帳號頁面更新 (截圖 17)
+            document.getElementById('myaccount-nickname').innerText = displayName;
+            document.getElementById('myaccount-email').innerText = currentUser ? currentUser.email : "";
+            document.getElementById('myaccount-xp').innerText = xp;
+            document.getElementById('myaccount-streak').innerText = streakDays;
 
-            const courseContainer = document.getElementById('profile-memberships-list');
+            // 繪製截圖 17 的藍底圓角課程標籤列表
+            const courseContainer = document.getElementById('myaccount-memberships-list');
             courseContainer.innerHTML = "";
             const list = window.currentUserData.memberships || [];
             if (list.length > 0) {
                 list.forEach(c => {
-                    const row = document.createElement('div');
-                    row.style.cssText = "display:flex; justify-content:space-between; padding:4px 0;";
-                    row.innerHTML = `<span><i class="fa-solid fa-book"></i> 課程：${c.courseId}</span> <span style="color:#6b7280;">到期日：${c.expireDate}</span>`;
-                    courseContainer.appendChild(row);
+                    const pill = document.createElement('div');
+                    pill.className = "course-pill";
+                    pill.innerText = `${c.courseId} | 到期日 ${c.expireDate}`;
+                    courseContainer.appendChild(pill);
                 });
             } else {
-                courseContainer.innerHTML = "<span>尚無已開通課程</span>";
+                courseContainer.innerHTML = "<span class='course-pill'>尚無開通課程</span>";
             }
         }
 
         // 修改暱稱
-        document.getElementById('btn-open-edit-nickname').onclick = () => {
-            openModal('modal-edit-nickname');
-        };
-        document.getElementById('btn-cancel-nickname').onclick = () => {
-            closeModal('modal-edit-nickname');
-        };
         document.getElementById('btn-save-nickname').onclick = async () => {
             const newName = document.getElementById('input-edit-nickname').value.trim();
             const errDiv = document.getElementById('edit-nickname-error-msg');
@@ -1344,12 +1401,8 @@
             loginErrorMsg.classList.remove('hidden');
         }
 
-        document.getElementById('btn-forgot-password').onclick = () => {
-            openModal('modal-forgot-password');
-        };
-        document.getElementById('btn-cancel-forgot-password').onclick = () => {
-            closeModal('modal-forgot-password');
-        };
+        document.getElementById('btn-forgot-password').onclick = () => openModal('modal-forgot-password');
+        document.getElementById('btn-cancel-forgot-password').onclick = () => closeModal('modal-forgot-password');
         document.getElementById('btn-send-reset-email').onclick = async () => {
             const email = document.getElementById('input-forgot-email').value.trim();
             if (!email) return alert("請輸入電子郵件！");
@@ -1362,18 +1415,12 @@
             }
         };
 
-        document.getElementById('btn-profile-trigger').onclick = () => {
-            openModal('modal-profile-view');
-        };
-        document.getElementById('btn-close-profile').onclick = () => {
-            closeModal('modal-profile-view');
-        };
-        document.getElementById('btn-trigger-logout').onclick = () => {
-            if (confirm("確定要登出嗎？")) {
+        function handleLogout() {
+            if (confirm("確定要登出系統嗎？")) {
                 auth.signOut();
-                closeModal('modal-profile-view');
+                closeProfileView();
             }
-        };
+        }
 
         // ==================== 彈窗通用控制輔助函式 ====================
         function openModal(modalId) {
@@ -1391,7 +1438,109 @@
             }
         }
 
-        // ==================== 🔥 截圖 13：學習成就統計 Dashboard 月曆邏輯 ====================
+        // ==================== 🌟 截圖 17、18 會員中心與排行榜視圖切換 ====================
+        function openProfileView() {
+            document.getElementById('learning-content-view').classList.add('hidden');
+            document.getElementById('profile-view').classList.remove('hidden');
+            renderUserInfo();
+            switchProfileTab('myaccount'); // 預設打開我的帳號（或排行榜）
+        }
+
+        function closeProfileView() {
+            document.getElementById('profile-view').classList.add('hidden');
+            document.getElementById('learning-content-view').classList.remove('hidden');
+        }
+
+        function switchProfileTab(tab) {
+            const btnLeaderboard = document.getElementById('btn-nav-leaderboard');
+            const btnMyAccount = document.getElementById('btn-nav-myaccount');
+            const pageLeaderboard = document.getElementById('sub-page-leaderboard');
+            const pageMyAccount = document.getElementById('sub-page-myaccount');
+
+            if (tab === 'leaderboard') {
+                btnLeaderboard.classList.add('active');
+                btnMyAccount.classList.remove('active');
+                pageLeaderboard.classList.remove('hidden');
+                pageMyAccount.classList.add('hidden');
+                loadLeaderboardData();
+            } else {
+                btnMyAccount.classList.add('active');
+                btnLeaderboard.classList.remove('active');
+                pageMyAccount.classList.remove('hidden');
+                pageLeaderboard.classList.add('hidden');
+            }
+        }
+
+        function switchRankSubTab(subTab) {
+            const btnFriends = document.getElementById('tab-rank-friends');
+            const btnGlobal = document.getElementById('tab-rank-global');
+            if (subTab === 'global') {
+                btnGlobal.classList.add('active');
+                btnFriends.classList.remove('active');
+                loadLeaderboardData();
+            } else {
+                btnFriends.classList.add('active');
+                btnGlobal.classList.remove('active');
+                // 好友榜暫顯
+                const container = document.getElementById('leaderboard-list-container');
+                container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>尚無好友排名數據</div>";
+            }
+        }
+
+        // 讀取全球排行榜
+        async function loadLeaderboardData() {
+            const container = document.getElementById('leaderboard-list-container');
+            container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>載入排行榜中...</div>";
+
+            try {
+                const snapshot = await db.collection("users")
+                    .orderBy("xp", "desc")
+                    .limit(20)
+                    .get();
+
+                if (snapshot.empty) {
+                    container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>暫無榜單資料</div>";
+                    return;
+                }
+
+                container.innerHTML = "";
+                let rank = 1;
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const row = document.createElement('div');
+                    row.className = "rank-item-row";
+
+                    let rankClass = rank === 1 ? "rank-1" : (rank === 2 ? "rank-2" : (rank === 3 ? "rank-3" : ""));
+
+                    row.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="rank-num ${rankClass}">${rank}</div>
+                            <img src="https://lh3.googleusercontent.com/a/default-user" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                            <div>
+                                <div style="font-weight: 800; color: #1e293b; font-size: 0.95rem;">${data.displayName || '學生'}</div>
+                                <div style="font-size: 0.78rem; color: #94a3b8;">${data.unlockedLevels ? data.unlockedLevels[0] : '1A'}</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: 800; color: var(--duo-gold); font-size: 0.95rem;">
+                                <i class="fa-solid fa-star"></i> ${data.xp || 0}
+                            </div>
+                            <div style="font-size: 0.78rem; color: var(--duo-fire-red); font-weight: bold;">
+                                <i class="fa-solid fa-fire"></i> ${data.streakDays || 1} 天
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(row);
+                    rank++;
+                });
+
+            } catch (e) {
+                console.error("載入排行榜失敗:", e);
+                container.innerHTML = "<div style='text-align:center; color:#ef4444; padding:20px 0;'>載入失敗，請確認網路！</div>";
+            }
+        }
+
+        // ==================== 🔥 學習成就統計 Dashboard 月曆邏輯 ====================
         let calendarCurrentDate = new Date(2026, 9, 1); // 2026年 10月
 
         function renderStreakCalendar(dateObj) {
@@ -1443,7 +1592,7 @@
             renderStreakCalendar(calendarCurrentDate);
         };
 
-        // ==================== 🎯 截圖中程度切換彈窗的邏輯 ====================
+        // ==================== 🎯 程度切換彈窗的邏輯 ====================
         const initialLevelSelect = document.getElementById('initial-level-select');
 
         function triggerLevelSelectionModal() {
@@ -1492,9 +1641,8 @@
             selectLevel(selectedVal, selectedText);
         };
 
-        // ==================== 😭 退出挑戰二次確認功能 ====================
+        // ==================== 退出挑戰二次確認功能 ====================
         function promptQuitChallenge() {
-            // 關閉目前所有打開的齒輪選單
             document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
             openModal('modal-quit-challenge');
         }
@@ -1502,7 +1650,7 @@
         function confirmExitChallenge() {
             closeModal('modal-quit-challenge');
             stopSpeechRecognition();
-            goToStep('step-stage'); // 退回到關卡選擇頁面，頂部導航會自動恢復顯示
+            goToStep('step-stage');
         }
 
         async function addXP(amount) {
@@ -1518,8 +1666,7 @@
             }
         }
 
-        // ==================== 2. 下拉選單與輔助函式 ====================
-
+        // ==================== 下拉選單與輔助函式 ====================
         function toggleGearDropdown(dropdownId) {
             const dropdown = document.getElementById(dropdownId);
             document.querySelectorAll('.gear-dropdown').forEach(d => {
@@ -2574,7 +2721,7 @@
             const scoreBadge = document.getElementById('lbl-block-score');
 
             if (userSentence === targetSentence) {
-                scoreBadge.innerText = "🎉 完全正確！太棒了！+10 XP";
+                scoreBadge.innerText = "🎉 完全正確！+10 XP";
                 scoreBadge.style.color = "#58cc02";
                 playBlockAudio();
                 addXP(10);
