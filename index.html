@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多語種雲端遊戲化學習系統無改</title>
+    <title>多語種雲端遊戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -172,7 +172,7 @@
             border-color: #86efac !important; font-weight: 900;
         }
 
-        /* 截圖 17、18 會員中心與排行榜視圖專用樣式 */
+        /* 會員中心與排行榜視圖專用樣式 */
         .profile-container-card {
             background: #ffffff;
             border: 2px solid #e5e7eb;
@@ -244,21 +244,21 @@
             cursor: not-allowed;
         }
 
-        .stage-card-item {
+        .lesson-card-item {
             background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 14px;
             padding: 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;
         }
-        .stage-card-title { font-weight: bold; color: var(--duo-dark); text-align: left; font-size: 1rem; margin-bottom: 4px; }
-        .stage-btn-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
-        .btn-stage-action {
+        .lesson-card-title { font-weight: bold; color: var(--duo-dark); text-align: left; font-size: 1rem; margin-bottom: 4px; }
+        .lesson-btn-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+        .btn-lesson-action {
             background: white; border: 2px solid #cbd5e1; border-bottom: 3px solid #cbd5e1;
             border-radius: 10px; padding: 8px 2px; font-size: 0.85rem; font-weight: bold;
             color: #334155; cursor: pointer; transition: all 0.15s ease;
         }
-        .btn-stage-action:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
-        .btn-stage-action.btn-grammar-stage:hover { border-color: var(--duo-purple); color: var(--duo-purple); }
-        .btn-stage-action.btn-dialogue-stage:hover { border-color: var(--duo-orange); color: var(--duo-orange); }
-        .btn-stage-action.btn-vocab-stage:hover { border-color: #10b981; color: #10b981; }
+        .btn-lesson-action:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
+        .btn-lesson-action.btn-grammar-lesson:hover { border-color: var(--duo-purple); color: var(--duo-purple); }
+        .btn-lesson-action.btn-dialogue-lesson:hover { border-color: var(--duo-orange); color: var(--duo-orange); }
+        .btn-lesson-action.btn-vocab-lesson:hover { border-color: #10b981; color: #10b981; }
 
         .btn-confirm {
             width: 100%; background: var(--duo-green); color: white; border: none;
@@ -551,7 +551,7 @@
         </div>
     </div>
 
-    <!-- 😭 截圖 16：離開挑戰二次確認彈窗 -->
+    <!-- 😭 離開挑戰二次確認彈窗 -->
     <div id="modal-quit-challenge" class="custom-modal">
         <div class="custom-modal-card" style="padding: 26px 20px;">
             <div style="margin-bottom: 14px;">
@@ -681,20 +681,20 @@
                 <div id="container-units" class="option-grid grid-3"></div>
             </div>
 
-            <!-- 步驟 5：選擇關卡與模式 -->
-            <div id="step-stage" class="step-page">
+            <!-- 步驟 5：選擇課堂關卡與模式 -->
+            <div id="step-lesson" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-unit')"><i class="fa-solid fa-arrow-left"></i> 回單元選擇</button>
-                    <span id="lbl-stage-unit" style="font-weight: bold; color: var(--duo-blue);">單元 1</span>
+                    <span id="lbl-lesson-unit" style="font-weight: bold; color: var(--duo-blue);">單元 1</span>
                 </div>
-                <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇關卡挑戰</h2>
-                <div id="container-stages"></div>
+                <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇課堂挑戰 (Lesson)</h2>
+                <div id="container-lessons"></div>
             </div>
 
             <!-- 步驟 5.5：語法說明教室 -->
             <div id="step-grammar" class="step-page">
                 <div class="top-nav">
-                    <button class="btn-back-step" onclick="goToStep('step-stage')"><i class="fa-solid fa-arrow-left"></i> 回關卡選擇</button>
+                    <button class="btn-back-step" onclick="goToStep('step-lesson')"><i class="fa-solid fa-arrow-left"></i> 回課堂選擇</button>
                     <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-purple);">語法教室</span>
                 </div>
 
@@ -827,7 +827,7 @@
                 </div>
                 <div class="chat-window" id="chat-window"></div>
                 <div id="box-blind-unlock" style="display: none; margin-bottom: 8px;">
-                    <button class="btn-stage-action" style="width: 100%; border-color: var(--duo-orange); color: var(--duo-orange);" onclick="unlockBlindTextManually()">
+                    <button class="btn-lesson-action" style="width: 100%; border-color: var(--duo-orange); color: var(--duo-orange);" onclick="unlockBlindTextManually()">
                         <i class="fa-solid fa-eye"></i> 解鎖當前句子內容
                     </button>
                 </div>
@@ -921,7 +921,7 @@
             </div>
         </div>
 
-        <!-- 🌟 視圖 B：截圖 17、18 的會員中心與排行榜大視圖 -->
+        <!-- 🌟 視圖 B：會員中心與排行榜大視圖 -->
         <div id="profile-view" class="hidden" style="text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
                 <button class="btn-3d btn-3d-secondary" onclick="closeProfileView()" style="padding: 8px 16px;">
@@ -937,7 +937,7 @@
                 </div>
             </div>
 
-            <!-- 分頁 1：學習排行榜 (截圖 18) -->
+            <!-- 分頁 1：學習排行榜 -->
             <div id="sub-page-leaderboard" class="profile-container-card">
                 <h3 style="margin: 0 0 14px 0; color: #1e293b; font-size: 1.2rem; font-weight: 800;">
                     <i class="fa-solid fa-trophy" style="color: var(--duo-gold);"></i> 學習排行榜
@@ -951,7 +951,7 @@
                 </div>
             </div>
 
-            <!-- 分頁 2：我的帳號 (截圖 17) -->
+            <!-- 分頁 2：我的帳號 -->
             <div id="sub-page-myaccount" class="profile-container-card hidden">
                 <div style="text-align: center; border-bottom: 1.5px dashed #e2e8f0; padding-bottom: 16px; margin-bottom: 16px;">
                     <img id="myaccount-avatar" src="https://lh3.googleusercontent.com/a/default-user" class="profile-avatar-large" alt="User Avatar">
@@ -1008,13 +1008,13 @@
         let currentUser = null;
         window.currentUserData = null;
 
-        // 當前配置
+        // 當前配置 (stage 已改為 lesson)
         let currentConfig = {
             mode: 'shadow',
             category: 'korean',
             level: '1A',
             unit_id: '1',
-            stage: '1',
+            lesson: '1',
             lang: 'zh'
         };
 
@@ -1052,7 +1052,7 @@
         let isTypewriterTyping = false;
         let currentFullDialogText = "";
 
-        // ==================== 整合進來的 Firestore ProgressModel ====================
+        // ==================== Firestore ProgressModel ====================
         const ProgressModel = {
             loadProgress: async (uid) => {
                 try {
@@ -1086,11 +1086,12 @@
                     console.error("更新單字天梯失敗:", error);
                 }
             },
-            updateUnitProgress: async (uid, unit, stage) => {
+            updateUnitProgress: async (uid, unit, lesson) => {
                 try {
                     if (!window.currentUserData.unitProgress) window.currentUserData.unitProgress = {};
                     window.currentUserData.unitProgress[`unit_${unit}`] = {
-                        maxStage: stage,
+                        maxLesson: lesson,
+                        maxStage: lesson, // 雙重相容
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     };
                     await db.collection("users").doc(uid).update({
@@ -1312,13 +1313,12 @@
             if (dashDays) dashDays.innerText = streakDays;
             if (dashHours) dashHours.innerText = Number(focusHours).toFixed(1);
 
-            // 我的帳號頁面更新 (截圖 17)
+            // 我的帳號頁面更新
             document.getElementById('myaccount-nickname').innerText = displayName;
             document.getElementById('myaccount-email').innerText = currentUser ? currentUser.email : "";
             document.getElementById('myaccount-xp').innerText = xp;
             document.getElementById('myaccount-streak').innerText = streakDays;
 
-            // 繪製截圖 17 的藍底圓角課程標籤列表
             const courseContainer = document.getElementById('myaccount-memberships-list');
             courseContainer.innerHTML = "";
             const list = window.currentUserData.memberships || [];
@@ -1438,12 +1438,12 @@
             }
         }
 
-        // ==================== 🌟 截圖 17、18 會員中心與排行榜視圖切換 ====================
+        // ==================== 會員中心與排行榜視圖切換 ====================
         function openProfileView() {
             document.getElementById('learning-content-view').classList.add('hidden');
             document.getElementById('profile-view').classList.remove('hidden');
             renderUserInfo();
-            switchProfileTab('myaccount'); // 預設打開我的帳號（或排行榜）
+            switchProfileTab('myaccount');
         }
 
         function closeProfileView() {
@@ -1481,13 +1481,11 @@
             } else {
                 btnFriends.classList.add('active');
                 btnGlobal.classList.remove('active');
-                // 好友榜暫顯
                 const container = document.getElementById('leaderboard-list-container');
                 container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>尚無好友排名數據</div>";
             }
         }
 
-        // 讀取全球排行榜
         async function loadLeaderboardData() {
             const container = document.getElementById('leaderboard-list-container');
             container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>載入排行榜中...</div>";
@@ -1541,7 +1539,7 @@
         }
 
         // ==================== 🔥 學習成就統計 Dashboard 月曆邏輯 ====================
-        let calendarCurrentDate = new Date(2026, 9, 1); // 2026年 10月
+        let calendarCurrentDate = new Date(2026, 9, 1);
 
         function renderStreakCalendar(dateObj) {
             const year = dateObj.getFullYear();
@@ -1650,7 +1648,7 @@
         function confirmExitChallenge() {
             closeModal('modal-quit-challenge');
             stopSpeechRecognition();
-            goToStep('step-stage');
+            goToStep('step-lesson');
         }
 
         async function addXP(amount) {
@@ -1696,7 +1694,6 @@
             document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
         }
 
-        // 🌟 進入挑戰自動隱藏頂部資訊列，離開挑戰自動恢復顯示
         function goToStep(stepId) {
             stopSpeechRecognition();
             document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
@@ -1914,9 +1911,9 @@
         function selectUnit(unitId) {
             stopSpeechRecognition();
             currentConfig.unit_id = unitId;
-            document.getElementById('lbl-stage-unit').innerText = `Level ${currentConfig.level} | 第 ${unitId} 單元`;
+            document.getElementById('lbl-lesson-unit').innerText = `Level ${currentConfig.level} | 第 ${unitId} 單元`;
 
-            const container = document.getElementById('container-stages');
+            const container = document.getElementById('container-lessons');
             container.innerHTML = "";
 
             const combinedData = [...rawShadowData, ...rawBlocksData, ...rawDialogueData, ...rawVocabData];
@@ -1927,54 +1924,55 @@
                 const u = Array.isArray(i) ? i[2] : i.unit_id;
                 return normalizeLevelStr(l) === targetLevelNormalized && String(u) === String(unitId);
             });
-            const stages = [...new Set(filtered.map(i => Array.isArray(i) ? i[3] : i.stage))].filter(Boolean).sort((a,b) => a - b);
+            // 抓取 lesson (或相容 stage)
+            const lessons = [...new Set(filtered.map(i => Array.isArray(i) ? i[3] : (i.lesson || i.stage)))].filter(Boolean).sort((a,b) => a - b);
 
-            if (stages.length > 0) {
-                stages.forEach(s => {
+            if (lessons.length > 0) {
+                lessons.forEach(les => {
                     const card = document.createElement('div');
-                    card.className = "stage-card-item";
+                    card.className = "lesson-card-item";
 
                     const title = document.createElement('div');
-                    title.className = "stage-card-title";
-                    title.innerText = `第 ${s} 關卡 (${currentConfig.unit_id}-${s})`;
+                    title.className = "lesson-card-title";
+                    title.innerText = `第 ${les} 課 (${currentConfig.unit_id}-${les})`;
 
                     const btnGroup = document.createElement('div');
-                    btnGroup.className = "stage-btn-group";
+                    btnGroup.className = "lesson-btn-group";
 
                     const btnGrammar = document.createElement('button');
-                    btnGrammar.className = "btn-stage-action btn-grammar-stage";
+                    btnGrammar.className = "btn-lesson-action btn-grammar-lesson";
                     btnGrammar.innerHTML = `<i class="fa-solid fa-book"></i> 📖 語法`;
-                    btnGrammar.onclick = () => selectStageAndMode(s, 'grammar');
+                    btnGrammar.onclick = () => selectLessonAndMode(les, 'grammar');
 
                     const btnShadow = document.createElement('button');
-                    btnShadow.className = "btn-stage-action";
+                    btnShadow.className = "btn-lesson-action";
                     btnShadow.innerHTML = `<i class="fa-solid fa-microphone"></i> 🎙️ 跟讀`;
-                    btnShadow.onclick = () => selectStageAndMode(s, 'shadow');
+                    btnShadow.onclick = () => selectLessonAndMode(les, 'shadow');
 
                     const btnBlocks = document.createElement('button');
-                    btnBlocks.className = "btn-stage-action";
+                    btnBlocks.className = "btn-lesson-action";
                     btnBlocks.innerHTML = `<i class="fa-solid fa-puzzle-piece"></i> 🧩 重組`;
-                    btnBlocks.onclick = () => selectStageAndMode(s, 'blocks');
+                    btnBlocks.onclick = () => selectLessonAndMode(les, 'blocks');
 
                     const btnDialogue = document.createElement('button');
-                    btnDialogue.className = "btn-stage-action btn-dialogue-stage";
+                    btnDialogue.className = "btn-lesson-action btn-dialogue-lesson";
                     btnDialogue.innerHTML = `<i class="fa-solid fa-comments"></i> 💬 對話`;
-                    btnDialogue.onclick = () => selectStageAndMode(s, 'dialogue');
+                    btnDialogue.onclick = () => selectLessonAndMode(les, 'dialogue');
 
                     const btnVocabShadow = document.createElement('button');
-                    btnVocabShadow.className = "btn-stage-action btn-vocab-stage";
+                    btnVocabShadow.className = "btn-lesson-action btn-vocab-lesson";
                     btnVocabShadow.innerHTML = `<i class="fa-solid fa-font"></i> 🗣️ 單字跟讀`;
-                    btnVocabShadow.onclick = () => selectStageAndMode(s, 'vocab_shadow');
+                    btnVocabShadow.onclick = () => selectLessonAndMode(les, 'vocab_shadow');
 
                     const btnVocabType = document.createElement('button');
-                    btnVocabType.className = "btn-stage-action btn-vocab-stage";
+                    btnVocabType.className = "btn-lesson-action btn-vocab-lesson";
                     btnVocabType.innerHTML = `<i class="fa-solid fa-keyboard"></i> ⌨ 單字聽打`;
-                    btnVocabType.onclick = () => selectStageAndMode(s, 'vocab_type');
+                    btnVocabType.onclick = () => selectLessonAndMode(les, 'vocab_type');
 
                     const btnVocabChoice = document.createElement('button');
-                    btnVocabChoice.className = "btn-stage-action btn-vocab-stage";
+                    btnVocabChoice.className = "btn-lesson-action btn-vocab-lesson";
                     btnVocabChoice.innerHTML = `<i class="fa-solid fa-list-check"></i> 🎯 單字選擇`;
-                    btnVocabChoice.onclick = () => selectStageAndMode(s, 'vocab_choice');
+                    btnVocabChoice.onclick = () => selectLessonAndMode(les, 'vocab_choice');
 
                     btnGroup.appendChild(btnGrammar);
                     btnGroup.appendChild(btnShadow);
@@ -1989,19 +1987,19 @@
                     container.appendChild(card);
                 });
             } else {
-                container.innerHTML = `<div style="color: #6b7280; padding: 20px 0;">此單元尚無關卡資料</div>`;
+                container.innerHTML = `<div style="color: #6b7280; padding: 20px 0;">此單元尚無課堂資料</div>`;
             }
 
-            goToStep('step-stage');
+            goToStep('step-lesson');
         }
 
-        function selectStageAndMode(stage, mode) {
+        function selectLessonAndMode(lesson, mode) {
             stopSpeechRecognition(); 
-            currentConfig.stage = stage;
+            currentConfig.lesson = lesson;
             currentConfig.mode = mode;
 
             if (currentUser) {
-                ProgressModel.updateUnitProgress(currentUser.uid, currentConfig.unit_id, stage);
+                ProgressModel.updateUnitProgress(currentUser.uid, currentConfig.unit_id, lesson);
             }
 
             if (mode === 'grammar') {
@@ -2009,7 +2007,7 @@
                 const matchGrammar = globalGrammarData.find(g => 
                     normalizeLevelStr(g.level) === targetLevelNormalized &&
                     String(g.unit_id) === String(currentConfig.unit_id) &&
-                    String(g.stage) === String(stage)
+                    String(g.lesson || g.stage) === String(lesson)
                 );
 
                 if (matchGrammar && (
@@ -2020,20 +2018,20 @@
                 )) {
                     startGrammarChallenge(matchGrammar);
                 } else {
-                    alert("此關卡目前沒有設定獨立語法觀念喔！");
+                    alert("此課堂目前沒有設定獨立語法觀念喔！");
                 }
             } else if (mode === 'dialogue') {
                 const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
                 const matchDialogue = rawDialogueData.find(d => 
                     normalizeLevelStr(d.level) === targetLevelNormalized &&
                     String(d.unit_id) === String(currentConfig.unit_id) &&
-                    String(d.stage) === String(stage)
+                    String(d.lesson || d.stage) === String(lesson)
                 );
 
                 if (matchDialogue) {
                     startDialogueChallenge(matchDialogue);
                 } else {
-                    alert("此關卡目前沒有設定對話練習喔！");
+                    alert("此課堂目前沒有設定對話練習喔！");
                 }
             } else if (mode.startsWith('vocab_')) {
                 startVocabChallenge(mode);
@@ -2058,10 +2056,10 @@
             vocabQuestions = rawVocabData.filter(v => 
                 normalizeLevelStr(v.level) === targetLevelNormalized &&
                 String(v.unit_id) === String(currentConfig.unit_id) &&
-                String(v.stage) === String(currentConfig.stage)
+                String(v.lesson || v.stage) === String(currentConfig.lesson)
             );
 
-            if (vocabQuestions.length === 0) return alert("此關卡目前沒有設定單字練習喔！");
+            if (vocabQuestions.length === 0) return alert("此課堂目前沒有設定單字練習喔！");
 
             vocabIndex = 0;
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
@@ -2071,7 +2069,7 @@
                 'vocab_choice': '🎯 單字選擇'
             };
 
-            const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - 關卡 ${currentConfig.stage} (${modeTitleMap[vocabMode]})`;
+            const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (${modeTitleMap[vocabMode]})`;
             document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
 
             if (vocabMode === 'vocab_shadow') goToStep('step-quiz-vocab-shadow');
@@ -2208,7 +2206,7 @@
                 if (bText) dialogueList.push({ speaker: 'B', targetText: bText, fillText: bxText || bText, audioUrl: dialogueItem.audio_url || '' });
             }
 
-            if (dialogueList.length === 0) return alert("此關卡對話資料為空！");
+            if (dialogueList.length === 0) return alert("此課堂對話資料為空！");
 
             dialogueIndex = 0;
             switchDialogueMode('basic');
@@ -2216,7 +2214,7 @@
 
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
             document.querySelectorAll('.lbl-quiz-info').forEach(e => {
-                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - 關卡 ${currentConfig.stage} (💬 對話挑戰)`;
+                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (💬 對話挑戰)`;
             });
 
             goToStep('step-quiz-dialogue');
@@ -2333,7 +2331,7 @@
             currentGrammarItem = grammarData;
             currentDialogIndex = 0;
             
-            document.getElementById('lbl-grammar-info').innerText = `語法教室 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Stage ${currentConfig.stage}`;
+            document.getElementById('lbl-grammar-info').innerText = `語法教室 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Lesson ${currentConfig.lesson}`;
             document.getElementById('area-grammar-all-history').style.display = 'none';
             document.getElementById('area-grammar-example').style.display = 'none';
             document.getElementById('area-grammar-ready').style.display = 'none';
@@ -2383,7 +2381,7 @@
                 } else if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') {
                     nextBtn.innerHTML = `進入測驗 <i class="fa-solid fa-pen-to-square"></i>`;
                 } else {
-                    nextBtn.innerHTML = `完成關卡 <i class="fa-solid fa-check"></i>`;
+                    nextBtn.innerHTML = `完成課堂 <i class="fa-solid fa-check"></i>`;
                 }
             } else {
                 nextBtn.innerHTML = `下一步 <i class="fa-solid fa-arrow-right"></i>`;
@@ -2457,7 +2455,7 @@
             if (currentGrammarItem.example && currentGrammarItem.example.trim() !== '') showExampleArea();
             else if (currentGrammarItem.ready && currentGrammarItem.ready.trim() !== '') showReadyArea();
             else if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') showGrammarQuizArea();
-            else goToStep('step-stage');
+            else goToStep('step-lesson');
         }
 
         function showExampleArea() {
@@ -2497,7 +2495,7 @@
             document.getElementById('area-grammar-example').style.display = 'none';
             if (currentGrammarItem.ready && currentGrammarItem.ready.trim() !== '') showReadyArea();
             else if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') showGrammarQuizArea();
-            else goToStep('step-stage');
+            else goToStep('step-lesson');
         }
 
         function showReadyArea() {
@@ -2510,7 +2508,7 @@
         function enterGrammarQuizFromReady() {
             document.getElementById('area-grammar-ready').style.display = 'none';
             if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') showGrammarQuizArea();
-            else goToStep('step-stage');
+            else goToStep('step-lesson');
         }
 
         function renderGrammarHistoryList() {
@@ -2593,9 +2591,9 @@
             if (isAllCorrect) {
                 resultText.innerText = currentGrammarItem.correct || "🎉 完全正確！通關成功！+20 XP";
                 resultText.style.color = "#58cc02";
-                actionBtn.innerHTML = `<i class="fa-solid fa-flag-checkered"></i> 完成關卡`;
+                actionBtn.innerHTML = `<i class="fa-solid fa-flag-checkered"></i> 完成課堂`;
                 actionBtn.style.background = "#58cc02";
-                actionBtn.onclick = () => goToStep('step-stage');
+                actionBtn.onclick = () => goToStep('step-lesson');
                 addXP(20);
             } else {
                 resultText.innerText = currentGrammarItem.incorrect || "❌ 答案不太對喔，再試一次！";
@@ -2613,7 +2611,7 @@
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
             const modeTitle = currentConfig.mode === 'shadow' ? '跟讀挑戰' : '重組挑戰';
             document.querySelectorAll('.lbl-quiz-info').forEach(e => {
-                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - 關卡 ${currentConfig.stage} (${modeTitle})`;
+                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (${modeTitle})`;
             });
 
             const langIndexMap = { 'zh': 5, 'en': 6, 'kr': 7, 'ja': 7 };
@@ -2625,7 +2623,7 @@
                 questions = rawShadowData.filter(i => 
                     normalizeLevelStr(i[1]) === targetLevelNormalized &&
                     String(i[2]) === String(currentConfig.unit_id) &&
-                    String(i[3]) === String(currentConfig.stage)
+                    String(i[3]) === String(currentConfig.lesson)
                 ).map(i => ({
                     id: i[0],
                     text: i[4],
@@ -2641,7 +2639,7 @@
                 questions = rawBlocksData.filter(i => 
                     normalizeLevelStr(i[1]) === targetLevelNormalized &&
                     String(i[2]) === String(currentConfig.unit_id) &&
-                    String(i[3]) === String(currentConfig.stage)
+                    String(i[3]) === String(currentConfig.lesson)
                 ).map(i => ({
                     id: i[0],
                     fullText: i[4],
@@ -2653,7 +2651,7 @@
 
             currentIndex = 0;
             if (questions.length > 0) displayQuestion();
-            else alert("該關卡尚無練習題目！");
+            else alert("該課堂尚無練習題目！");
         }
 
         function displayQuestion() {
@@ -2766,7 +2764,7 @@
             return str.replace(/[.,?!~\s\r\n]/g, '').toLowerCase();
         }
 
-        // 發音檢驗邏輯（合格即可，不打分數）
+        // 發音檢驗邏輯
         function isSpeechPass(str1, str2) {
             const s1 = cleanStringForCompare(str1);
             const s2 = cleanStringForCompare(str2);
