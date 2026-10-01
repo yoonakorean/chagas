@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>gram23戲化學習系統</title>
+    <title>多語種雲端遊戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -730,7 +730,7 @@
                 </div>
             </div>
 
-            <!-- 步驟 6-A：跟讀挑戰畫面 -->
+            <!-- 步驟 6-A：跟讀挑戰畫面 (Sentence 跟讀) -->
             <div id="step-quiz-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -827,7 +827,7 @@
                 </div>
             </div>
 
-            <!-- 步驟 6-D：單字跟讀挑戰畫面 -->
+            <!-- 步驟 6-D：單字跟讀挑戰畫面 (獨立單字庫，完全不受 sentence 影響) -->
             <div id="step-quiz-vocab-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.85rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -847,7 +847,7 @@
                 </div>
                 <div class="result-box">
                     <div>辨識結果：<span id="lbl-vocab-recognized-text" style="font-weight: bold; color: #374151;">-</span></div>
-                    <div class="score-badge" id="lbl-score">判定結果：--</div>
+                    <div class="score-badge" id="lbl-vocab-score">判定結果：--</div>
                 </div>
                 <div class="nav-controls">
                     <button class="btn-nav" id="btn-vocab-prev" onclick="prevVocabQuestion()">上一題</button>
@@ -922,7 +922,6 @@
                 </div>
             </div>
 
-            <!-- 分頁 1：學習排行榜 -->
             <div id="sub-page-leaderboard" class="profile-container-card">
                 <h3 style="margin: 0 0 14px 0; color: #1e293b; font-size: 1.2rem; font-weight: 800;">
                     <i class="fa-solid fa-trophy" style="color: var(--duo-gold);"></i> 學習排行榜
@@ -936,7 +935,6 @@
                 </div>
             </div>
 
-            <!-- 分頁 2：我的帳號 -->
             <div id="sub-page-myaccount" class="profile-container-card hidden">
                 <div style="text-align: center; border-bottom: 1.5px dashed #e2e8f0; padding-bottom: 16px; margin-bottom: 16px;">
                     <img id="myaccount-avatar" src="https://lh3.googleusercontent.com/a/default-user" class="profile-avatar-large" alt="User Avatar">
@@ -979,10 +977,8 @@
 
     <!-- 核心邏輯腳本 -->
     <script>
-        // 🔑 1. 白名單專用 Google Apps Script API
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
-        // 📚 2. 各語言題庫專用 Google Apps Script API
         const API_URLS = {
             korean: "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
             japanese: "https://script.google.com/macros/s/AKfycbQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
@@ -1005,7 +1001,7 @@
         let rawBlocksData = [];  
         let globalGrammarData = []; 
         let rawDialogueData = []; 
-        let rawVocabData = [];
+        let rawVocabData = []; // 單字獨立陣列，嚴格不受 sentence 影響
 
         let questions = [];
         let currentIndex = 0;
@@ -1752,6 +1748,7 @@
             btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 同步最新試算表中...`;
 
             try {
+                // getLanguageData 同步 sentence 資料；getVocabularyData 獨立取得單字庫
                 const [shadowRes, blocksRes, grammarRes, dialogueRes, vocabRes] = await Promise.all([
                     requestGAS(targetApi, 'getLanguageData').catch(()=>null),
                     requestGAS(targetApi, 'getBlocksData').catch(()=>null),
@@ -1998,13 +1995,14 @@
                     alert("此課堂目前沒有設定對話練習喔！");
                 }
             } else if (mode.startsWith('vocab_')) {
+                // 單字模式獨立進入，使用 rawVocabData
                 startVocabChallenge(mode);
             } else {
                 startMainQuiz();
             }
         }
 
-        // ==================== 3. 單字測驗邏輯 ====================
+        // ==================== 3. 單字測驗邏輯 (維持獨立讀取 vocabulary) ====================
 
         function getTranslationByLang(item) {
             if (!item) return "";
@@ -2301,7 +2299,6 @@
             document.getElementById('area-grammar-ready').style.display = 'none';
             document.getElementById('area-grammar-quiz').style.display = 'none';
 
-            // 結構化語法對話，嚴格保留 gramNum
             if (grammarData.dialogs && grammarData.dialogs.length > 0) {
                 currentGrammarItem.structuredDialogs = grammarData.dialogs.map((d, idx) => {
                     if (typeof d === 'object' && d !== null && d.text !== undefined) {
@@ -2388,7 +2385,6 @@
             const audioBtn = document.getElementById('btn-gram2-audio');
             const targetGramNum = currentDialogObj.gramNum;
 
-            // 🎯 核心判定：只有真正的 gram2 或 gram3 才有音檔功能，空值不順延至 gram4
             if (targetGramNum === 2 || targetGramNum === 3) {
                 audioBtn.style.display = 'block';
                 audioBtn.onclick = (e) => { 
@@ -2624,6 +2620,7 @@
 
             if (currentConfig.mode === 'shadow') {
                 goToStep('step-quiz-shadow');
+                // 抓取 sentence 資料
                 questions = rawShadowData.filter(i => 
                     normalizeLevelStr(i[1]) === targetLevelNormalized &&
                     String(i[2]) === String(currentConfig.unit_id) &&
