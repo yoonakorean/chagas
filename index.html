@@ -763,9 +763,9 @@
         </div>
     </div>
 
-    <!-- 核心邏輯腳本 (包含內建 Firestore 模組) -->
+    <!-- 核心邏輯腳本 -->
     <script>
-        // 🔑 1. 白名單與程度權限專用 Google Apps Script API
+        // 🔑 1. 白名單專用 Google Apps Script API
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbzcpVJShHN94x3-igocTch4A9nsvwgBvIc_Qe-yCFhwFKTkQm97TMkysZqalBVQaf_M/exec";
 
         // 📚 2. 各語言題庫專用 Google Apps Script API
@@ -909,12 +909,11 @@
             }
         });
 
-        // 向白名單 API 驗證學員資格與課程權限
+        // 核心白名單驗證（精準對應 allowedLevels 與 memberships）
         async function verifyAndSyncUser(user) {
             document.getElementById('lbl-username').innerText = "驗證白名單中...";
             try {
-                // 向 AUTH_WHITELIST_API 發送 JSONP 查詢
-                const gasResult = await loadDataViaJSONP(AUTH_WHITELIST_API, '', `&email=${encodeURIComponent(user.email)}`);
+                const gasResult = await loadDataViaJSONP(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
 
                 if (!gasResult || gasResult.status !== "success") {
                     alert("您不在系統白名單內或帳號已被停權！\n請聯繫管理員開通。");
@@ -922,28 +921,37 @@
                     return;
                 }
 
-                const memberInfo = gasResult.member || {};
-                const memberships = gasResult.memberships || [];
+                // 提取開放程度清單 (例如 ['1A', '2A'])
+                let rawLevels = gasResult.allowedLevels || [];
+                if (!Array.isArray(rawLevels)) rawLevels = [String(rawLevels)];
+                const unlockedLevels = rawLevels.map(l => String(l).trim().toUpperCase()).filter(Boolean);
 
-                // 提取開通的程度陣列 (例如 ['0A', '1A'])
-                const unlockedLevels = memberships
-                    .filter(m => m.status.toLowerCase() === 'active')
-                    .map(m => m.courseId.toUpperCase());
+                const memberships = gasResult.memberships || unlockedLevels.map(lvl => ({
+                    courseId: lvl,
+                    expireDate: gasResult.expireAt || "2027-12-31",
+                    status: "active"
+                }));
 
-                // 透過 ProgressModel 讀取 Firestore 進度紀錄
+                // 透過 ProgressModel 讀取 Firestore 紀錄
                 const firestoreData = await ProgressModel.loadProgress(user.uid);
 
                 if (!firestoreData) {
-                    window.tempMemberInfo = memberInfo;
+                    window.tempMemberInfo = {
+                        realName: gasResult.realName || "",
+                        nickname: gasResult.nickname || "",
+                        role: gasResult.role || "student",
+                        status: "active"
+                    };
                     window.tempMemberships = memberships;
                     window.tempUnlockedLevels = unlockedLevels;
+
                     document.getElementById('login-modal').classList.add('hidden');
                     document.getElementById('modal-setup-nickname').classList.remove('hidden');
                 } else {
                     window.currentUserData = firestoreData;
-                    window.currentUserData.realName = memberInfo.realName || firestoreData.realName || "";
-                    window.currentUserData.role = memberInfo.role || firestoreData.role || "student";
-                    window.currentUserData.status = memberInfo.status || firestoreData.status || "active";
+                    window.currentUserData.realName = gasResult.realName || firestoreData.realName || "-";
+                    window.currentUserData.role = gasResult.role || firestoreData.role || "Student";
+                    window.currentUserData.status = "開通中";
                     window.currentUserData.memberships = memberships;
                     window.currentUserData.unlockedLevels = unlockedLevels;
 
@@ -975,7 +983,7 @@
                 displayName: nickname,
                 realName: window.tempMemberInfo.realName || "",
                 role: window.tempMemberInfo.role || "student",
-                status: window.tempMemberInfo.status || "active",
+                status: "開通中",
                 nativeLanguage: nativeLang,
                 xp: 0,
                 unlockedLevels: window.tempUnlockedLevels || [],
@@ -1213,23 +1221,36 @@
             checkCacheStatus();
         }
 
+        // 強固版 JSONP 呼叫函式
         function loadDataViaJSONP(apiUrl, actionName, extraParams = '') {
             return new Promise((resolve, reject) => {
-                const callbackName = 'gas_cb_' + Date.now() + Math.floor(Math.random()*1000);
+                const callbackName = 'gas_cb_' + Date.now() + Math.floor(Math.random() * 1000);
                 const script = document.createElement('script');
+
                 window[callbackName] = function(data) {
                     delete window[callbackName];
                     if (document.body.contains(script)) document.body.removeChild(script);
                     resolve(data);
                 };
+
                 script.onerror = function() {
                     delete window[callbackName];
                     if (document.body.contains(script)) document.body.removeChild(script);
                     reject(new Error("JSONP 連線失敗"));
                 };
-                const connector = apiUrl.includes('?') ? '&' : '?';
-                const actionPart = actionName ? `action=${actionName}&` : '';
-                script.src = `${apiUrl}${connector}${actionPart}prefix=${callbackName}&t=${Date.now()}${extraParams}`;
+
+                let url = new URL(apiUrl);
+                if (actionName) url.searchParams.set('action', actionName);
+                url.searchParams.set('prefix', callbackName);
+                url.searchParams.set('t', Date.now());
+
+                if (extraParams) {
+                    const clean = extraParams.startsWith('&') ? extraParams.slice(1) : extraParams;
+                    const sp = new URLSearchParams(clean);
+                    sp.forEach((v, k) => url.searchParams.set(k, v));
+                }
+
+                script.src = url.toString();
                 document.body.appendChild(script);
             });
         }
@@ -1309,12 +1330,11 @@
             }
         }
 
-        // 依據 Memberships 權限動態渲染解鎖 / 鎖定程度選單
+        // 依據 Memberships 權限動態渲染解鎖/鎖定
         function renderLevelMenu() {
             const container = document.getElementById('container-levels');
             container.innerHTML = "";
 
-            // 取得當前學員解鎖的程度代碼陣列 (例如 ['0A'])
             const userUnlocked = (window.currentUserData && window.currentUserData.unlockedLevels)
                 ? window.currentUserData.unlockedLevels.map(l => l.toUpperCase())
                 : [];
@@ -1481,7 +1501,6 @@
             currentConfig.stage = stage;
             currentConfig.mode = mode;
 
-            // 記錄關卡解鎖進度至 Firestore
             if (currentUser) {
                 ProgressModel.updateUnitProgress(currentUser.uid, currentConfig.unit_id, stage);
             }
