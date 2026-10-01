@@ -763,14 +763,15 @@
         </div>
     </div>
 
-    <!-- 邏輯腳本 -->
+    <!-- 核心邏輯腳本 (包含內建 Firestore 模組) -->
     <script>
-        // ⚠️ 請填寫您的 Google Apps Script 部署 URL
-        const GAS_AUTH_API = "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec";
+        // 🔑 1. 白名單與程度權限專用 Google Apps Script API
+        const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbzcpVJShHN94x3-igocTch4A9nsvwgBvIc_Qe-yCFhwFKTkQm97TMkysZqalBVQaf_M/exec";
 
+        // 📚 2. 各語言題庫專用 Google Apps Script API
         const API_URLS = {
-            korean: GAS_AUTH_API,
-            japanese: "",
+            korean: "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
+            japanese: "https://script.google.com/macros/s/AKfycbQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
             english: ""
         };
 
@@ -822,7 +823,7 @@
         let isTypewriterTyping = false;
         let currentFullDialogText = "";
 
-        // ==================== ProgressModel 模組化整合 ====================
+        // ==================== 整合進來的 Firestore ProgressModel ====================
         const ProgressModel = {
             loadProgress: async (uid) => {
                 try {
@@ -839,6 +840,21 @@
                     await db.collection("users").doc(uid).update(data);
                 } catch (error) {
                     console.error("儲存進度失敗:", error);
+                }
+            },
+            updateWordProgress: async (uid, word, isCorrect, elapsed) => {
+                try {
+                    if (!window.currentUserData.wordProgress) window.currentUserData.wordProgress = {};
+                    window.currentUserData.wordProgress[word] = {
+                        lastTested: firebase.firestore.FieldValue.serverTimestamp(),
+                        isCorrect: isCorrect,
+                        elapsed: elapsed
+                    };
+                    await db.collection("users").doc(uid).update({
+                        "wordProgress": window.currentUserData.wordProgress
+                    });
+                } catch (error) {
+                    console.error("更新單字天梯失敗:", error);
                 }
             },
             updateUnitProgress: async (uid, unit, stage) => {
@@ -893,12 +909,12 @@
             }
         });
 
-        // 核心白名單驗證（呼叫 GAS）
+        // 向白名單 API 驗證學員資格與課程權限
         async function verifyAndSyncUser(user) {
-            document.getElementById('lbl-username').innerText = "驗證權限中...";
+            document.getElementById('lbl-username').innerText = "驗證白名單中...";
             try {
-                // 1. 向 GAS 查詢 Members 與 Memberships
-                const gasResult = await loadDataViaJSONP(GAS_AUTH_API, '', `&email=${encodeURIComponent(user.email)}`);
+                // 向 AUTH_WHITELIST_API 發送 JSONP 查詢
+                const gasResult = await loadDataViaJSONP(AUTH_WHITELIST_API, '', `&email=${encodeURIComponent(user.email)}`);
 
                 if (!gasResult || gasResult.status !== "success") {
                     alert("您不在系統白名單內或帳號已被停權！\n請聯繫管理員開通。");
@@ -906,27 +922,24 @@
                     return;
                 }
 
-                // 2. 取得 GAS 中的權限
                 const memberInfo = gasResult.member || {};
                 const memberships = gasResult.memberships || [];
 
-                // 提煉出已開通的程度列表 (CourseId 如 '0A', '1A')
+                // 提取開通的程度陣列 (例如 ['0A', '1A'])
                 const unlockedLevels = memberships
                     .filter(m => m.status.toLowerCase() === 'active')
                     .map(m => m.courseId.toUpperCase());
 
-                // 3. 透過 ProgressModel 載入 Firestore 記錄
+                // 透過 ProgressModel 讀取 Firestore 進度紀錄
                 const firestoreData = await ProgressModel.loadProgress(user.uid);
 
                 if (!firestoreData) {
-                    // 首次登入，開啟暱稱填寫彈窗
                     window.tempMemberInfo = memberInfo;
                     window.tempMemberships = memberships;
                     window.tempUnlockedLevels = unlockedLevels;
                     document.getElementById('login-modal').classList.add('hidden');
                     document.getElementById('modal-setup-nickname').classList.remove('hidden');
                 } else {
-                    // 舊學員登入，即時同步試算表最新權限
                     window.currentUserData = firestoreData;
                     window.currentUserData.realName = memberInfo.realName || firestoreData.realName || "";
                     window.currentUserData.role = memberInfo.role || firestoreData.role || "student";
@@ -945,7 +958,7 @@
             }
         }
 
-        // 完成首次註冊暱稱儲存
+        // 首次登入儲存暱稱
         document.getElementById('btn-save-initial-nickname').onclick = async () => {
             const nickname = document.getElementById('input-setup-nickname').value.trim();
             const nativeLang = document.getElementById('select-native-language').value;
@@ -978,7 +991,6 @@
             renderUserInfo();
         };
 
-        // 渲染使用者資料至個人中心與資訊條
         function renderUserInfo() {
             if (!window.currentUserData) return;
             document.getElementById('lbl-username').innerText = window.currentUserData.displayName || "學生";
@@ -1005,7 +1017,7 @@
             }
         }
 
-        // 修改暱稱（30秒冷卻限制）
+        // 修改暱稱（30秒冷卻機制）
         document.getElementById('btn-open-edit-nickname').onclick = () => {
             document.getElementById('modal-edit-nickname').classList.remove('hidden');
         };
@@ -1302,7 +1314,7 @@
             const container = document.getElementById('container-levels');
             container.innerHTML = "";
 
-            // 取得當前學員解鎖的程度代碼陣列 (如 ['0A'])
+            // 取得當前學員解鎖的程度代碼陣列 (例如 ['0A'])
             const userUnlocked = (window.currentUserData && window.currentUserData.unlockedLevels)
                 ? window.currentUserData.unlockedLevels.map(l => l.toUpperCase())
                 : [];
@@ -1537,7 +1549,7 @@
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
             const modeTitleMap = {
                 'vocab_shadow': '🗣️ 單字跟讀',
-                'vocab_type': '⌨️️ 單字聽打',
+                'vocab_type': '⌨ 單字聽打',
                 'vocab_choice': '🎯 單字選擇'
             };
 
@@ -2236,6 +2248,7 @@
             return str.replace(/[.,?!~\s\r\n]/g, '').toLowerCase();
         }
 
+        // 發音檢驗邏輯（合格即可，不打分數）
         function isSpeechPass(str1, str2) {
             const s1 = cleanStringForCompare(str1);
             const s2 = cleanStringForCompare(str2);
