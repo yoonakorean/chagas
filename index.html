@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多語st to lesson</title>
+    <title>多語gram2</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -2337,7 +2337,32 @@
             document.getElementById('area-grammar-ready').style.display = 'none';
             document.getElementById('area-grammar-quiz').style.display = 'none';
 
+            // 將 dialogs 轉換為攜帶原始 gram 編號的結構，相容純字串與物件
             if (grammarData.dialogs && grammarData.dialogs.length > 0) {
+                currentGrammarItem.structuredDialogs = grammarData.dialogs.map((d, idx) => {
+                    if (typeof d === 'object' && d !== null && d.text !== undefined) {
+                        return d;
+                    }
+                    // 若後端僅回傳純字串陣列，檢查原始物件中對應的 gram1 ~ gram10
+                    let matchedGramNum = null;
+                    const dClean = String(d).trim();
+                    for (let g = 1; g <= 10; g++) {
+                        const originalVal = grammarData[`gram${g}`];
+                        if (originalVal && String(originalVal).trim() === dClean) {
+                            matchedGramNum = g;
+                            break;
+                        }
+                    }
+                    return {
+                        gramNum: matchedGramNum !== null ? matchedGramNum : (idx + 1),
+                        text: dClean
+                    };
+                });
+            } else {
+                currentGrammarItem.structuredDialogs = [];
+            }
+
+            if (currentGrammarItem.structuredDialogs && currentGrammarItem.structuredDialogs.length > 0) {
                 document.getElementById('area-grammar-dialog').style.display = 'block';
                 showCurrentGrammarDialog();
             } else if (grammarData.example && grammarData.example.trim() !== '') {
@@ -2351,13 +2376,17 @@
             goToStep('step-grammar');
         }
 
-        function playGrammarAudio(dialogIdx) {
+        function playGrammarAudio(gramNum, dialogText) {
             stopSpeechRecognition();
             if (!currentGrammarItem) return;
-            let audioUrl = dialogIdx === 1 ? currentGrammarItem.gram2_audio : (dialogIdx === 2 ? currentGrammarItem.gram3_audio : "");
-            const textToSpeak = (currentGrammarItem.dialogs && currentGrammarItem.dialogs[dialogIdx])
-                ? currentGrammarItem.dialogs[dialogIdx].replace(/^[\s\r\n\u3000]+/g, '').trim()
-                : "";
+            let audioUrl = "";
+            if (gramNum === 2) {
+                audioUrl = currentGrammarItem.gram2_audio || "";
+            } else if (gramNum === 3) {
+                audioUrl = currentGrammarItem.gram3_audio || "";
+            }
+
+            const textToSpeak = dialogText ? dialogText.replace(/^[\s\r\n\u3000]+/g, '').trim() : "";
 
             if (audioUrl && audioUrl.trim() !== '') {
                 new Audio(audioUrl).play().catch(() => { if (textToSpeak) speakTTS(textToSpeak); });
@@ -2367,8 +2396,8 @@
         }
 
         function showCurrentGrammarDialog() {
-            if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
-            const total = currentGrammarItem.dialogs.length;
+            if (!currentGrammarItem || !currentGrammarItem.structuredDialogs) return;
+            const total = currentGrammarItem.structuredDialogs.length;
             document.getElementById('lbl-dialog-counter').innerText = `${currentDialogIndex + 1} / ${total}`;
             document.getElementById('btn-prev-dialog').disabled = currentDialogIndex === 0;
 
@@ -2387,13 +2416,20 @@
                 nextBtn.innerHTML = `下一步 <i class="fa-solid fa-arrow-right"></i>`;
             }
 
-            currentFullDialogText = (currentGrammarItem.dialogs[currentDialogIndex] || "").replace(/^[\s\r\n\u3000]+/g, '').replace(/\r/g, '').trim();
+            const currentDialogObj = currentGrammarItem.structuredDialogs[currentDialogIndex];
+            currentFullDialogText = (currentDialogObj.text || "").replace(/^[\s\r\n\u3000]+/g, '').replace(/\r/g, '').trim();
 
             const audioBtn = document.getElementById('btn-gram2-audio');
-            if (currentDialogIndex === 1 || currentDialogIndex === 2) {
+            const targetGramNum = currentDialogObj.gramNum;
+
+            // 嚴格判定：只有當前句子真正是 gram2 或 gram3 時，才顯示音檔按鈕與播放
+            if (targetGramNum === 2 || targetGramNum === 3) {
                 audioBtn.style.display = 'block';
-                audioBtn.onclick = (e) => { e.stopPropagation(); playGrammarAudio(currentDialogIndex); };
-                playGrammarAudio(currentDialogIndex);
+                audioBtn.onclick = (e) => { 
+                    e.stopPropagation(); 
+                    playGrammarAudio(targetGramNum, currentFullDialogText); 
+                };
+                playGrammarAudio(targetGramNum, currentFullDialogText);
             } else {
                 audioBtn.style.display = 'none';
             }
@@ -2514,13 +2550,15 @@
         function renderGrammarHistoryList() {
             const container = document.getElementById('container-dialog-history');
             container.innerHTML = "";
-            if (currentGrammarItem && currentGrammarItem.dialogs && currentGrammarItem.dialogs.length > 0) {
-                let listToRender = [...currentGrammarItem.dialogs];
+            const list = currentGrammarItem ? (currentGrammarItem.structuredDialogs || currentGrammarItem.dialogs) : [];
+            if (list && list.length > 0) {
+                let listToRender = [...list];
                 if (listToRender.length > 1) listToRender.pop();
-                listToRender.forEach((dText, idx) => {
+                listToRender.forEach((itemObj, idx) => {
+                    const text = typeof itemObj === 'object' && itemObj !== null ? (itemObj.text || '') : String(itemObj);
                     const item = document.createElement('div');
                     item.className = 'dialog-history-item';
-                    item.innerHTML = `<span class="num">${idx + 1}.</span> ${dText.replace(/^[\s\r\n\u3000]+/g, '').replace(/\r/g, '').trim()}`;
+                    item.innerHTML = `<span class="num">${idx + 1}.</span> ${text.replace(/^[\s\r\n\u3000]+/g, '').replace(/\r/g, '').trim()}`;
                     container.appendChild(item);
                 });
                 document.getElementById('area-grammar-all-history').style.display = 'block';
