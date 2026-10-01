@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多語種雲端遊戲化學習系統</title>
+    <title>多語種雲端遊戲化學習系統555</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -78,69 +78,48 @@
         }
         .user-meta-item:hover { background: #f3f4f6; }
 
-        /* 彈窗樣式 */
+        /* 彈窗樣式 - 統一為登入畫面規範 */
         .custom-modal {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.6); display: flex; justify-content: center;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.55); display: flex; justify-content: center;
             align-items: center; z-index: 99999;
         }
         .custom-modal-card {
-            background: white; border-radius: 28px; padding: 28px 22px;
+            background: white; border-radius: 24px; padding: 24px 20px;
             width: 88%; max-width: 380px; text-align: center;
-            box-shadow: 0 12px 36px rgba(0,0,0,0.28); position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25); position: relative;
             box-sizing: border-box;
-            animation: modalPopIn 0.18s ease-out;
         }
-        @keyframes modalPopIn {
-            from { transform: scale(0.92); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
         .close-icon-circle {
-            position: absolute; top: 16px; left: 16px; width: 32px; height: 32px;
-            background: #f1f5f9; color: #94a3b8; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 0.95rem;
+            position: absolute; top: 14px; left: 16px; width: 28px; height: 28px;
+            background: #f3f4f6; color: #9ca3af; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 0.9rem;
             cursor: pointer; transition: background 0.15s;
         }
         .close-icon-circle:hover { background: #e2e8f0; color: #64748b; }
 
         .hidden { display: none !important; }
 
-        /* 月曆 Dashboard 專用樣式 */
-        .calendar-header-ctrl {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 12px; font-weight: bold; color: #374151; font-size: 0.95rem;
+        /* 統一輸入框與下拉選單大小（對齊登入畫面） */
+        input, select {
+            width: 100%; padding: 10px 12px; margin: 6px 0; border-radius: 12px;
+            border: 2px solid #e5e7eb; box-sizing: border-box; font-size: 0.95rem;
+            font-family: inherit; outline: none;
         }
-        .calendar-nav-btn {
-            background: #f1f5f9; border: none; border-radius: 8px; width: 30px; height: 30px;
-            display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: #475569;
-        }
-        .calendar-nav-btn:hover { background: #e2e8f0; }
-        .calendar-grid {
-            display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; text-align: center;
-        }
-        .calendar-day-header { font-size: 0.8rem; color: #94a3b8; font-weight: bold; padding-bottom: 4px; }
-        .calendar-day {
-            font-size: 0.85rem; padding: 8px 0; border-radius: 12px; background: #f8fafc;
-            border: 1px solid #f1f5f9; color: #334155; font-weight: bold;
-        }
-        .calendar-day.empty { background: transparent; border: none; }
-        .calendar-day.checked {
-            background: #dcfce7 !important; color: #15803d !important;
-            border-color: #86efac !important; font-weight: 900;
-        }
+        input:focus, select:focus { border-color: var(--duo-blue); }
 
-        /* 藍框 Select */
+        /* 程度選擇 Select 專用樣式（保持藍框但尺寸與登入輸入框一致） */
         .level-select-box {
-            width: 100%; padding: 14px 16px; margin: 16px 0 20px 0; border-radius: 16px;
-            border: 2.5px solid #0066ff !important; box-sizing: border-box; font-size: 1.05rem;
-            font-weight: 800; color: #1e293b; background: #fff; outline: none;
+            width: 100%; padding: 10px 12px; margin: 12px 0 14px 0; border-radius: 14px;
+            border: 2px solid var(--duo-blue) !important; box-sizing: border-box; font-size: 0.95rem;
+            font-weight: bold; color: #1e293b; background: #fff; outline: none;
             cursor: pointer;
         }
 
+        /* 3D 按鈕 - 統一登入按鈕大小 */
         .btn-3d {
-            font-size: 1rem; font-weight: 800; border: none;
-            border-radius: 16px; cursor: pointer; transition: all 0.1s ease;
+            font-size: 0.95rem; font-weight: bold; border: none;
+            border-radius: 14px; cursor: pointer; transition: all 0.1s ease;
             user-select: none; touch-action: manipulation; box-sizing: border-box;
         }
         .btn-3d-primary { 
@@ -156,6 +135,29 @@
             box-shadow: 0 4px 0 #e5e7eb; display: flex; align-items: center;
             justify-content: center; gap: 10px; width: 100%; padding: 12px;
             font-size: 1rem; font-weight: bold; border-radius: 14px; cursor: pointer;
+        }
+
+        /* 月曆 Dashboard 樣式 */
+        .calendar-header-ctrl {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; font-weight: bold; color: #374151; font-size: 0.9rem;
+        }
+        .calendar-nav-btn {
+            background: #f3f4f6; border: none; border-radius: 8px; width: 28px; height: 28px;
+            display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: #4b5563;
+        }
+        .calendar-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; text-align: center;
+        }
+        .calendar-day-header { font-size: 0.75rem; color: #9ca3af; font-weight: bold; padding-bottom: 4px; }
+        .calendar-day {
+            font-size: 0.85rem; padding: 8px 0; border-radius: 10px; background: #f9fafb;
+            border: 1px solid #f3f4f6; color: #4b5563; font-weight: bold;
+        }
+        .calendar-day.empty { background: transparent; border: none; }
+        .calendar-day.checked {
+            background: #dcfce7 !important; color: #15803d !important;
+            border-color: #86efac !important; font-weight: 900;
         }
 
         .step-page { display: none; }
@@ -375,9 +377,9 @@
     <!-- 🔑 1. 登入 / 註冊彈窗 -->
     <div class="custom-modal" id="login-modal">
         <div class="custom-modal-card">
-            <div style="font-size: 2.2rem; color: var(--duo-blue); margin-bottom: 8px;"><i class="fa-solid fa-graduation-cap"></i></div>
-            <h3 style="margin: 0 0 6px 0;">登入多語學習系統</h3>
-            <p style="font-size: 0.82rem; color:#6b7280; margin-bottom: 16px;">需為已開通白名單之學員方可登入</p>
+            <div style="font-size: 2.5rem; color: var(--duo-blue); margin-bottom: 8px;"><i class="fa-solid fa-graduation-cap"></i></div>
+            <h3 style="margin: 0 0 8px 0; font-size: 1.2rem;">歡迎來到多語種大冒險</h3>
+            <p style="font-size: 0.85rem; color:#6b7280; margin-bottom: 18px;">請使用已被系統開通的 Google 帳號登入</p>
             
             <button class="btn-google" id="btn-google-login">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="Google">
@@ -386,35 +388,35 @@
 
             <div style="display:flex; align-items:center; gap:8px; margin: 14px 0;">
                 <div style="flex:1; height:1px; background:#e5e7eb;"></div>
-                <span style="font-size:0.75rem; color:#9ca3af;">或使用 Email</span>
+                <span style="font-size:0.75rem; color:#9ca3af;">或使用 Email 登入</span>
                 <div style="flex:1; height:1px; background:#e5e7eb;"></div>
             </div>
 
             <div style="display:flex; gap:6px; background:#f3f4f6; padding:4px; border-radius:12px; margin-bottom: 8px;">
                 <button class="btn-3d btn-3d-secondary" id="tab-login" style="flex:1; padding:6px;">登入</button>
-                <button class="btn-3d btn-3d-secondary" id="tab-register" style="flex:1; padding:6px;">註冊</button>
+                <button class="btn-3d btn-3d-secondary" id="tab-register" style="flex:1; padding:6px;">註冊帳號</button>
             </div>
 
-            <input type="email" id="email-input" placeholder="電子信箱" style="width:100%; padding:10px 12px; margin:6px 0; border-radius:12px; border:2px solid #e5e7eb; box-sizing:border-box;">
-            <input type="password" id="password-input" placeholder="密碼" style="width:100%; padding:10px 12px; margin:6px 0; border-radius:12px; border:2px solid #e5e7eb; box-sizing:border-box;">
+            <input type="email" id="email-input" placeholder="電子信箱">
+            <input type="password" id="password-input" placeholder="密碼">
             <button class="btn-3d btn-3d-primary" id="btn-auth-submit" style="width:100%; padding:10px; margin-top: 6px;">登入</button>
 
             <div style="margin-top: 10px;">
-                <button id="btn-forgot-password" style="border:none; background:none; color:var(--duo-blue); cursor:pointer; font-size:0.8rem;">忘記密碼？</button>
+                <button id="btn-forgot-password" style="border:none; background:none; color:var(--duo-blue); cursor:pointer; font-size:0.82rem;">忘記密碼？</button>
             </div>
-            <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.8rem; margin-top: 10px;" class="hidden"></div>
+            <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 10px;" class="hidden"></div>
         </div>
     </div>
 
     <!-- 🔑 忘記密碼 Modal -->
     <div id="modal-forgot-password" class="custom-modal hidden">
         <div class="custom-modal-card">
-            <h3 style="margin-top:0;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
-            <p style="font-size: 0.82rem; color: #6b7280; margin-bottom: 8px;">輸入信箱寄送密碼重設信件：</p>
-            <input type="email" id="input-forgot-email" placeholder="電子信箱" style="width:100%; padding:10px 12px; margin:6px 0; border-radius:12px; border:2px solid #e5e7eb; box-sizing:border-box;">
+            <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
+            <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 10px;">請輸入您的登入 Email，我們將寄送重設密碼信件給您：</p>
+            <input type="email" id="input-forgot-email" placeholder="電子信箱">
             <div style="display:flex; gap:10px; margin-top:12px;">
-                <button id="btn-send-reset-email" class="btn-3d btn-3d-primary" style="flex:1; padding:8px;">寄送信件</button>
-                <button id="btn-cancel-forgot-password" class="btn-3d btn-3d-secondary" style="flex:1; padding:8px;">取消</button>
+                <button id="btn-send-reset-email" class="btn-3d btn-3d-primary" style="flex:1; padding:10px;">寄送重設信件</button>
+                <button id="btn-cancel-forgot-password" class="btn-3d btn-3d-secondary" style="flex:1; padding:10px;">取消</button>
             </div>
         </div>
     </div>
@@ -422,52 +424,49 @@
     <!-- 👤 首次登入設定暱稱與母語 -->
     <div id="modal-setup-nickname" class="custom-modal hidden">
         <div class="custom-modal-card">
-            <h3 style="margin-top:0;"><i class="fa-solid fa-user-gear" style="color:var(--duo-blue);"></i> 設定學習檔案</h3>
-            <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 8px;">請設定排行榜公開暱稱 (2~12字，30秒限改一次)</p>
-            <input type="text" id="input-setup-nickname" placeholder="例如：韓語小霸王" maxlength="12" style="width:100%; padding:10px 12px; margin:6px 0; border-radius:12px; border:2px solid #e5e7eb; box-sizing:border-box;" />
-            <p style="font-size: 0.82rem; color: #6b7280; margin: 10px 0 4px; text-align:left;">選擇母語（題意翻譯將以此呈現）</p>
-            <select id="select-native-language" style="width:100%; padding:10px; border-radius:12px; border:2px solid #e5e7eb;">
+            <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-user-gear" style="color:var(--duo-blue);"></i> 設定您的學習暱稱</h3>
+            <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 8px;">請設定排行榜上顯示的名稱 (2~12字，30秒限改一次)</p>
+            <input type="text" id="input-setup-nickname" placeholder="例如：韓語小霸王" maxlength="12" />
+            <p style="font-size: 0.85rem; color: #6b7280; margin: 12px 0 4px; text-align:left;">選擇母語（題意翻譯將以此呈現）</p>
+            <select id="select-native-language">
                 <option value="zh">繁體中文</option>
                 <option value="en">English</option>
                 <option value="kr">한국어</option>
             </select>
             <div id="setup-nickname-error" style="color: var(--duo-red); font-size: 0.8rem; margin-top: 6px;" class="hidden"></div>
-            <button id="btn-save-initial-nickname" class="btn-3d btn-3d-primary" style="width:100%; padding:10px; margin-top:12px;">完成設定</button>
+            <button id="btn-save-initial-nickname" class="btn-3d btn-3d-primary" style="width:100%; padding:10px; margin-top:12px;">完成設定並開始學習</button>
         </div>
     </div>
 
-    <!-- 🔥 學習成就統計 Dashboard Modal (截圖 13 的打卡與月曆彈窗) -->
+    <!-- 🔥 學習成就統計 Dashboard Modal -->
     <div id="modal-streak-dashboard" class="custom-modal hidden">
         <div class="custom-modal-card">
             <div class="close-icon-circle" id="btn-close-streak-modal"><i class="fa-solid fa-xmark"></i></div>
-            <h3 style="margin: 4px 0 16px 0; color: #1e293b; font-size: 1.25rem; font-weight: 800;">
+            <h3 style="margin: 2px 0 14px 0; color: #1f2937; font-size: 1.2rem; font-weight: 800;">
                 <i class="fa-solid fa-fire" style="color: var(--duo-fire-red);"></i> 學習成就統計
             </h3>
             
-            <!-- 打卡天數與專注時數卡片 -->
-            <div style="display: flex; justify-content: space-around; background: #ffffff; padding: 14px 10px; border-radius: 20px; margin-bottom: 16px; border: 1.5px solid #e2e8f0;">
+            <div style="display: flex; justify-content: space-around; background: #f9fafb; padding: 12px; border-radius: 16px; margin-bottom: 14px; border: 1px solid #e5e7eb;">
                 <div style="flex: 1;">
-                    <div style="font-size: 0.82rem; color: #64748b; font-weight: bold; margin-bottom: 4px;">打卡天數</div>
-                    <div style="font-size: 1.35rem; font-weight: 900; color: var(--duo-fire-red);"><span id="dash-streak-days">1</span> 天</div>
+                    <div style="font-size: 0.75rem; color: #6b7280; font-weight: bold;">打卡天數</div>
+                    <div style="font-size: 1.25rem; font-weight: bold; color: var(--duo-fire-red);"><span id="dash-streak-days">1</span> 天</div>
                 </div>
-                <div style="width: 1px; background: #e2e8f0; margin: 0 4px;"></div>
+                <div style="width: 1px; background: #e5e7eb; margin: 0 4px;"></div>
                 <div style="flex: 1;">
-                    <div style="font-size: 0.82rem; color: #64748b; font-weight: bold; margin-bottom: 4px;">專注時數</div>
-                    <div style="font-size: 1.35rem; font-weight: 900; color: var(--duo-blue);"><span id="dash-focus-hours">0.0</span> 小時</div>
+                    <div style="font-size: 0.75rem; color: #6b7280; font-weight: bold;">專注時數</div>
+                    <div style="font-size: 1.25rem; font-weight: bold; color: var(--duo-blue);"><span id="dash-focus-hours">0.0</span> 小時</div>
                 </div>
             </div>
 
-            <!-- 簽到紀錄與月份切換 -->
             <div class="calendar-header-ctrl">
                 <div><i class="fa-regular fa-calendar-days" style="color: var(--duo-gold);"></i> 簽到紀錄</div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <button class="calendar-nav-btn" id="btn-cal-prev"><i class="fa-solid fa-chevron-left"></i></button>
-                    <span id="lbl-calendar-month-title" style="font-weight: 800; font-size: 0.95rem; color: #1e293b;">2026年 10月</span>
+                    <span id="lbl-calendar-month-title" style="font-weight: bold; font-size: 0.9rem;">2026年 10月</span>
                     <button class="calendar-nav-btn" id="btn-cal-next"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
             </div>
 
-            <!-- 月曆網格 -->
             <div class="calendar-grid">
                 <div class="calendar-day-header">日</div>
                 <div class="calendar-day-header">一</div>
@@ -485,22 +484,23 @@
     <div id="modal-select-initial-level" class="custom-modal hidden">
         <div class="custom-modal-card">
             <div class="close-icon-circle" id="btn-close-level-modal"><i class="fa-solid fa-xmark"></i></div>
-            <h3 style="margin: 6px 0 8px 0; color: #1e293b; font-size: 1.28rem; font-weight: 800;">選擇課程程度</h3>
+            <h3 style="margin: 4px 0 8px 0; color: #1f2937; font-size: 1.2rem; font-weight: 800;">選擇課程程度</h3>
+            <p style="font-size: 0.85rem; color: #6b7280; margin: 0 0 10px 0;">切換您要挑戰的課程級別</p>
             <select id="initial-level-select" class="level-select-box"></select>
-            <button id="btn-confirm-initial-level" class="btn-3d btn-3d-primary" style="width: 100%; padding: 14px; font-size: 1.1rem;">確定切換</button>
+            <button id="btn-confirm-initial-level" class="btn-3d btn-3d-primary" style="width: 100%; padding: 10px; margin-top: 4px;">確定切換</button>
         </div>
     </div>
 
     <!-- ✏️ 修改暱稱 Modal -->
     <div id="modal-edit-nickname" class="custom-modal hidden">
         <div class="custom-modal-card">
-            <h3 style="margin-top:0;">修改公開暱稱</h3>
-            <p style="font-size: 0.8rem; color: var(--duo-orange); margin-bottom: 8px;">⚠️ 注意：暱稱每 30 秒僅能修改一次</p>
-            <input type="text" id="input-edit-nickname" placeholder="輸入新暱稱 (2~12字)" maxlength="12" style="width:100%; padding:10px 12px; margin:6px 0; border-radius:12px; border:2px solid #e5e7eb; box-sizing:border-box;" />
+            <h3 style="margin-top:0; font-size: 1.2rem;">修改公開暱稱</h3>
+            <p style="font-size: 0.82rem; color: var(--duo-orange); margin-bottom: 8px;">⚠️ 注意：暱稱每 30 秒僅能修改一次</p>
+            <input type="text" id="input-edit-nickname" placeholder="輸入新暱稱 (2~12字)" maxlength="12" />
             <div id="edit-nickname-error-msg" style="color: var(--duo-red); font-size: 0.8rem; text-align: center; margin-top: 4px;" class="hidden"></div>
             <div style="display:flex; gap:10px; margin-top:12px;">
-                <button id="btn-save-nickname" class="btn-3d btn-3d-primary" style="flex:1; padding:8px;">儲存修改</button>
-                <button id="btn-cancel-nickname" class="btn-3d btn-3d-secondary" style="flex:1; padding:8px;">取消</button>
+                <button id="btn-save-nickname" class="btn-3d btn-3d-primary" style="flex:1; padding:10px;">儲存修改</button>
+                <button id="btn-cancel-nickname" class="btn-3d btn-3d-secondary" style="flex:1; padding:10px;">取消</button>
             </div>
         </div>
     </div>
@@ -511,11 +511,11 @@
             <div class="close-icon-circle" id="btn-close-profile"><i class="fa-solid fa-xmark"></i></div>
             <div style="text-align: center; margin-bottom: 12px;">
                 <img id="profile-user-avatar" src="https://lh3.googleusercontent.com/a/default-user" class="profile-avatar-large" alt="User Avatar">
-                <h3 style="margin: 0; color: #1f2937;">
+                <h3 style="margin: 0; color: #1f2937; font-size: 1.15rem;">
                     <span id="profile-nickname">學生</span>
                     <button id="btn-open-edit-nickname" style="border:none; background:none; color:var(--duo-blue); cursor:pointer;"><i class="fa-solid fa-pen-to-square"></i></button>
                 </h3>
-                <p style="font-size: 0.8rem; color: #6b7280; margin: 2px 0 0 0;" id="profile-email">email@example.com</p>
+                <p style="font-size: 0.82rem; color: #6b7280; margin: 2px 0 0 0;" id="profile-email">email@example.com</p>
             </div>
 
             <div style="font-size: 0.88rem; display: flex; flex-direction: column; gap: 8px;">
@@ -544,7 +544,7 @@
                 </div>
             </div>
 
-            <button id="btn-trigger-logout" class="btn-3d" style="width: 100%; padding: 10px; margin-top: 15px; background: var(--duo-red); color: white; box-shadow: 0 3px 0 var(--duo-red-shadow);">
+            <button id="btn-trigger-logout" class="btn-3d" style="width: 100%; padding: 10px; margin-top: 15px; background: var(--duo-red); color: white; box-shadow: 0 4px 0 var(--duo-red-shadow);">
                 <i class="fa-solid fa-right-from-bracket"></i> 登出
             </button>
         </div>
@@ -1127,7 +1127,6 @@
                     window.currentUserData.memberships = memberships;
                     window.currentUserData.unlockedLevels = unlockedLevels;
 
-                    // 若當前設定的程度未在已解鎖列表內，預設選取已解鎖的第一個
                     if (!unlockedLevels.includes(currentConfig.level)) {
                         currentConfig.level = unlockedLevels[0];
                     }
@@ -1317,13 +1316,13 @@
             }
         };
 
-        // ==================== 🔥 截圖 13：學習成就統計 Dashboard 月曆邏輯 ====================
+        // ==================== 🔥 學習成就統計 Dashboard 月曆邏輯 ====================
         const modalStreakDashboard = document.getElementById('modal-streak-dashboard');
         let calendarCurrentDate = new Date(2026, 9, 1); // 2026年 10月
 
         function renderStreakCalendar(dateObj) {
             const year = dateObj.getFullYear();
-            const month = dateObj.getMonth(); // 0-based
+            const month = dateObj.getMonth();
             document.getElementById('lbl-calendar-month-title').innerText = `${year}年 ${month + 1}月`;
 
             const container = document.getElementById('calendar-days-container');
@@ -1332,7 +1331,6 @@
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
 
-            // 填充前置空白天數
             for (let i = 0; i < firstDayIndex; i++) {
                 const emptyCell = document.createElement('div');
                 emptyCell.className = "calendar-day empty";
@@ -1340,13 +1338,11 @@
             }
 
             const today = new Date();
-            // 繪製日期格子
             for (let day = 1; day <= totalDays; day++) {
                 const dayCell = document.createElement('div');
                 dayCell.className = "calendar-day";
                 dayCell.innerText = day;
 
-                // 若為當前月份第 1 天（或今天）標註為簽到打卡日
                 if (day === 1 && month === 9 && year === 2026) {
                     dayCell.classList.add('checked');
                 } else if (today.getFullYear() === year && today.getMonth() === month && today.getDate() === day) {
@@ -1357,7 +1353,6 @@
             }
         }
 
-        // 點擊頂部連續天數觸發彈窗
         document.getElementById('btn-streak-trigger').addEventListener('click', () => {
             renderStreakCalendar(calendarCurrentDate);
             modalStreakDashboard.classList.remove('hidden');
@@ -1377,7 +1372,7 @@
             renderStreakCalendar(calendarCurrentDate);
         };
 
-        // ==================== 🎯 截圖中程度切換彈窗的邏輯 ====================
+        // ==================== 🎯 程度切換彈窗的邏輯 ====================
         const levelSelectModal = document.getElementById('modal-select-initial-level');
         const initialLevelSelect = document.getElementById('initial-level-select');
 
@@ -1651,7 +1646,6 @@
             return s;
         }
 
-        // 切換程度核心函式
         function selectLevel(levelCode, levelTitle) {
             stopSpeechRecognition();
             currentConfig.level = levelCode;
@@ -2542,7 +2536,6 @@
             return str.replace(/[.,?!~\s\r\n]/g, '').toLowerCase();
         }
 
-        // 發音檢驗邏輯（合格即可，不打分數）
         function isSpeechPass(str1, str2) {
             const s1 = cleanStringForCompare(str1);
             const s2 = cleanStringForCompare(str2);
