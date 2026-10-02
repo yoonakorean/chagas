@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>問答戲化學習系統</title>
+    <title>多語種雲端遊戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -61,7 +61,6 @@
             flex-direction: column;
         }
 
-        /* 📱 頂部資訊列自適應排版 */
         .user-meta-bar {
             display: flex;
             justify-content: space-between;
@@ -89,7 +88,6 @@
         }
         .user-meta-item:hover { background: #f3f4f6; }
 
-        /* 彈窗自適應：支援螢幕滾動、防破版 */
         .custom-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.55); display: none; justify-content: center;
@@ -916,7 +914,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-dialogue" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 步驟 6-C2：聊天視窗風【句子問答】練習 (新新增/完全複製對話邏輯) -->
+            <!-- 步驟 6-C2：聊天視窗風【句子問答】練習 (全新交替對話解鎖邏輯) -->
             <div id="step-quiz-qna" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1140,7 +1138,7 @@
         let rawBlocksData = [];  
         let globalGrammarData = []; 
         let rawDialogueData = []; 
-        let rawQnaData = []; // ❓ 句子問答獨立原始資料
+        let rawQnaData = []; 
         let rawVocabData = [];
 
         let questions = [];
@@ -1157,13 +1155,13 @@
         let userRole = 'A'; 
         let isBlindUnlocked = false;
 
-        // ❓ 句子問答運作變數 (與 Dialogue 結構完全一致)
+        // ❓ 句子問答全新對話輪替變數
         let currentQnaItem = null;
         let qnaList = [];
         let qnaIndex = 0;
         let qnaSubMode = 'basic';
         let qnaUserRole = 'A';
-        let isQnaBlindUnlocked = false;
+        let qnaUnlockedIndices = new Set(); // 記錄已成功解鎖完整句子的索引
 
         let vocabQuestions = [];
         let vocabIndex = 0;
@@ -1178,7 +1176,6 @@
 
         let currentRankSubTab = 'global';
 
-        // 🎯 追蹤當前挑戰進度 (紀錄答對的題目數)
         let passedSubQuestions = new Set();
         let totalChallengeQuestions = 0;
 
@@ -2084,13 +2081,12 @@
             btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 同步最新試算表中...`;
 
             try {
-                // 抓取與句子對話 100% 一樣的分頁 (getDialogueData)
                 const [shadowRes, blocksRes, grammarRes, dialogueRes, qnaRes, vocabRes] = await Promise.all([
                     requestGAS(targetApi, 'getLanguageData').catch(()=>null),
                     requestGAS(targetApi, 'getBlocksData').catch(()=>null),
                     requestGAS(targetApi, 'getGrammarData').catch(()=>null),
                     requestGAS(targetApi, 'getDialogueData').catch(()=>null),
-                    requestGAS(targetApi, 'getDialogueData').catch(()=>null), // 完全參照句子對話抓取
+                    requestGAS(targetApi, 'getDialogueData').catch(()=>null),
                     requestGAS(targetApi, 'getVocabularyData').catch(()=>null)
                 ]);
 
@@ -2211,7 +2207,6 @@
             }
         }
 
-        // 🍊 通關橘色動態標記 logic
         function selectUnit(unitId) {
             stopSpeechRecognition();
             currentConfig.unit_id = unitId;
@@ -2268,7 +2263,7 @@
                     const btnShadow = createActionButton('shadow', '🎙️ 跟讀');
                     const btnBlocks = createActionButton('blocks', '🧩 重組');
                     const btnDialogue = createActionButton('dialogue', '💬 對話', 'btn-dialogue-lesson');
-                    const btnQna = createActionButton('qna', '❓ 句子問答', 'btn-qna-lesson'); // 複製出的新類型
+                    const btnQna = createActionButton('qna', '❓ 句子問答', 'btn-qna-lesson');
                     const btnVocabShadow = createActionButton('vocab_shadow', '🗣 單字跟讀', 'btn-vocab-lesson');
                     const btnVocabType = createActionButton('vocab_type', '⌨ 單字聽打', 'btn-vocab-lesson');
                     const btnVocabChoice = createActionButton('vocab_choice', '🎯 單字選擇', 'btn-vocab-lesson');
@@ -2683,12 +2678,13 @@
         function prevDialogueSentence() { if (dialogueIndex > 0) { dialogueIndex--; isBlindUnlocked = false; renderChatWindow(); } }
         function nextDialogueSentence() { if (dialogueIndex < dialogueList.length - 1) { dialogueIndex++; isBlindUnlocked = false; renderChatWindow(); } }
 
-        // ==================== 4.5 句子問答 (QnA) 邏輯 - 完全參照對話 ====================
+        // ==================== 4.5 句子問答 (QnA) 獨特互動邏輯 ====================
 
         function startQnaChallenge(qnaItem) {
             stopSpeechRecognition();
             currentQnaItem = qnaItem;
             qnaList = [];
+            qnaUnlockedIndices.clear();
 
             for (let i = 1; i <= 8; i++) {
                 const aText = (qnaItem[`a${i}`] || '').trim();
@@ -2696,8 +2692,8 @@
                 const axText = (qnaItem[`a${i}x`] || '').trim();
                 const bxText = (qnaItem[`b${i}x`] || '').trim();
 
-                if (aText) qnaList.push({ speaker: 'A', targetText: aText, fillText: axText || aText, audioUrl: qnaItem.audio_url || '' });
-                if (bText) qnaList.push({ speaker: 'B', targetText: bText, fillText: bxText || bText, audioUrl: qnaItem.audio_url || '' });
+                if (aText) qnaList.push({ index: qnaList.length, speaker: 'A', targetText: aText, fillText: axText || aText, audioUrl: qnaItem.audio_url || '' });
+                if (bText) qnaList.push({ index: qnaList.length, speaker: 'B', targetText: bText, fillText: bxText || bText, audioUrl: qnaItem.audio_url || '' });
             }
 
             if (qnaList.length === 0) return alert("此課堂問答資料為空！");
@@ -2720,12 +2716,12 @@
             stopSpeechRecognition();
             qnaSubMode = mode;
             qnaIndex = 0;
+            qnaUnlockedIndices.clear();
             ['basic', 'fill', 'blind'].forEach(m => {
                 const btn = document.getElementById(`btn-qna-mode-${m}`);
                 if (btn) btn.classList.remove('active');
             });
             document.getElementById(`btn-qna-mode-${mode}`).classList.add('active');
-            isQnaBlindUnlocked = false;
             renderQnaChatWindow();
         }
 
@@ -2733,6 +2729,7 @@
             stopSpeechRecognition();
             qnaUserRole = role;
             qnaIndex = 0;
+            qnaUnlockedIndices.clear();
             ['a', 'b'].forEach(r => {
                 const btn = document.getElementById(`btn-qna-role-${r.toLowerCase()}`);
                 if (btn) btn.classList.remove('active');
@@ -2751,13 +2748,14 @@
             for (let idx = 0; idx <= qnaIndex; idx++) {
                 const item = qnaList[idx];
                 const isCurrentTarget = (idx === qnaIndex);
+                const isUser = (item.speaker === qnaUserRole);
+                const isUnlocked = qnaUnlockedIndices.has(idx);
 
                 const row = document.createElement('div');
                 row.className = `chat-bubble-row speaker-${item.speaker}`;
 
                 const label = document.createElement('div');
                 label.className = 'chat-speaker-label';
-                const isUser = (item.speaker === qnaUserRole);
                 label.innerText = `Speaker ${item.speaker}${isUser ? ' (你)' : ''}`;
 
                 const bubble = document.createElement('div');
@@ -2765,9 +2763,17 @@
                 if (isCurrentTarget) bubble.classList.add('active-target');
 
                 let bubbleText = item.targetText;
-                if (qnaSubMode === 'fill' && isCurrentTarget && !isQnaBlindUnlocked) {
-                    bubbleText = item.fillText;
-                } else if (qnaSubMode === 'blind' && isCurrentTarget && !isQnaBlindUnlocked) {
+
+                // 💡 挖空模式下的全新文字顯示邏輯
+                if (qnaSubMode === 'fill') {
+                    if (isUser) {
+                        // 使用者的句子：解鎖前顯示填空關鍵字 (a1x/b1x)，答對解鎖後顯示完整句 (a1/b1)
+                        bubbleText = isUnlocked ? item.targetText : item.fillText;
+                    } else {
+                        // 對方的句子：直接顯示完整句子
+                        bubbleText = item.targetText;
+                    }
+                } else if (qnaSubMode === 'blind' && isCurrentTarget && !isUnlocked) {
                     bubbleText = "??? (聽音或問答解鎖)";
                 }
 
@@ -2789,20 +2795,41 @@
                 chatWin.appendChild(row);
             }
 
-            setTimeout(() => { chatWin.scrollTop = chatWin.scrollHeight; }, 50);
+            setTimeout(() => { chatWin.scrollTop = chatWin.scrollHeight; }, 60);
 
             const blindBox = document.getElementById('box-qna-blind-unlock');
-            blindBox.style.display = (qnaSubMode === 'blind' && !isQnaBlindUnlocked) ? 'block' : 'none';
+            blindBox.style.display = (qnaSubMode === 'blind' && !qnaUnlockedIndices.has(qnaIndex)) ? 'block' : 'none';
 
             document.getElementById('lbl-qna-progress').innerText = `${qnaIndex + 1} / ${qnaList.length}`;
             document.getElementById('btn-qna-prev').disabled = qnaIndex === 0;
             document.getElementById('btn-qna-next').disabled = qnaIndex === qnaList.length - 1;
 
+            // 💡 若當前回合輪到電腦 (非玩家)，自動播放語音
             const currentItem = qnaList[qnaIndex];
-            if (currentItem && currentItem.speaker !== qnaUserRole) playQnaAudio();
+            if (currentItem && currentItem.speaker !== qnaUserRole) {
+                playQnaAudio();
+            }
         }
 
-        function unlockQnaBlindTextManually() { isQnaBlindUnlocked = true; renderQnaChatWindow(); }
+        function unlockQnaBlindTextManually() {
+            qnaUnlockedIndices.add(qnaIndex);
+            renderQnaChatWindow();
+        }
+
+        function handleQnaSpeechSuccess() {
+            qnaUnlockedIndices.add(qnaIndex);
+            passedSubQuestions.add(qnaIndex);
+            checkAndShowFinishButton();
+
+            renderQnaChatWindow();
+
+            if (qnaIndex < qnaList.length - 1) {
+                setTimeout(() => {
+                    qnaIndex++;
+                    renderQnaChatWindow();
+                }, 800);
+            }
+        }
 
         function playSpecificQnaAudio(idx) {
             stopSpeechRecognition();
@@ -2818,8 +2845,8 @@
         }
 
         function playQnaAudio() { playSpecificQnaAudio(qnaIndex); }
-        function prevQnaSentence() { if (qnaIndex > 0) { qnaIndex--; isQnaBlindUnlocked = false; renderQnaChatWindow(); } }
-        function nextQnaSentence() { if (qnaIndex < qnaList.length - 1) { qnaIndex++; isQnaBlindUnlocked = false; renderQnaChatWindow(); } }
+        function prevQnaSentence() { if (qnaIndex > 0) { qnaIndex--; renderQnaChatWindow(); } }
+        function nextQnaSentence() { if (qnaIndex < qnaList.length - 1) { qnaIndex++; renderQnaChatWindow(); } }
 
         // ==================== 5. 語法小教室邏輯 ====================
 
@@ -2879,7 +2906,6 @@
             return str.replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
         }
 
-        // 🐢 語法教室語速調整為 0.85
         function playGrammarAudio(gramNum, dialogText) {
             stopSpeechRecognition();
             if (!currentGrammarItem) return;
@@ -2894,7 +2920,7 @@
 
             if (audioUrl && audioUrl.trim() !== '') {
                 const audio = new Audio(audioUrl);
-                audio.playbackRate = 0.85; // 放慢 0.85 倍速
+                audio.playbackRate = 0.85;
                 audio.play().catch(() => { if (textToSpeak) speakTTS(textToSpeak, 0.85); });
             } else if (textToSpeak) {
                 speakTTS(textToSpeak, 0.85);
@@ -3311,7 +3337,6 @@
         function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; displayQuestion(); } }
         function prevQuestion() { if (currentIndex > 0) { currentIndex--; displayQuestion(); } }
 
-        // 🐢 語音合成 TTS 預設語速調整為 0.85
         function speakTTS(text, rate = 0.85) {
             if (!text) return;
             stopSpeechRecognition();
@@ -3320,7 +3345,7 @@
             const utterance = new SpeechSynthesisUtterance(text);
             const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
             utterance.lang = langMap[currentConfig.category] || 'ko-KR';
-            utterance.rate = rate; // 控制語速 (0.85 慢速清晰朗讀)
+            utterance.rate = rate;
             synth.speak(utterance);
         }
 
@@ -3405,10 +3430,7 @@
                         const targetText = currentSentence.targetText || "";
                         const pass = isSpeechPass(targetText, userSpeech);
                         if (pass || qnaSubMode === 'basic') {
-                            isQnaBlindUnlocked = true;
-                            renderQnaChatWindow();
-                            passedSubQuestions.add(qnaIndex);
-                            checkAndShowFinishButton();
+                            handleQnaSpeechSuccess();
                         }
                     }
                 } else {
