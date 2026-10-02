@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>橘色戲化學習系統</title>
+    <title>0.85戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -585,7 +585,7 @@
                 <i class="fa-solid fa-fire" style="color: var(--duo-fire-red);"></i> 學習成就統計
             </h3>
             
-            <div style="display: flex; justify-style: space-around; background: #f9fafb; padding: 12px; border-radius: 16px; margin-bottom: 14px; border: 1px solid #e5e7eb;">
+            <div style="display: flex; justify-content: space-around; background: #f9fafb; padding: 12px; border-radius: 16px; margin-bottom: 14px; border: 1px solid #e5e7eb;">
                 <div style="flex: 1;">
                     <div style="font-size: 0.75rem; color: #6b7280; font-weight: bold;">打卡天數</div>
                     <div style="font-size: 1.25rem; font-weight: bold; color: var(--duo-fire-red);"><span id="dash-streak-days">1</span> 天</div>
@@ -2209,7 +2209,7 @@
                     const btnShadow = createActionButton('shadow', '🎙️ 跟讀');
                     const btnBlocks = createActionButton('blocks', '🧩 重組');
                     const btnDialogue = createActionButton('dialogue', '💬 對話', 'btn-dialogue-lesson');
-                    const btnVocabShadow = createActionButton('vocab_shadow', '🗣️ 單字跟讀', 'btn-vocab-lesson');
+                    const btnVocabShadow = createActionButton('vocab_shadow', '🗣️️ 單字跟讀', 'btn-vocab-lesson');
                     const btnVocabType = createActionButton('vocab_type', '⌨ 單字聽打', 'btn-vocab-lesson');
                     const btnVocabChoice = createActionButton('vocab_choice', '🎯 單字選擇', 'btn-vocab-lesson');
 
@@ -2420,9 +2420,11 @@
             const currentVocab = vocabQuestions[vocabIndex];
             if (!currentVocab) return;
             if (currentVocab.audio_url && currentVocab.audio_url.trim() !== '') {
-                new Audio(currentVocab.audio_url).play().catch(() => speakTTS(currentVocab.text));
+                const audio = new Audio(currentVocab.audio_url);
+                audio.playbackRate = 0.85;
+                audio.play().catch(() => speakTTS(currentVocab.text, 0.85));
             } else {
-                speakTTS(currentVocab.text);
+                speakTTS(currentVocab.text, 0.85);
             }
         }
 
@@ -2595,9 +2597,11 @@
             if (!dialogueList || !dialogueList[idx]) return;
             const target = dialogueList[idx];
             if (target.audioUrl && target.audioUrl.trim() !== '') {
-                new Audio(target.audioUrl).play().catch(() => speakTTS(target.targetText));
+                const audio = new Audio(target.audioUrl);
+                audio.playbackRate = 0.85;
+                audio.play().catch(() => speakTTS(target.targetText, 0.85));
             } else {
-                speakTTS(target.targetText);
+                speakTTS(target.targetText, 0.85);
             }
         }
 
@@ -2663,6 +2667,7 @@
             return str.replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
         }
 
+        // 🐢 語法教室語速調整為 0.85
         function playGrammarAudio(gramNum, dialogText) {
             stopSpeechRecognition();
             if (!currentGrammarItem) return;
@@ -2676,9 +2681,11 @@
             const textToSpeak = dialogText ? cleanInitialWhitespace(dialogText) : "";
 
             if (audioUrl && audioUrl.trim() !== '') {
-                new Audio(audioUrl).play().catch(() => { if (textToSpeak) speakTTS(textToSpeak); });
+                const audio = new Audio(audioUrl);
+                audio.playbackRate = 0.85; // 放慢 0.85 倍速
+                audio.play().catch(() => { if (textToSpeak) speakTTS(textToSpeak, 0.85); });
             } else if (textToSpeak) {
-                speakTTS(textToSpeak);
+                speakTTS(textToSpeak, 0.85);
             }
         }
 
@@ -2803,8 +2810,13 @@
                 const audioUrl = audioUrls[idx] || '';
                 playBtn.onclick = () => {
                     stopSpeechRecognition();
-                    if (audioUrl) new Audio(audioUrl).play().catch(() => speakTTS(exText));
-                    else speakTTS(exText);
+                    if (audioUrl) {
+                        const audio = new Audio(audioUrl);
+                        audio.playbackRate = 0.85;
+                        audio.play().catch(() => speakTTS(exText, 0.85));
+                    } else {
+                        speakTTS(exText, 0.85);
+                    }
                 };
 
                 row.appendChild(textSpan);
@@ -3062,22 +3074,33 @@
             stopSpeechRecognition();
             const q = questions[currentIndex];
             if (!q) return;
-            if (q.audioUrl && q.audioUrl.trim() !== '') new Audio(q.audioUrl).play().catch(() => speakTTS(q.fullText));
-            else speakTTS(q.fullText);
+            if (q.audioUrl && q.audioUrl.trim() !== '') {
+                const audio = new Audio(q.audioUrl);
+                audio.playbackRate = 0.85;
+                audio.play().catch(() => speakTTS(q.fullText, 0.85));
+            } else {
+                speakTTS(q.fullText, 0.85);
+            }
         }
 
         function playAudio() {
             stopSpeechRecognition();
             const q = questions[currentIndex];
             if (!q) return;
-            if (q.audioUrl && q.audioUrl.trim() !== '') new Audio(q.audioUrl).play().catch(() => speakTTS(q.text));
-            else speakTTS(q.text);
+            if (q.audioUrl && q.audioUrl.trim() !== '') {
+                const audio = new Audio(q.audioUrl);
+                audio.playbackRate = 0.85;
+                audio.play().catch(() => speakTTS(q.text, 0.85));
+            } else {
+                speakTTS(q.text, 0.85);
+            }
         }
 
         function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; displayQuestion(); } }
         function prevQuestion() { if (currentIndex > 0) { currentIndex--; displayQuestion(); } }
 
-        function speakTTS(text) {
+        // 🐢 語音合成 TTS 預設語速調整為 0.85
+        function speakTTS(text, rate = 0.85) {
             if (!text) return;
             stopSpeechRecognition();
             const synth = window.speechSynthesis;
@@ -3085,6 +3108,7 @@
             const utterance = new SpeechSynthesisUtterance(text);
             const langMap = { 'korean': 'ko-KR', 'japanese': 'ja-JP', 'english': 'en-US' };
             utterance.lang = langMap[currentConfig.category] || 'ko-KR';
+            utterance.rate = rate; // 控制語速 (0.85 慢速清晰朗讀)
             synth.speak(utterance);
         }
 
