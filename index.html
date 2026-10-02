@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>多語種雲端遊戲化學習系統</title>
+    <title>計分調整戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -278,6 +278,24 @@
         }
         .btn-confirm:active { transform: translateY(2px); border-bottom-width: 2px; }
 
+        .btn-finish-challenge {
+            width: 100%;
+            background: #f59e0b;
+            color: white;
+            border: none;
+            border-bottom: 4px solid #d97706;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 14px;
+            cursor: pointer;
+            margin-top: 14px;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+            display: none;
+            animation: popIn 0.3s ease-out;
+        }
+        .btn-finish-challenge:active { transform: translateY(2px); border-bottom-width: 2px; }
+
         .btn-sync-refresh {
             background: none; border: none; color: var(--duo-blue); font-size: 0.85rem;
             font-weight: bold; cursor: pointer; margin-top: 12px; text-decoration: underline;
@@ -408,7 +426,6 @@
             cursor: pointer; color: inherit; vertical-align: middle;
         }
 
-        /* 📱 語法小教室響應式：靠左且完全自適應不同尺寸 */
         .grammar-dialog-box {
             background: #eef2ff; border: 2px solid #818cf8; border-radius: 16px;
             padding: 16px 14px; padding-bottom: 35px; font-size: 1.05rem; color: #312e81;
@@ -420,7 +437,6 @@
             border: none; border-radius: 8px; padding: 4px 9px; font-size: 0.8rem; font-weight: bold; cursor: pointer;
         }
 
-        /* 📱 語法測驗響應式排版 */
         #container-grammar-questions {
             text-align: left !important;
             margin-bottom: 12px;
@@ -462,7 +478,6 @@
             display: block;
         }
 
-        /* 📱 行動裝置專用微調 Media Queries (< 420px) */
         @media (max-width: 420px) {
             body { padding: 8px 4px; }
             .shadowing-card { padding: 14px 10px; border-radius: 16px; }
@@ -828,6 +843,7 @@
                     <span class="lbl-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
                     <button class="btn-nav" id="btn-next" onclick="nextQuestion()">下一題</button>
                 </div>
+                <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
             <!-- 步驟 6-B：字塊重組畫面 -->
@@ -857,6 +873,7 @@
                     <span class="lbl-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
                     <button class="btn-nav" id="btn-block-next" onclick="nextQuestion()">下一題</button>
                 </div>
+                <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
             <!-- 步驟 6-C：聊天視窗風對話練習 -->
@@ -895,6 +912,7 @@
                     <span class="lbl-progress" id="lbl-dialogue-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
                     <button class="btn-nav" id="btn-dialogue-next" onclick="nextDialogueSentence()">下一句</button>
                 </div>
+                <button class="btn-finish-challenge" id="btn-finish-dialogue" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
             <!-- 步驟 6-D：單字跟讀挑戰畫面 -->
@@ -924,6 +942,7 @@
                     <span class="lbl-progress" id="lbl-vocab-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
                     <button class="btn-nav" id="btn-vocab-next" onclick="nextVocabQuestion()">下一題</button>
                 </div>
+                <button class="btn-finish-challenge" id="btn-finish-vocab-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
             <!-- 步驟 6-E：單字聽打挑戰畫面 -->
@@ -951,6 +970,7 @@
                     <span class="lbl-progress" id="lbl-vocab-type-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
                     <button class="btn-nav" id="btn-vocab-type-next" onclick="nextVocabQuestion()">下一題</button>
                 </div>
+                <button class="btn-finish-challenge" id="btn-finish-vocab-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
             <!-- 步驟 6-F：單字意思選擇題畫面 -->
@@ -973,6 +993,7 @@
                     <span class="lbl-progress" id="lbl-vocab-choice-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
                     <button class="btn-nav" id="btn-vocab-choice-next" onclick="nextVocabQuestion()">下一題</button>
                 </div>
+                <button class="btn-finish-challenge" id="btn-finish-vocab-choice" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
         </div>
 
@@ -1107,6 +1128,10 @@
         let currentFullDialogText = "";
 
         let currentRankSubTab = 'global';
+
+        // 🎯 追蹤當前挑戰進度 (紀錄答對的題目數)
+        let passedSubQuestions = new Set();
+        let totalChallengeQuestions = 0;
 
         const ProgressModel = {
             loadProgress: async (uid) => {
@@ -1297,6 +1322,7 @@
                     window.currentUserData.memberships = memberships;
                     window.currentUserData.unlockedLevels = unlockedLevels;
                     if (!window.currentUserData.friends) window.currentUserData.friends = [];
+                    if (!window.currentUserData.completedLessons) window.currentUserData.completedLessons = [];
 
                     if (!unlockedLevels.includes(currentConfig.level)) {
                         currentConfig.level = unlockedLevels[0];
@@ -1338,7 +1364,8 @@
                 memberships: window.tempMemberships || [],
                 lastNicknameUpdatedAt: 0,
                 unitProgress: {},
-                friends: []
+                friends: [],
+                completedLessons: []
             };
 
             await db.collection('users').doc(currentUser.uid).set(initialData);
@@ -2209,10 +2236,48 @@
             goToStep('step-lesson');
         }
 
+        function resetChallengeProgress() {
+            passedSubQuestions.clear();
+            document.querySelectorAll('.btn-finish-challenge').forEach(btn => btn.style.display = 'none');
+        }
+
+        function getCurrentLessonKey() {
+            return `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_${currentConfig.mode}`;
+        }
+
+        function checkAndShowFinishButton() {
+            if (passedSubQuestions.size >= totalChallengeQuestions && totalChallengeQuestions > 0) {
+                document.querySelectorAll('.btn-finish-challenge').forEach(btn => btn.style.display = 'block');
+            }
+        }
+
+        async function finishCurrentChallenge() {
+            stopSpeechRecognition();
+            const lessonKey = getCurrentLessonKey();
+            const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
+
+            if (completedList.includes(lessonKey)) {
+                alert("🎉 恭喜完成複習！由於先前已通關此關卡，本次不重複發放 XP。");
+            } else {
+                alert("🎉 恭喜首次通關成功！獲得 100 XP 獎勵！");
+                if (currentUser) {
+                    completedList.push(lessonKey);
+                    window.currentUserData.completedLessons = completedList;
+                    await addXP(100);
+                    await db.collection("users").doc(currentUser.uid).update({
+                        completedLessons: completedList
+                    });
+                }
+            }
+
+            goToStep('step-lesson');
+        }
+
         function selectLessonAndMode(lesson, mode) {
             stopSpeechRecognition(); 
             currentConfig.lesson = lesson;
             currentConfig.mode = mode;
+            resetChallengeProgress();
 
             if (currentUser) {
                 ProgressModel.updateUnitProgress(currentUser.uid, currentConfig.unit_id, lesson);
@@ -2278,9 +2343,10 @@
             if (vocabQuestions.length === 0) return alert("此課堂目前沒有設定單字練習喔！");
 
             vocabIndex = 0;
+            totalChallengeQuestions = vocabQuestions.length;
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
             const modeTitleMap = {
-                'vocab_shadow': '🗣️️ 單字跟讀',
+                'vocab_shadow': '🗣 單字跟讀',
                 'vocab_type': '⌨ 單字聽打',
                 'vocab_choice': '🎯 單字選擇'
             };
@@ -2374,12 +2440,13 @@
             const typeTextElem = document.getElementById('lbl-vocab-type-text');
 
             if (userText === targetText) {
-                scoreBadge.innerText = "🎉 完全正確！+10 XP";
+                scoreBadge.innerText = "🎉 完全正確！";
                 scoreBadge.style.color = "#58cc02";
                 typeTextElem.style.display = 'block';
                 transLbl.innerText = `💡 翻譯：${getTranslationByLang(currentVocab)}`;
                 playVocabAudio();
-                addXP(10);
+                passedSubQuestions.add(vocabIndex);
+                checkAndShowFinishButton();
             } else {
                 scoreBadge.innerText = "❌ 答案不太對喔，再試試看！";
                 scoreBadge.style.color = "#ff4b4b";
@@ -2392,10 +2459,11 @@
             const scoreBadge = document.getElementById('lbl-vocab-choice-score');
 
             if (selectedText.trim() === correctAns) {
-                scoreBadge.innerText = "🎉 正確答案！+10 XP";
+                scoreBadge.innerText = "🎉 正確答案！";
                 scoreBadge.style.color = "#58cc02";
                 playVocabAudio();
-                addXP(10);
+                passedSubQuestions.add(vocabIndex);
+                checkAndShowFinishButton();
             } else {
                 scoreBadge.innerText = `❌ 選錯囉！正確答案是：${correctAns}`;
                 scoreBadge.style.color = "#ff4b4b";
@@ -2425,6 +2493,7 @@
             if (dialogueList.length === 0) return alert("此課堂對話資料為空！");
 
             dialogueIndex = 0;
+            totalChallengeQuestions = dialogueList.length;
             switchDialogueMode('basic');
             switchUserRole('A');
 
@@ -2712,7 +2781,7 @@
             if (currentGrammarItem.example && currentGrammarItem.example.trim() !== '') showExampleArea();
             else if (currentGrammarItem.ready && currentGrammarItem.ready.trim() !== '') showReadyArea();
             else if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') showGrammarQuizArea();
-            else goToStep('step-lesson');
+            else finishCurrentChallenge();
         }
 
         function showExampleArea() {
@@ -2752,7 +2821,7 @@
             document.getElementById('area-grammar-example').style.display = 'none';
             if (currentGrammarItem.ready && currentGrammarItem.ready.trim() !== '') showReadyArea();
             else if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') showGrammarQuizArea();
-            else goToStep('step-lesson');
+            else finishCurrentChallenge();
         }
 
         function showReadyArea() {
@@ -2765,7 +2834,7 @@
         function enterGrammarQuizFromReady() {
             document.getElementById('area-grammar-ready').style.display = 'none';
             if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') showGrammarQuizArea();
-            else goToStep('step-lesson');
+            else finishCurrentChallenge();
         }
 
         function renderGrammarHistoryList() {
@@ -2848,12 +2917,11 @@
             resultBox.style.display = 'block';
 
             if (isAllCorrect) {
-                resultText.innerText = currentGrammarItem.correct || "🎉 完全正確！通關成功！+20 XP";
+                resultText.innerText = currentGrammarItem.correct || "🎉 完全正確！通關成功！";
                 resultText.style.color = "#58cc02";
-                actionBtn.innerHTML = `<i class="fa-solid fa-flag-checkered"></i> 完成課堂`;
+                actionBtn.innerHTML = `<i class="fa-solid fa-flag-checkered"></i> 完成挑戰並領取獎勵`;
                 actionBtn.style.background = "#58cc02";
-                actionBtn.onclick = () => goToStep('step-lesson');
-                addXP(20);
+                actionBtn.onclick = () => finishCurrentChallenge();
             } else {
                 resultText.innerText = currentGrammarItem.incorrect || "❌ 答案不太對喔，再試一次！";
                 resultText.style.color = "#ff4b4b";
@@ -2909,6 +2977,7 @@
             }
 
             currentIndex = 0;
+            totalChallengeQuestions = questions.length;
             if (questions.length > 0) displayQuestion();
             else alert("該課堂尚無練習題目！");
         }
@@ -2978,10 +3047,11 @@
             const scoreBadge = document.getElementById('lbl-block-score');
 
             if (userSentence === targetSentence) {
-                scoreBadge.innerText = "🎉 完全正確！+10 XP";
+                scoreBadge.innerText = "🎉 完全正確！";
                 scoreBadge.style.color = "#58cc02";
                 playBlockAudio();
-                addXP(10);
+                passedSubQuestions.add(currentIndex);
+                checkAndShowFinishButton();
             } else {
                 scoreBadge.innerText = "❌ 答案不太對喔，再試試看！";
                 scoreBadge.style.color = "#ff4b4b";
@@ -3071,10 +3141,11 @@
                     const pass = isSpeechPass(targetText, userSpeech);
 
                     if (pass) {
-                        document.getElementById('lbl-vocab-score').innerText = "🎉 發音合格！+10 XP";
+                        document.getElementById('lbl-vocab-score').innerText = "🎉 發音合格！";
                         document.getElementById('lbl-vocab-score').style.color = "#58cc02";
                         document.getElementById('lbl-vocab-translation').innerText = `💡 翻譯：${getTranslationByLang(currentVocab)}`;
-                        addXP(10);
+                        passedSubQuestions.add(vocabIndex);
+                        checkAndShowFinishButton();
                     } else {
                         document.getElementById('lbl-vocab-score').innerText = "⚠️ 發音未達標，再試一次！";
                         document.getElementById('lbl-vocab-score').style.color = "#ff4b4b";
@@ -3088,7 +3159,8 @@
                         if (pass || dialogueSubMode === 'basic') {
                             isBlindUnlocked = true;
                             renderChatWindow();
-                            addXP(5);
+                            passedSubQuestions.add(dialogueIndex);
+                            checkAndShowFinishButton();
                         }
                     }
                 } else {
@@ -3098,9 +3170,10 @@
                     const pass = isSpeechPass(targetText, userSpeech);
 
                     if (pass) {
-                        document.getElementById('lbl-score').innerText = "🎉 發音合格！+10 XP";
+                        document.getElementById('lbl-score').innerText = "🎉 發音合格！";
                         document.getElementById('lbl-score').style.color = "#58cc02";
-                        addXP(10);
+                        passedSubQuestions.add(currentIndex);
+                        checkAndShowFinishButton();
                     } else {
                         document.getElementById('lbl-score').innerText = "⚠ 發音未達標，請再念一次！";
                         document.getElementById('lbl-score').style.color = "#ff4b4b";
