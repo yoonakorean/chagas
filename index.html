@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>多語種雲端遊戲化學習系統</title>
+    <title>盲聽端遊戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -2769,14 +2769,21 @@
 
                 let bubbleText = item.targetText;
 
+                // 💡 挖空模式與盲測聽力模式的文字隱藏與解鎖判定邏輯
                 if (qnaSubMode === 'fill') {
                     if (isUser) {
                         bubbleText = isUnlocked ? item.targetText : item.fillText;
                     } else {
                         bubbleText = item.targetText;
                     }
-                } else if (qnaSubMode === 'blind' && isCurrentTarget && !isUnlocked) {
-                    bubbleText = "??? (聽音或問答解鎖)";
+                } else if (qnaSubMode === 'blind') {
+                    if (isUser) {
+                        // 盲測聽力模式：使用者句子在未解鎖前完全不給關鍵字，只顯示 ???
+                        bubbleText = isUnlocked ? item.targetText : "??? (聽音或問答解鎖)";
+                    } else {
+                        // 對方句子：盲測聽力下對手未解鎖前也隱藏，解鎖後顯示完整句
+                        bubbleText = isUnlocked ? item.targetText : "??? (聽音或問答解鎖)";
+                    }
                 }
 
                 const textSpan = document.createElement('span');
@@ -2800,13 +2807,13 @@
             setTimeout(() => { chatWin.scrollTop = chatWin.scrollHeight; }, 60);
 
             const blindBox = document.getElementById('box-qna-blind-unlock');
-            blindBox.style.display = (qnaSubMode === 'blind' && !qnaUnlockedIndices.has(qnaIndex)) ? 'block' : 'none';
+            // 💡 盲測聽力或挖空填空模式下均可支援手動解鎖按鈕
+            blindBox.style.display = ((qnaSubMode === 'blind' || qnaSubMode === 'fill') && !qnaUnlockedIndices.has(qnaIndex)) ? 'block' : 'none';
 
             document.getElementById('lbl-qna-progress').innerText = `${qnaIndex + 1} / ${qnaList.length}`;
             document.getElementById('btn-qna-prev').disabled = qnaIndex === 0;
             document.getElementById('btn-qna-next').disabled = qnaIndex === qnaList.length - 1;
 
-            // 💡 修正：確保角色 B 進入畫面時或切換時，對手的第一句（例如 A1）能自動播放語音
             let targetAudioIdx = qnaIndex;
             if (qnaList[qnaIndex].speaker === qnaUserRole && qnaIndex > 0) {
                 targetAudioIdx = qnaIndex - 1;
@@ -2833,6 +2840,8 @@
             if (qnaIndex < qnaList.length - 1) {
                 setTimeout(() => {
                     qnaIndex++;
+                    // 💡 盲測模式下推進到對方句子時，自動將對方的句子同步標記為已解鎖並播放音檔
+                    qnaUnlockedIndices.add(qnaIndex); 
                     renderQnaChatWindow();
 
                     if (qnaIndex < qnaList.length - 1 && qnaList[qnaIndex].speaker !== qnaUserRole) {
@@ -2849,6 +2858,11 @@
             stopSpeechRecognition();
             if (!qnaList || !qnaList[idx]) return;
             const target = qnaList[idx];
+            
+            // 💡 點擊喇叭播放音檔時自動解鎖該句顯示
+            qnaUnlockedIndices.add(idx);
+            renderQnaChatWindow();
+
             if (target.audioUrl && target.audioUrl.trim() !== '') {
                 const audio = new Audio(target.audioUrl);
                 audio.playbackRate = 0.85;
