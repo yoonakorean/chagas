@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>計分調整戲化學習系統</title>
+    <title>多語種雲端遊戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -665,7 +665,7 @@
         </div>
     </div>
 
-    <!-- ✏️ 修改暱稱 Modal -->
+    <!-- ✏️️ 修改暱稱 Modal -->
     <div id="modal-edit-nickname" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;">修改公開暱稱</h3>
@@ -3040,13 +3040,21 @@
             });
         }
 
+        // 🔧 修正後的句子重組比對邏輯 (自動清除空格與標點符號進行標準化比對)
         function checkBlockAnswer() {
             const q = questions[currentIndex];
+            
+            // 1. 將使用者選取的字塊拼起來，並去除所有空格與標點符號
             const userSentence = selectedBlockIndices.map(i => q.options[i]).join('');
-            const targetSentence = q.fullText.replace(/\s+/g, '');
+            const cleanUserSentence = cleanStringForCompare(userSentence);
+            
+            // 2. 將正確答案也去除所有空格與標點符號
+            const cleanTargetSentence = cleanStringForCompare(q.fullText);
+            
             const scoreBadge = document.getElementById('lbl-block-score');
 
-            if (userSentence === targetSentence) {
+            // 3. 進行標準化後的比對
+            if (cleanUserSentence === cleanTargetSentence) {
                 scoreBadge.innerText = "🎉 完全正確！";
                 scoreBadge.style.color = "#58cc02";
                 playBlockAudio();
@@ -3090,7 +3098,7 @@
 
         function cleanStringForCompare(str) {
             if (!str) return "";
-            return str.replace(/[.,?!~\s\r\n]/g, '').toLowerCase();
+            return str.replace(/[.,?!~\s\r\n\t]/g, '').toLowerCase();
         }
 
         function isSpeechPass(str1, str2) {
