@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>自動下一句學習系統</title>
+    <title>多語種雲端遊戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -584,7 +584,7 @@
                 <i class="fa-solid fa-fire" style="color: var(--duo-fire-red);"></i> 學習成就統計
             </h3>
             
-            <div style="display: flex; justify-style: space-around; background: #f9fafb; padding: 12px; border-radius: 16px; margin-bottom: 14px; border: 1px solid #e5e7eb;">
+            <div style="display: flex; justify-content: space-around; background: #f9fafb; padding: 12px; border-radius: 16px; margin-bottom: 14px; border: 1px solid #e5e7eb;">
                 <div style="flex: 1;">
                     <div style="font-size: 0.75rem; color: #6b7280; font-weight: bold;">打卡天數</div>
                     <div style="font-size: 1.25rem; font-weight: bold; color: var(--duo-fire-red);"><span id="dash-streak-days">1</span> 天</div>
@@ -2734,12 +2734,10 @@
             resetQnaIndexByRole();
         }
 
-        // 💡 依據角色設定起始 Index：Role A 從 0 (A1) 開始，Role B 從 1 (即 A1 與 B1 同時呈現) 開始
         function resetQnaIndexByRole() {
             if (qnaUserRole === 'A') {
                 qnaIndex = 0;
             } else {
-                // 扮演 Speaker B 時，進入畫面就顯示 A1(0) 並且自動帶出你的提示 B1(1)
                 qnaIndex = (qnaList.length > 1) ? 1 : 0;
             }
             renderQnaChatWindow();
@@ -2771,13 +2769,10 @@
 
                 let bubbleText = item.targetText;
 
-                // 💡 挖空模式下的文字顯示邏輯
                 if (qnaSubMode === 'fill') {
                     if (isUser) {
-                        // 使用者的句子：解鎖前顯示填空關鍵字 (a1x/b1x)，答對解鎖後顯示完整句 (a1/b1)
                         bubbleText = isUnlocked ? item.targetText : item.fillText;
                     } else {
-                        // 對方的句子：直接顯示完整句子
                         bubbleText = item.targetText;
                     }
                 } else if (qnaSubMode === 'blind' && isCurrentTarget && !isUnlocked) {
@@ -2811,10 +2806,15 @@
             document.getElementById('btn-qna-prev').disabled = qnaIndex === 0;
             document.getElementById('btn-qna-next').disabled = qnaIndex === qnaList.length - 1;
 
-            // 💡 若剛切換到非玩家角色 (對手) 的回合，自動播放該句音檔
-            const currentItem = qnaList[qnaIndex];
-            if (currentItem && currentItem.speaker !== qnaUserRole) {
-                playQnaAudio();
+            // 💡 修正：確保角色 B 進入畫面時或切換時，對手的第一句（例如 A1）能自動播放語音
+            let targetAudioIdx = qnaIndex;
+            if (qnaList[qnaIndex].speaker === qnaUserRole && qnaIndex > 0) {
+                targetAudioIdx = qnaIndex - 1;
+            }
+            if (qnaList[targetAudioIdx] && qnaList[targetAudioIdx].speaker !== qnaUserRole) {
+                setTimeout(() => {
+                    playSpecificQnaAudio(targetAudioIdx);
+                }, 300);
             }
         }
 
@@ -2823,27 +2823,23 @@
             renderQnaChatWindow();
         }
 
-        // 💡 語音辨識成功後的自動推進核心邏輯
         function handleQnaSpeechSuccess() {
             qnaUnlockedIndices.add(qnaIndex);
             passedSubQuestions.add(qnaIndex);
             checkAndShowFinishButton();
 
-            // 1. 即時渲染將關鍵字替換成完整句子
             renderQnaChatWindow();
 
-            // 2. 自動推進下一步
             if (qnaIndex < qnaList.length - 1) {
                 setTimeout(() => {
-                    qnaIndex++; // 帶出對手的回應 (例如：a1 答完帶出 b1，或 b1 答完帶出 a2)
-                    renderQnaChatWindow(); // 這會自動顯示對手句子並自動播放其音檔
+                    qnaIndex++;
+                    renderQnaChatWindow();
 
-                    // 💡 如果還有再下一句 (即屬於玩家的挑戰，例如 a2x 或 b2x)，緊接著自動再推進顯示關鍵字提示！
                     if (qnaIndex < qnaList.length - 1 && qnaList[qnaIndex].speaker !== qnaUserRole) {
                         setTimeout(() => {
                             qnaIndex++;
-                            renderQnaChatWindow(); // 帶出玩家的關鍵字提示 (a2x / b2x)
-                        }, 1200); // 留給對手語音播放與呈現的延遲時間
+                            renderQnaChatWindow();
+                        }, 1200);
                     }
                 }, 800);
             }
