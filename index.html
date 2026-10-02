@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>多語種雲端遊戲化學習系統</title>
+    <title>橘色戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -585,7 +585,7 @@
                 <i class="fa-solid fa-fire" style="color: var(--duo-fire-red);"></i> 學習成就統計
             </h3>
             
-            <div style="display: flex; justify-content: space-around; background: #f9fafb; padding: 12px; border-radius: 16px; margin-bottom: 14px; border: 1px solid #e5e7eb;">
+            <div style="display: flex; justify-style: space-around; background: #f9fafb; padding: 12px; border-radius: 16px; margin-bottom: 14px; border: 1px solid #e5e7eb;">
                 <div style="flex: 1;">
                     <div style="font-size: 0.75rem; color: #6b7280; font-weight: bold;">打卡天數</div>
                     <div style="font-size: 1.25rem; font-weight: bold; color: var(--duo-fire-red);"><span id="dash-streak-days">1</span> 天</div>
@@ -665,7 +665,7 @@
         </div>
     </div>
 
-    <!-- ✏️️ 修改暱稱 Modal -->
+    <!-- ✏ 修改暱稱 Modal -->
     <div id="modal-edit-nickname" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;">修改公開暱稱</h3>
@@ -2152,6 +2152,7 @@
             }
         }
 
+        // 🍊 通關橘色動態標記 logic
         function selectUnit(unitId) {
             stopSpeechRecognition();
             currentConfig.unit_id = unitId;
@@ -2170,6 +2171,8 @@
             });
             const lessons = [...new Set(filtered.map(i => Array.isArray(i) ? i[3] : (i.lesson || i.stage)))].filter(Boolean).sort((a,b) => a - b);
 
+            const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
+
             if (lessons.length > 0) {
                 lessons.forEach(les => {
                     const card = document.createElement('div');
@@ -2182,40 +2185,33 @@
                     const btnGroup = document.createElement('div');
                     btnGroup.className = "lesson-btn-group";
 
-                    const btnGrammar = document.createElement('button');
-                    btnGrammar.className = "btn-lesson-action btn-grammar-lesson";
-                    btnGrammar.innerHTML = `<i class="fa-solid fa-book"></i> 📖 語法`;
-                    btnGrammar.onclick = () => selectLessonAndMode(les, 'grammar');
+                    const createActionButton = (mode, label, defaultClass = '') => {
+                        const btn = document.createElement('button');
+                        const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${les}_${mode}`;
+                        const isCompleted = completedList.includes(lessonKey);
 
-                    const btnShadow = document.createElement('button');
-                    btnShadow.className = "btn-lesson-action";
-                    btnShadow.innerHTML = `<i class="fa-solid fa-microphone"></i> 🎙️ 跟讀`;
-                    btnShadow.onclick = () => selectLessonAndMode(les, 'shadow');
+                        btn.className = `btn-lesson-action ${defaultClass}`;
+                        
+                        if (isCompleted) {
+                            btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${label}`;
+                            btn.style.backgroundColor = '#f59e0b';
+                            btn.style.color = '#ffffff';
+                            btn.style.borderColor = '#d97706';
+                        } else {
+                            btn.innerHTML = label;
+                        }
 
-                    const btnBlocks = document.createElement('button');
-                    btnBlocks.className = "btn-lesson-action";
-                    btnBlocks.innerHTML = `<i class="fa-solid fa-puzzle-piece"></i> 🧩 重組`;
-                    btnBlocks.onclick = () => selectLessonAndMode(les, 'blocks');
+                        btn.onclick = () => selectLessonAndMode(les, mode);
+                        return btn;
+                    };
 
-                    const btnDialogue = document.createElement('button');
-                    btnDialogue.className = "btn-lesson-action btn-dialogue-lesson";
-                    btnDialogue.innerHTML = `<i class="fa-solid fa-comments"></i> 💬 對話`;
-                    btnDialogue.onclick = () => selectLessonAndMode(les, 'dialogue');
-
-                    const btnVocabShadow = document.createElement('button');
-                    btnVocabShadow.className = "btn-lesson-action btn-vocab-lesson";
-                    btnVocabShadow.innerHTML = `<i class="fa-solid fa-font"></i> 🗣️ 單字跟讀`;
-                    btnVocabShadow.onclick = () => selectLessonAndMode(les, 'vocab_shadow');
-
-                    const btnVocabType = document.createElement('button');
-                    btnVocabType.className = "btn-lesson-action btn-vocab-lesson";
-                    btnVocabType.innerHTML = `<i class="fa-solid fa-keyboard"></i> ⌨ 單字聽打`;
-                    btnVocabType.onclick = () => selectLessonAndMode(les, 'vocab_type');
-
-                    const btnVocabChoice = document.createElement('button');
-                    btnVocabChoice.className = "btn-lesson-action btn-vocab-lesson";
-                    btnVocabChoice.innerHTML = `<i class="fa-solid fa-list-check"></i> 🎯 單字選擇`;
-                    btnVocabChoice.onclick = () => selectLessonAndMode(les, 'vocab_choice');
+                    const btnGrammar = createActionButton('grammar', '📖 語法', 'btn-grammar-lesson');
+                    const btnShadow = createActionButton('shadow', '🎙️ 跟讀');
+                    const btnBlocks = createActionButton('blocks', '🧩 重組');
+                    const btnDialogue = createActionButton('dialogue', '💬 對話', 'btn-dialogue-lesson');
+                    const btnVocabShadow = createActionButton('vocab_shadow', '🗣️ 單字跟讀', 'btn-vocab-lesson');
+                    const btnVocabType = createActionButton('vocab_type', '⌨ 單字聽打', 'btn-vocab-lesson');
+                    const btnVocabChoice = createActionButton('vocab_choice', '🎯 單字選擇', 'btn-vocab-lesson');
 
                     btnGroup.appendChild(btnGrammar);
                     btnGroup.appendChild(btnShadow);
@@ -2270,7 +2266,7 @@
                 }
             }
 
-            goToStep('step-lesson');
+            selectUnit(currentConfig.unit_id);
         }
 
         function selectLessonAndMode(lesson, mode) {
@@ -3040,20 +3036,16 @@
             });
         }
 
-        // 🔧 修正後的句子重組比對邏輯 (自動清除空格與標點符號進行標準化比對)
         function checkBlockAnswer() {
             const q = questions[currentIndex];
             
-            // 1. 將使用者選取的字塊拼起來，並去除所有空格與標點符號
             const userSentence = selectedBlockIndices.map(i => q.options[i]).join('');
             const cleanUserSentence = cleanStringForCompare(userSentence);
             
-            // 2. 將正確答案也去除所有空格與標點符號
             const cleanTargetSentence = cleanStringForCompare(q.fullText);
             
             const scoreBadge = document.getElementById('lbl-block-score');
 
-            // 3. 進行標準化後的比對
             if (cleanUserSentence === cleanTargetSentence) {
                 scoreBadge.innerText = "🎉 完全正確！";
                 scoreBadge.style.color = "#58cc02";
