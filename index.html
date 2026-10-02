@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>0.85戲化學習系統</title>
+    <title>多語種雲端遊戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -269,6 +269,7 @@
         .btn-lesson-action:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
         .btn-lesson-action.btn-grammar-lesson:hover { border-color: var(--duo-purple); color: var(--duo-purple); }
         .btn-lesson-action.btn-dialogue-lesson:hover { border-color: var(--duo-orange); color: var(--duo-orange); }
+        .btn-lesson-action.btn-qna-lesson:hover { border-color: #06b6d4; color: #06b6d4; }
         .btn-lesson-action.btn-vocab-lesson:hover { border-color: #10b981; color: #10b981; }
 
         .btn-confirm {
@@ -915,6 +916,45 @@
                 <button class="btn-finish-challenge" id="btn-finish-dialogue" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
+            <!-- 步驟 6-C2：聊天視窗風【句子問答】練習 (新新增/完全複製對話邏輯) -->
+            <div id="step-quiz-qna" class="step-page">
+                <div class="challenge-top-bar">
+                    <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div class="gear-menu-container">
+                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-qna')"><i class="fa-solid fa-gear"></i></button>
+                        <div class="gear-dropdown" id="gear-dropdown-qna">
+                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-qna')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                            <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="dialogue-sub-nav">
+                    <button class="btn-dialogue-mode active" id="btn-qna-mode-basic" onclick="switchQnaMode('basic')">基礎問答</button>
+                    <button class="btn-dialogue-mode" id="btn-qna-mode-fill" onclick="switchQnaMode('fill')">挖空填空</button>
+                    <button class="btn-dialogue-mode" id="btn-qna-mode-blind" onclick="switchQnaMode('blind')">盲測聽力</button>
+                </div>
+                <div class="role-switch-box">
+                    <button class="btn-role active" id="btn-qna-role-a" onclick="switchQnaUserRole('A')">扮演 Speaker A</button>
+                    <button class="btn-role" id="btn-qna-role-b" onclick="switchQnaUserRole('B')">扮演 Speaker B</button>
+                </div>
+                <div class="chat-window" id="qna-chat-window"></div>
+                <div id="box-qna-blind-unlock" style="display: none; margin-bottom: 8px;">
+                    <button class="btn-lesson-action" style="width: 100%; border-color: #06b6d4; color: #06b6d4;" onclick="unlockQnaBlindTextManually()">
+                        <i class="fa-solid fa-eye"></i> 解鎖當前句子內容
+                    </button>
+                </div>
+                <div class="controls">
+                    <button class="btn-circle btn-listen" id="btn-qna-play" onclick="playQnaAudio()"><i class="fa-solid fa-volume-high"></i></button>
+                    <button class="btn-circle btn-record" id="btn-qna-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
+                </div>
+                <div class="nav-controls">
+                    <button class="btn-nav" id="btn-qna-prev" onclick="prevQnaSentence()">上一句</button>
+                    <span class="lbl-progress" id="lbl-qna-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
+                    <button class="btn-nav" id="btn-qna-next" onclick="nextQnaSentence()">下一句</button>
+                </div>
+                <button class="btn-finish-challenge" id="btn-finish-qna" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
+            </div>
+
             <!-- 步驟 6-D：單字跟讀挑戰畫面 -->
             <div id="step-quiz-vocab-shadow" class="step-page">
                 <div class="challenge-top-bar">
@@ -1100,6 +1140,7 @@
         let rawBlocksData = [];  
         let globalGrammarData = []; 
         let rawDialogueData = []; 
+        let rawQnaData = []; // ❓ 句子問答獨立原始資料
         let rawVocabData = [];
 
         let questions = [];
@@ -1115,6 +1156,14 @@
         let dialogueSubMode = 'basic'; 
         let userRole = 'A'; 
         let isBlindUnlocked = false;
+
+        // ❓ 句子問答運作變數 (與 Dialogue 結構完全一致)
+        let currentQnaItem = null;
+        let qnaList = [];
+        let qnaIndex = 0;
+        let qnaSubMode = 'basic';
+        let qnaUserRole = 'A';
+        let isQnaBlindUnlocked = false;
 
         let vocabQuestions = [];
         let vocabIndex = 0;
@@ -1991,6 +2040,7 @@
             localStorage.removeItem(`all_data_${currentConfig.category}`);
             localStorage.removeItem(`grammar_data_${currentConfig.category}`);
             localStorage.removeItem(`dialogue_data_${currentConfig.category}`);
+            localStorage.removeItem(`qna_data_${currentConfig.category}`);
             localStorage.removeItem(`vocab_data_${currentConfig.category}`);
             alert(`已清除快取！請繼續點擊下一步。`);
             checkCacheStatus();
@@ -2003,11 +2053,13 @@
             const cacheKey = `all_data_${currentConfig.category}`;
             const grammarCacheKey = `grammar_data_${currentConfig.category}`;
             const dialogueCacheKey = `dialogue_data_${currentConfig.category}`;
+            const qnaCacheKey = `qna_data_${currentConfig.category}`;
             const vocabCacheKey = `vocab_data_${currentConfig.category}`;
 
             const cachedData = localStorage.getItem(cacheKey);
             const cachedGrammar = localStorage.getItem(grammarCacheKey);
             const cachedDialogue = localStorage.getItem(dialogueCacheKey);
+            const cachedQna = localStorage.getItem(qnaCacheKey);
             const cachedVocab = localStorage.getItem(vocabCacheKey);
 
             if (cachedData) {
@@ -2018,6 +2070,7 @@
                         rawBlocksData = parsed.blocks || [];
                         if (cachedGrammar) try { globalGrammarData = JSON.parse(cachedGrammar); } catch(e) {}
                         if (cachedDialogue) try { rawDialogueData = JSON.parse(cachedDialogue); } catch(e) {}
+                        if (cachedQna) try { rawQnaData = JSON.parse(cachedQna); } catch(e) {}
                         if (cachedVocab) try { rawVocabData = JSON.parse(cachedVocab); } catch(e) {}
                         renderLevelMenu();
                         goToStep('step-level');
@@ -2031,11 +2084,13 @@
             btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 同步最新試算表中...`;
 
             try {
-                const [shadowRes, blocksRes, grammarRes, dialogueRes, vocabRes] = await Promise.all([
+                // 抓取與句子對話 100% 一樣的分頁 (getDialogueData)
+                const [shadowRes, blocksRes, grammarRes, dialogueRes, qnaRes, vocabRes] = await Promise.all([
                     requestGAS(targetApi, 'getLanguageData').catch(()=>null),
                     requestGAS(targetApi, 'getBlocksData').catch(()=>null),
                     requestGAS(targetApi, 'getGrammarData').catch(()=>null),
                     requestGAS(targetApi, 'getDialogueData').catch(()=>null),
+                    requestGAS(targetApi, 'getDialogueData').catch(()=>null), // 完全參照句子對話抓取
                     requestGAS(targetApi, 'getVocabularyData').catch(()=>null)
                 ]);
 
@@ -2048,6 +2103,10 @@
                 if (dialogueRes && dialogueRes.status === 'success') {
                     rawDialogueData = dialogueRes.data || [];
                     try { localStorage.setItem(dialogueCacheKey, JSON.stringify(dialogueRes.data)); } catch(e){}
+                }
+                if (qnaRes && qnaRes.status === 'success') {
+                    rawQnaData = qnaRes.data || [];
+                    try { localStorage.setItem(qnaCacheKey, JSON.stringify(qnaRes.data)); } catch(e){}
                 }
                 if (vocabRes && vocabRes.status === 'success') {
                     rawVocabData = vocabRes.data || [];
@@ -2130,7 +2189,7 @@
             const container = document.getElementById('container-units');
             container.innerHTML = "";
 
-            const combinedData = [...rawShadowData, ...rawBlocksData, ...rawDialogueData, ...rawVocabData];
+            const combinedData = [...rawShadowData, ...rawBlocksData, ...rawDialogueData, ...rawQnaData, ...rawVocabData];
             const targetLevelNormalized = normalizeLevelStr(level);
 
             const filtered = combinedData.filter(i => {
@@ -2161,7 +2220,7 @@
             const container = document.getElementById('container-lessons');
             container.innerHTML = "";
 
-            const combinedData = [...rawShadowData, ...rawBlocksData, ...rawDialogueData, ...rawVocabData];
+            const combinedData = [...rawShadowData, ...rawBlocksData, ...rawDialogueData, ...rawQnaData, ...rawVocabData];
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
             const filtered = combinedData.filter(i => {
@@ -2209,7 +2268,8 @@
                     const btnShadow = createActionButton('shadow', '🎙️ 跟讀');
                     const btnBlocks = createActionButton('blocks', '🧩 重組');
                     const btnDialogue = createActionButton('dialogue', '💬 對話', 'btn-dialogue-lesson');
-                    const btnVocabShadow = createActionButton('vocab_shadow', '🗣️️ 單字跟讀', 'btn-vocab-lesson');
+                    const btnQna = createActionButton('qna', '❓ 句子問答', 'btn-qna-lesson'); // 複製出的新類型
+                    const btnVocabShadow = createActionButton('vocab_shadow', '🗣 單字跟讀', 'btn-vocab-lesson');
                     const btnVocabType = createActionButton('vocab_type', '⌨ 單字聽打', 'btn-vocab-lesson');
                     const btnVocabChoice = createActionButton('vocab_choice', '🎯 單字選擇', 'btn-vocab-lesson');
 
@@ -2217,6 +2277,7 @@
                     btnGroup.appendChild(btnShadow);
                     btnGroup.appendChild(btnBlocks);
                     btnGroup.appendChild(btnDialogue);
+                    btnGroup.appendChild(btnQna);
                     btnGroup.appendChild(btnVocabShadow);
                     btnGroup.appendChild(btnVocabType);
                     btnGroup.appendChild(btnVocabChoice);
@@ -2309,6 +2370,19 @@
                     startDialogueChallenge(matchDialogue);
                 } else {
                     alert("此課堂目前沒有設定對話練習喔！");
+                }
+            } else if (mode === 'qna') {
+                const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+                const matchQna = rawQnaData.find(d => 
+                    normalizeLevelStr(d.level) === targetLevelNormalized &&
+                    String(d.unit_id) === String(currentConfig.unit_id) &&
+                    String(d.lesson || d.stage) === String(lesson)
+                );
+
+                if (matchQna) {
+                    startQnaChallenge(matchQna);
+                } else {
+                    alert("此課堂目前沒有設定句子問答喔！");
                 }
             } else if (mode.startsWith('vocab_')) {
                 startVocabChallenge(mode);
@@ -2608,6 +2682,144 @@
         function playDialogueAudio() { playSpecificDialogueAudio(dialogueIndex); }
         function prevDialogueSentence() { if (dialogueIndex > 0) { dialogueIndex--; isBlindUnlocked = false; renderChatWindow(); } }
         function nextDialogueSentence() { if (dialogueIndex < dialogueList.length - 1) { dialogueIndex++; isBlindUnlocked = false; renderChatWindow(); } }
+
+        // ==================== 4.5 句子問答 (QnA) 邏輯 - 完全參照對話 ====================
+
+        function startQnaChallenge(qnaItem) {
+            stopSpeechRecognition();
+            currentQnaItem = qnaItem;
+            qnaList = [];
+
+            for (let i = 1; i <= 8; i++) {
+                const aText = (qnaItem[`a${i}`] || '').trim();
+                const bText = (qnaItem[`b${i}`] || '').trim();
+                const axText = (qnaItem[`a${i}x`] || '').trim();
+                const bxText = (qnaItem[`b${i}x`] || '').trim();
+
+                if (aText) qnaList.push({ speaker: 'A', targetText: aText, fillText: axText || aText, audioUrl: qnaItem.audio_url || '' });
+                if (bText) qnaList.push({ speaker: 'B', targetText: bText, fillText: bxText || bText, audioUrl: qnaItem.audio_url || '' });
+            }
+
+            if (qnaList.length === 0) return alert("此課堂問答資料為空！");
+
+            qnaIndex = 0;
+            totalChallengeQuestions = qnaList.length;
+            switchQnaMode('basic');
+            switchQnaUserRole('A');
+
+            const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
+            document.querySelectorAll('.lbl-quiz-info').forEach(e => {
+                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (❓ 句子問答)`;
+            });
+
+            goToStep('step-quiz-qna');
+            renderQnaChatWindow();
+        }
+
+        function switchQnaMode(mode) {
+            stopSpeechRecognition();
+            qnaSubMode = mode;
+            qnaIndex = 0;
+            ['basic', 'fill', 'blind'].forEach(m => {
+                const btn = document.getElementById(`btn-qna-mode-${m}`);
+                if (btn) btn.classList.remove('active');
+            });
+            document.getElementById(`btn-qna-mode-${mode}`).classList.add('active');
+            isQnaBlindUnlocked = false;
+            renderQnaChatWindow();
+        }
+
+        function switchQnaUserRole(role) {
+            stopSpeechRecognition();
+            qnaUserRole = role;
+            qnaIndex = 0;
+            ['a', 'b'].forEach(r => {
+                const btn = document.getElementById(`btn-qna-role-${r.toLowerCase()}`);
+                if (btn) btn.classList.remove('active');
+            });
+            document.getElementById(`btn-qna-role-${role.toLowerCase()}`).classList.add('active');
+            renderQnaChatWindow();
+        }
+
+        function renderQnaChatWindow() {
+            stopSpeechRecognition();
+            if (!qnaList || qnaList.length === 0) return;
+
+            const chatWin = document.getElementById('qna-chat-window');
+            chatWin.innerHTML = '';
+
+            for (let idx = 0; idx <= qnaIndex; idx++) {
+                const item = qnaList[idx];
+                const isCurrentTarget = (idx === qnaIndex);
+
+                const row = document.createElement('div');
+                row.className = `chat-bubble-row speaker-${item.speaker}`;
+
+                const label = document.createElement('div');
+                label.className = 'chat-speaker-label';
+                const isUser = (item.speaker === qnaUserRole);
+                label.innerText = `Speaker ${item.speaker}${isUser ? ' (你)' : ''}`;
+
+                const bubble = document.createElement('div');
+                bubble.className = 'chat-bubble';
+                if (isCurrentTarget) bubble.classList.add('active-target');
+
+                let bubbleText = item.targetText;
+                if (qnaSubMode === 'fill' && isCurrentTarget && !isQnaBlindUnlocked) {
+                    bubbleText = item.fillText;
+                } else if (qnaSubMode === 'blind' && isCurrentTarget && !isQnaBlindUnlocked) {
+                    bubbleText = "??? (聽音或問答解鎖)";
+                }
+
+                const textSpan = document.createElement('span');
+                textSpan.innerText = bubbleText;
+                bubble.appendChild(textSpan);
+
+                const playBtn = document.createElement('button');
+                playBtn.className = 'btn-bubble-play';
+                playBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
+                playBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    playSpecificQnaAudio(idx);
+                };
+                bubble.appendChild(playBtn);
+
+                row.appendChild(label);
+                row.appendChild(bubble);
+                chatWin.appendChild(row);
+            }
+
+            setTimeout(() => { chatWin.scrollTop = chatWin.scrollHeight; }, 50);
+
+            const blindBox = document.getElementById('box-qna-blind-unlock');
+            blindBox.style.display = (qnaSubMode === 'blind' && !isQnaBlindUnlocked) ? 'block' : 'none';
+
+            document.getElementById('lbl-qna-progress').innerText = `${qnaIndex + 1} / ${qnaList.length}`;
+            document.getElementById('btn-qna-prev').disabled = qnaIndex === 0;
+            document.getElementById('btn-qna-next').disabled = qnaIndex === qnaList.length - 1;
+
+            const currentItem = qnaList[qnaIndex];
+            if (currentItem && currentItem.speaker !== qnaUserRole) playQnaAudio();
+        }
+
+        function unlockQnaBlindTextManually() { isQnaBlindUnlocked = true; renderQnaChatWindow(); }
+
+        function playSpecificQnaAudio(idx) {
+            stopSpeechRecognition();
+            if (!qnaList || !qnaList[idx]) return;
+            const target = qnaList[idx];
+            if (target.audioUrl && target.audioUrl.trim() !== '') {
+                const audio = new Audio(target.audioUrl);
+                audio.playbackRate = 0.85;
+                audio.play().catch(() => speakTTS(target.targetText, 0.85));
+            } else {
+                speakTTS(target.targetText, 0.85);
+            }
+        }
+
+        function playQnaAudio() { playSpecificQnaAudio(qnaIndex); }
+        function prevQnaSentence() { if (qnaIndex > 0) { qnaIndex--; isQnaBlindUnlocked = false; renderQnaChatWindow(); } }
+        function nextQnaSentence() { if (qnaIndex < qnaList.length - 1) { qnaIndex++; isQnaBlindUnlocked = false; renderQnaChatWindow(); } }
 
         // ==================== 5. 語法小教室邏輯 ====================
 
@@ -3143,7 +3355,7 @@
                 document.querySelectorAll('.btn-record').forEach(b => b.classList.add('recording'));
                 if (currentConfig.mode === 'vocab_shadow') {
                     document.getElementById('lbl-vocab-recognized-text').innerText = "聆聽中...";
-                } else if (currentConfig.mode !== 'dialogue') {
+                } else if (currentConfig.mode !== 'dialogue' && currentConfig.mode !== 'qna') {
                     document.getElementById('lbl-recognized-text').innerText = "聆聽中...";
                 }
             };
@@ -3184,6 +3396,18 @@
                             isBlindUnlocked = true;
                             renderChatWindow();
                             passedSubQuestions.add(dialogueIndex);
+                            checkAndShowFinishButton();
+                        }
+                    }
+                } else if (currentConfig.mode === 'qna') {
+                    const currentSentence = qnaList[qnaIndex];
+                    if (currentSentence) {
+                        const targetText = currentSentence.targetText || "";
+                        const pass = isSpeechPass(targetText, userSpeech);
+                        if (pass || qnaSubMode === 'basic') {
+                            isQnaBlindUnlocked = true;
+                            renderQnaChatWindow();
+                            passedSubQuestions.add(qnaIndex);
                             checkAndShowFinishButton();
                         }
                     }
