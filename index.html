@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>註冊化學習系統</title>
+    <title>問答遊戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -46,7 +46,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 🎮 手遊風格啟動/進入遊戲遮罩頁面 */
+        /* 🎮 手遊風格啟動/進入遊戲遮罩頁面 (z-index 99990) */
         #game-splash-screen {
             position: fixed;
             top: 0;
@@ -54,7 +54,7 @@
             width: 100vw;
             height: 100vh;
             background: linear-gradient(145deg, #0f172a 0%, #1e293b 60%, #0f172a 100%);
-            z-index: 9999999;
+            z-index: 99990;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -172,7 +172,6 @@
             box-shadow: 0 2px 0 #2e6d02, 0 4px 12px rgba(88, 204, 2, 0.4);
         }
 
-        /* 訪客登入/註冊按鈕樣式 */
         .btn-splash-auth {
             width: 100%;
             padding: 15px 24px;
@@ -245,10 +244,11 @@
         }
         .user-meta-item:hover { background: #f3f4f6; }
 
+        /* 💡 修正：z-index 提高至 100000，確保登入框浮在手遊遮罩上面 */
         .custom-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.55); display: none; justify-content: center;
-            align-items: center; z-index: 999999;
+            background: rgba(0, 0, 0, 0.65); display: none; justify-content: center;
+            align-items: center; z-index: 100000;
             padding: 16px;
         }
         .custom-modal.show { display: flex !important; }
@@ -685,9 +685,12 @@
         </div>
     </div>
 
-    <!-- 🔑 1. 登入 / 註冊彈窗 -->
+    <!-- 🔑 1. 登入 / 註冊彈窗 (層級提升至最高) -->
     <div class="custom-modal" id="login-modal">
         <div class="custom-modal-card">
+            <!-- 加上關閉按鈕，方便不想登入時回到手遊進入頁 -->
+            <div class="close-icon-circle" onclick="closeModal('login-modal')"><i class="fa-solid fa-xmark"></i></div>
+            
             <div style="font-size: 2.2rem; color: var(--duo-blue); margin-bottom: 8px;"><i class="fa-solid fa-graduation-cap"></i></div>
             <h3 style="margin: 0 0 6px 0; font-size: 1.2rem;">登入多語學習系統</h3>
             <p style="font-size: 0.82rem; color:#6b7280; margin-bottom: 16px;">需為已開通白名單之學員方可登入</p>
@@ -1383,7 +1386,7 @@
             if (authBtn) authBtn.style.display = 'inline-flex';
         }
 
-        // 點擊「登入 / 註冊帳號」按鈕
+        // 點擊「登入 / 註冊帳號」按鈕：開啟登入彈窗
         function openLoginModalFromSplash() {
             openModal('login-modal');
         }
@@ -1533,7 +1536,8 @@
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 currentUser = user;
-                // 恢復進度條顯示
+                closeModal('login-modal');
+                // 恢復進度條顯示並更新狀態
                 const loadingBox = document.getElementById('splash-loading-box');
                 const authBtn = document.getElementById('btn-splash-auth');
                 if (loadingBox) loadingBox.style.display = 'block';
@@ -3212,7 +3216,7 @@
             if (audioUrl && audioUrl.trim() !== '') {
                 const audio = new Audio(audioUrl);
                 audio.playbackRate = 0.85;
-                audio.play().catch(() => { if (textToSpeak) speakTTS(textToSpeak, 0.85); });
+                audio.play().catch(() => { if (textToSpeak) speakTTS(textToSpeak, 0.85)); });
             } else if (textToSpeak) {
                 speakTTS(textToSpeak, 0.85);
             }
