@@ -46,162 +46,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 🎮 手遊風格啟動/進入遊戲遮罩頁面 (z-index 99990) */
-        #game-splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(145deg, #0f172a 0%, #1e293b 60%, #0f172a 100%);
-            z-index: 99990;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 24px 20px;
-            box-sizing: border-box;
-            color: #ffffff;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-        #game-splash-screen.fade-out {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-        .splash-logo-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 36px;
-            animation: floatLogo 2.5s ease-in-out infinite alternate;
-        }
-        @keyframes floatLogo {
-            0% { transform: translateY(0px) scale(1); }
-            100% { transform: translateY(-8px) scale(1.03); }
-        }
-        .splash-icon-circle {
-            width: 96px;
-            height: 96px;
-            background: rgba(28, 176, 246, 0.15);
-            border: 3px solid var(--duo-blue);
-            box-shadow: 0 0 25px rgba(28, 176, 246, 0.45);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.8rem;
-            color: var(--duo-blue);
-            margin-bottom: 16px;
-        }
-        .splash-game-title {
-            font-size: 1.8rem;
-            font-weight: 900;
-            letter-spacing: 1.5px;
-            margin: 0;
-            text-shadow: 0 3px 12px rgba(0,0,0,0.5);
-            background: linear-gradient(180deg, #ffffff 40%, #93c5fd 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .splash-game-subtitle {
-            font-size: 0.88rem;
-            color: #94a3b8;
-            margin-top: 6px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .splash-action-zone {
-            width: 100%;
-            max-width: 320px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-        .splash-progress-bar-container {
-            width: 100%;
-            height: 12px;
-            background: rgba(255, 255, 255, 0.12);
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
-            margin-bottom: 12px;
-        }
-        .splash-progress-bar-fill {
-            height: 100%;
-            width: 15%;
-            background: linear-gradient(90deg, #38bdf8, var(--duo-green));
-            border-radius: 12px;
-            transition: width 0.3s ease;
-            box-shadow: 0 0 10px rgba(88, 204, 2, 0.6);
-        }
-        .splash-status-text {
-            font-size: 0.82rem;
-            color: #cbd5e1;
-            font-weight: bold;
-            min-height: 1.3rem;
-            text-align: center;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-enter-game {
-            width: 100%;
-            padding: 15px 24px;
-            background: linear-gradient(180deg, #58cc02 0%, #46a302 100%);
-            border: 2px solid #86efac;
-            box-shadow: 0 6px 0 #2e6d02, 0 8px 24px rgba(88, 204, 2, 0.4);
-            color: white;
-            font-size: 1.15rem;
-            font-weight: 900;
-            border-radius: 18px;
-            cursor: pointer;
-            user-select: none;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            letter-spacing: 1px;
-            animation: pulseBtn 1.5s infinite;
-        }
-        .btn-enter-game:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #2e6d02, 0 4px 12px rgba(88, 204, 2, 0.4);
-        }
-
-        .btn-splash-auth {
-            width: 100%;
-            padding: 15px 24px;
-            background: linear-gradient(180deg, #1cb0f6 0%, #0284c7 100%);
-            border: 2px solid #7dd3fc;
-            box-shadow: 0 6px 0 #0369a1, 0 8px 24px rgba(2, 132, 199, 0.4);
-            color: white;
-            font-size: 1.15rem;
-            font-weight: 900;
-            border-radius: 18px;
-            cursor: pointer;
-            user-select: none;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            letter-spacing: 1px;
-            animation: pulseBtn 1.5s infinite;
-        }
-        .btn-splash-auth:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #0369a1, 0 4px 12px rgba(2, 132, 199, 0.4);
-        }
-
-        @keyframes pulseBtn {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
-        }
-
         .shadowing-card {
             background: white;
             border: 2px solid #e5e7eb;
@@ -244,11 +88,10 @@
         }
         .user-meta-item:hover { background: #f3f4f6; }
 
-        /* 💡 修正：z-index 提高至 100000，確保登入框浮在手遊遮罩上面 */
         .custom-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.65); display: none; justify-content: center;
-            align-items: center; z-index: 100000;
+            background: rgba(0, 0, 0, 0.55); display: none; justify-content: center;
+            align-items: center; z-index: 999999;
             padding: 16px;
         }
         .custom-modal.show { display: flex !important; }
@@ -654,43 +497,9 @@
 </head>
 <body>
 
-    <!-- 🎮 手遊風格啟動與進入遊戲頁面 (Splash Cover) -->
-    <div id="game-splash-screen">
-        <div class="splash-logo-container">
-            <div class="splash-icon-circle">
-                <i class="fa-solid fa-gamepad"></i>
-            </div>
-            <h1 class="splash-game-title">語言冒險之境</h1>
-            <div class="splash-game-subtitle">多語互動闖關學習系統</div>
-        </div>
-
-        <div class="splash-action-zone">
-            <!-- 進度條 (已登入資料載入中時顯示) -->
-            <div id="splash-loading-box" style="width: 100%; text-align: center;">
-                <div class="splash-progress-bar-container">
-                    <div id="splash-bar-fill" class="splash-progress-bar-fill"></div>
-                </div>
-                <div id="splash-status-lbl" class="splash-status-text">連線伺服器中...</div>
-            </div>
-
-            <!-- 🔑 訪客 / 未登入：登入註冊按鈕 -->
-            <button id="btn-splash-auth" class="btn-splash-auth" onclick="openLoginModalFromSplash()">
-                <i class="fa-solid fa-right-to-bracket"></i> 登入 / 註冊帳號
-            </button>
-
-            <!-- ⚔️ 已登入並載入完成：進入遊戲按鈕 -->
-            <button id="btn-splash-start" class="btn-enter-game" onclick="enterGame()">
-                <i class="fa-solid fa-play"></i> 進入遊戲
-            </button>
-        </div>
-    </div>
-
-    <!-- 🔑 1. 登入 / 註冊彈窗 (層級提升至最高) -->
+    <!-- 🔑 1. 登入 / 註冊彈窗 -->
     <div class="custom-modal" id="login-modal">
         <div class="custom-modal-card">
-            <!-- 加上關閉按鈕，方便不想登入時回到手遊進入頁 -->
-            <div class="close-icon-circle" onclick="closeModal('login-modal')"><i class="fa-solid fa-xmark"></i></div>
-            
             <div style="font-size: 2.2rem; color: var(--duo-blue); margin-bottom: 8px;"><i class="fa-solid fa-graduation-cap"></i></div>
             <h3 style="margin: 0 0 6px 0; font-size: 1.2rem;">登入多語學習系統</h3>
             <p style="font-size: 0.82rem; color:#6b7280; margin-bottom: 16px;">需為已開通白名單之學員方可登入</p>
@@ -896,7 +705,7 @@
 
         <!-- 🌟 視圖 A：學習與題目挑戰區塊 -->
         <div id="learning-content-view">
-            <!-- 步驟 1：選擇學習語言 -->
+            <!-- 步驟 1：選擇學習語言（已改為起始畫面，省略重複母語設定） -->
             <div id="step-learn-lang" class="step-page active">
                 <h2 class="step-title" style="margin-top: 8px;"><i class="fa-solid fa-language"></i> 請選擇要學習的語言</h2>
                 <div class="option-grid grid-1">
@@ -1253,13 +1062,13 @@
                 <div style="text-align: center; border-bottom: 1.5px dashed #e2e8f0; padding-bottom: 14px; margin-bottom: 14px;">
                     <img id="myaccount-avatar" src="https://lh3.googleusercontent.com/a/default-user" class="profile-avatar-large" alt="User Avatar">
                     <h3 style="margin: 0; color: #1e293b; font-size: 1.2rem;">
-                        <span id="myaccount-nickname">學生</span>
+                        <span id="myaccount-nickname">UWEI</span>
                         <button onclick="openModal('modal-edit-nickname')" style="border:none; background:none; color:var(--duo-blue); cursor:pointer; font-size:0.95rem;"><i class="fa-solid fa-pen-to-square"></i></button>
                     </h3>
                     <p style="font-size: 0.85rem; color: #64748b; margin: 4px 0 0 0;" id="myaccount-email">email@example.com</p>
                 </div>
 
-                <!-- 🌐 母語偏好設定 -->
+                <!-- 🌐 母語偏好設定（已移至此處） -->
                 <div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 14px; border: 1px solid #e2e8f0;">
                     <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
                         <i class="fa-solid fa-earth-americas" style="color: var(--duo-blue);"></i> 顯示母語設定
@@ -1367,51 +1176,6 @@
 
         let passedSubQuestions = new Set();
         let totalChallengeQuestions = 0;
-
-        // 🎮 手遊啟動畫面進度控制邏輯
-        function setSplashProgress(percent, text) {
-            const bar = document.getElementById('splash-bar-fill');
-            const lbl = document.getElementById('splash-status-lbl');
-            if (bar) bar.style.width = `${percent}%`;
-            if (lbl && text) lbl.innerText = text;
-        }
-
-        // 顯示未登入/訪客專屬的登入註冊按鈕
-        function showSplashAuthButton() {
-            const loadingBox = document.getElementById('splash-loading-box');
-            const startBtn = document.getElementById('btn-splash-start');
-            const authBtn = document.getElementById('btn-splash-auth');
-            if (loadingBox) loadingBox.style.display = 'none';
-            if (startBtn) startBtn.style.display = 'none';
-            if (authBtn) authBtn.style.display = 'inline-flex';
-        }
-
-        // 點擊「登入 / 註冊帳號」按鈕：開啟登入彈窗
-        function openLoginModalFromSplash() {
-            openModal('login-modal');
-        }
-
-        // 顯示進入遊戲按鈕（已登入完成）
-        function showSplashReadyToEnter() {
-            const loadingBox = document.getElementById('splash-loading-box');
-            const authBtn = document.getElementById('btn-splash-auth');
-            const startBtn = document.getElementById('btn-splash-start');
-            if (loadingBox) loadingBox.style.display = 'none';
-            if (authBtn) authBtn.style.display = 'none';
-            if (startBtn) {
-                startBtn.style.display = 'inline-flex';
-                const name = (window.currentUserData && window.currentUserData.displayName) ? window.currentUserData.displayName : "冒險者";
-                startBtn.innerHTML = `<i class="fa-solid fa-play"></i> 進入遊戲 (${name})`;
-            }
-        }
-
-        // 進入遊戲
-        function enterGame() {
-            const splash = document.getElementById('game-splash-screen');
-            if (splash) {
-                splash.classList.add('fade-out');
-            }
-        }
 
         const ProgressModel = {
             loadProgress: async (uid) => {
@@ -1536,35 +1300,26 @@
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 currentUser = user;
-                closeModal('login-modal');
-                // 恢復進度條顯示並更新狀態
-                const loadingBox = document.getElementById('splash-loading-box');
-                const authBtn = document.getElementById('btn-splash-auth');
-                if (loadingBox) loadingBox.style.display = 'block';
-                if (authBtn) authBtn.style.display = 'none';
                 await verifyAndSyncUser(user);
             } else {
                 currentUser = null;
                 window.currentUserData = null;
-                showSplashAuthButton();
+                openModal('login-modal');
                 document.getElementById('lbl-username').innerText = "訪客";
                 document.getElementById('lbl-xp').innerText = "0";
             }
         });
 
         async function verifyAndSyncUser(user) {
-            setSplashProgress(35, "正在載入用戶設定與白名單...");
+            document.getElementById('lbl-username').innerText = "驗證白名單中...";
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
 
                 if (!gasResult || gasResult.status !== "success") {
-                    setSplashProgress(100, "白名單驗證未通過！");
                     alert("您不在系統白名單內或帳號已被停權！\n請聯繫管理員開通。");
                     await auth.signOut();
                     return;
                 }
-
-                setSplashProgress(65, "正在同步雲端學習存檔...");
 
                 let rawLevels = gasResult.allowedLevels || [];
                 if (!Array.isArray(rawLevels)) rawLevels = [String(rawLevels)];
@@ -1623,16 +1378,10 @@
 
                     closeModal('login-modal');
                     renderUserInfo();
-
-                    setSplashProgress(100, "資料載入完成！");
-                    setTimeout(() => {
-                        showSplashReadyToEnter();
-                    }, 350);
                 }
 
             } catch (err) {
                 console.error("驗證失敗:", err);
-                setSplashProgress(100, "連線失敗！");
                 alert("伺服器連線驗證失敗：" + err.message);
                 await auth.signOut();
             }
@@ -1672,8 +1421,6 @@
             closeModal('modal-setup-nickname');
             setUserLang(nativeLang);
             renderUserInfo();
-
-            showSplashReadyToEnter();
         };
 
         // 🌐 更新「我的帳號」中的母語並自動存檔
@@ -1702,7 +1449,7 @@
             const xp = window.currentUserData.xp || 0;
             const displayName = window.currentUserData.displayName || "學生";
 
-            // 同步母語狀態
+            // 同步母語下拉選單狀態
             const savedLang = window.currentUserData.nativeLanguage || localStorage.getItem('preferred_user_lang') || 'zh';
             setUserLang(savedLang);
             const accountLangSelect = document.getElementById('select-account-language');
@@ -1821,11 +1568,6 @@
 
         function handleLogout() {
             if (confirm("確定要登出系統嗎？")) {
-                const splash = document.getElementById('game-splash-screen');
-                if (splash) {
-                    splash.classList.remove('fade-out');
-                    showSplashAuthButton();
-                }
                 auth.signOut();
                 closeProfileView();
             }
@@ -3216,7 +2958,7 @@
             if (audioUrl && audioUrl.trim() !== '') {
                 const audio = new Audio(audioUrl);
                 audio.playbackRate = 0.85;
-                audio.play().catch(() => { if (textToSpeak) speakTTS(textToSpeak, 0.85)); });
+                audio.play().catch(() => { if (textToSpeak) speakTTS(textToSpeak, 0.85); });
             } else if (textToSpeak) {
                 speakTTS(textToSpeak, 0.85);
             }
