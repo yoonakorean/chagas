@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>問答全保留化學習系統</title>
+    <title>問答遊戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -557,7 +557,7 @@
     <div id="modal-setup-nickname" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-user-gear" style="color:var(--duo-blue);"></i> 設定您的學習暱稱</h3>
-            <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 8px;">請設定排行榜上顯示的名稱 (2~12字，30秒限改一次)</p>
+            <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 8px;">請設定排行榜上顯示的名稱 (2~12字，不可與他人重複)</p>
             <input type="text" id="input-setup-nickname" placeholder="例如：韓語小霸王" maxlength="12" />
             <p style="font-size: 0.85rem; color: #6b7280; margin: 12px 0 4px; text-align:left;">選擇母語（題意翻譯將以此呈現）</p>
             <select id="select-native-language">
@@ -677,7 +677,7 @@
     <div id="modal-edit-nickname" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;">修改公開暱稱</h3>
-            <p style="font-size: 0.82rem; color: var(--duo-orange); margin-bottom: 8px;">⚠️ 注意：暱稱每 30 秒僅能修改一次</p>
+            <p style="font-size: 0.82rem; color: var(--duo-orange); margin-bottom: 8px;">⚠️ 注意：暱稱每 30 秒僅能修改一次，不可重複</p>
             <input type="text" id="input-edit-nickname" placeholder="輸入新暱稱 (2~12字)" maxlength="12" />
             <div id="edit-nickname-error-msg" style="color: var(--duo-red); font-size: 0.8rem; text-align: center; margin-top: 4px;" class="hidden"></div>
             <div style="display:flex; gap:10px; margin-top:12px;">
@@ -1220,7 +1220,7 @@
         let qnaUserRole = 'A';
         let qnaUnlockedIndices = new Set();
 
-        // 🗣️ 新增句子聊天挑戰專用變數
+        // 🗣️ 句子聊天挑戰專用變數
         let chatRounds = [];
         let chatRoundIndex = 0;
         let chatRole = 'A';
@@ -1277,6 +1277,25 @@
                 }
             }
         };
+
+        // 🔍 檢查暱稱是否已被使用 (不分大小寫比對)
+        async function isNicknameTaken(nickname, excludeUid = null) {
+            try {
+                const snap = await db.collection("users").where("displayName", "==", nickname).get();
+                if (snap.empty) return false;
+                if (excludeUid) {
+                    let hasOtherUser = false;
+                    snap.forEach(doc => {
+                        if (doc.id !== excludeUid) hasOtherUser = true;
+                    });
+                    return hasOtherUser;
+                }
+                return true;
+            } catch (err) {
+                console.error("檢查暱稱重複失敗:", err);
+                return false;
+            }
+        }
 
         async function requestGAS(apiUrl, actionName = '', extraParams = '') {
             let url = new URL(apiUrl);
@@ -1436,10 +1455,12 @@
             }
         }
 
+        // 🌟 首次登入設定暱稱（加入重複性檢查）
         document.getElementById('btn-save-initial-nickname').onclick = async () => {
             const nickname = document.getElementById('input-setup-nickname').value.trim();
             const nativeLang = document.getElementById('select-native-language').value;
             const errDiv = document.getElementById('setup-nickname-error');
+            const submitBtn = document.getElementById('btn-save-initial-nickname');
 
             if (nickname.length < 2 || nickname.length > 12) {
                 errDiv.innerText = "暱稱需介於 2 到 12 個字元！";
@@ -1447,29 +1468,50 @@
                 return;
             }
 
-            const initialData = {
-                email: currentUser.email,
-                displayName: nickname,
-                realName: window.tempMemberInfo.realName || "",
-                role: window.tempMemberInfo.role || "student",
-                status: "開通中",
-                nativeLanguage: nativeLang,
-                xp: 0,
-                streakDays: 1,
-                focusHours: 0.0,
-                unlockedLevels: window.tempUnlockedLevels || ['0A'],
-                memberships: window.tempMemberships || [],
-                lastNicknameUpdatedAt: 0,
-                unitProgress: {},
-                friends: [],
-                completedLessons: []
-            };
+            submitBtn.disabled = true;
+            submitBtn.innerText = "檢查暱稱中...";
 
-            await db.collection('users').doc(currentUser.uid).set(initialData);
-            window.currentUserData = initialData;
-            closeModal('modal-setup-nickname');
-            setUserLang(nativeLang);
-            renderUserInfo();
+            try {
+                // 檢查是否重複
+                const taken = await isNicknameTaken(nickname, currentUser.uid);
+                if (taken) {
+                    errDiv.innerText = "此暱稱已被其他學員使用，請換一個再試！";
+                    errDiv.classList.remove('hidden');
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "完成設定並開始學習";
+                    return;
+                }
+
+                const initialData = {
+                    email: currentUser.email,
+                    displayName: nickname,
+                    realName: window.tempMemberInfo.realName || "",
+                    role: window.tempMemberInfo.role || "student",
+                    status: "開通中",
+                    nativeLanguage: nativeLang,
+                    xp: 0,
+                    streakDays: 1,
+                    focusHours: 0.0,
+                    unlockedLevels: window.tempUnlockedLevels || ['0A'],
+                    memberships: window.tempMemberships || [],
+                    lastNicknameUpdatedAt: 0,
+                    unitProgress: {},
+                    friends: [],
+                    completedLessons: []
+                };
+
+                await db.collection('users').doc(currentUser.uid).set(initialData);
+                window.currentUserData = initialData;
+                closeModal('modal-setup-nickname');
+                setUserLang(nativeLang);
+                renderUserInfo();
+            } catch (e) {
+                errDiv.innerText = "儲存失敗：" + e.message;
+                errDiv.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "完成設定並開始學習";
+            }
         };
 
         async function updateAccountNativeLang(lang) {
@@ -1534,13 +1576,21 @@
             }
         }
 
+        // 🌟 修改公開暱稱（加入重複性檢查）
         document.getElementById('btn-save-nickname').onclick = async () => {
             const newName = document.getElementById('input-edit-nickname').value.trim();
             const errDiv = document.getElementById('edit-nickname-error-msg');
+            const btnSave = document.getElementById('btn-save-nickname');
             const now = Date.now();
 
             if (newName.length < 2 || newName.length > 12) {
                 errDiv.innerText = "暱稱需介於 2 到 12 個字元！";
+                errDiv.classList.remove('hidden');
+                return;
+            }
+
+            if (newName === (window.currentUserData.displayName || '')) {
+                errDiv.innerText = "新暱稱與現有暱稱相同！";
                 errDiv.classList.remove('hidden');
                 return;
             }
@@ -1554,7 +1604,20 @@
                 return;
             }
 
+            btnSave.disabled = true;
+            btnSave.innerText = "檢查重複中...";
+
             try {
+                // 檢查是否已被其他人使用
+                const taken = await isNicknameTaken(newName, currentUser.uid);
+                if (taken) {
+                    errDiv.innerText = "此暱稱已被其他學員使用，請換一個再試！";
+                    errDiv.classList.remove('hidden');
+                    btnSave.disabled = false;
+                    btnSave.innerText = "儲存修改";
+                    return;
+                }
+
                 await ProgressModel.saveProgress(currentUser.uid, {
                     displayName: newName,
                     lastNicknameUpdatedAt: now
@@ -1567,6 +1630,9 @@
             } catch (e) {
                 errDiv.innerText = "修改失敗：" + e.message;
                 errDiv.classList.remove('hidden');
+            } finally {
+                btnSave.disabled = false;
+                btnSave.innerText = "儲存修改";
             }
         };
 
@@ -1795,7 +1861,7 @@
                         <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
                             <div class="rank-num ${rankClass}">${rank}</div>
                             <img src="https://lh3.googleusercontent.com/a/default-user" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
-                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            <div style="overflow: hidden; text-overflow: border-box; white-space: nowrap;">
                                 <div style="font-weight: 800; color: #1e293b; font-size: 0.92rem; overflow: hidden; text-overflow: ellipsis;">
                                     ${u.displayName}${u.isMe ? ' <span style="font-size:0.75rem; color:var(--duo-green);">(你)</span>' : ''}
                                 </div>
@@ -3681,7 +3747,7 @@
                     if (pass) {
                         handleChatSpeechSuccess(userSpeech);
                     } else {
-                        document.getElementById('lbl-chat-score').innerText = "⚠️ 發音未達標，請再念一次！";
+                        document.getElementById('lbl-chat-score').innerText = "⚠️️ 發音未達標，請再念一次！";
                         document.getElementById('lbl-chat-score').style.color = "#ff4b4b";
                     }
 
@@ -3719,7 +3785,7 @@
                         passedSubQuestions.add(vocabIndex);
                         checkAndShowFinishButton();
                     } else {
-                        document.getElementById('lbl-vocab-score').innerText = "⚠️ 發音未達標，再試一次！";
+                        document.getElementById('lbl-vocab-score').innerText = "⚠️️ 發音未達標，再試一次！";
                         document.getElementById('lbl-vocab-score').style.color = "#ff4b4b";
                     }
 
