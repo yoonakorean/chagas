@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>開始頁面學習系統</title>
+    <title>註冊化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -118,6 +118,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 12px;
         }
         .splash-progress-bar-container {
             width: 100%;
@@ -170,6 +171,32 @@
             transform: translateY(4px);
             box-shadow: 0 2px 0 #2e6d02, 0 4px 12px rgba(88, 204, 2, 0.4);
         }
+
+        /* 訪客登入/註冊按鈕樣式 */
+        .btn-splash-auth {
+            width: 100%;
+            padding: 15px 24px;
+            background: linear-gradient(180deg, #1cb0f6 0%, #0284c7 100%);
+            border: 2px solid #7dd3fc;
+            box-shadow: 0 6px 0 #0369a1, 0 8px 24px rgba(2, 132, 199, 0.4);
+            color: white;
+            font-size: 1.15rem;
+            font-weight: 900;
+            border-radius: 18px;
+            cursor: pointer;
+            user-select: none;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            letter-spacing: 1px;
+            animation: pulseBtn 1.5s infinite;
+        }
+        .btn-splash-auth:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #0369a1, 0 4px 12px rgba(2, 132, 199, 0.4);
+        }
+
         @keyframes pulseBtn {
             0% { transform: scale(1); }
             50% { transform: scale(1.03); }
@@ -638,7 +665,7 @@
         </div>
 
         <div class="splash-action-zone">
-            <!-- 進度條 (資料載入中時顯示) -->
+            <!-- 進度條 (已登入資料載入中時顯示) -->
             <div id="splash-loading-box" style="width: 100%; text-align: center;">
                 <div class="splash-progress-bar-container">
                     <div id="splash-bar-fill" class="splash-progress-bar-fill"></div>
@@ -646,7 +673,12 @@
                 <div id="splash-status-lbl" class="splash-status-text">連線伺服器中...</div>
             </div>
 
-            <!-- 進入遊戲按鈕 (驗證與載入完成後顯示) -->
+            <!-- 🔑 訪客 / 未登入：登入註冊按鈕 -->
+            <button id="btn-splash-auth" class="btn-splash-auth" onclick="openLoginModalFromSplash()">
+                <i class="fa-solid fa-right-to-bracket"></i> 登入 / 註冊帳號
+            </button>
+
+            <!-- ⚔️ 已登入並載入完成：進入遊戲按鈕 -->
             <button id="btn-splash-start" class="btn-enter-game" onclick="enterGame()">
                 <i class="fa-solid fa-play"></i> 進入遊戲
             </button>
@@ -839,7 +871,7 @@
         <div class="user-meta-bar" id="app-user-meta-bar">
             <div class="user-meta-item" id="btn-profile-trigger" onclick="openProfileView()">
                 <i class="fa-solid fa-user" style="color: var(--duo-blue);"></i>
-                <span id="lbl-username">載入中...</span>
+                <span id="lbl-username">訪客</span>
             </div>
             <div class="user-meta-item" id="btn-streak-trigger" onclick="openStreakDashboard()">
                 <i class="fa-solid fa-fire" style="color: var(--duo-red);"></i>
@@ -1341,18 +1373,36 @@
             if (lbl && text) lbl.innerText = text;
         }
 
-        function showSplashReadyToEnter() {
+        // 顯示未登入/訪客專屬的登入註冊按鈕
+        function showSplashAuthButton() {
             const loadingBox = document.getElementById('splash-loading-box');
             const startBtn = document.getElementById('btn-splash-start');
+            const authBtn = document.getElementById('btn-splash-auth');
             if (loadingBox) loadingBox.style.display = 'none';
+            if (startBtn) startBtn.style.display = 'none';
+            if (authBtn) authBtn.style.display = 'inline-flex';
+        }
+
+        // 點擊「登入 / 註冊帳號」按鈕
+        function openLoginModalFromSplash() {
+            openModal('login-modal');
+        }
+
+        // 顯示進入遊戲按鈕（已登入完成）
+        function showSplashReadyToEnter() {
+            const loadingBox = document.getElementById('splash-loading-box');
+            const authBtn = document.getElementById('btn-splash-auth');
+            const startBtn = document.getElementById('btn-splash-start');
+            if (loadingBox) loadingBox.style.display = 'none';
+            if (authBtn) authBtn.style.display = 'none';
             if (startBtn) {
                 startBtn.style.display = 'inline-flex';
-                // 顯示登入者暱稱，提升代入感
                 const name = (window.currentUserData && window.currentUserData.displayName) ? window.currentUserData.displayName : "冒險者";
                 startBtn.innerHTML = `<i class="fa-solid fa-play"></i> 進入遊戲 (${name})`;
             }
         }
 
+        // 進入遊戲
         function enterGame() {
             const splash = document.getElementById('game-splash-screen');
             if (splash) {
@@ -1483,12 +1533,16 @@
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 currentUser = user;
+                // 恢復進度條顯示
+                const loadingBox = document.getElementById('splash-loading-box');
+                const authBtn = document.getElementById('btn-splash-auth');
+                if (loadingBox) loadingBox.style.display = 'block';
+                if (authBtn) authBtn.style.display = 'none';
                 await verifyAndSyncUser(user);
             } else {
                 currentUser = null;
                 window.currentUserData = null;
-                setSplashProgress(100, "請先登入帳號...");
-                openModal('login-modal');
+                showSplashAuthButton();
                 document.getElementById('lbl-username').innerText = "訪客";
                 document.getElementById('lbl-xp').innerText = "0";
             }
@@ -1766,11 +1820,7 @@
                 const splash = document.getElementById('game-splash-screen');
                 if (splash) {
                     splash.classList.remove('fade-out');
-                    const loadingBox = document.getElementById('splash-loading-box');
-                    const startBtn = document.getElementById('btn-splash-start');
-                    if (loadingBox) loadingBox.style.display = 'block';
-                    if (startBtn) startBtn.style.display = 'none';
-                    setSplashProgress(10, "已登出系統...");
+                    showSplashAuthButton();
                 }
                 auth.signOut();
                 closeProfileView();
