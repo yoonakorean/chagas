@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>問答遊戲化學習系統</title>
+    <title>聊天遊戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -268,6 +268,7 @@
         .btn-lesson-action.btn-grammar-lesson:hover { border-color: var(--duo-purple); color: var(--duo-purple); }
         .btn-lesson-action.btn-dialogue-lesson:hover { border-color: var(--duo-orange); color: var(--duo-orange); }
         .btn-lesson-action.btn-qna-lesson:hover { border-color: #06b6d4; color: #06b6d4; }
+        .btn-lesson-action.btn-chat-lesson:hover { border-color: #ec4899; color: #ec4899; }
         .btn-lesson-action.btn-vocab-lesson:hover { border-color: #10b981; color: #10b981; }
 
         .btn-confirm {
@@ -475,6 +476,53 @@
             width: 72px; height: 72px; border-radius: 50%;
             border: 3px solid var(--duo-blue); margin: 0 auto 8px auto; object-fit: cover;
             display: block;
+        }
+
+        /* 句子聊天挑戰專屬樣式 */
+        .chat-challenge-partner-card {
+            background: #eff6ff;
+            border: 1.5px solid #bfdbfe;
+            border-radius: 16px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+        .chat-challenge-partner-label {
+            font-size: 0.75rem;
+            color: #3b82f6;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .chat-challenge-partner-body {
+            font-size: 1.15rem;
+            font-weight: bold;
+            color: #1e3a8a;
+            word-break: break-word;
+            line-height: 1.35;
+        }
+
+        .btn-keyword-toggle {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1.5px solid #cbd5e1;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-keyword-toggle.active {
+            background: #fef3c7;
+            color: #b45309;
+            border-color: #fde68a;
         }
 
         @media (max-width: 420px) {
@@ -845,6 +893,65 @@
                 <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
+            <!-- 步驟 6-A2：全新【句子聊天挑戰】畫面 (Sentence Chat Challenge) -->
+            <div id="step-quiz-sentence-chat" class="step-page">
+                <div class="challenge-top-bar">
+                    <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div class="gear-menu-container">
+                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-chat')"><i class="fa-solid fa-gear"></i></button>
+                        <div class="gear-dropdown" id="gear-dropdown-chat">
+                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-chat')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                            <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 角色切換與關鍵字切換控制列 -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 6px; flex-wrap: wrap;">
+                    <div class="role-switch-box" style="margin-bottom: 0;">
+                        <button class="btn-role active" id="btn-sc-role-a" onclick="switchSentenceChatRole('A')">扮演 角色 A</button>
+                        <button class="btn-role" id="btn-sc-role-b" onclick="switchSentenceChatRole('B')">扮演 角色 B</button>
+                    </div>
+                    <div>
+                        <button class="btn-keyword-toggle active" id="btn-toggle-keywords" onclick="toggleChatKeywordVisibility()">
+                            <i class="fa-solid fa-key"></i> <span id="lbl-kw-toggle-text">關閉關鍵字</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 對手回覆展示卡片 (例如 A 模式錄音成功後播放並顯示 B；或 B 模式進題目時播放並顯示 A) -->
+                <div id="partner-speech-card" class="chat-challenge-partner-card" style="display: none;">
+                    <div class="chat-challenge-partner-label">
+                        <span id="lbl-partner-role-title"><i class="fa-solid fa-comment-dots"></i> 對方回應</span>
+                        <button class="btn-circle btn-listen" style="width: 28px; height: 28px; font-size: 0.75rem;" onclick="playSentenceChatPartnerAudio()">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
+                    <div class="chat-challenge-partner-body" id="lbl-partner-speech-text">...</div>
+                </div>
+
+                <!-- 當前使用者需念出的目標提示 / 關鍵字卡片 -->
+                <div class="target-text" id="lbl-sc-target-text" style="font-size: 1.45rem; min-height: 2.4rem;">載入中...</div>
+                <div class="translation-text" id="lbl-sc-keyword-text" style="color: #d97706; font-weight: bold;">[關鍵字載入中]</div>
+
+                <div class="controls">
+                    <button class="btn-circle btn-listen" id="btn-sc-play-audio" onclick="playSentenceChatAudio()" title="播放當前語音"><i class="fa-solid fa-volume-high"></i></button>
+                    <button class="btn-circle btn-record" id="btn-sc-start-record" onclick="toggleRecording()" title="錄音"><i class="fa-solid fa-microphone"></i></button>
+                </div>
+
+                <div class="result-box">
+                    <div>辨識結果：<span id="lbl-sc-recognized-text" style="font-weight: bold; color: #374151;">-</span></div>
+                    <div class="score-badge" id="lbl-sc-score">判定結果：--</div>
+                </div>
+
+                <div class="nav-controls">
+                    <button class="btn-nav" id="btn-sc-prev" onclick="prevSentenceChatQuestion()">上一題</button>
+                    <span class="lbl-progress" id="lbl-sc-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
+                    <button class="btn-nav" id="btn-sc-next" onclick="nextSentenceChatQuestion()">下一題</button>
+                </div>
+                <button class="btn-finish-challenge" id="btn-finish-sentence-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
+            </div>
+
             <!-- 步驟 6-B：字塊重組畫面 -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
@@ -1162,6 +1269,14 @@
         let qnaSubMode = 'basic';
         let qnaUserRole = 'A';
         let qnaUnlockedIndices = new Set(); // 記錄已成功解鎖完整句子的索引
+
+        // 🗣️ 句子聊天挑戰專屬變數
+        let currentSentenceChatItem = null;
+        let sentenceChatRounds = []; // 存放各回合 { roundNum, a, ax, b, bx }
+        let sentenceChatIndex = 0;
+        let sentenceChatRole = 'A'; // 'A' 或 'B'
+        let showKeywords = true; // 關鍵字顯示開關
+        let sentenceChatPassedRound = false; // 當前題是否已達成
 
         let vocabQuestions = [];
         let vocabIndex = 0;
@@ -2261,6 +2376,7 @@
 
                     const btnGrammar = createActionButton('grammar', '📖 語法', 'btn-grammar-lesson');
                     const btnShadow = createActionButton('shadow', '🎙️ 跟讀');
+                    const btnSentenceChat = createActionButton('sentence_chat', '🗣️ 句子聊天', 'btn-chat-lesson');
                     const btnBlocks = createActionButton('blocks', '🧩 重組');
                     const btnDialogue = createActionButton('dialogue', '💬 對話', 'btn-dialogue-lesson');
                     const btnQna = createActionButton('qna', '❓ 句子問答', 'btn-qna-lesson');
@@ -2270,6 +2386,7 @@
 
                     btnGroup.appendChild(btnGrammar);
                     btnGroup.appendChild(btnShadow);
+                    btnGroup.appendChild(btnSentenceChat);
                     btnGroup.appendChild(btnBlocks);
                     btnGroup.appendChild(btnDialogue);
                     btnGroup.appendChild(btnQna);
@@ -2353,6 +2470,19 @@
                 } else {
                     alert("此課堂目前沒有設定獨立語法觀念喔！");
                 }
+            } else if (mode === 'sentence_chat') {
+                const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+                const matchDialogue = rawDialogueData.find(d => 
+                    normalizeLevelStr(d.level) === targetLevelNormalized &&
+                    String(d.unit_id) === String(currentConfig.unit_id) &&
+                    String(d.lesson || d.stage) === String(lesson)
+                );
+
+                if (matchDialogue) {
+                    startSentenceChatChallenge(matchDialogue);
+                } else {
+                    alert("此課堂目前在 dialogue 試算表中沒有對話資料喔！");
+                }
             } else if (mode === 'dialogue') {
                 const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
                 const matchDialogue = rawDialogueData.find(d => 
@@ -2383,6 +2513,273 @@
                 startVocabChallenge(mode);
             } else {
                 startMainQuiz();
+            }
+        }
+
+        // ==================== 2.5 句子聊天挑戰 (Sentence Chat) 邏輯 ====================
+
+        function startSentenceChatChallenge(dialogueItem) {
+            stopSpeechRecognition();
+            currentSentenceChatItem = dialogueItem;
+            sentenceChatRounds = [];
+
+            // 依序檢查 1 ~ 8 回合
+            for (let i = 1; i <= 8; i++) {
+                const aVal = (dialogueItem[`a${i}`] || '').trim();
+                const axVal = (dialogueItem[`a${i}x`] || '').trim();
+                const bVal = (dialogueItem[`b${i}`] || '').trim();
+                const bxVal = (dialogueItem[`b${i}x`] || '').trim();
+
+                // 只要 A 或 B 該題有句子，就構成該題的回合
+                if (aVal || bVal) {
+                    sentenceChatRounds.push({
+                        roundNum: i,
+                        a: aVal,
+                        ax: axVal,
+                        b: bVal,
+                        bx: bxVal
+                    });
+                }
+            }
+
+            if (sentenceChatRounds.length === 0) {
+                return alert("此課堂的 dialogue 分頁無有效對話內容！");
+            }
+
+            sentenceChatIndex = 0;
+            totalChallengeQuestions = sentenceChatRounds.length;
+            sentenceChatRole = 'A';
+            showKeywords = true;
+
+            const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
+            const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (🗣️ 句子聊天挑戰)`;
+            document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
+
+            updateSentenceChatRoleButtons();
+            updateKeywordToggleButton();
+            goToStep('step-quiz-sentence-chat');
+            displaySentenceChatQuestion();
+        }
+
+        function switchSentenceChatRole(role) {
+            stopSpeechRecognition();
+            sentenceChatRole = role;
+            sentenceChatIndex = 0;
+            sentenceChatPassedRound = false;
+            updateSentenceChatRoleButtons();
+            displaySentenceChatQuestion();
+        }
+
+        function updateSentenceChatRoleButtons() {
+            const btnA = document.getElementById('btn-sc-role-a');
+            const btnB = document.getElementById('btn-sc-role-b');
+            if (sentenceChatRole === 'A') {
+                btnA.classList.add('active');
+                btnB.classList.remove('active');
+            } else {
+                btnB.classList.add('active');
+                btnA.classList.remove('active');
+            }
+        }
+
+        function toggleChatKeywordVisibility() {
+            showKeywords = !showKeywords;
+            updateKeywordToggleButton();
+            renderSentenceChatKeywords();
+        }
+
+        function updateKeywordToggleButton() {
+            const btn = document.getElementById('btn-toggle-keywords');
+            const lbl = document.getElementById('lbl-kw-toggle-text');
+            if (showKeywords) {
+                btn.classList.add('active');
+                lbl.innerText = "關閉關鍵字";
+            } else {
+                btn.classList.remove('active');
+                lbl.innerText = "顯示關鍵字";
+            }
+        }
+
+        function renderSentenceChatKeywords() {
+            const curRound = sentenceChatRounds[sentenceChatIndex];
+            if (!curRound) return;
+
+            const kwElem = document.getElementById('lbl-sc-keyword-text');
+            if (!showKeywords) {
+                kwElem.innerText = "🔒 關鍵字已關閉 (請憑實力回答)";
+                kwElem.style.color = "#9ca3af";
+                return;
+            }
+
+            kwElem.style.color = "#d97706";
+            if (sentenceChatRole === 'A') {
+                const kw = curRound.ax || "(無關鍵字提示)";
+                kwElem.innerText = `🔑 關鍵字 (A${curRound.roundNum}x)：${kw}`;
+            } else {
+                const kw = curRound.bx || "(無關鍵字提示)";
+                kwElem.innerText = `🔑 關鍵字 (B${curRound.roundNum}x)：${kw}`;
+            }
+        }
+
+        function displaySentenceChatQuestion() {
+            stopSpeechRecognition();
+            if (!sentenceChatRounds || sentenceChatRounds.length === 0) return;
+
+            sentenceChatPassedRound = false;
+            const curRound = sentenceChatRounds[sentenceChatIndex];
+            const total = sentenceChatRounds.length;
+
+            document.getElementById('lbl-sc-progress').innerText = `${sentenceChatIndex + 1} / ${total}`;
+            document.getElementById('lbl-sc-recognized-text').innerText = "-";
+            document.getElementById('lbl-sc-score').innerText = "判定結果：--";
+            document.getElementById('btn-sc-prev').disabled = sentenceChatIndex === 0;
+            document.getElementById('btn-sc-next').disabled = sentenceChatIndex === total - 1;
+
+            const partnerCard = document.getElementById('partner-speech-card');
+            const partnerLabel = document.getElementById('lbl-partner-role-title');
+            const partnerText = document.getElementById('lbl-partner-speech-text');
+            const targetTextElem = document.getElementById('lbl-sc-target-text');
+
+            renderSentenceChatKeywords();
+
+            if (sentenceChatRole === 'A') {
+                // 【角色 A 模式】：
+                // 尚未唸出前，隱藏對方 (B) 的卡片
+                partnerCard.style.display = 'none';
+                partnerLabel.innerHTML = `<i class="fa-solid fa-robot"></i> 角色 B 回應 (B${curRound.roundNum})：`;
+                partnerText.innerText = curRound.b || "";
+
+                // 目標指示使用者錄音念 A
+                targetTextElem.innerText = `請唸出 A${curRound.roundNum} 的內容`;
+            } else {
+                // 【角色 B 模式】：
+                // 一進入題目，自動播放 A 欄位音檔並顯示
+                partnerCard.style.display = 'block';
+                partnerLabel.innerHTML = `<i class="fa-solid fa-robot"></i> 角色 A 發言 (A${curRound.roundNum})：`;
+                partnerText.innerText = curRound.a || "";
+
+                // 目標指示使用者念 B
+                targetTextElem.innerText = `請唸出 B${curRound.roundNum} 的內容`;
+
+                // 自動播放角色 A 的音檔 / 語音
+                setTimeout(() => {
+                    playSentenceChatRoleAAudio();
+                }, 350);
+            }
+        }
+
+        function playSentenceChatRoleAAudio() {
+            const curRound = sentenceChatRounds[sentenceChatIndex];
+            if (!curRound || !curRound.a) return;
+            // 優先播放該課堂 audio_url，若無則 TTS
+            if (currentSentenceChatItem && currentSentenceChatItem.audio_url && currentSentenceChatItem.audio_url.trim() !== '') {
+                const audio = new Audio(currentSentenceChatItem.audio_url);
+                audio.playbackRate = 0.85;
+                audio.play().catch(() => speakTTS(curRound.a, 0.85));
+            } else {
+                speakTTS(curRound.a, 0.85);
+            }
+        }
+
+        function playSentenceChatPartnerAudio() {
+            const curRound = sentenceChatRounds[sentenceChatIndex];
+            if (!curRound) return;
+            const textToPlay = (sentenceChatRole === 'A') ? curRound.b : curRound.a;
+            if (textToPlay) {
+                speakTTS(textToPlay, 0.85);
+            }
+        }
+
+        function playSentenceChatAudio() {
+            const curRound = sentenceChatRounds[sentenceChatIndex];
+            if (!curRound) return;
+            // 當點擊主要播放按鈕時：
+            if (sentenceChatRole === 'A') {
+                // 如果已經唸對並解鎖了 B，播放 B；否則朗讀 A 提示
+                if (sentenceChatPassedRound && curRound.b) {
+                    speakTTS(curRound.b, 0.85);
+                } else if (curRound.a) {
+                    speakTTS(curRound.a, 0.85);
+                }
+            } else {
+                // 角色 B 模式：播放角色 A 的發言
+                if (curRound.a) {
+                    speakTTS(curRound.a, 0.85);
+                }
+            }
+        }
+
+        function prevSentenceChatQuestion() {
+            if (sentenceChatIndex > 0) {
+                sentenceChatIndex--;
+                displaySentenceChatQuestion();
+            }
+        }
+
+        function nextSentenceChatQuestion() {
+            if (sentenceChatIndex < sentenceChatRounds.length - 1) {
+                sentenceChatIndex++;
+                displaySentenceChatQuestion();
+            }
+        }
+
+        function handleSentenceChatSpeechResult(userSpeech) {
+            const curRound = sentenceChatRounds[sentenceChatIndex];
+            if (!curRound) return;
+
+            const recLabel = document.getElementById('lbl-sc-recognized-text');
+            const scoreLabel = document.getElementById('lbl-sc-score');
+            const partnerCard = document.getElementById('partner-speech-card');
+            const partnerText = document.getElementById('lbl-partner-speech-text');
+
+            if (sentenceChatRole === 'A') {
+                // 使用者扮演 A，需偵測念出 a{n}
+                const targetText = curRound.a || "";
+                const isPass = isSpeechPass(targetText, userSpeech);
+
+                recLabel.innerText = userSpeech;
+
+                if (isPass) {
+                    sentenceChatPassedRound = true;
+                    scoreLabel.innerText = "🎉 回應成功！發音合格！";
+                    scoreLabel.style.color = "#58cc02";
+
+                    // 自動播放 b{n} 音檔並顯示句子
+                    partnerCard.style.display = 'block';
+                    partnerText.innerText = curRound.b || "";
+                    
+                    if (curRound.b) {
+                        setTimeout(() => {
+                            speakTTS(curRound.b, 0.85);
+                        }, 400);
+                    }
+
+                    passedSubQuestions.add(sentenceChatIndex);
+                    checkAndShowFinishButton();
+                } else {
+                    scoreLabel.innerText = "⚠️ 發音未達標，請重新嘗試！";
+                    scoreLabel.style.color = "#ff4b4b";
+                }
+
+            } else {
+                // 使用者扮演 B，需偵測念出 b{n}
+                const targetText = curRound.b || "";
+                const isPass = isSpeechPass(targetText, userSpeech);
+
+                if (isPass) {
+                    sentenceChatPassedRound = true;
+                    // 辨識結果顯示 b{n} 整句
+                    recLabel.innerText = curRound.b;
+                    scoreLabel.innerText = "🎉 回應成功！發音合格！";
+                    scoreLabel.style.color = "#58cc02";
+
+                    passedSubQuestions.add(sentenceChatIndex);
+                    checkAndShowFinishButton();
+                } else {
+                    recLabel.innerText = userSpeech;
+                    scoreLabel.innerText = "⚠️ 發音未達標，請重新嘗試！";
+                    scoreLabel.style.color = "#ff4b4b";
+                }
             }
         }
 
@@ -2678,7 +3075,7 @@
         function prevDialogueSentence() { if (dialogueIndex > 0) { dialogueIndex--; isBlindUnlocked = false; renderChatWindow(); } }
         function nextDialogueSentence() { if (dialogueIndex < dialogueList.length - 1) { dialogueIndex++; isBlindUnlocked = false; renderChatWindow(); } }
 
-        // ==================== 4.5 句子問答 (QnA) 獨特互動邏輯 (全自動推進流暢版) ====================
+        // ==================== 4.5 句子問答 (QnA) 互動邏輯 ====================
 
         function startQnaChallenge(qnaItem) {
             stopSpeechRecognition();
@@ -2806,7 +3203,6 @@
             document.getElementById('btn-qna-prev').disabled = qnaIndex === 0;
             document.getElementById('btn-qna-next').disabled = qnaIndex === qnaList.length - 1;
 
-            // 💡 修正：確保角色 B 進入畫面時或切換時，對手的第一句（例如 A1）能自動播放語音
             let targetAudioIdx = qnaIndex;
             if (qnaList[qnaIndex].speaker === qnaUserRole && qnaIndex > 0) {
                 targetAudioIdx = qnaIndex - 1;
@@ -2935,7 +3331,7 @@
             if (audioUrl && audioUrl.trim() !== '') {
                 const audio = new Audio(audioUrl);
                 audio.playbackRate = 0.85;
-                audio.play().catch(() => { if (textToSpeak) speakTTS(textToSpeak, 0.85); });
+                audio.play().catch(() => { if (textToSpeak) speakTTS(textToSpeak, 0.85)); });
             } else if (textToSpeak) {
                 speakTTS(textToSpeak, 0.85);
             }
@@ -3394,6 +3790,8 @@
                 document.querySelectorAll('.btn-record').forEach(b => b.classList.add('recording'));
                 if (currentConfig.mode === 'vocab_shadow') {
                     document.getElementById('lbl-vocab-recognized-text').innerText = "聆聽中...";
+                } else if (currentConfig.mode === 'sentence_chat') {
+                    document.getElementById('lbl-sc-recognized-text').innerText = "聆聽中...";
                 } else if (currentConfig.mode !== 'dialogue' && currentConfig.mode !== 'qna') {
                     document.getElementById('lbl-recognized-text').innerText = "聆聽中...";
                 }
@@ -3409,7 +3807,10 @@
 
                 const userSpeech = event.results[0][0].transcript;
 
-                if (currentConfig.mode === 'vocab_shadow') {
+                if (currentConfig.mode === 'sentence_chat') {
+                    handleSentenceChatSpeechResult(userSpeech);
+
+                } else if (currentConfig.mode === 'vocab_shadow') {
                     document.getElementById('lbl-vocab-recognized-text').innerText = userSpeech;
                     const currentVocab = vocabQuestions[vocabIndex];
                     const targetText = currentVocab ? (currentVocab.text || "") : "";
