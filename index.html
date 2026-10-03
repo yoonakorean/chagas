@@ -553,8 +553,8 @@
             <p style="font-size: 0.85rem; color: #6b7280; margin: 12px 0 4px; text-align:left;">選擇母語（題意翻譯將以此呈現）</p>
             <select id="select-native-language">
                 <option value="zh">繁體中文</option>
-                <option value="en">English</option>
-                <option value="kr">한국어</option>
+                <option value="en">英文</option>
+                <option value="kr">韓文</option>
             </select>
             <div id="setup-nickname-error" style="color: var(--duo-red); font-size: 0.8rem; margin-top: 6px;" class="hidden"></div>
             <button id="btn-save-initial-nickname" class="btn-3d btn-3d-primary" style="width:100%; padding:10px; margin-top:12px;">完成設定並開始學習</button>
@@ -705,23 +705,9 @@
 
         <!-- 🌟 視圖 A：學習與題目挑戰區塊 -->
         <div id="learning-content-view">
-            <!-- 步驟 1：選擇母語 -->
-            <div id="step-user-lang" class="step-page active">
-                <h2 class="step-title"><i class="fa-solid fa-earth-americas"></i> 請選擇你的母語</h2>
-                <div class="option-grid grid-1">
-                    <button class="btn-option selected" id="btn-lang-zh" onclick="setUserLang('zh')">繁體中文</button>
-                    <button class="btn-option" id="btn-lang-en" onclick="setUserLang('en')">English</button>
-                    <button class="btn-option" id="btn-lang-kr" onclick="setUserLang('kr')">한국어</button>
-                </div>
-                <button class="btn-confirm" onclick="goToStep('step-learn-lang')">下一步 <i class="fa-solid fa-arrow-right"></i></button>
-            </div>
-
-            <!-- 步驟 2：選擇學習語言 -->
-            <div id="step-learn-lang" class="step-page">
-                <div class="top-nav">
-                    <button class="btn-back-step" onclick="goToStep('step-user-lang')"><i class="fa-solid fa-arrow-left"></i> 回母語選擇</button>
-                </div>
-                <h2 class="step-title"><i class="fa-solid fa-language"></i> 請選擇要學習的語言</h2>
+            <!-- 步驟 1：選擇學習語言（已改為起始畫面，省略重複母語設定） -->
+            <div id="step-learn-lang" class="step-page active">
+                <h2 class="step-title" style="margin-top: 8px;"><i class="fa-solid fa-language"></i> 請選擇要學習的語言</h2>
                 <div class="option-grid grid-1">
                     <button class="btn-option selected" id="btn-cat-korean" onclick="selectCategory('korean')">🇰🇷 韓文</button>
                     <button class="btn-option" id="btn-cat-japanese" onclick="selectCategory('japanese')">🇯🇵 日文</button>
@@ -734,7 +720,7 @@
                 </div>
             </div>
 
-            <!-- 步驟 3：選擇程度 -->
+            <!-- 步驟 2：選擇程度 -->
             <div id="step-level" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-learn-lang')"><i class="fa-solid fa-arrow-left"></i> 回學習語言</button>
@@ -743,7 +729,7 @@
                 <div id="container-levels" class="option-grid grid-2"></div>
             </div>
 
-            <!-- 步驟 4：選擇單元 -->
+            <!-- 步驟 3：選擇單元 -->
             <div id="step-unit" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
@@ -753,7 +739,7 @@
                 <div id="container-units" class="option-grid grid-3"></div>
             </div>
 
-            <!-- 步驟 5：選擇課堂關卡與模式 -->
+            <!-- 步驟 4：選擇課堂關卡與模式 -->
             <div id="step-lesson" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-unit')"><i class="fa-solid fa-arrow-left"></i> 回單元選擇</button>
@@ -914,7 +900,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-dialogue" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 步驟 6-C2：聊天視窗風【句子問答】練習 (自動輪替解鎖全自動流暢版) -->
+            <!-- 步驟 6-C2：聊天視窗風【句子問答】練習 -->
             <div id="step-quiz-qna" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1082,6 +1068,18 @@
                     <p style="font-size: 0.85rem; color: #64748b; margin: 4px 0 0 0;" id="myaccount-email">email@example.com</p>
                 </div>
 
+                <!-- 🌐 母語偏好設定（已移至此處） -->
+                <div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 14px; border: 1px solid #e2e8f0;">
+                    <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fa-solid fa-earth-americas" style="color: var(--duo-blue);"></i> 顯示母語設定
+                    </div>
+                    <select id="select-account-language" onchange="updateAccountNativeLang(this.value)" style="margin: 0;">
+                        <option value="zh">繁體中文</option>
+                        <option value="en">English</option>
+                        <option value="kr">한국어</option>
+                    </select>
+                </div>
+
                 <div style="margin-bottom: 16px;">
                     <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 8px;">已開通課程與到期日：</div>
                     <div id="myaccount-memberships-list">
@@ -1131,7 +1129,7 @@
             level: '1A',
             unit_id: '1',
             lesson: '1',
-            lang: 'zh'
+            lang: localStorage.getItem('preferred_user_lang') || 'zh'
         };
 
         let rawShadowData = [];  
@@ -1155,13 +1153,13 @@
         let userRole = 'A'; 
         let isBlindUnlocked = false;
 
-        // ❓ 句子問答全新對話輪替變數
+        // ❓ 句子問答變數
         let currentQnaItem = null;
         let qnaList = [];
         let qnaIndex = 0;
         let qnaSubMode = 'basic';
         let qnaUserRole = 'A';
-        let qnaUnlockedIndices = new Set(); // 記錄已成功解鎖完整句子的索引
+        let qnaUnlockedIndices = new Set();
 
         let vocabQuestions = [];
         let vocabIndex = 0;
@@ -1370,6 +1368,10 @@
                     if (!window.currentUserData.friends) window.currentUserData.friends = [];
                     if (!window.currentUserData.completedLessons) window.currentUserData.completedLessons = [];
 
+                    if (window.currentUserData.nativeLanguage) {
+                        setUserLang(window.currentUserData.nativeLanguage);
+                    }
+
                     if (!unlockedLevels.includes(currentConfig.level)) {
                         currentConfig.level = unlockedLevels[0];
                     }
@@ -1421,12 +1423,39 @@
             renderUserInfo();
         };
 
+        // 🌐 更新「我的帳號」中的母語並自動存檔
+        async function updateAccountNativeLang(lang) {
+            setUserLang(lang);
+            localStorage.setItem('preferred_user_lang', lang);
+
+            if (currentUser) {
+                try {
+                    await db.collection('users').doc(currentUser.uid).update({
+                        nativeLanguage: lang
+                    });
+                    if (window.currentUserData) {
+                        window.currentUserData.nativeLanguage = lang;
+                    }
+                } catch (e) {
+                    console.error("更新母語偏好失敗:", e);
+                }
+            }
+        }
+
         function renderUserInfo() {
             if (!window.currentUserData) return;
             const streakDays = window.currentUserData.streakDays || 1;
             const focusHours = window.currentUserData.focusHours || 0.0;
             const xp = window.currentUserData.xp || 0;
             const displayName = window.currentUserData.displayName || "學生";
+
+            // 同步母語下拉選單狀態
+            const savedLang = window.currentUserData.nativeLanguage || localStorage.getItem('preferred_user_lang') || 'zh';
+            setUserLang(savedLang);
+            const accountLangSelect = document.getElementById('select-account-language');
+            if (accountLangSelect) {
+                accountLangSelect.value = savedLang;
+            }
 
             document.getElementById('lbl-username').innerText = displayName;
             document.getElementById('lbl-streak-days').innerText = streakDays;
@@ -2002,12 +2031,7 @@
 
         function setUserLang(lang) {
             currentConfig.lang = lang;
-            ['zh', 'en', 'kr'].forEach(l => {
-                const btn = document.getElementById(`btn-lang-${l}`);
-                if (btn) btn.classList.remove('selected');
-            });
-            const activeBtn = document.getElementById(`btn-lang-${lang}`);
-            if (activeBtn) activeBtn.classList.add('selected');
+            localStorage.setItem('preferred_user_lang', lang);
         }
 
         function selectCategory(category) {
@@ -2678,7 +2702,7 @@
         function prevDialogueSentence() { if (dialogueIndex > 0) { dialogueIndex--; isBlindUnlocked = false; renderChatWindow(); } }
         function nextDialogueSentence() { if (dialogueIndex < dialogueList.length - 1) { dialogueIndex++; isBlindUnlocked = false; renderChatWindow(); } }
 
-        // ==================== 4.5 句子問答 (QnA) 獨特互動邏輯 (全自動推進流暢版) ====================
+        // ==================== 4.5 句子問答 (QnA) 獨特互動邏輯 ====================
 
         function startQnaChallenge(qnaItem) {
             stopSpeechRecognition();
@@ -2806,7 +2830,6 @@
             document.getElementById('btn-qna-prev').disabled = qnaIndex === 0;
             document.getElementById('btn-qna-next').disabled = qnaIndex === qnaList.length - 1;
 
-            // 💡 修正：確保角色 B 進入畫面時或切換時，對手的第一句（例如 A1）能自動播放語音
             let targetAudioIdx = qnaIndex;
             if (qnaList[qnaIndex].speaker === qnaUserRole && qnaIndex > 0) {
                 targetAudioIdx = qnaIndex - 1;
@@ -3494,8 +3517,10 @@
         }
 
         window.onload = () => {
-            setUserLang('zh');
+            const savedLang = localStorage.getItem('preferred_user_lang') || 'zh';
+            setUserLang(savedLang);
             selectCategory('korean');
+            goToStep('step-learn-lang');
         };
     </script>
 </body>
