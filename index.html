@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>暱稱化學習系統</title>
+    <title>問答遊戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -401,12 +401,16 @@
         }
         .btn-role.active { border-color: var(--duo-blue); background: #ddf4ff; color: var(--duo-blue); }
 
+        /* ⚡ 挑戰模式切換按鈕樣式 */
         .btn-keyword-toggle {
             background: #f1f5f9; border: 1.5px solid #cbd5e1; border-radius: 16px;
-            padding: 4px 10px; font-size: 0.78rem; font-weight: bold; color: #475569;
+            padding: 5px 12px; font-size: 0.8rem; font-weight: bold; color: #475569;
             cursor: pointer; transition: all 0.15s; margin-bottom: 8px;
         }
         .btn-keyword-toggle:hover { background: #e2e8f0; }
+        .btn-keyword-toggle.active {
+            background: #fee2e2; border-color: #f87171; color: #dc2626;
+        }
 
         .chat-window {
             background: #f0f2f5; border: 2px solid #e5e7eb; border-radius: 16px; height: 280px;
@@ -840,7 +844,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-G：句子聊天挑戰畫面（版面與跟讀完全一致） -->
+            <!-- 🌟 步驟 6-G：句子聊天挑戰畫面 -->
             <div id="step-quiz-sentence-chat" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -857,12 +861,15 @@
                     <button class="btn-role active" id="btn-chat-role-a" onclick="switchChatRole('A')">角色 A (我念 A 聽 B)</button>
                     <button class="btn-role" id="btn-chat-role-b" onclick="switchChatRole('B')">角色 B (聽 A 我念 B)</button>
                 </div>
+
+                <!-- ⚡ 挑戰模式按鈕 -->
                 <div style="margin-bottom: 6px;">
                     <button class="btn-keyword-toggle" id="btn-toggle-keywords" onclick="toggleChatKeywords()">
-                        <i class="fa-solid fa-eye-slash"></i> 關閉關鍵字
+                        <i class="fa-solid fa-bolt"></i> 開啟挑戰模式
                     </button>
                 </div>
 
+                <!-- 對手回答區塊 (角色B 或 角色A答對後出現) -->
                 <div id="chat-partner-bubble" style="display: none; background: #e0f2fe; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 10px; margin-bottom: 10px; text-align: left;">
                     <div style="font-size: 0.75rem; color: #0284c7; font-weight: 800; margin-bottom: 2px;" id="lbl-partner-title">對方回覆：</div>
                     <div style="font-size: 1.15rem; font-weight: bold; color: #0f172a;" id="lbl-partner-text">...</div>
@@ -872,6 +879,7 @@
                 <div class="translation-text" id="lbl-chat-translation">...</div>
                 
                 <div class="controls">
+                    <!-- 藍色播放音檔按鈕 (挑戰模式會被隱藏) -->
                     <button class="btn-circle btn-listen" id="btn-chat-play-audio" onclick="playChatTargetAudio()"><i class="fa-solid fa-volume-high"></i></button>
                     <button class="btn-circle btn-record" id="btn-chat-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
                 </div>
@@ -1224,7 +1232,7 @@
         let chatRounds = [];
         let chatRoundIndex = 0;
         let chatRole = 'A';
-        let showChatKeywords = true;
+        let isChatChallengeMode = false; // ⚡ 是否開啟挑戰模式（預設為普通）
         let chatRoundPassed = false;
 
         let vocabQuestions = [];
@@ -1278,7 +1286,7 @@
             }
         };
 
-        // 🔍 檢查暱稱是否已被使用 (不分大小寫比對)
+        // 🔍 檢查暱稱是否已被使用
         async function isNicknameTaken(nickname, excludeUid = null) {
             try {
                 const snap = await db.collection("users").where("displayName", "==", nickname).get();
@@ -1455,7 +1463,6 @@
             }
         }
 
-        // 🌟 首次登入設定暱稱（加入重複性檢查）
         document.getElementById('btn-save-initial-nickname').onclick = async () => {
             const nickname = document.getElementById('input-setup-nickname').value.trim();
             const nativeLang = document.getElementById('select-native-language').value;
@@ -1472,7 +1479,6 @@
             submitBtn.innerText = "檢查暱稱中...";
 
             try {
-                // 檢查是否重複
                 const taken = await isNicknameTaken(nickname, currentUser.uid);
                 if (taken) {
                     errDiv.innerText = "此暱稱已被其他學員使用，請換一個再試！";
@@ -1576,7 +1582,6 @@
             }
         }
 
-        // 🌟 修改公開暱稱（加入重複性檢查）
         document.getElementById('btn-save-nickname').onclick = async () => {
             const newName = document.getElementById('input-edit-nickname').value.trim();
             const errDiv = document.getElementById('edit-nickname-error-msg');
@@ -1608,7 +1613,6 @@
             btnSave.innerText = "檢查重複中...";
 
             try {
-                // 檢查是否已被其他人使用
                 const taken = await isNicknameTaken(newName, currentUser.uid);
                 if (taken) {
                     errDiv.innerText = "此暱稱已被其他學員使用，請換一個再試！";
@@ -1861,7 +1865,7 @@
                         <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
                             <div class="rank-num ${rankClass}">${rank}</div>
                             <img src="https://lh3.googleusercontent.com/a/default-user" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
-                            <div style="overflow: hidden; text-overflow: border-box; white-space: nowrap;">
+                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                 <div style="font-weight: 800; color: #1e293b; font-size: 0.92rem; overflow: hidden; text-overflow: ellipsis;">
                                     ${u.displayName}${u.isMe ? ' <span style="font-size:0.75rem; color:var(--duo-green);">(你)</span>' : ''}
                                 </div>
@@ -2892,12 +2896,13 @@
             chatRoundIndex = 0;
             totalChallengeQuestions = chatRounds.length;
             chatRole = 'A';
-            showChatKeywords = true;
+            isChatChallengeMode = false; // 預設關閉挑戰模式
 
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
             const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (🗣️ 句子聊天挑戰)`;
             document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
 
+            updateChallengeModeButtonUI();
             switchChatRole('A');
             goToStep('step-quiz-sentence-chat');
         }
@@ -2914,15 +2919,23 @@
             displayChatRound();
         }
 
+        // ⚡ 切換挑戰模式
         function toggleChatKeywords() {
-            showChatKeywords = !showChatKeywords;
-            const btn = document.getElementById('btn-toggle-keywords');
-            if (showChatKeywords) {
-                btn.innerHTML = `<i class="fa-solid fa-eye-slash"></i> 關閉關鍵字`;
-            } else {
-                btn.innerHTML = `<i class="fa-solid fa-eye"></i> 顯示關鍵字`;
-            }
+            isChatChallengeMode = !isChatChallengeMode;
+            updateChallengeModeButtonUI();
             displayChatRound(false);
+        }
+
+        function updateChallengeModeButtonUI() {
+            const btn = document.getElementById('btn-toggle-keywords');
+            if (!btn) return;
+            if (isChatChallengeMode) {
+                btn.innerHTML = `<i class="fa-solid fa-fire"></i> 挑戰模式中 (點擊關閉)`;
+                btn.classList.add('active');
+            } else {
+                btn.innerHTML = `<i class="fa-solid fa-bolt"></i> 開啟挑戰模式`;
+                btn.classList.remove('active');
+            }
         }
 
         function displayChatRound(autoPlayOpponent = true) {
@@ -2944,22 +2957,36 @@
             const partnerBubble = document.getElementById('chat-partner-bubble');
             const targetTextElem = document.getElementById('lbl-chat-target-text');
             const transElem = document.getElementById('lbl-chat-translation');
+            const playAudioBtn = document.getElementById('btn-chat-play-audio');
+
+            // ⚡ 挑戰模式開啟時隱藏播放按鈕，關閉時顯示
+            if (playAudioBtn) {
+                playAudioBtn.style.display = isChatChallengeMode ? 'none' : 'flex';
+            }
 
             if (chatRole === 'A') {
                 partnerBubble.style.display = 'none';
-                let displayText = showChatKeywords ? (curRound.axText || curRound.aText) : "??? (念出完整句子)";
+
+                let displayText = isChatChallengeMode ? "??? (挑戰模式中，念出完整句子)" : (curRound.axText || curRound.aText);
                 targetTextElem.innerText = displayText;
-                transElem.innerText = `【角色 A】請依關鍵字提示念出句子：`;
+                transElem.innerText = isChatChallengeMode ? `【角色 A】盲測挑戰模式：請念出第一句回答：` : `【角色 A】請依關鍵字提示念出句子：`;
 
             } else {
-                partnerBubble.style.display = 'block';
-                document.getElementById('lbl-partner-title').innerText = `對方 (Speaker A)：`;
-                document.getElementById('lbl-partner-text').innerText = curRound.aText;
+                // 角色 B
+                // ⚡ 挑戰模式下：若為角色B，Speaker A的藍色框框也要隱藏
+                if (isChatChallengeMode) {
+                    partnerBubble.style.display = 'none';
+                } else {
+                    partnerBubble.style.display = 'block';
+                    document.getElementById('lbl-partner-title').innerText = `對方 (Speaker A)：`;
+                    document.getElementById('lbl-partner-text').innerText = curRound.aText;
+                }
 
-                let displayText = showChatKeywords ? (curRound.bxText || curRound.bText) : "??? (聽完對方後念出對應句)";
+                let displayText = isChatChallengeMode ? "??? (聽取對方語音後直接回應)" : (curRound.bxText || curRound.bText);
                 targetTextElem.innerText = displayText;
-                transElem.innerText = `【角色 B】請聽取 Speaker A 語音並念出回答：`;
+                transElem.innerText = isChatChallengeMode ? `【角色 B】挑戰模式：請聽 Speaker A 語音並念出回答：` : `【角色 B】請聽取 Speaker A 語音並念出回答：`;
 
+                // ⚡ 無論是否為挑戰模式，角色B都自動播放Speaker A的音檔
                 if (autoPlayOpponent) {
                     setTimeout(() => {
                         playOpponentAudio(curRound.aAudio, curRound.aText);
@@ -3003,8 +3030,9 @@
             if (chatRole === 'A') {
                 document.getElementById('lbl-chat-score').innerText = "🎉 發音合格！";
                 document.getElementById('lbl-chat-score').style.color = "#58cc02";
-                targetTextElem.innerText = curRound.aText;
+                targetTextElem.innerText = curRound.aText; // 顯示完整句子
 
+                // 自動播放 B 音檔並顯示
                 partnerBubble.style.display = 'block';
                 document.getElementById('lbl-partner-title').innerText = `對方 (Speaker B) 回覆：`;
                 document.getElementById('lbl-partner-text').innerText = curRound.bText;
@@ -3016,7 +3044,12 @@
             } else {
                 document.getElementById('lbl-chat-score').innerText = "🎉 回應合格！";
                 document.getElementById('lbl-chat-score').style.color = "#58cc02";
-                targetTextElem.innerText = curRound.bText;
+                targetTextElem.innerText = curRound.bText; // 顯示整句 b1
+
+                // 若之前被隱藏，念對後解鎖顯示 Speaker A
+                partnerBubble.style.display = 'block';
+                document.getElementById('lbl-partner-title').innerText = `對方 (Speaker A)：`;
+                document.getElementById('lbl-partner-text').innerText = curRound.aText;
             }
         }
 
@@ -3747,7 +3780,7 @@
                     if (pass) {
                         handleChatSpeechSuccess(userSpeech);
                     } else {
-                        document.getElementById('lbl-chat-score').innerText = "⚠️️ 發音未達標，請再念一次！";
+                        document.getElementById('lbl-chat-score').innerText = "⚠️ 發音未達標，請再念一次！";
                         document.getElementById('lbl-chat-score').style.color = "#ff4b4b";
                     }
 
@@ -3785,7 +3818,7 @@
                         passedSubQuestions.add(vocabIndex);
                         checkAndShowFinishButton();
                     } else {
-                        document.getElementById('lbl-vocab-score').innerText = "⚠️️ 發音未達標，再試一次！";
+                        document.getElementById('lbl-vocab-score').innerText = "⚠️ 發音未達標，再試一次！";
                         document.getElementById('lbl-vocab-score').style.color = "#ff4b4b";
                     }
 
