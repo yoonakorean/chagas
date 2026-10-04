@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>０a化學習系統</title>
+    <title>問答遊戲化學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -863,7 +863,6 @@
                     <button class="btn-role" id="btn-chat-role-b" onclick="switchChatRole('B')">角色 B (聽 A 我念 B)</button>
                 </div>
 
-                <!-- ⚡ 挑戰模式按鈕 -->
                 <div style="margin-bottom: 6px;">
                     <button class="btn-keyword-toggle" id="btn-toggle-keywords" onclick="toggleChatKeywords()">
                         <i class="fa-solid fa-bolt"></i> 開啟挑戰模式
@@ -958,7 +957,7 @@
                     <button class="btn-circle btn-record" id="btn-dialogue-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
                 </div>
                 <div class="nav-controls">
-                    <button class="btn-nav" id="btn-dialogue-prev" onclick="prevDialogueSentence()">上一句</button>
+                    <button class="btn-dialogue-prev" id="btn-dialogue-prev" onclick="prevDialogueSentence()">上一句</button>
                     <span class="lbl-progress" id="lbl-dialogue-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
                     <button class="btn-nav" id="btn-dialogue-next" onclick="nextDialogueSentence()">下一句</button>
                 </div>
@@ -1063,7 +1062,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-vocab-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 步驟 6-F：單字意思選擇題畫面 (含 0A 韓語單字選擇) -->
+            <!-- 步驟 6-F：單字意思選擇題畫面 (含 0A 韓語單字聽音選擇) -->
             <div id="step-quiz-vocab-choice" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1075,10 +1074,19 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- 🌟 0A 專屬：聽音播放按鈕區 (盲測用) -->
+                <div id="box-0a-audio-player" style="display: none; margin: 10px 0 14px 0;">
+                    <button class="btn-circle btn-listen" id="btn-0a-choice-play" onclick="playVocabAudio()" style="margin: 0 auto; width: 62px; height: 62px; font-size: 1.35rem;">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <div style="font-size: 0.85rem; color: #64748b; font-weight: bold; margin-top: 6px;">點擊重播題目語音</div>
+                </div>
+
                 <div class="target-text" id="lbl-vocab-choice-text">載入中...</div>
                 <div id="lbl-vocab-choice-sub" style="font-size: 0.95rem; color: #475569; font-weight: bold; margin-bottom: 6px; display: none;"></div>
                 <div class="vocab-choice-list" id="container-vocab-choices"></div>
-                <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-vocab-choice-score">請選擇正確意思</div></div>
+                <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-vocab-choice-score">請選擇正確韓語單字</div></div>
                 <div class="nav-controls">
                     <button class="btn-nav" id="btn-vocab-choice-prev" onclick="prevVocabQuestion()">上一題</button>
                     <span class="lbl-progress" id="lbl-vocab-choice-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
@@ -2408,7 +2416,7 @@
                     };
 
                     const btnGrammar = createActionButton('grammar', '📖 語法', 'btn-grammar-lesson');
-                    const btnShadow = createActionButton('shadow', '🎙️️ 跟讀');
+                    const btnShadow = createActionButton('shadow', '🎙 跟讀');
                     const btnBlocks = createActionButton('blocks', '🧩 重組');
                     const btnDialogue = createActionButton('dialogue', '💬 對話', 'btn-dialogue-lesson');
                     const btnSentenceChat = createActionButton('sentence_chat', '🗣️ 句子聊天挑戰', 'btn-chat-lesson');
@@ -2421,7 +2429,6 @@
                     btnGroup.appendChild(btnSentenceChat);
                     btnGroup.appendChild(btnQna);
 
-                    // 🌟 0A 專屬限定挑戰按鈕
                     if (is0ALevel) {
                         const btn0aShadow = createActionButton('0a_shadow', '🗣 韓語單字跟讀', 'btn-0a-special');
                         const btn0aChoice = createActionButton('0a_choice', '🎯 韓語單字選擇', 'btn-0a-special');
@@ -2429,7 +2436,6 @@
                         btnGroup.appendChild(btn0aChoice);
                     }
 
-                    // 既有一般單字模組
                     const btnVocabShadow = createActionButton('vocab_shadow', '🗣 單字跟讀', 'btn-vocab-lesson');
                     const btnVocabType = createActionButton('vocab_type', '⌨ 單字聽打', 'btn-vocab-lesson');
                     const btnVocabChoice = createActionButton('vocab_choice', '🎯 單字選擇', 'btn-vocab-lesson');
@@ -2603,7 +2609,6 @@
                 document.getElementById('lbl-vocab-progress').innerText = `${vocabIndex + 1} / ${total}`;
                 document.getElementById('lbl-vocab-target-text').innerText = item.text || "";
 
-                // 拼音與發音音標提示
                 const subElem = document.getElementById('lbl-vocab-subtext');
                 const pronParts = [];
                 if (item.romanization) pronParts.push(`拼音: [${item.romanization}]`);
@@ -2627,60 +2632,91 @@
 
             } else if (currentConfig.mode === '0a_choice') {
                 document.getElementById('lbl-vocab-choice-progress').innerText = `${vocabIndex + 1} / ${total}`;
-                document.getElementById('lbl-vocab-choice-text').innerText = item.text || "";
+                
+                // 🌟 隱藏韓文題目文字，改為聽音盲測
+                const targetTextElem = document.getElementById('lbl-vocab-choice-text');
+                targetTextElem.innerText = "??? (聽音選擇韓文單字)";
+
+                // 顯示藍色音檔播放按鈕
+                const audioPlayerBox = document.getElementById('box-0a-audio-player');
+                if (audioPlayerBox) audioPlayerBox.style.display = 'block';
 
                 const choiceSubElem = document.getElementById('lbl-vocab-choice-sub');
-                const pronParts = [];
-                if (item.romanization) pronParts.push(`[${item.romanization}]`);
-                if (item.pos_zh) pronParts.push(`(${item.pos_zh})`);
+                choiceSubElem.innerText = "";
+                choiceSubElem.style.display = 'none';
 
-                if (pronParts.length > 0) {
-                    choiceSubElem.innerText = pronParts.join(' ');
-                    choiceSubElem.style.display = 'block';
-                } else {
-                    choiceSubElem.style.display = 'none';
-                }
-
-                document.getElementById('lbl-vocab-choice-score').innerText = "請選擇正確意思";
+                document.getElementById('lbl-vocab-choice-score').innerText = "請聽音選擇正確的韓語單字";
                 document.getElementById('lbl-vocab-choice-score').style.color = "#58cc02";
 
                 const container = document.getElementById('container-vocab-choices');
                 container.innerHTML = "";
 
-                // 解析 choice 欄位（以 / 分開）
+                // 解析 choice 欄位的韓文選項 (以 / 拆分)
                 let choices = (item.choice || '').split('/').map(s => s.trim()).filter(Boolean);
-                const correctAns = (getTranslationByLang(item) || item.zh_tw || '').trim();
-                if (correctAns && !choices.includes(correctAns)) {
-                    choices.push(correctAns);
+                const correctKoreanWord = (item.text || '').trim();
+                
+                if (correctKoreanWord && !choices.includes(correctKoreanWord)) {
+                    choices.push(correctKoreanWord);
                 }
                 choices.sort(() => Math.random() - 0.5);
 
-                choices.forEach(cText => {
+                choices.forEach(kText => {
                     const btn = document.createElement('button');
                     btn.className = 'btn-vocab-choice';
-                    btn.innerText = cText;
-                    btn.onclick = () => check0aChoiceAnswer(cText);
+                    btn.innerText = kText;
+                    btn.onclick = () => check0aChoiceAnswer(kText);
                     container.appendChild(btn);
                 });
 
                 document.getElementById('btn-vocab-choice-prev').disabled = vocabIndex === 0;
                 document.getElementById('btn-vocab-choice-next').disabled = vocabIndex === total - 1;
+
+                // 進入題目時自動播放一次題目音檔
+                setTimeout(() => {
+                    playVocabAudio();
+                }, 300);
             }
         }
 
-        function check0aChoiceAnswer(selectedText) {
-            const item = vocabQuestions[vocabIndex];
-            const correctAns = (getTranslationByLang(item) || item.zh_tw || '').trim();
-            const scoreBadge = document.getElementById('lbl-vocab-choice-score');
+        // 🌟 依使用者目前選擇的母語偏好取得翻譯 (zh_tw, en, ja)
+        function get0aTranslationByNativeLang(item) {
+            if (!item) return "";
+            if (currentConfig.lang === 'en') return item.en || item.zh_tw || "";
+            if (currentConfig.lang === 'ja' || currentConfig.lang === 'kr') return item.ja || item.zh_tw || "";
+            return item.zh_tw || "";
+        }
 
-            if (selectedText.trim() === correctAns) {
-                scoreBadge.innerText = "🎉 正確答案！";
+        function check0aChoiceAnswer(selectedKoreanText) {
+            const item = vocabQuestions[vocabIndex];
+            const correctWord = (item.text || '').trim();
+            const scoreBadge = document.getElementById('lbl-vocab-choice-score');
+            const targetTextElem = document.getElementById('lbl-vocab-choice-text');
+            const choiceSubElem = document.getElementById('lbl-vocab-choice-sub');
+
+            if (selectedKoreanText.trim() === correctWord) {
+                scoreBadge.innerText = "🎉 答對了！";
                 scoreBadge.style.color = "#58cc02";
+                
+                // 選對後顯示韓語題目
+                targetTextElem.innerText = item.text || "";
+
+                // 🌟 選對後依母語顯示中文、英文或日文翻譯
+                const nativeTrans = get0aTranslationByNativeLang(item);
+                const pronParts = [];
+                if (item.romanization) pronParts.push(`[${item.romanization}]`);
+                if (item.pos_zh) pronParts.push(`(${item.pos_zh})`);
+                if (nativeTrans) pronParts.push(`💡 翻譯：${nativeTrans}`);
+
+                if (pronParts.length > 0) {
+                    choiceSubElem.innerText = pronParts.join(' ');
+                    choiceSubElem.style.display = 'block';
+                }
+
                 playVocabAudio();
                 passedSubQuestions.add(vocabIndex);
                 checkAndShowFinishButton();
             } else {
-                scoreBadge.innerText = `❌ 選錯囉！正確答案是：${correctAns}`;
+                scoreBadge.innerText = `❌ 選錯囉，再聽一次試試看！`;
                 scoreBadge.style.color = "#ff4b4b";
             }
         }
@@ -3235,6 +3271,10 @@
 
             const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (${modeTitleMap[vocabMode]})`;
             document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
+
+            // 進入一般單字模式時隱藏 0A 專屬播放器
+            const audioPlayerBox = document.getElementById('box-0a-audio-player');
+            if (audioPlayerBox) audioPlayerBox.style.display = 'none';
 
             if (vocabMode === 'vocab_shadow') goToStep('step-quiz-vocab-shadow');
             else if (vocabMode === 'vocab_type') goToStep('step-quiz-vocab-type');
@@ -3964,7 +4004,9 @@
                     if (pass) {
                         document.getElementById('lbl-vocab-score').innerText = "🎉 發音合格！";
                         document.getElementById('lbl-vocab-score').style.color = "#58cc02";
-                        document.getElementById('lbl-vocab-translation').innerText = `💡 翻譯：${getTranslationByLang(currentVocab)}`;
+                        
+                        const trans = currentConfig.mode === '0a_shadow' ? get0aTranslationByNativeLang(currentVocab) : getTranslationByLang(currentVocab);
+                        document.getElementById('lbl-vocab-translation').innerText = `💡 翻譯：${trans}`;
                         passedSubQuestions.add(vocabIndex);
                         checkAndShowFinishButton();
                     } else {
