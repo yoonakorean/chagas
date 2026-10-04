@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>問答遊戲化學習系統</title>
+    <title>隨機選項學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -1075,7 +1075,7 @@
                     </div>
                 </div>
 
-                <!-- 🌟 0A 專屬：聽音播放按鈕區 (盲測用) -->
+                <!-- 0A 專屬：聽音播放按鈕區 (盲測用) -->
                 <div id="box-0a-audio-player" style="display: none; margin: 10px 0 14px 0;">
                     <button class="btn-circle btn-listen" id="btn-0a-choice-play" onclick="playVocabAudio()" style="margin: 0 auto; width: 62px; height: 62px; font-size: 1.35rem;">
                         <i class="fa-solid fa-volume-high"></i>
@@ -1256,6 +1256,18 @@
 
         let passedSubQuestions = new Set();
         let totalChallengeQuestions = 0;
+
+        // 🎲 嚴格隨機洗牌函式 (Fisher-Yates Shuffle)，徹底打亂選項位置防止背答案
+        function shuffleArray(arr) {
+            const array = [...arr];
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+            }
+            return array;
+        }
 
         const ProgressModel = {
             loadProgress: async (uid) => {
@@ -2633,11 +2645,9 @@
             } else if (currentConfig.mode === '0a_choice') {
                 document.getElementById('lbl-vocab-choice-progress').innerText = `${vocabIndex + 1} / ${total}`;
                 
-                // 🌟 隱藏韓文題目文字，改為聽音盲測
                 const targetTextElem = document.getElementById('lbl-vocab-choice-text');
                 targetTextElem.innerText = "??? (聽音選擇韓文單字)";
 
-                // 顯示藍色音檔播放按鈕
                 const audioPlayerBox = document.getElementById('box-0a-audio-player');
                 if (audioPlayerBox) audioPlayerBox.style.display = 'block';
 
@@ -2658,7 +2668,9 @@
                 if (correctKoreanWord && !choices.includes(correctKoreanWord)) {
                     choices.push(correctKoreanWord);
                 }
-                choices.sort(() => Math.random() - 0.5);
+                
+                // 🎲 套用 Fisher-Yates 洗牌法，確保每次換題/進題時選項位置均勻隨機打亂
+                choices = shuffleArray(choices);
 
                 choices.forEach(kText => {
                     const btn = document.createElement('button');
@@ -2671,14 +2683,12 @@
                 document.getElementById('btn-vocab-choice-prev').disabled = vocabIndex === 0;
                 document.getElementById('btn-vocab-choice-next').disabled = vocabIndex === total - 1;
 
-                // 進入題目時自動播放一次題目音檔
                 setTimeout(() => {
                     playVocabAudio();
                 }, 300);
             }
         }
 
-        // 🌟 依使用者目前選擇的母語偏好取得翻譯 (zh_tw, en, ja)
         function get0aTranslationByNativeLang(item) {
             if (!item) return "";
             if (currentConfig.lang === 'en') return item.en || item.zh_tw || "";
@@ -2697,10 +2707,8 @@
                 scoreBadge.innerText = "🎉 答對了！";
                 scoreBadge.style.color = "#58cc02";
                 
-                // 選對後顯示韓語題目
                 targetTextElem.innerText = item.text || "";
 
-                // 🌟 選對後依母語顯示中文、英文或日文翻譯
                 const nativeTrans = get0aTranslationByNativeLang(item);
                 const pronParts = [];
                 if (item.romanization) pronParts.push(`[${item.romanization}]`);
@@ -3272,7 +3280,6 @@
             const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (${modeTitleMap[vocabMode]})`;
             document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
 
-            // 進入一般單字模式時隱藏 0A 專屬播放器
             const audioPlayerBox = document.getElementById('box-0a-audio-player');
             if (audioPlayerBox) audioPlayerBox.style.display = 'none';
 
@@ -3328,7 +3335,9 @@
                 let choices = (currentVocab.choice || '').split('/').map(s => s.trim()).filter(Boolean);
                 const correctAns = currentVocab.zh_tw.trim();
                 if (correctAns && !choices.includes(correctAns)) choices.push(correctAns);
-                choices.sort(() => Math.random() - 0.5);
+                
+                // 🎲 套用 Fisher-Yates 洗牌法，確保每次進入題目隨機換位置
+                choices = shuffleArray(choices);
 
                 choices.forEach(cText => {
                     const btn = document.createElement('button');
@@ -3688,7 +3697,9 @@
 
             const cContainer = document.getElementById('container-grammar-choices');
             cContainer.innerHTML = '';
-            const choices = currentGrammarItem.choice.split('/').map(s => s.trim()).filter(Boolean);
+            let choices = currentGrammarItem.choice.split('/').map(s => s.trim()).filter(Boolean);
+            choices = shuffleArray(choices);
+
             choices.forEach(opt => {
                 const btn = document.createElement('div');
                 btn.className = 'block-chip';
@@ -3779,7 +3790,7 @@
                 ).map(i => ({
                     id: i[0],
                     fullText: i[4],
-                    options: (i[5] || '').split(',').map(s => s.trim()).filter(Boolean).sort(() => Math.random() - 0.5),
+                    options: shuffleArray((i[5] || '').split(',').map(s => s.trim()).filter(Boolean)),
                     translation: i[bLangIdx] || i[6] || '',
                     audioUrl: i[9] || ''
                 }));
