@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>直向抓取項學習系統</title>
+    <title>找回題型學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -869,7 +869,6 @@
                     </button>
                 </div>
 
-                <!-- 💡 角色 A 在挑戰模式時使用的三語提示框 -->
                 <div id="chat-a-hint-bubble" style="display: none; background: #fef3c7; border: 1.5px solid #fde68a; border-radius: 14px; padding: 10px; margin-bottom: 10px; text-align: left;">
                     <div style="font-size: 0.78rem; color: #b45309; font-weight: 800; margin-bottom: 2px;" id="lbl-chat-a-hint-title">💡 關鍵字提示：</div>
                     <div style="font-size: 1.05rem; font-weight: bold; color: #92400e;" id="lbl-chat-a-hint-text">...</div>
@@ -1081,7 +1080,6 @@
                     </div>
                 </div>
 
-                <!-- 0A 專屬：聽音播放按鈕區 (盲測用) -->
                 <div id="box-0a-audio-player" style="display: none; margin: 10px 0 14px 0;">
                     <button class="btn-circle btn-listen" id="btn-0a-choice-play" onclick="playVocabAudio()" style="margin: 0 auto; width: 62px; height: 62px; font-size: 1.35rem;">
                         <i class="fa-solid fa-volume-high"></i>
@@ -1118,7 +1116,6 @@
                 </div>
             </div>
 
-            <!-- 分頁 1：學習排行榜 -->
             <div id="sub-page-leaderboard" class="profile-container-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                     <h3 style="margin: 0; color: #1e293b; font-size: 1.15rem; font-weight: 800;">
@@ -1138,7 +1135,6 @@
                 </div>
             </div>
 
-            <!-- 分頁 2：我的帳號 -->
             <div id="sub-page-myaccount" class="profile-container-card hidden">
                 <div style="text-align: center; border-bottom: 1.5px dashed #e2e8f0; padding-bottom: 14px; margin-bottom: 14px;">
                     <img id="myaccount-avatar" src="https://lh3.googleusercontent.com/a/default-user" class="profile-avatar-large" alt="User Avatar">
@@ -1227,14 +1223,12 @@
         let isToggling = false; 
         let selectedBlockIndices = [];
 
-        let currentDialogueItem = null;
         let dialogueList = []; 
         let dialogueIndex = 0;
         let dialogueSubMode = 'basic'; 
         let userRole = 'A'; 
         let isBlindUnlocked = false;
 
-        let currentQnaItem = null;
         let qnaList = [];
         let qnaIndex = 0;
         let qnaSubMode = 'basic';
@@ -1274,14 +1268,32 @@
             return array;
         }
 
+        // 💡 強化版通用取值函式：自動相容陣列與物件格式，徹底防止其他關卡消失！
         function getItemField(item, fieldName) {
             if (!item) return '';
-            if (!Array.isArray(item)) {
-                return item[fieldName] !== undefined ? item[fieldName] : (item[fieldName.toLowerCase()] || '');
+            const f = String(fieldName).toLowerCase().replace(/[\s_\-]/g, '');
+
+            if (Array.isArray(item)) {
+                // GAS 回傳的陣列格式：[0:id, 1:level, 2:unit, 3:lesson, 4:text/fulltext, 5:zh/options, 6:en/zh, 7:third/en, 8:audio/third, 9:hint/audio]
+                if (f === 'id') return item[0] !== undefined ? String(item[0]) : '';
+                if (f === 'level' || f === 'lvl') return String(item[1] || '');
+                if (f === 'unitid' || f === 'unit') return String(item[2] || '');
+                if (f === 'lesson' || f === 'stage') return String(item[3] || '');
+                if (f === 'text' || f === 'fulltext') return String(item[4] || '');
+                return '';
             }
-            const shadowMapping = { 'id': 0, 'level': 1, 'unit_id': 2, 'lesson': 3, 'stage': 3, 'text': 4, 'fulltext': 4, 'options': 5, 'zh': 5, 'en': 6, 'third': 7, 'audio': 8, 'hint': 9 };
-            const idx = shadowMapping[fieldName.toLowerCase()];
-            return (idx !== undefined && item[idx] !== undefined) ? item[idx] : '';
+
+            // 物件格式
+            if (f === 'lesson' || f === 'stage') {
+                return String(item.lesson || item.stage || '');
+            }
+            if (f === 'unitid' || f === 'unit') {
+                return String(item.unit_id || item.unitid || item.unit || '');
+            }
+            if (f === 'level' || f === 'lvl') {
+                return String(item.level || item.lvl || '');
+            }
+            return item[fieldName] !== undefined ? String(item[fieldName]) : (item[f] !== undefined ? String(item[f]) : '');
         }
 
         const ProgressModel = {
@@ -2367,7 +2379,7 @@
             const container = document.getElementById('container-units');
             container.innerHTML = "";
 
-            const combinedData = [...rawShadowData, ...rawBlocksData, ...rawDialogueData, ...rawQnaData, ...rawVocabData, ...raw0aChoiceData];
+            const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawQnaData, ...rawVocabData, ...raw0aChoiceData];
             const targetLevelNormalized = normalizeLevelStr(level);
 
             const filtered = combinedData.filter(i => {
@@ -2397,7 +2409,7 @@
             const container = document.getElementById('container-lessons');
             container.innerHTML = "";
 
-            const combinedData = [...rawShadowData, ...rawBlocksData, ...rawDialogueData, ...rawQnaData, ...rawVocabData, ...raw0aChoiceData];
+            const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawQnaData, ...rawVocabData, ...raw0aChoiceData];
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
             const filtered = combinedData.filter(i => {
@@ -2715,7 +2727,6 @@
             stopSpeechRecognition();
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
-            // 依據當前 level, unit_id, lesson 篩選出所有對話列（每列一題）
             const rows = rawDialogueData.filter(d => 
                 normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
                 String(getItemField(d, 'unit_id')) === String(currentConfig.unit_id) &&
@@ -3056,7 +3067,6 @@
 
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
-            // 依據當前 level, unit_id, lesson 找出所有對話列（每列一題）
             const rows = rawDialogueData.filter(d => 
                 normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
                 String(getItemField(d, 'unit_id')) === String(currentConfig.unit_id) &&
@@ -3171,7 +3181,6 @@
                     targetTextElem.innerText = "??? (挑戰模式中，請念出完整句子)";
                     transElem.innerText = `【角色 A】挑戰模式：請參考下方關鍵字提示回答：`;
 
-                    // 💡 依據使用者目前母語挑選 hint_zh / hint_en / hint_jp
                     let activeHint = curRound.hintZh;
                     let hintTitleText = "💡 提示：";
 
@@ -3826,10 +3835,10 @@
 
                     return {
                         id: getItemField(i, 'id') || idx + 1,
-                        text: getItemField(i, 'text'),
+                        text: Array.isArray(i) ? i[4] : (i.text || ''),
                         translation: trans,
-                        audioUrl: getItemField(i, 'audio'),
-                        hint: getItemField(i, 'hint')
+                        audioUrl: Array.isArray(i) ? i[8] : (i.audiourl || i.audio_url || ''),
+                        hint: Array.isArray(i) ? i[9] : (i.hint || '')
                     };
                 });
             } else {
@@ -3850,15 +3859,15 @@
                                 (i.zh_tw || i.zh || '');
                     }
 
-                    const optRaw = getItemField(i, 'options') || (Array.isArray(i) ? i[5] : (i.optionsjson || i.options || ''));
+                    const optRaw = Array.isArray(i) ? i[5] : (i.optionsjson || i.options || '');
                     const opts = typeof optRaw === 'string' ? optRaw.split(',').map(s => s.trim()).filter(Boolean) : (Array.isArray(optRaw) ? optRaw : []);
 
                     return {
                         id: getItemField(i, 'id') || idx + 1,
-                        fullText: getItemField(i, 'fulltext') || getItemField(i, 'text'),
+                        fullText: Array.isArray(i) ? i[4] : (i.fulltext || i.text || ''),
                         options: shuffleArray(opts),
                         translation: trans,
-                        audioUrl: getItemField(i, 'audio')
+                        audioUrl: Array.isArray(i) ? i[9] : (i.audiourl || i.audio_url || '')
                     };
                 });
             }
