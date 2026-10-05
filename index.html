@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>動態欄位項學習系統</title>
+    <title>吧句以上習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -481,7 +481,7 @@
             border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; margin-bottom: 12px;
             white-space: pre-wrap; word-break: break-word;
         }
-        .dialog-history-item { padding: 7px 8px; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151; line-5; text-align: left; }
+        .dialog-history-item { padding: 7px 8px; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151; line-height: 1.5; text-align: left; }
         .dialog-history-item:last-child { border-bottom: none; }
         .dialog-history-item span.num { font-weight: bold; color: var(--duo-blue); margin-right: 4px; }
 
@@ -682,7 +682,7 @@
     <div id="modal-edit-nickname" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;">修改公開暱稱</h3>
-            <p style="font-size: 0.82rem; color: var(--duo-orange); margin-bottom: 8px;">⚠️ 注意：暱稱每 30 秒僅能修改一次，不可重複</p>
+            <p style="font-size: 0.82rem; color: var(--duo-orange); margin-bottom: 8px;">⚠️️ 注意：暱稱每 30 秒僅能修改一次，不可重複</p>
             <input type="text" id="input-edit-nickname" placeholder="輸入新暱稱 (2~12字)" maxlength="12" />
             <div id="edit-nickname-error-msg" style="color: var(--duo-red); font-size: 0.8rem; text-align: center; margin-top: 4px;" class="hidden"></div>
             <div style="display:flex; gap:10px; margin-top:12px;">
@@ -867,6 +867,12 @@
                     <button class="btn-keyword-toggle" id="btn-toggle-keywords" onclick="toggleChatKeywords()">
                         <i class="fa-solid fa-bolt"></i> 開啟挑戰模式
                     </button>
+                </div>
+
+                <!-- 💡 角色 A 在挑戰模式時使用的三語提示框 -->
+                <div id="chat-a-hint-bubble" style="display: none; background: #fef3c7; border: 1.5px solid #fde68a; border-radius: 14px; padding: 10px; margin-bottom: 10px; text-align: left;">
+                    <div style="font-size: 0.78rem; color: #b45309; font-weight: 800; margin-bottom: 2px;" id="lbl-chat-a-hint-title">💡 關鍵字提示：</div>
+                    <div style="font-size: 1.05rem; font-weight: bold; color: #92400e;" id="lbl-chat-a-hint-text">...</div>
                 </div>
 
                 <div id="chat-partner-bubble" style="display: none; background: #e0f2fe; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 10px; margin-bottom: 10px; text-align: left;">
@@ -1212,7 +1218,7 @@
         let rawDialogueData = []; 
         let rawQnaData = []; 
         let rawVocabData = [];
-        let raw0aChoiceData = []; // 0achoice 專屬資料
+        let raw0aChoiceData = [];
 
         let questions = [];
         let currentIndex = 0;
@@ -1257,7 +1263,6 @@
         let passedSubQuestions = new Set();
         let totalChallengeQuestions = 0;
 
-        // 🎲 嚴格隨機洗牌函式 (Fisher-Yates Shuffle)
         function shuffleArray(arr) {
             const array = [...arr];
             for (let i = array.length - 1; i > 0; i--) {
@@ -1269,13 +1274,11 @@
             return array;
         }
 
-        // 💡 通用動態物件/陣列欄位取值輔助函式 (即使資料來源為陣列或物件皆能自動解析)
         function getItemField(item, fieldName) {
             if (!item) return '';
             if (!Array.isArray(item)) {
                 return item[fieldName] !== undefined ? item[fieldName] : (item[fieldName.toLowerCase()] || '');
             }
-            // 陣列模式下的相容映射順序
             const shadowMapping = { 'id': 0, 'level': 1, 'unit_id': 2, 'lesson': 3, 'stage': 3, 'text': 4, 'fulltext': 4, 'options': 5, 'zh': 5, 'en': 6, 'third': 7, 'audio': 8, 'hint': 9 };
             const idx = shadowMapping[fieldName.toLowerCase()];
             return (idx !== undefined && item[idx] !== undefined) ? item[idx] : '';
@@ -2360,7 +2363,6 @@
             goToStep('step-unit');
         }
 
-        // 💡 動態解析單元列表 (全面支援物件與陣列混用格式)
         function renderUnits(level) {
             const container = document.getElementById('container-units');
             container.innerHTML = "";
@@ -2387,7 +2389,6 @@
             }
         }
 
-        // 💡 動態解析課堂列表
         function selectUnit(unitId) {
             stopSpeechRecognition();
             currentConfig.unit_id = unitId;
@@ -2675,7 +2676,6 @@
                 const container = document.getElementById('container-vocab-choices');
                 container.innerHTML = "";
 
-                // 解析 choice 欄位的韓文選項 (以 / 拆分)
                 let choices = (item.choice || '').split('/').map(s => s.trim()).filter(Boolean);
                 const correctKoreanWord = (item.text || '').trim();
                 
@@ -2683,7 +2683,6 @@
                     choices.push(correctKoreanWord);
                 }
                 
-                // 🎲 嚴格隨機洗牌打亂
                 choices = shuffleArray(choices);
 
                 choices.forEach(kText => {
@@ -2743,21 +2742,25 @@
             }
         }
 
-        // ==================== 4. 原版對話練習邏輯 ====================
+        // ==================== 4. 原版對話練習邏輯 (動態句數) ====================
 
         function startDialogueChallenge(dialogueItem) {
             stopSpeechRecognition();
             currentDialogueItem = dialogueItem;
             dialogueList = [];
 
-            for (let i = 1; i <= 8; i++) {
+            let i = 1;
+            while (dialogueItem[`a${i}`] || dialogueItem[`b${i}`] || i <= 8) {
                 const aText = (dialogueItem[`a${i}`] || '').trim();
                 const bText = (dialogueItem[`b${i}`] || '').trim();
                 const axText = (dialogueItem[`a${i}x`] || '').trim();
                 const bxText = (dialogueItem[`b${i}x`] || '').trim();
+                const aAudio = dialogueItem[`a${i}_audio`] || dialogueItem.audio_url || '';
+                const bAudio = dialogueItem[`b${i}_audio`] || dialogueItem.audio_url || '';
 
-                if (aText) dialogueList.push({ speaker: 'A', targetText: aText, fillText: axText || aText, audioUrl: dialogueItem.audio_url || '' });
-                if (bText) dialogueList.push({ speaker: 'B', targetText: bText, fillText: bxText || bText, audioUrl: dialogueItem.audio_url || '' });
+                if (aText) dialogueList.push({ speaker: 'A', targetText: aText, fillText: axText || aText, audioUrl: aAudio });
+                if (bText) dialogueList.push({ speaker: 'B', targetText: bText, fillText: bxText || bText, audioUrl: bAudio });
+                i++;
             }
 
             if (dialogueList.length === 0) return alert("此課堂對話資料為空！");
@@ -2881,7 +2884,7 @@
         function prevDialogueSentence() { if (dialogueIndex > 0) { dialogueIndex--; isBlindUnlocked = false; renderChatWindow(); } }
         function nextDialogueSentence() { if (dialogueIndex < dialogueList.length - 1) { dialogueIndex++; isBlindUnlocked = false; renderChatWindow(); } }
 
-        // ==================== 4.5 原版句子問答 (QnA) 邏輯 ====================
+        // ==================== 4.5 原版句子問答 (QnA) 邏輯 (動態句數) ====================
 
         function startQnaChallenge(qnaItem) {
             stopSpeechRecognition();
@@ -2889,14 +2892,18 @@
             qnaList = [];
             qnaUnlockedIndices.clear();
 
-            for (let i = 1; i <= 8; i++) {
+            let i = 1;
+            while (qnaItem[`a${i}`] || qnaItem[`b${i}`] || i <= 8) {
                 const aText = (qnaItem[`a${i}`] || '').trim();
                 const bText = (qnaItem[`b${i}`] || '').trim();
                 const axText = (qnaItem[`a${i}x`] || '').trim();
                 const bxText = (qnaItem[`b${i}x`] || '').trim();
+                const aAudio = qnaItem[`a${i}_audio`] || qnaItem.audio_url || '';
+                const bAudio = qnaItem[`b${i}_audio`] || qnaItem.audio_url || '';
 
-                if (aText) qnaList.push({ index: qnaList.length, speaker: 'A', targetText: aText, fillText: axText || aText, audioUrl: qnaItem.audio_url || '' });
-                if (bText) qnaList.push({ index: qnaList.length, speaker: 'B', targetText: bText, fillText: bxText || bText, audioUrl: qnaItem.audio_url || '' });
+                if (aText) qnaList.push({ index: qnaList.length, speaker: 'A', targetText: aText, fillText: axText || aText, audioUrl: aAudio });
+                if (bText) qnaList.push({ index: qnaList.length, speaker: 'B', targetText: bText, fillText: bxText || bText, audioUrl: bAudio });
+                i++;
             }
 
             if (qnaList.length === 0) return alert("此課堂問答資料為空！");
@@ -3064,13 +3071,14 @@
         function prevQnaSentence() { if (qnaIndex > 0) { qnaIndex--; renderQnaChatWindow(); } }
         function nextQnaSentence() { if (qnaIndex < qnaList.length - 1) { qnaIndex++; renderQnaChatWindow(); } }
 
-        // ==================== 🌟 句子聊天挑戰邏輯 ====================
+        // ==================== 🌟 句子聊天挑戰邏輯 (動態句數 + 三語提示) ====================
 
         function startSentenceChatChallenge(dialogueItem) {
             stopSpeechRecognition();
             chatRounds = [];
 
-            for (let i = 1; i <= 8; i++) {
+            let i = 1;
+            while (dialogueItem[`a${i}`] || dialogueItem[`b${i}`] || i <= 8) {
                 const aText = (dialogueItem[`a${i}`] || '').trim();
                 const bText = (dialogueItem[`b${i}`] || '').trim();
                 const axText = (dialogueItem[`a${i}x`] || '').trim();
@@ -3078,6 +3086,11 @@
 
                 const aAudio = dialogueItem[`a${i}_audio`] || dialogueItem.audio_url || '';
                 const bAudio = dialogueItem[`b${i}_audio`] || dialogueItem.audio_url || '';
+
+                // 支援個別句提示，如果沒有則退回整體課程提示
+                const hintZh = dialogueItem[`a${i}_hint_zh`] || dialogueItem.hint_zh || '';
+                const hintEn = dialogueItem[`a${i}_hint_en`] || dialogueItem.hint_en || '';
+                const hintJp = dialogueItem[`a${i}_hint_jp`] || dialogueItem.hint_jp || '';
 
                 if (aText || bText) {
                     chatRounds.push({
@@ -3087,9 +3100,13 @@
                         axText: axText || aText,
                         bxText: bxText || bText,
                         aAudio: aAudio,
-                        bAudio: bAudio
+                        bAudio: bAudio,
+                        hintZh: hintZh,
+                        hintEn: hintEn,
+                        hintJp: hintJp
                     });
                 }
+                i++;
             }
 
             if (chatRounds.length === 0) return alert("此課堂 dialogue 分頁無題目資料！");
@@ -3155,6 +3172,7 @@
             document.getElementById('lbl-chat-score').style.color = "#58cc02";
 
             const partnerBubble = document.getElementById('chat-partner-bubble');
+            const hintBubble = document.getElementById('chat-a-hint-bubble');
             const targetTextElem = document.getElementById('lbl-chat-target-text');
             const transElem = document.getElementById('lbl-chat-translation');
             const playAudioBtn = document.getElementById('btn-chat-play-audio');
@@ -3166,11 +3184,40 @@
             if (chatRole === 'A') {
                 partnerBubble.style.display = 'none';
 
-                let displayText = isChatChallengeMode ? "??? (挑戰模式中，念出完整句子)" : (curRound.axText || curRound.aText);
-                targetTextElem.innerText = displayText;
-                transElem.innerText = isChatChallengeMode ? `【角色 A】盲測挑戰模式：請念出第一句回答：` : `【角色 A】請依關鍵字提示念出句子：`;
+                if (isChatChallengeMode) {
+                    targetTextElem.innerText = "??? (挑戰模式中，請念出完整句子)";
+                    transElem.innerText = `【角色 A】挑戰模式：請參考下方關鍵字提示回答：`;
+
+                    // 💡 依據使用者目前母語挑選 hint_zh / hint_en / hint_jp
+                    let activeHint = curRound.hintZh;
+                    let hintTitleText = "💡 提示：";
+
+                    if (currentConfig.lang === 'en') {
+                        activeHint = curRound.hintEn || curRound.hintZh;
+                        hintTitleText = "💡 Keyword Hint (EN):";
+                    } else if (currentConfig.lang === 'ja' || currentConfig.lang === 'kr') {
+                        activeHint = curRound.hintJp || curRound.hintZh;
+                        hintTitleText = "💡 キーワードヒント (JP):";
+                    } else {
+                        hintTitleText = "💡 關鍵字提示 (中文)：";
+                    }
+
+                    if (activeHint && activeHint.trim() !== '') {
+                        document.getElementById('lbl-chat-a-hint-title').innerText = hintTitleText;
+                        document.getElementById('lbl-chat-a-hint-text').innerText = activeHint.trim();
+                        hintBubble.style.display = 'block';
+                    } else {
+                        hintBubble.style.display = 'none';
+                    }
+                } else {
+                    hintBubble.style.display = 'none';
+                    targetTextElem.innerText = curRound.axText || curRound.aText;
+                    transElem.innerText = `【角色 A】請依關鍵字提示念出句子：`;
+                }
 
             } else {
+                hintBubble.style.display = 'none';
+
                 if (isChatChallengeMode) {
                     partnerBubble.style.display = 'none';
                 } else {
@@ -3350,7 +3397,6 @@
                 const correctAns = (currentVocab.zh_tw || '').trim();
                 if (correctAns && !choices.includes(correctAns)) choices.push(correctAns);
                 
-                // 🎲 嚴格隨機洗牌
                 choices = shuffleArray(choices);
 
                 choices.forEach(cText => {
