@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>吧句以上習系統</title>
+    <title>直向抓取項學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -682,7 +682,7 @@
     <div id="modal-edit-nickname" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;">修改公開暱稱</h3>
-            <p style="font-size: 0.82rem; color: var(--duo-orange); margin-bottom: 8px;">⚠️️ 注意：暱稱每 30 秒僅能修改一次，不可重複</p>
+            <p style="font-size: 0.82rem; color: var(--duo-orange); margin-bottom: 8px;">⚠ 注意：暱稱每 30 秒僅能修改一次，不可重複</p>
             <input type="text" id="input-edit-nickname" placeholder="輸入新暱稱 (2~12字)" maxlength="12" />
             <div id="edit-nickname-error-msg" style="color: var(--duo-red); font-size: 0.8rem; text-align: center; margin-top: 4px;" class="hidden"></div>
             <div style="display:flex; gap:10px; margin-top:12px;">
@@ -2548,44 +2548,11 @@
                     alert("此課堂目前沒有設定獨立語法觀念喔！");
                 }
             } else if (mode === 'dialogue') {
-                const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-                const matchDialogue = rawDialogueData.find(d => 
-                    normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
-                    String(getItemField(d, 'unit_id')) === String(currentConfig.unit_id) &&
-                    String(getItemField(d, 'lesson')) === String(lesson)
-                );
-
-                if (matchDialogue) {
-                    startDialogueChallenge(matchDialogue);
-                } else {
-                    alert("此課堂目前沒有設定對話練習喔！");
-                }
+                startDialogueChallenge();
             } else if (mode === 'qna') {
-                const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-                const matchQna = rawQnaData.find(d => 
-                    normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
-                    String(getItemField(d, 'unit_id')) === String(currentConfig.unit_id) &&
-                    String(getItemField(d, 'lesson')) === String(lesson)
-                );
-
-                if (matchQna) {
-                    startQnaChallenge(matchQna);
-                } else {
-                    alert("此課堂目前沒有設定句子問答喔！");
-                }
+                startQnaChallenge();
             } else if (mode === 'sentence_chat') {
-                const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-                const matchDialogue = rawDialogueData.find(d => 
-                    normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
-                    String(getItemField(d, 'unit_id')) === String(currentConfig.unit_id) &&
-                    String(getItemField(d, 'lesson')) === String(lesson)
-                );
-
-                if (matchDialogue) {
-                    startSentenceChatChallenge(matchDialogue);
-                } else {
-                    alert("此課堂 dialogue 分頁目前沒有設定對話資料喔！");
-                }
+                startSentenceChatChallenge();
             } else if (mode === '0a_shadow' || mode === '0a_choice') {
                 start0aSpecialChallenge(mode);
             } else if (mode.startsWith('vocab_')) {
@@ -2742,28 +2709,33 @@
             }
         }
 
-        // ==================== 4. 原版對話練習邏輯 (動態句數) ====================
+        // ==================== 4. 原版對話練習邏輯 (直向多列結構) ====================
 
-        function startDialogueChallenge(dialogueItem) {
+        function startDialogueChallenge() {
             stopSpeechRecognition();
-            currentDialogueItem = dialogueItem;
+            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+
+            // 依據當前 level, unit_id, lesson 篩選出所有對話列（每列一題）
+            const rows = rawDialogueData.filter(d => 
+                normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
+                String(getItemField(d, 'unit_id')) === String(currentConfig.unit_id) &&
+                String(getItemField(d, 'lesson')) === String(currentConfig.lesson)
+            );
+
             dialogueList = [];
+            rows.forEach(d => {
+                const aText = (d.a1 || '').trim();
+                const bText = (d.b1 || '').trim();
+                const axText = (d.a1x || aText).trim();
+                const bxText = (d.bx1 || bText).trim();
+                const aAudio = d.a1_audio || d.audio_url || '';
+                const bAudio = d.b1_audio || d.audio_url || '';
 
-            let i = 1;
-            while (dialogueItem[`a${i}`] || dialogueItem[`b${i}`] || i <= 8) {
-                const aText = (dialogueItem[`a${i}`] || '').trim();
-                const bText = (dialogueItem[`b${i}`] || '').trim();
-                const axText = (dialogueItem[`a${i}x`] || '').trim();
-                const bxText = (dialogueItem[`b${i}x`] || '').trim();
-                const aAudio = dialogueItem[`a${i}_audio`] || dialogueItem.audio_url || '';
-                const bAudio = dialogueItem[`b${i}_audio`] || dialogueItem.audio_url || '';
+                if (aText) dialogueList.push({ speaker: 'A', targetText: aText, fillText: axText, audioUrl: aAudio });
+                if (bText) dialogueList.push({ speaker: 'B', targetText: bText, fillText: bxText, audioUrl: bAudio });
+            });
 
-                if (aText) dialogueList.push({ speaker: 'A', targetText: aText, fillText: axText || aText, audioUrl: aAudio });
-                if (bText) dialogueList.push({ speaker: 'B', targetText: bText, fillText: bxText || bText, audioUrl: bAudio });
-                i++;
-            }
-
-            if (dialogueList.length === 0) return alert("此課堂對話資料為空！");
+            if (dialogueList.length === 0) return alert("此課堂 dialogue 分頁無題目資料！");
 
             dialogueIndex = 0;
             totalChallengeQuestions = dialogueList.length;
@@ -2884,27 +2856,32 @@
         function prevDialogueSentence() { if (dialogueIndex > 0) { dialogueIndex--; isBlindUnlocked = false; renderChatWindow(); } }
         function nextDialogueSentence() { if (dialogueIndex < dialogueList.length - 1) { dialogueIndex++; isBlindUnlocked = false; renderChatWindow(); } }
 
-        // ==================== 4.5 原版句子問答 (QnA) 邏輯 (動態句數) ====================
+        // ==================== 4.5 原版句子問答 (QnA) 邏輯 (直向多列結構) ====================
 
-        function startQnaChallenge(qnaItem) {
+        function startQnaChallenge() {
             stopSpeechRecognition();
-            currentQnaItem = qnaItem;
+            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+
+            const rows = rawQnaData.filter(d => 
+                normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
+                String(getItemField(d, 'unit_id')) === String(currentConfig.unit_id) &&
+                String(getItemField(d, 'lesson')) === String(currentConfig.lesson)
+            );
+
             qnaList = [];
             qnaUnlockedIndices.clear();
 
-            let i = 1;
-            while (qnaItem[`a${i}`] || qnaItem[`b${i}`] || i <= 8) {
-                const aText = (qnaItem[`a${i}`] || '').trim();
-                const bText = (qnaItem[`b${i}`] || '').trim();
-                const axText = (qnaItem[`a${i}x`] || '').trim();
-                const bxText = (qnaItem[`b${i}x`] || '').trim();
-                const aAudio = qnaItem[`a${i}_audio`] || qnaItem.audio_url || '';
-                const bAudio = qnaItem[`b${i}_audio`] || qnaItem.audio_url || '';
+            rows.forEach((d, idx) => {
+                const aText = (d.a1 || '').trim();
+                const bText = (d.b1 || '').trim();
+                const axText = (d.a1x || aText).trim();
+                const bxText = (d.bx1 || bText).trim();
+                const aAudio = d.a1_audio || d.audio_url || '';
+                const bAudio = d.b1_audio || d.audio_url || '';
 
-                if (aText) qnaList.push({ index: qnaList.length, speaker: 'A', targetText: aText, fillText: axText || aText, audioUrl: aAudio });
-                if (bText) qnaList.push({ index: qnaList.length, speaker: 'B', targetText: bText, fillText: bxText || bText, audioUrl: bAudio });
-                i++;
-            }
+                if (aText) qnaList.push({ index: qnaList.length, speaker: 'A', targetText: aText, fillText: axText, audioUrl: aAudio });
+                if (bText) qnaList.push({ index: qnaList.length, speaker: 'B', targetText: bText, fillText: bxText, audioUrl: bAudio });
+            });
 
             if (qnaList.length === 0) return alert("此課堂問答資料為空！");
 
@@ -3071,34 +3048,41 @@
         function prevQnaSentence() { if (qnaIndex > 0) { qnaIndex--; renderQnaChatWindow(); } }
         function nextQnaSentence() { if (qnaIndex < qnaList.length - 1) { qnaIndex++; renderQnaChatWindow(); } }
 
-        // ==================== 🌟 句子聊天挑戰邏輯 (動態句數 + 三語提示) ====================
+        // ==================== 🌟 句子聊天挑戰邏輯 (直向多列結構 + 三語提示) ====================
 
-        function startSentenceChatChallenge(dialogueItem) {
+        function startSentenceChatChallenge() {
             stopSpeechRecognition();
             chatRounds = [];
 
-            let i = 1;
-            while (dialogueItem[`a${i}`] || dialogueItem[`b${i}`] || i <= 8) {
-                const aText = (dialogueItem[`a${i}`] || '').trim();
-                const bText = (dialogueItem[`b${i}`] || '').trim();
-                const axText = (dialogueItem[`a${i}x`] || '').trim();
-                const bxText = (dialogueItem[`b${i}x`] || '').trim();
+            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
-                const aAudio = dialogueItem[`a${i}_audio`] || dialogueItem.audio_url || '';
-                const bAudio = dialogueItem[`b${i}_audio`] || dialogueItem.audio_url || '';
+            // 依據當前 level, unit_id, lesson 找出所有對話列（每列一題）
+            const rows = rawDialogueData.filter(d => 
+                normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
+                String(getItemField(d, 'unit_id')) === String(currentConfig.unit_id) &&
+                String(getItemField(d, 'lesson')) === String(currentConfig.lesson)
+            );
 
-                // 支援個別句提示，如果沒有則退回整體課程提示
-                const hintZh = dialogueItem[`a${i}_hint_zh`] || dialogueItem.hint_zh || '';
-                const hintEn = dialogueItem[`a${i}_hint_en`] || dialogueItem.hint_en || '';
-                const hintJp = dialogueItem[`a${i}_hint_jp`] || dialogueItem.hint_jp || '';
+            rows.forEach((d, idx) => {
+                const aText = (d.a1 || '').trim();
+                const bText = (d.b1 || '').trim();
+                const axText = (d.a1x || aText).trim();
+                const bxText = (d.bx1 || bText).trim();
+
+                const aAudio = d.a1_audio || d.audio_url || '';
+                const bAudio = d.b1_audio || d.audio_url || '';
+
+                const hintZh = d.hint_zh || '';
+                const hintEn = d.hint_en || '';
+                const hintJp = d.hint_jp || '';
 
                 if (aText || bText) {
                     chatRounds.push({
-                        roundNum: i,
+                        roundNum: idx + 1,
                         aText: aText,
                         bText: bText,
-                        axText: axText || aText,
-                        bxText: bxText || bText,
+                        axText: axText,
+                        bxText: bxText,
                         aAudio: aAudio,
                         bAudio: bAudio,
                         hintZh: hintZh,
@@ -3106,8 +3090,7 @@
                         hintJp: hintJp
                     });
                 }
-                i++;
-            }
+            });
 
             if (chatRounds.length === 0) return alert("此課堂 dialogue 分頁無題目資料！");
 
