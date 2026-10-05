@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>隨機選項學習系統</title>
+    <title>動態欄位項學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -481,7 +481,7 @@
             border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; margin-bottom: 12px;
             white-space: pre-wrap; word-break: break-word;
         }
-        .dialog-history-item { padding: 7px 8px; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151; line-height: 1.5; text-align: left; }
+        .dialog-history-item { padding: 7px 8px; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151; line-5; text-align: left; }
         .dialog-history-item:last-child { border-bottom: none; }
         .dialog-history-item span.num { font-weight: bold; color: var(--duo-blue); margin-right: 4px; }
 
@@ -1257,7 +1257,7 @@
         let passedSubQuestions = new Set();
         let totalChallengeQuestions = 0;
 
-        // 🎲 嚴格隨機洗牌函式 (Fisher-Yates Shuffle)，徹底打亂選項位置防止背答案
+        // 🎲 嚴格隨機洗牌函式 (Fisher-Yates Shuffle)
         function shuffleArray(arr) {
             const array = [...arr];
             for (let i = array.length - 1; i > 0; i--) {
@@ -1267,6 +1267,18 @@
                 array[j] = temp;
             }
             return array;
+        }
+
+        // 💡 通用動態物件/陣列欄位取值輔助函式 (即使資料來源為陣列或物件皆能自動解析)
+        function getItemField(item, fieldName) {
+            if (!item) return '';
+            if (!Array.isArray(item)) {
+                return item[fieldName] !== undefined ? item[fieldName] : (item[fieldName.toLowerCase()] || '');
+            }
+            // 陣列模式下的相容映射順序
+            const shadowMapping = { 'id': 0, 'level': 1, 'unit_id': 2, 'lesson': 3, 'stage': 3, 'text': 4, 'fulltext': 4, 'options': 5, 'zh': 5, 'en': 6, 'third': 7, 'audio': 8, 'hint': 9 };
+            const idx = shadowMapping[fieldName.toLowerCase()];
+            return (idx !== undefined && item[idx] !== undefined) ? item[idx] : '';
         }
 
         const ProgressModel = {
@@ -2348,6 +2360,7 @@
             goToStep('step-unit');
         }
 
+        // 💡 動態解析單元列表 (全面支援物件與陣列混用格式)
         function renderUnits(level) {
             const container = document.getElementById('container-units');
             container.innerHTML = "";
@@ -2356,10 +2369,10 @@
             const targetLevelNormalized = normalizeLevelStr(level);
 
             const filtered = combinedData.filter(i => {
-                const l = Array.isArray(i) ? i[1] : i.level;
+                const l = getItemField(i, 'level');
                 return normalizeLevelStr(l) === targetLevelNormalized;
             });
-            const units = [...new Set(filtered.map(i => Array.isArray(i) ? i[2] : i.unit_id))].filter(Boolean).sort((a,b) => a - b);
+            const units = [...new Set(filtered.map(i => getItemField(i, 'unit_id')))].filter(Boolean).sort((a,b) => a - b);
 
             if (units.length > 0) {
                 units.forEach(u => {
@@ -2374,6 +2387,7 @@
             }
         }
 
+        // 💡 動態解析課堂列表
         function selectUnit(unitId) {
             stopSpeechRecognition();
             currentConfig.unit_id = unitId;
@@ -2386,11 +2400,11 @@
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
             const filtered = combinedData.filter(i => {
-                const l = Array.isArray(i) ? i[1] : i.level;
-                const u = Array.isArray(i) ? i[2] : i.unit_id;
+                const l = getItemField(i, 'level');
+                const u = getItemField(i, 'unit_id');
                 return normalizeLevelStr(l) === targetLevelNormalized && String(u) === String(unitId);
             });
-            const lessons = [...new Set(filtered.map(i => Array.isArray(i) ? i[3] : (i.lesson || i.stage)))].filter(Boolean).sort((a,b) => a - b);
+            const lessons = [...new Set(filtered.map(i => getItemField(i, 'lesson')))].filter(Boolean).sort((a,b) => a - b);
 
             const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
             const is0ALevel = (targetLevelNormalized === '0A');
@@ -2517,9 +2531,9 @@
             if (mode === 'grammar') {
                 const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
                 const matchGrammar = globalGrammarData.find(g => 
-                    normalizeLevelStr(g.level) === targetLevelNormalized &&
-                    String(g.unit_id) === String(currentConfig.unit_id) &&
-                    String(g.lesson || g.stage) === String(lesson)
+                    normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
+                    String(getItemField(g, 'unit_id')) === String(currentConfig.unit_id) &&
+                    String(getItemField(g, 'lesson')) === String(lesson)
                 );
 
                 if (matchGrammar && (
@@ -2535,9 +2549,9 @@
             } else if (mode === 'dialogue') {
                 const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
                 const matchDialogue = rawDialogueData.find(d => 
-                    normalizeLevelStr(d.level) === targetLevelNormalized &&
-                    String(d.unit_id) === String(currentConfig.unit_id) &&
-                    String(d.lesson || d.stage) === String(lesson)
+                    normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
+                    String(getItemField(d, 'unit_id')) === String(currentConfig.unit_id) &&
+                    String(getItemField(d, 'lesson')) === String(lesson)
                 );
 
                 if (matchDialogue) {
@@ -2548,9 +2562,9 @@
             } else if (mode === 'qna') {
                 const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
                 const matchQna = rawQnaData.find(d => 
-                    normalizeLevelStr(d.level) === targetLevelNormalized &&
-                    String(d.unit_id) === String(currentConfig.unit_id) &&
-                    String(d.lesson || d.stage) === String(lesson)
+                    normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
+                    String(getItemField(d, 'unit_id')) === String(currentConfig.unit_id) &&
+                    String(getItemField(d, 'lesson')) === String(lesson)
                 );
 
                 if (matchQna) {
@@ -2561,9 +2575,9 @@
             } else if (mode === 'sentence_chat') {
                 const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
                 const matchDialogue = rawDialogueData.find(d => 
-                    normalizeLevelStr(d.level) === targetLevelNormalized &&
-                    String(d.unit_id) === String(currentConfig.unit_id) &&
-                    String(d.lesson || d.stage) === String(lesson)
+                    normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
+                    String(getItemField(d, 'unit_id')) === String(currentConfig.unit_id) &&
+                    String(getItemField(d, 'lesson')) === String(lesson)
                 );
 
                 if (matchDialogue) {
@@ -2587,9 +2601,9 @@
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
             vocabQuestions = raw0aChoiceData.filter(v => 
-                normalizeLevelStr(v.level) === targetLevelNormalized &&
-                String(v.unit_id) === String(currentConfig.unit_id) &&
-                String(v.lesson || v.stage) === String(currentConfig.lesson)
+                normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
+                String(getItemField(v, 'unit_id')) === String(currentConfig.unit_id) &&
+                String(getItemField(v, 'lesson')) === String(currentConfig.lesson)
             );
 
             if (vocabQuestions.length === 0) return alert("0achoice 分頁尚無此課堂的韓語單字資料！");
@@ -2669,7 +2683,7 @@
                     choices.push(correctKoreanWord);
                 }
                 
-                // 🎲 套用 Fisher-Yates 洗牌法，確保每次換題/進題時選項位置均勻隨機打亂
+                // 🎲 嚴格隨機洗牌打亂
                 choices = shuffleArray(choices);
 
                 choices.forEach(kText => {
@@ -3261,9 +3275,9 @@
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
             vocabQuestions = rawVocabData.filter(v => 
-                normalizeLevelStr(v.level) === targetLevelNormalized &&
-                String(v.unit_id) === String(currentConfig.unit_id) &&
-                String(v.lesson || v.stage) === String(currentConfig.lesson)
+                normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
+                String(getItemField(v, 'unit_id')) === String(currentConfig.unit_id) &&
+                String(getItemField(v, 'lesson')) === String(currentConfig.lesson)
             );
 
             if (vocabQuestions.length === 0) return alert("此課堂目前沒有設定單字練習喔！");
@@ -3333,10 +3347,10 @@
                 container.innerHTML = "";
 
                 let choices = (currentVocab.choice || '').split('/').map(s => s.trim()).filter(Boolean);
-                const correctAns = currentVocab.zh_tw.trim();
+                const correctAns = (currentVocab.zh_tw || '').trim();
                 if (correctAns && !choices.includes(correctAns)) choices.push(correctAns);
                 
-                // 🎲 套用 Fisher-Yates 洗牌法，確保每次進入題目隨機換位置
+                // 🎲 嚴格隨機洗牌
                 choices = shuffleArray(choices);
 
                 choices.forEach(cText => {
@@ -3390,7 +3404,7 @@
 
         function checkVocabChoiceAnswer(selectedText) {
             const currentVocab = vocabQuestions[vocabIndex];
-            const correctAns = currentVocab.zh_tw.trim();
+            const correctAns = (currentVocab.zh_tw || '').trim();
             const scoreBadge = document.getElementById('lbl-vocab-choice-score');
 
             if (selectedText.trim() === correctAns) {
@@ -3761,39 +3775,63 @@
                 e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (${modeTitle})`;
             });
 
-            const langIndexMap = { 'zh': 5, 'en': 6, 'kr': 7, 'ja': 7 };
-            const langIdx = langIndexMap[currentConfig.lang] !== undefined ? langIndexMap[currentConfig.lang] : 5;
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
             if (currentConfig.mode === 'shadow') {
                 goToStep('step-quiz-shadow');
                 questions = rawShadowData.filter(i => 
-                    normalizeLevelStr(i[1]) === targetLevelNormalized &&
-                    String(i[2]) === String(currentConfig.unit_id) &&
-                    String(i[3]) === String(currentConfig.lesson)
-                ).map(i => ({
-                    id: i[0],
-                    text: i[4],
-                    translation: i[langIdx] || i[5] || '',
-                    audioUrl: i[8],
-                    hint: i[9] || ''
-                }));
+                    normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized &&
+                    String(getItemField(i, 'unit_id')) === String(currentConfig.unit_id) &&
+                    String(getItemField(i, 'lesson')) === String(currentConfig.lesson)
+                ).map((i, idx) => {
+                    let trans = '';
+                    if (Array.isArray(i)) {
+                        const langIndexMap = { 'zh': 5, 'en': 6, 'kr': 7, 'ja': 7 };
+                        const langIdx = langIndexMap[currentConfig.lang] !== undefined ? langIndexMap[currentConfig.lang] : 5;
+                        trans = i[langIdx] || i[5] || '';
+                    } else {
+                        trans = currentConfig.lang === 'en' ? (i.en || i.zh_tw || '') :
+                                (currentConfig.lang === 'kr' || currentConfig.lang === 'ja') ? (i.ja || i.kr || i.zh_tw || '') :
+                                (i.zh_tw || i.zh || '');
+                    }
+
+                    return {
+                        id: getItemField(i, 'id') || idx + 1,
+                        text: getItemField(i, 'text'),
+                        translation: trans,
+                        audioUrl: getItemField(i, 'audio'),
+                        hint: getItemField(i, 'hint')
+                    };
+                });
             } else {
                 goToStep('step-quiz-blocks');
-                const blockLangIndexMap = { 'zh': 6, 'en': 7, 'kr': 8, 'ja': 8 };
-                const bLangIdx = blockLangIndexMap[currentConfig.lang] !== undefined ? blockLangIndexMap[currentConfig.lang] : 6;
-
                 questions = rawBlocksData.filter(i => 
-                    normalizeLevelStr(i[1]) === targetLevelNormalized &&
-                    String(i[2]) === String(currentConfig.unit_id) &&
-                    String(i[3]) === String(currentConfig.lesson)
-                ).map(i => ({
-                    id: i[0],
-                    fullText: i[4],
-                    options: shuffleArray((i[5] || '').split(',').map(s => s.trim()).filter(Boolean)),
-                    translation: i[bLangIdx] || i[6] || '',
-                    audioUrl: i[9] || ''
-                }));
+                    normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized &&
+                    String(getItemField(i, 'unit_id')) === String(currentConfig.unit_id) &&
+                    String(getItemField(i, 'lesson')) === String(currentConfig.lesson)
+                ).map((i, idx) => {
+                    let trans = '';
+                    if (Array.isArray(i)) {
+                        const blockLangIndexMap = { 'zh': 6, 'en': 7, 'kr': 8, 'ja': 8 };
+                        const bLangIdx = blockLangIndexMap[currentConfig.lang] !== undefined ? blockLangIndexMap[currentConfig.lang] : 6;
+                        trans = i[bLangIdx] || i[6] || '';
+                    } else {
+                        trans = currentConfig.lang === 'en' ? (i.en || i.zh_tw || '') :
+                                (currentConfig.lang === 'kr' || currentConfig.lang === 'ja') ? (i.ja || i.kr || i.zh_tw || '') :
+                                (i.zh_tw || i.zh || '');
+                    }
+
+                    const optRaw = getItemField(i, 'options') || (Array.isArray(i) ? i[5] : (i.optionsjson || i.options || ''));
+                    const opts = typeof optRaw === 'string' ? optRaw.split(',').map(s => s.trim()).filter(Boolean) : (Array.isArray(optRaw) ? optRaw : []);
+
+                    return {
+                        id: getItemField(i, 'id') || idx + 1,
+                        fullText: getItemField(i, 'fulltext') || getItemField(i, 'text'),
+                        options: shuffleArray(opts),
+                        translation: trans,
+                        audioUrl: getItemField(i, 'audio')
+                    };
+                });
             }
 
             currentIndex = 0;
