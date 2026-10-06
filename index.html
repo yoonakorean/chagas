@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>上下左右學習系統</title>
+    <title>voice學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -376,80 +376,53 @@
         .block-chip:active { transform: translateY(2px); border-bottom-width: 2px; }
         .block-chip.used { opacity: 0.3; pointer-events: none; background: #f3f4f6; }
 
-        /* 🌟 韓字積木插槽精準排版 */
-        .hangul-tray-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        /* 🌟 3 * 9 自由拼字棋盤樣式 (3 Rows x 9 Columns) */
+        .hangul-grid-board-wrapper {
             width: 100%;
+            overflow-x: auto;
             padding: 6px 0;
-        }
-        .hangul-block-frame {
-            background: #ffffff;
-            border: 2.5px solid var(--duo-blue);
-            border-radius: 18px;
-            box-shadow: 0 4px 14px rgba(28, 176, 246, 0.12);
-            padding: 8px;
-            display: inline-grid;
-            gap: 6px;
-            align-items: center;
+            display: flex;
             justify-content: center;
+            -webkit-overflow-scrolling: touch;
         }
-        /* 1. 左右結構 (如: 나, 가) */
-        .hangul-frame-horizontal {
-            grid-template-columns: 56px 56px;
-            grid-template-rows: 80px;
+        .hangul-grid-board {
+            display: grid;
+            grid-template-rows: repeat(3, 44px);
+            grid-template-columns: repeat(9, 44px);
+            gap: 4px;
+            background: #ffffff;
+            border: 2px solid #bae6fd;
+            border-radius: 16px;
+            padding: 8px;
+            box-shadow: 0 4px 12px rgba(28, 176, 246, 0.08);
+            margin: 0 auto;
         }
-        /* 2. 上下結構 (如: 우, 고) */
-        .hangul-frame-vertical {
-            grid-template-columns: 82px;
-            grid-template-rows: 52px 52px;
-        }
-        /* 3. 上中下三層 (如: 좋, 문) */
-        .hangul-frame-vertical-batchim {
-            grid-template-columns: 82px;
-            grid-template-rows: 44px 44px 44px;
-        }
-        /* 4. 左右+收音 (如: 강, 달) */
-        .hangul-frame-horizontal-batchim {
-            grid-template-columns: 50px 50px;
-            grid-template-rows: 54px 44px;
-        }
-        /* 5. 混合 (如: 쉬, 과) */
-        .hangul-frame-mixed {
-            grid-template-columns: 48px 46px;
-            grid-template-rows: 46px 46px;
-        }
-        /* 6. 混合+收音 (如: 곽) */
-        .hangul-frame-mixed-batchim {
-            grid-template-columns: 48px 46px;
-            grid-template-rows: 42px 42px 38px;
-        }
-
-        .hangul-slot {
+        .hangul-grid-cell {
             background: #f8fafc;
-            border: 2px dashed #cbd5e1;
-            border-radius: 12px;
+            border: 1.5px dashed #cbd5e1;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 100%;
-            height: 100%;
-            font-size: 1.4rem;
+            font-size: 1.25rem;
             font-weight: 900;
             color: #94a3b8;
+            cursor: pointer;
             user-select: none;
-            transition: all 0.15s ease;
+            transition: all 0.12s ease;
         }
-        .hangul-slot.filled {
+        .hangul-grid-cell:hover:not(.filled) {
+            background: #f1f5f9;
+            border-color: var(--duo-blue);
+        }
+        .hangul-grid-cell.filled {
             background: #ddf4ff;
             border: 2px solid var(--duo-blue);
             color: #0369a1;
-            cursor: pointer;
             box-shadow: 0 2px 4px rgba(0,0,0,0.06);
         }
-        .hangul-slot.filled:active {
-            transform: scale(0.95);
+        .hangul-grid-cell.filled:active {
+            transform: scale(0.92);
         }
 
         .vocab-input {
@@ -458,7 +431,7 @@
             display: block;
         }
         .vocab-input:focus { border-color: var(--duo-blue); }
-        .vocab-choice-list { display: flex flex-direction: column; gap: 8px; margin: 12px 0; }
+        .vocab-choice-list { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
         .btn-vocab-choice {
             background: white; border: 2px solid #e5e7eb; border-bottom: 3px solid #e5e7eb;
             border-radius: 12px; padding: 11px; font-size: 0.95rem; font-weight: bold;
@@ -509,7 +482,7 @@
         .chat-bubble.active-target { outline: 2.5px solid var(--duo-blue); }
         .chat-bubble-row.speaker-B .chat-bubble.active-target { outline: 2.5px solid var(--duo-green); }
         .chat-bubble .btn-bubble-play {
-            display: inline-flex align-items: center; justify-content: center;
+            display: inline-flex; align-items: center; justify-content: center;
             background: rgba(0, 0, 0, 0.08); border: none; border-radius: 50%;
             width: 24px; height: 24px; font-size: 0.7rem; margin-left: 6px;
             cursor: pointer; color: inherit; vertical-align: middle;
@@ -565,6 +538,16 @@
             width: 72px; height: 72px; border-radius: 50%;
             border: 3px solid var(--duo-blue); margin: 0 auto 8px auto; object-fit: cover;
             display: block;
+        }
+
+        @media (max-width: 440px) {
+            .hangul-grid-board {
+                grid-template-rows: repeat(3, 38px);
+                grid-template-columns: repeat(9, 38px);
+                gap: 3px;
+                padding: 6px;
+            }
+            .hangul-grid-cell { font-size: 1.1rem; }
         }
 
         @media (max-width: 420px) {
@@ -1309,6 +1292,10 @@
         let isRecording = false;
         let isToggling = false; 
         let selectedBlockIndices = [];
+
+        // 🌟 3x9 矩陣棋盤狀態管理：記錄 27 個格子分別放了哪個 optionIndex (null 代表空格)
+        let gridBoardCells = new Array(27).fill(null);
+        let selectedTargetGridIndex = null;
 
         let dialogueList = []; 
         let dialogueIndex = 0;
@@ -2620,7 +2607,7 @@ function selectCategory(category) {
                     }
                     if (hasDialogue) {
                         btnGroup.appendChild(createActionButton('dialogue', '💬 對話', 'btn-dialogue-lesson'));
-                        btnGroup.appendChild(createActionButton('sentence_chat', '🗣️️ 句子聊天挑戰', 'btn-chat-lesson'));
+                        btnGroup.appendChild(createActionButton('sentence_chat', '🗣 句子聊天挑戰', 'btn-chat-lesson'));
                     }
                     if (hasQna) {
                         btnGroup.appendChild(createActionButton('qna', '❓ 句子問答', 'btn-qna-lesson'));
@@ -3271,7 +3258,7 @@ function selectCategory(category) {
             isChatChallengeMode = false;
 
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
-            const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (🗣️ 句子聊天挑戰)`;
+            const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (${modeTitle})`;
             document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
 
             updateChallengeModeButtonUI();
@@ -3966,102 +3953,6 @@ function selectCategory(category) {
 
         // ==================== 6. 跟讀與重組題邏輯 ====================
 
-        // 🌟 方案 A 精準版：韓文 Unicode 音節精確拆解（初聲、中聲、終聲）
-        const CHOSUNG_LIST = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-        const JUNGSUNG_LIST = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
-        const JONGSUNG_LIST = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-
-        // 母音分類
-        const VOWEL_VERTICAL_SET = new Set(['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅣ']);
-        const VOWEL_HORIZONTAL_SET = new Set(['ㅗ','ㅛ','ㅜ','ㅠ','ㅡ']);
-        const VOWEL_MIXED_MAP = {
-            'ㅘ': ['ㅗ', 'ㅏ'],
-            'ㅙ': ['ㅗ', 'ㅐ'],
-            'ㅚ': ['ㅗ', 'ㅣ'],
-            'ㅝ': ['ㅜ', 'ㅓ'],
-            'ㅞ': ['ㅜ', 'ㅔ'],
-            'ㅟ': ['ㅜ', 'ㅣ'],
-            'ㅢ': ['ㅡ', 'ㅣ']
-        };
-
-        // 🌟 根據題目的完整答案（如 나, 우, 좋, 쉬）精準解析該字的版型架構與各插槽放置規則
-        function analyzeHangulSyllableStructure(fullTextChar) {
-            const code = fullTextChar.charCodeAt(0);
-            // 判斷是否為組合韓字 (AC00 - D7A3)
-            if (code < 0xAC00 || code > 0xD7A3) {
-                return { layout: 'horizontal', slots: [] };
-            }
-
-            const syllableIndex = code - 0xAC00;
-            const choIndex = Math.floor(syllableIndex / (21 * 28));
-            const jungIndex = Math.floor((syllableIndex % (21 * 28)) / 28);
-            const jongIndex = syllableIndex % 28;
-
-            const cho = CHOSUNG_LIST[choIndex];
-            const jung = JUNGSUNG_LIST[jungIndex];
-            const jong = JONGSUNG_LIST[jongIndex];
-
-            const hasBatchim = jongIndex > 0;
-            const isMixedVowel = VOWEL_MIXED_MAP[jung] !== undefined;
-            const isHorizontalVowel = VOWEL_HORIZONTAL_SET.has(jung);
-
-            let layout = 'horizontal';
-            let slots = [];
-
-            if (isMixedVowel) {
-                const [hPart, vPart] = VOWEL_MIXED_MAP[jung];
-                if (hasBatchim) {
-                    layout = 'mixed-batchim';
-                    slots = [
-                        { type: 'cho', expected: cho, area: '1 / 1 / 2 / 2' },
-                        { type: 'jung_h', expected: hPart, area: '2 / 1 / 3 / 2' },
-                        { type: 'jung_v', expected: vPart, area: '1 / 2 / 3 / 3' },
-                        { type: 'jong', expected: jong, area: '3 / 1 / 4 / 3' }
-                    ];
-                } else {
-                    layout = 'mixed';
-                    slots = [
-                        { type: 'cho', expected: cho, area: '1 / 1 / 2 / 2' },
-                        { type: 'jung_h', expected: hPart, area: '2 / 1 / 3 / 2' },
-                        { type: 'jung_v', expected: vPart, area: '1 / 2 / 3 / 3' }
-                    ];
-                }
-            } else if (isHorizontalVowel) {
-                if (hasBatchim) {
-                    layout = 'vertical-batchim'; // 上中下 (如: 좋, 문)
-                    slots = [
-                        { type: 'cho', expected: cho, area: '1 / 1 / 2 / 2' },
-                        { type: 'jung', expected: jung, area: '2 / 1 / 3 / 2' },
-                        { type: 'jong', expected: jong, area: '3 / 1 / 4 / 2' }
-                    ];
-                } else {
-                    layout = 'vertical'; // 上下 (如: 우, 고)
-                    slots = [
-                        { type: 'cho', expected: cho, area: '1 / 1 / 2 / 2' },
-                        { type: 'jung', expected: jung, area: '2 / 1 / 3 / 2' }
-                    ];
-                }
-            } else {
-                // 垂直母音 (如: 나, 가, 이)
-                if (hasBatchim) {
-                    layout = 'horizontal-batchim'; // 左右+下 (如: 강)
-                    slots = [
-                        { type: 'cho', expected: cho, area: '1 / 1 / 2 / 2' },
-                        { type: 'jung', expected: jung, area: '1 / 2 / 2 / 3' },
-                        { type: 'jong', expected: jong, area: '2 / 1 / 3 / 3' }
-                    ];
-                } else {
-                    layout = 'horizontal'; // 左右純兩格 (如: 나, 가)
-                    slots = [
-                        { type: 'cho', expected: cho, area: '1 / 1 / 2 / 2' },
-                        { type: 'jung', expected: jung, area: '1 / 2 / 2 / 3' }
-                    ];
-                }
-            }
-
-            return { layout, slots };
-        }
-
         function startMainQuiz() {
             stopSpeechRecognition();
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
@@ -4165,12 +4056,15 @@ function selectCategory(category) {
                 document.getElementById('btn-block-next').disabled = currentIndex === questions.length - 1;
 
                 selectedBlockIndices = [];
+                // 🌟 初始化 3x9 網格與定位
+                gridBoardCells = new Array(27).fill(null);
+                selectedTargetGridIndex = null;
                 renderBlocks();
                 playBlockAudio();
             }
         }
 
-        // 🌟 方案 A 升級版：精確根據目標題目字元做排版
+        // 🌟 3x9 自由棋盤渲染邏輯 (0A 專屬：3行 x 9列)
         function renderBlocks() {
             const q = questions[currentIndex];
             const zoneOptions = document.getElementById('zone-options');
@@ -4180,80 +4074,118 @@ function selectCategory(category) {
 
             const is0AKorean = (normalizeLevelStr(currentConfig.level) === '0A' && currentConfig.category === 'korean');
 
-            // 渲染下方可選字塊
-            q.options.forEach((optText, idx) => {
+            // 1. 渲染下方選項字塊
+            q.options.forEach((optText, optIdx) => {
+                // 檢查是否已被放入 3x9 棋盤或已被選用
+                const isUsed = is0AKorean ? gridBoardCells.includes(optIdx) : selectedBlockIndices.includes(optIdx);
+
                 const btn = document.createElement('div');
-                btn.className = 'block-chip' + (selectedBlockIndices.includes(idx) ? ' used' : '');
+                btn.className = 'block-chip' + (isUsed ? ' used' : '');
                 btn.innerText = optText;
-                btn.onclick = () => { selectedBlockIndices.push(idx); renderBlocks(); };
+
+                btn.onclick = () => {
+                    if (is0AKorean) {
+                        // 🌟 若有點選特定的格子，直接放入該格；若無則自動尋找第一個空格
+                        let targetIdx = selectedTargetGridIndex;
+                        if (targetIdx === null || gridBoardCells[targetIdx] !== null) {
+                            targetIdx = gridBoardCells.findIndex(val => val === null);
+                        }
+                        if (targetIdx !== -1) {
+                            gridBoardCells[targetIdx] = optIdx;
+                            // 自動尋找下一個空白格選取
+                            const nextEmpty = gridBoardCells.findIndex((val, i) => val === null && i > targetIdx);
+                            selectedTargetGridIndex = (nextEmpty !== -1) ? nextEmpty : null;
+                            renderBlocks();
+                        }
+                    } else {
+                        // 1A 以上一般模式
+                        selectedBlockIndices.push(optIdx);
+                        renderBlocks();
+                    }
+                };
                 zoneOptions.appendChild(btn);
             });
 
+            // 2. 渲染上方答案區域
             if (is0AKorean) {
-                // 🌟 直接分析正確目標單字（例如 '나'）的結構
-                const targetChar = (q.fullText || '').trim()[0] || '';
-                const structure = analyzeHangulSyllableStructure(targetChar);
+                const wrapper = document.createElement('div');
+                wrapper.className = 'hangul-grid-board-wrapper';
 
-                const trayContainer = document.createElement('div');
-                trayContainer.className = 'hangul-tray-container';
+                const board = document.createElement('div');
+                board.className = 'hangul-grid-board';
 
-                const frame = document.createElement('div');
-                frame.className = `hangul-block-frame hangul-frame-${structure.layout}`;
+                for (let i = 0; i < 27; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'hangul-grid-cell';
 
-                // 建立托盤插槽
-                const slotCount = structure.slots.length > 0 ? structure.slots.length : q.options.length;
+                    const assignedOptIdx = gridBoardCells[i];
 
-                for (let s = 0; s < slotCount; s++) {
-                    const slotDiv = document.createElement('div');
-                    slotDiv.className = 'hangul-slot';
-
-                    if (structure.slots[s]) {
-                        slotDiv.style.gridArea = structure.slots[s].area;
-                    }
-
-                    if (s < selectedBlockIndices.length) {
-                        const optIndex = selectedBlockIndices[s];
-                        slotDiv.classList.add('filled');
-                        slotDiv.innerText = q.options[optIndex];
-                        slotDiv.title = "點擊移除此字塊";
-                        slotDiv.onclick = () => {
-                            selectedBlockIndices = selectedBlockIndices.filter(i => i !== optIndex);
+                    if (assignedOptIdx !== null) {
+                        cell.classList.add('filled');
+                        cell.innerText = q.options[assignedOptIdx];
+                        cell.title = "點擊收回此字塊";
+                        cell.onclick = () => {
+                            gridBoardCells[i] = null;
+                            selectedTargetGridIndex = i; // 移出後預設焦點留在該格
                             renderBlocks();
                         };
                     } else {
-                        slotDiv.innerText = "";
+                        cell.innerText = "";
+                        if (selectedTargetGridIndex === i) {
+                            cell.style.borderColor = "var(--duo-blue)";
+                            cell.style.backgroundColor = "#e0f2fe";
+                        }
+                        cell.title = "點擊選取放置位置";
+                        cell.onclick = () => {
+                            selectedTargetGridIndex = i;
+                            renderBlocks();
+                        };
                     }
 
-                    frame.appendChild(slotDiv);
+                    board.appendChild(cell);
                 }
 
-                trayContainer.appendChild(frame);
-                zoneAnswer.appendChild(trayContainer);
+                wrapper.appendChild(board);
+                zoneAnswer.appendChild(wrapper);
 
             } else {
-                // 一般水平字塊重組 (1A 以上整句重組)
+                // 1A 以上一般水平橫向字塊排列
                 selectedBlockIndices.forEach(idx => {
                     const btn = document.createElement('div');
                     btn.className = 'block-chip';
                     btn.innerText = q.options[idx];
-                    btn.onclick = () => { selectedBlockIndices = selectedBlockIndices.filter(i => i !== idx); renderBlocks(); };
+                    btn.onclick = () => {
+                        selectedBlockIndices = selectedBlockIndices.filter(i => i !== idx);
+                        renderBlocks();
+                    };
                     zoneAnswer.appendChild(btn);
                 });
             }
         }
 
-        // 🌟 核心調整：回答正確後在「完全正確！」後面顯示 voice 欄位的讀音
+        // 🌟 檢查答案並在回答正確後顯示 voice 欄位文字
         function checkBlockAnswer() {
             const q = questions[currentIndex];
+            const is0AKorean = (normalizeLevelStr(currentConfig.level) === '0A' && currentConfig.category === 'korean');
             
-            const userSentence = selectedBlockIndices.map(i => q.options[i]).join('');
+            let userSentence = "";
+            if (is0AKorean) {
+                // 依棋盤由左至右、由上至下收集字元
+                userSentence = gridBoardCells
+                    .filter(idx => idx !== null)
+                    .map(idx => q.options[idx])
+                    .join('');
+            } else {
+                userSentence = selectedBlockIndices.map(i => q.options[i]).join('');
+            }
+
             const cleanUserSentence = cleanStringForCompare(userSentence);
             const cleanTargetSentence = cleanStringForCompare(q.fullText);
             
             const scoreBadge = document.getElementById('lbl-block-score');
 
             if (cleanUserSentence === cleanTargetSentence) {
-                // 🌟 抓取 voice 欄位文字（若有則顯示）
+                // 🌟 正確後在「完全正確！」後顯示 voice 讀音
                 const voiceTip = (q.voice && q.voice.trim() !== '') ? ` [${q.voice.trim()}]` : '';
                 scoreBadge.innerText = `🎉 完全正確！${voiceTip}`;
                 scoreBadge.style.color = "#58cc02";
