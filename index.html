@@ -726,7 +726,7 @@
 
         <!-- 🌟 視圖 A：學習與題目挑戰區塊 -->
         <div id="learning-content-view">
-            <!-- 步驟 1：已隱藏至背景載入，平常不顯示 -->
+            <!-- 步驟 1：已隱藏至背景，平常不顯示 -->
             <div id="step-learn-lang" class="step-page hidden">
                 <div id="cache-status" style="font-size: 0.75rem; color: #6b7280; margin-top: 8px;"></div>
             </div>
@@ -1510,7 +1510,6 @@
 
                     closeModal('login-modal');
                     renderUserInfo();
-                    // 🌟 登入後自動以記錄的語言載入課程
                     await autoLoadCurrentCategory();
                 }
 
@@ -1587,7 +1586,6 @@
             localStorage.setItem('preferred_learn_category', cat);
         }
 
-        // 🌟 在「我的帳號」切換學習語言時觸發
         async function updateAccountLearnCategory(cat) {
             setLearnCategory(cat);
             if (currentUser) {
@@ -2430,6 +2428,7 @@ function selectCategory(category) {
             }
         }
 
+        // 🌟 核心調整：動態判定試算表是否「確實有該關卡資料」，有才顯示按鈕！
         function selectUnit(unitId) {
             stopSpeechRecognition();
             currentConfig.unit_id = unitId;
@@ -2453,6 +2452,64 @@ function selectCategory(category) {
 
             if (lessons.length > 0) {
                 lessons.forEach(les => {
+                    const lesStr = String(les);
+                    const unitStr = String(unitId);
+
+                    // 1. 檢查語法資料是否存在
+                    const hasGrammar = globalGrammarData.some(g => {
+                        return normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
+                               String(getItemField(g, 'unit_id')) === unitStr &&
+                               String(getItemField(g, 'lesson')) === lesStr &&
+                               ((g.dialogs && g.dialogs.length > 0) || 
+                                (g.example && g.example.trim() !== '') ||
+                                (g.ready && g.ready.trim() !== '') ||
+                                (g.question && g.question.trim() !== ''));
+                    });
+
+                    // 2. 檢查句子跟讀資料是否存在
+                    const hasShadow = rawShadowData.some(i => {
+                        return normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized &&
+                               String(getItemField(i, 'unit_id')) === unitStr &&
+                               String(getItemField(i, 'lesson')) === lesStr;
+                    });
+
+                    // 3. 檢查字塊重組資料是否存在
+                    const hasBlocks = rawBlocksData.some(i => {
+                        return normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized &&
+                               String(getItemField(i, 'unit_id')) === unitStr &&
+                               String(getItemField(i, 'lesson')) === lesStr;
+                    });
+
+                    // 4. 檢查對話資料是否存在
+                    const hasDialogue = rawDialogueData.some(d => {
+                        return normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
+                               String(getItemField(d, 'unit_id')) === unitStr &&
+                               String(getItemField(d, 'lesson')) === lesStr &&
+                               ((d.a1 && d.a1.trim() !== '') || (d.b1 && d.b1.trim() !== ''));
+                    });
+
+                    // 5. 檢查句子問答資料是否存在
+                    const hasQna = rawQnaData.some(d => {
+                        return normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
+                               String(getItemField(d, 'unit_id')) === unitStr &&
+                               String(getItemField(d, 'lesson')) === lesStr &&
+                               ((d.a1 && d.a1.trim() !== '') || (d.b1 && d.b1.trim() !== ''));
+                    });
+
+                    // 6. 檢查一般單字庫資料是否存在
+                    const hasVocab = rawVocabData.some(v => {
+                        return normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
+                               String(getItemField(v, 'unit_id')) === unitStr &&
+                               String(getItemField(v, 'lesson')) === lesStr;
+                    });
+
+                    // 7. 檢查 0A 專屬單字資料是否存在
+                    const has0aChoice = raw0aChoiceData.some(v => {
+                        return normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
+                               String(getItemField(v, 'unit_id')) === unitStr &&
+                               String(getItemField(v, 'lesson')) === lesStr;
+                    });
+
                     const card = document.createElement('div');
                     card.className = "lesson-card-item";
 
@@ -2483,34 +2540,41 @@ function selectCategory(category) {
                         return btn;
                     };
 
-                    const btnGrammar = createActionButton('grammar', '📖 語法', 'btn-grammar-lesson');
-                    const btnShadow = createActionButton('shadow', '🎙 跟讀');
-                    const btnBlocks = createActionButton('blocks', '🧩 重組');
-                    const btnDialogue = createActionButton('dialogue', '💬 對話', 'btn-dialogue-lesson');
-                    const btnSentenceChat = createActionButton('sentence_chat', '🗣️ 句子聊天挑戰', 'btn-chat-lesson');
-                    const btnQna = createActionButton('qna', '❓ 句子問答', 'btn-qna-lesson');
-
-                    btnGroup.appendChild(btnGrammar);
-                    btnGroup.appendChild(btnShadow);
-                    btnGroup.appendChild(btnBlocks);
-                    btnGroup.appendChild(btnDialogue);
-                    btnGroup.appendChild(btnSentenceChat);
-                    btnGroup.appendChild(btnQna);
-
-                    if (is0ALevel) {
-                        const btn0aShadow = createActionButton('0a_shadow', '🗣 韓語單字跟讀', 'btn-0a-special');
-                        const btn0aChoice = createActionButton('0a_choice', '🎯 韓語單字選擇', 'btn-0a-special');
-                        btnGroup.appendChild(btn0aShadow);
-                        btnGroup.appendChild(btn0aChoice);
+                    // 🌟 僅在有資料時才將按鈕加進選單
+                    if (hasGrammar) {
+                        btnGroup.appendChild(createActionButton('grammar', '📖 語法', 'btn-grammar-lesson'));
+                    }
+                    if (hasShadow) {
+                        btnGroup.appendChild(createActionButton('shadow', '🎙 跟讀'));
+                    }
+                    if (hasBlocks) {
+                        btnGroup.appendChild(createActionButton('blocks', '🧩 重組'));
+                    }
+                    if (hasDialogue) {
+                        btnGroup.appendChild(createActionButton('dialogue', '💬 對話', 'btn-dialogue-lesson'));
+                        btnGroup.appendChild(createActionButton('sentence_chat', '🗣️ 句子聊天挑戰', 'btn-chat-lesson'));
+                    }
+                    if (hasQna) {
+                        btnGroup.appendChild(createActionButton('qna', '❓ 句子問答', 'btn-qna-lesson'));
                     }
 
-                    const btnVocabShadow = createActionButton('vocab_shadow', '🗣 單字跟讀', 'btn-vocab-lesson');
-                    const btnVocabType = createActionButton('vocab_type', '⌨ 單字聽打', 'btn-vocab-lesson');
-                    const btnVocabChoice = createActionButton('vocab_choice', '🎯 單字選擇', 'btn-vocab-lesson');
+                    if (is0ALevel && has0aChoice) {
+                        btnGroup.appendChild(createActionButton('0a_shadow', '🗣 韓語單字跟讀', 'btn-0a-special'));
+                        btnGroup.appendChild(createActionButton('0a_choice', '🎯 韓語單字選擇', 'btn-0a-special'));
+                    }
 
-                    btnGroup.appendChild(btnVocabShadow);
-                    btnGroup.appendChild(btnVocabType);
-                    btnGroup.appendChild(btnVocabChoice);
+                    if (hasVocab) {
+                        btnGroup.appendChild(createActionButton('vocab_shadow', '🗣 單字跟讀', 'btn-vocab-lesson'));
+                        btnGroup.appendChild(createActionButton('vocab_type', '⌨ 單字聽打', 'btn-vocab-lesson'));
+                        btnGroup.appendChild(createActionButton('vocab_choice', '🎯 單字選擇', 'btn-vocab-lesson'));
+                    }
+
+                    if (btnGroup.children.length === 0) {
+                        const emptyTip = document.createElement('div');
+                        emptyTip.style.cssText = "font-size:0.8rem; color:#94a3b8; padding: 6px 0;";
+                        emptyTip.innerText = "此課堂尚無開放挑戰";
+                        btnGroup.appendChild(emptyTip);
+                    }
 
                     card.appendChild(title);
                     card.appendChild(btnGroup);
