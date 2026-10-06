@@ -1,0 +1,316 @@
+{\rtf1\ansi\ansicpg950\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red20\green67\blue174;\red246\green247\blue249;\red46\green49\blue51;
+\red0\green0\blue0;\red186\green6\blue115;\red77\green80\blue85;\red162\green0\blue16;\red18\green115\blue126;
+\red97\green3\blue173;}
+{\*\expandedcolortbl;;\cssrgb\c9412\c35294\c73725;\cssrgb\c97255\c97647\c98039;\cssrgb\c23529\c25098\c26275;
+\cssrgb\c0\c0\c0;\cssrgb\c78824\c15294\c52549;\cssrgb\c37255\c38824\c40784;\cssrgb\c70196\c7843\c7059;\cssrgb\c3529\c52157\c56863;
+\cssrgb\c46275\c15294\c73333;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs26 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 function\cf4 \strokec4  \strokec5 doGet\strokec4 (\strokec5 e\strokec4 ) \{\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3   \cf2 \strokec2 var\cf4 \strokec4  \strokec5 output\strokec4  = \cf6 \strokec6 ContentService\cf4 \strokec4 .\strokec5 createTextOutput\strokec4 ();\cb1 \
+\cb3   \cf2 \strokec2 var\cf4 \strokec4  \strokec5 params\strokec4  = \strokec5 e\strokec4  ? \strokec5 e\strokec4 .\strokec5 parameter\strokec4  : \{\};\cb1 \
+\cb3   \cf2 \strokec2 var\cf4 \strokec4  \strokec5 prefix\strokec4  = \strokec5 params\strokec4 .\strokec5 prefix\strokec4  || \strokec5 params\strokec4 .\strokec5 callback\strokec4 ; \cf7 \strokec7 // \uc0\u29992 \u26044  JSONP \u36328 \u32178 \u22495 \u23384 \u21462 \cf4 \cb1 \strokec4 \
+\
+\cb3   \cf2 \strokec2 function\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\strokec5 obj\strokec4 ) \{\cb1 \
+\cb3     \cf2 \strokec2 var\cf4 \strokec4  \strokec5 jsonStr\strokec4  = \cf6 \strokec6 JSON\cf4 \strokec4 .\strokec5 stringify\strokec4 (\strokec5 obj\strokec4 );\cb1 \
+\cb3     \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 prefix\strokec4 ) \{\cb1 \
+\cb3       \strokec5 output\strokec4 .\strokec5 setMimeType\strokec4 (\cf6 \strokec6 ContentService\cf4 \strokec4 .\cf6 \strokec6 MimeType\cf4 \strokec4 .\cf6 \strokec6 JAVASCRIPT\cf4 \strokec4 );\cb1 \
+\cb3       \strokec5 output\strokec4 .\strokec5 setContent\strokec4 (\strokec5 prefix\strokec4  + \cf8 \strokec8 '('\cf4 \strokec4  + \strokec5 jsonStr\strokec4  + \cf8 \strokec8 ');'\cf4 \strokec4 );\cb1 \
+\cb3     \} \cf2 \strokec2 else\cf4 \strokec4  \{\cb1 \
+\cb3       \strokec5 output\strokec4 .\strokec5 setMimeType\strokec4 (\cf6 \strokec6 ContentService\cf4 \strokec4 .\cf6 \strokec6 MimeType\cf4 \strokec4 .\cf6 \strokec6 JSON\cf4 \strokec4 );\cb1 \
+\cb3       \strokec5 output\strokec4 .\strokec5 setContent\strokec4 (\strokec5 jsonStr\strokec4 );\cb1 \
+\cb3     \}\cb1 \
+\cb3     \cf2 \strokec2 return\cf4 \strokec4  \strokec5 output\strokec4 ;\cb1 \
+\cb3   \}\cb1 \
+\
+\cb3   \cf7 \strokec7 // \uc0\u36328 \u22823 \u23567 \u23531 \u33287 \u21435 \u38500 \u31354 \u30333 /\u24213 \u32218 \u23563 \u25214 \u24037 \u20316 \u34920 \u30340 \u36628 \u21161 \u20989 \u24335 \cf4 \cb1 \strokec4 \
+\cb3   \cf2 \strokec2 function\cf4 \strokec4  \strokec5 getSheetCaseInsensitive\strokec4 (\strokec5 ss\strokec4 , \strokec5 targetName\strokec4 ) \{\cb1 \
+\cb3     \cf2 \strokec2 var\cf4 \strokec4  \strokec5 sheets\strokec4  = \strokec5 ss\strokec4 .\strokec5 getSheets\strokec4 ();\cb1 \
+\cb3     \cf2 \strokec2 for\cf4 \strokec4  (\cf2 \strokec2 var\cf4 \strokec4  \strokec5 i\strokec4  = \cf9 \strokec9 0\cf4 \strokec4 ; \strokec5 i\strokec4  < \strokec5 sheets\strokec4 .\strokec5 length\strokec4 ; \strokec5 i\strokec4 ++) \{\cb1 \
+\cb3       \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 sheets\strokec4 [\strokec5 i\strokec4 ].\strokec5 getName\strokec4 ().\strokec5 trim\strokec4 ().\strokec5 toLowerCase\strokec4 () === \strokec5 targetName\strokec4 .\strokec5 toLowerCase\strokec4 ()) \{\cb1 \
+\cb3         \cf2 \strokec2 return\cf4 \strokec4  \strokec5 sheets\strokec4 [\strokec5 i\strokec4 ];\cb1 \
+\cb3       \}\cb1 \
+\cb3     \}\cb1 \
+\cb3     \cf2 \strokec2 return\cf4 \strokec4  \cf2 \strokec2 null\cf4 \strokec4 ;\cb1 \
+\cb3   \}\cb1 \
+\
+\cb3   \cf7 \strokec7 //  \uc0\u21205 \u24907 \u27161 \u38988 \u32034 \u24341 \u35299 \u26512 \u22120 \u65306 \u23559 \u27161 \u38988 \u27491 \u35215 \u21270 \u65288 \u21435 \u38500 \u31354 \u30333 \u12289 \u24213 \u32218 \u12289 \u31526 \u34399 \u20006 \u36681 \u23567 \u23531 \u65289 \cf4 \cb1 \strokec4 \
+\cb3   \cf2 \strokec2 function\cf4 \strokec4  \strokec5 buildHeaderIndexMap\strokec4 (\strokec5 headerRow\strokec4 ) \{\cb1 \
+\cb3     \cf2 \strokec2 var\cf4 \strokec4  \strokec5 map\strokec4  = \{\};\cb1 \
+\cb3     \cf2 \strokec2 for\cf4 \strokec4  (\cf2 \strokec2 var\cf4 \strokec4  \strokec5 j\strokec4  = \cf9 \strokec9 0\cf4 \strokec4 ; \strokec5 j\strokec4  < \strokec5 headerRow\strokec4 .\strokec5 length\strokec4 ; \strokec5 j\strokec4 ++) \{\cb1 \
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 h\strokec4  = \cf6 \strokec6 String\cf4 \strokec4 (\strokec5 headerRow\strokec4 [\strokec5 j\strokec4 ] || \cf8 \strokec8 ''\cf4 \strokec4 ).\strokec5 trim\strokec4 ().\strokec5 toLowerCase\strokec4 ().\strokec5 replace\strokec4 (\cf10 \strokec10 /[\\s_\\-\\/\\\\()\uc0\u65288 \u65289 ]/\cf2 \strokec2 g\cf4 \strokec4 , \cf8 \strokec8 ''\cf4 \strokec4 );\cb1 \
+\cb3       \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 h\strokec4 ) \{\cb1 \
+\cb3         \strokec5 map\strokec4 [\strokec5 h\strokec4 ] = \strokec5 j\strokec4 ;\cb1 \
+\cb3       \}\cb1 \
+\cb3     \}\cb1 \
+\cb3     \cf2 \strokec2 return\cf4 \strokec4  \strokec5 map\strokec4 ;\cb1 \
+\cb3   \}\cb1 \
+\
+\cb3   \cf7 \strokec7 //  \uc0\u21205 \u24907 \u23433 \u20840 \u21462 \u20540 \u65306 \u20381 \u25818 \u21029 \u21517 \u28165 \u21934 \u23563 \u25214 \u27396 \u20301 \u65292 \u32085 \u19981 \u20351 \u29992 \u23531 \u27515 \u30340 \u22266 \u23450 \u27396 \u20301 \u25976 \u23383 \u65281 \cf4 \cb1 \strokec4 \
+\cb3   \cf2 \strokec2 function\cf4 \strokec4  \strokec5 getValueByAliases\strokec4 (\strokec5 row\strokec4 , \strokec5 colMap\strokec4 , \strokec5 aliases\strokec4 , \strokec5 defaultValue\strokec4 ) \{\cb1 \
+\cb3     \strokec5 defaultValue\strokec4  = (\strokec5 defaultValue\strokec4  !== \cf2 \strokec2 undefined\cf4 \strokec4 ) ? \strokec5 defaultValue\strokec4  : \cf8 \strokec8 ''\cf4 \strokec4 ;\cb1 \
+\cb3     \cf2 \strokec2 for\cf4 \strokec4  (\cf2 \strokec2 var\cf4 \strokec4  \strokec5 a\strokec4  = \cf9 \strokec9 0\cf4 \strokec4 ; \strokec5 a\strokec4  < \strokec5 aliases\strokec4 .\strokec5 length\strokec4 ; \strokec5 a\strokec4 ++) \{\cb1 \
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 cleanKey\strokec4  = \strokec5 aliases\strokec4 [\strokec5 a\strokec4 ].\strokec5 toLowerCase\strokec4 ().\strokec5 replace\strokec4 (\cf10 \strokec10 /[\\s_\\-\\/\\\\()\uc0\u65288 \u65289 ]/\cf2 \strokec2 g\cf4 \strokec4 , \cf8 \strokec8 ''\cf4 \strokec4 );\cb1 \
+\cb3       \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 colMap\strokec4 [\strokec5 cleanKey\strokec4 ] !== \cf2 \strokec2 undefined\cf4 \strokec4 ) \{\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 val\strokec4  = \strokec5 row\strokec4 [\strokec5 colMap\strokec4 [\strokec5 cleanKey\strokec4 ]];\cb1 \
+\cb3         \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 val\strokec4  !== \cf2 \strokec2 undefined\cf4 \strokec4  && \strokec5 val\strokec4  !== \cf2 \strokec2 null\cf4 \strokec4 ) \{\cb1 \
+\cb3           \cf2 \strokec2 return\cf4 \strokec4  \cf6 \strokec6 String\cf4 \strokec4 (\strokec5 val\strokec4 ).\strokec5 trim\strokec4 ();\cb1 \
+\cb3         \}\cb1 \
+\cb3         \cf2 \strokec2 return\cf4 \strokec4  \cf8 \strokec8 ''\cf4 \strokec4 ;\cb1 \
+\cb3       \}\cb1 \
+\cb3     \}\cb1 \
+\cb3     \cf2 \strokec2 return\cf4 \strokec4  \strokec5 defaultValue\strokec4 ;\cb1 \
+\cb3   \}\cb1 \
+\
+\cb3   \cf2 \strokec2 try\cf4 \strokec4  \{\cb1 \
+\cb3     \cf2 \strokec2 var\cf4 \strokec4  \strokec5 ss\strokec4  = \cf6 \strokec6 SpreadsheetApp\cf4 \strokec4 .\strokec5 getActiveSpreadsheet\strokec4 ();\cb1 \
+\cb3     \cf2 \strokec2 var\cf4 \strokec4  \strokec5 action\strokec4  = \strokec5 params\strokec4 .\strokec5 action\strokec4  || \cf8 \strokec8 ''\cf4 \strokec4 ;\cb1 \
+\
+\cb3     \cf7 \strokec7 //  1. \uc0\u21477 \u23376 \u36319 \u35712 \u38364 \u21345  (\u24037 \u20316 \u34920  sentence \u25110  words)\cf4 \cb1 \strokec4 \
+\cb3     \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 action\strokec4  === \cf8 \strokec8 'getLanguageData'\cf4 \strokec4  || \strokec5 action\strokec4  === \cf8 \strokec8 'getSentenceData'\cf4 \strokec4 ) \{\cb1 \
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 sheet\strokec4  = \strokec5 getSheetCaseInsensitive\strokec4 (\strokec5 ss\strokec4 , \cf8 \strokec8 "sentence"\cf4 \strokec4 ) || \strokec5 getSheetCaseInsensitive\strokec4 (\strokec5 ss\strokec4 , \cf8 \strokec8 "words"\cf4 \strokec4 );\cb1 \
+\cb3       \cf2 \strokec2 if\cf4 \strokec4  (!\strokec5 sheet\strokec4 ) \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "error"\cf4 \strokec4 , \strokec5 message\strokec4 : \cf8 \strokec8 "\uc0\u25214 \u19981 \u21040  sentence \u25110  words \u24037 \u20316 \u34920 "\cf4 \strokec4  \});\cb1 \
+\
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 data\strokec4  = \strokec5 sheet\strokec4 .\strokec5 getDataRange\strokec4 ().\strokec5 getValues\strokec4 ();\cb1 \
+\cb3       \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 data\strokec4 .\strokec5 length\strokec4  <= \cf9 \strokec9 1\cf4 \strokec4 ) \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "success"\cf4 \strokec4 , \strokec5 data\strokec4 : [] \});\cb1 \
+\
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 col\strokec4  = \strokec5 buildHeaderIndexMap\strokec4 (\strokec5 data\strokec4 [\cf9 \strokec9 0\cf4 \strokec4 ]);\cb1 \
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 rows\strokec4  = [];\cb1 \
+\
+\cb3       \cf2 \strokec2 for\cf4 \strokec4  (\cf2 \strokec2 var\cf4 \strokec4  \strokec5 i\strokec4  = \cf9 \strokec9 1\cf4 \strokec4 ; \strokec5 i\strokec4  < \strokec5 data\strokec4 .\strokec5 length\strokec4 ; \strokec5 i\strokec4 ++) \{\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 r\strokec4  = \strokec5 data\strokec4 [\strokec5 i\strokec4 ];\cb1 \
+\
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 idVal\strokec4      = \strokec5 getValueByAliases\strokec4 (\strokec5 r\strokec4 , \strokec5 col\strokec4 , [\cf8 \strokec8 'id'\cf4 \strokec4 , \cf8 \strokec8 'no'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u24207 \u34399 '\cf4 \strokec4 ], \strokec5 i\strokec4 );\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 lvlVal\strokec4     = \strokec5 getValueByAliases\strokec4 (\strokec5 r\strokec4 , \strokec5 col\strokec4 , [\cf8 \strokec8 'level'\cf4 \strokec4 , \cf8 \strokec8 'lvl'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u32026 \u21029 '\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u31243 \u24230 '\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 unitVal\strokec4    = \strokec5 getValueByAliases\strokec4 (\strokec5 r\strokec4 , \strokec5 col\strokec4 , [\cf8 \strokec8 'unitid'\cf4 \strokec4 , \cf8 \strokec8 'unit'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u21934 \u20803 '\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 lessonVal\strokec4  = \strokec5 getValueByAliases\strokec4 (\strokec5 r\strokec4 , \strokec5 col\strokec4 , [\cf8 \strokec8 'lesson'\cf4 \strokec4 , \cf8 \strokec8 'stage'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u35506 \u22530 '\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u35506 '\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 textVal\strokec4    = \strokec5 getValueByAliases\strokec4 (\strokec5 r\strokec4 , \strokec5 col\strokec4 , [\cf8 \strokec8 'text'\cf4 \strokec4 , \cf8 \strokec8 'sentence'\cf4 \strokec4 , \cf8 \strokec8 'target'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u21477 \u23376 '\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u20839 \u23481 '\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 zhVal\strokec4      = \strokec5 getValueByAliases\strokec4 (\strokec5 r\strokec4 , \strokec5 col\strokec4 , [\cf8 \strokec8 'zhtw'\cf4 \strokec4 , \cf8 \strokec8 'zh'\cf4 \strokec4 , \cf8 \strokec8 'tw'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u20013 \u25991 '\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u32763 \u35695 '\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 enVal\strokec4      = \strokec5 getValueByAliases\strokec4 (\strokec5 r\strokec4 , \strokec5 col\strokec4 , [\cf8 \strokec8 'en'\cf4 \strokec4 , \cf8 \strokec8 'english'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u33521 \u25991 '\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 thirdVal\strokec4   = \strokec5 getValueByAliases\strokec4 (\strokec5 r\strokec4 , \strokec5 col\strokec4 , [\cf8 \strokec8 'kr'\cf4 \strokec4 , \cf8 \strokec8 'korean'\cf4 \strokec4 , \cf8 \strokec8 'ja'\cf4 \strokec4 , \cf8 \strokec8 'jp'\cf4 \strokec4 , \cf8 \strokec8 'japanese'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u38867 \u25991 '\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u26085 \u25991 '\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 audioVal\strokec4   = \strokec5 getValueByAliases\strokec4 (\strokec5 r\strokec4 , \strokec5 col\strokec4 , [\cf8 \strokec8 'audiourl'\cf4 \strokec4 , \cf8 \strokec8 'audio'\cf4 \strokec4 , \cf8 \strokec8 'sound'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u35486 \u38899 '\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u38899 \u27284 '\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 hintVal\strokec4    = \strokec5 getValueByAliases\strokec4 (\strokec5 r\strokec4 , \strokec5 col\strokec4 , [\cf8 \strokec8 'hint'\cf4 \strokec4 , \cf8 \strokec8 'tips'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u25552 \u31034 '\cf4 \strokec4 ]);\cb1 \
+\
+\cb3         \strokec5 rows\strokec4 .\strokec5 push\strokec4 ([\cb1 \
+\cb3           \strokec5 idVal\strokec4 , \strokec5 lvlVal\strokec4 , \strokec5 unitVal\strokec4 , \strokec5 lessonVal\strokec4 , \strokec5 textVal\strokec4 ,\cb1 \
+\cb3           \strokec5 zhVal\strokec4 , \strokec5 enVal\strokec4 , \strokec5 thirdVal\strokec4 , \strokec5 audioVal\strokec4 , \strokec5 hintVal\cb1 \strokec4 \
+\cb3         ]);\cb1 \
+\cb3       \}\cb1 \
+\cb3       \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "success"\cf4 \strokec4 , \strokec5 data\strokec4 : \strokec5 rows\strokec4  \});\cb1 \
+\cb3     \}\cb1 \
+\
+\cb3     \cf7 \strokec7 //  2. \uc0\u25340 \u23383 \u38364 \u21345  (blocks \u24037 \u20316 \u34920 )\cf4 \cb1 \strokec4 \
+\cb3     \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 action\strokec4  === \cf8 \strokec8 'getBlocksData'\cf4 \strokec4 ) \{\cb1 \
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 sheetBlocks\strokec4  = \strokec5 getSheetCaseInsensitive\strokec4 (\strokec5 ss\strokec4 , \cf8 \strokec8 "blocks"\cf4 \strokec4 );\cb1 \
+\cb3       \cf2 \strokec2 if\cf4 \strokec4  (!\strokec5 sheetBlocks\strokec4 ) \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "error"\cf4 \strokec4 , \strokec5 message\strokec4 : \cf8 \strokec8 "\uc0\u25214 \u19981 \u21040  blocks \u24037 \u20316 \u34920 "\cf4 \strokec4  \});\cb1 \
+\
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 dataB\strokec4  = \strokec5 sheetBlocks\strokec4 .\strokec5 getDataRange\strokec4 ().\strokec5 getValues\strokec4 ();\cb1 \
+\cb3       \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 dataB\strokec4 .\strokec5 length\strokec4  <= \cf9 \strokec9 1\cf4 \strokec4 ) \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "success"\cf4 \strokec4 , \strokec5 data\strokec4 : [] \});\cb1 \
+\
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 colB\strokec4  = \strokec5 buildHeaderIndexMap\strokec4 (\strokec5 dataB\strokec4 [\cf9 \strokec9 0\cf4 \strokec4 ]);\cb1 \
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 rowsB\strokec4  = [];\cb1 \
+\
+\cb3       \cf2 \strokec2 for\cf4 \strokec4  (\cf2 \strokec2 var\cf4 \strokec4  \strokec5 m\strokec4  = \cf9 \strokec9 1\cf4 \strokec4 ; \strokec5 m\strokec4  < \strokec5 dataB\strokec4 .\strokec5 length\strokec4 ; \strokec5 m\strokec4 ++) \{\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 rb\strokec4  = \strokec5 dataB\strokec4 [\strokec5 m\strokec4 ];\cb1 \
+\
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 bIdVal\strokec4        = \strokec5 getValueByAliases\strokec4 (\strokec5 rb\strokec4 , \strokec5 colB\strokec4 , [\cf8 \strokec8 'id'\cf4 \strokec4 , \cf8 \strokec8 'no'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u24207 \u34399 '\cf4 \strokec4 ], \strokec5 m\strokec4 );\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 bLvlVal\strokec4       = \strokec5 getValueByAliases\strokec4 (\strokec5 rb\strokec4 , \strokec5 colB\strokec4 , [\cf8 \strokec8 'level'\cf4 \strokec4 , \cf8 \strokec8 'lvl'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u32026 \u21029 '\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 bUnitVal\strokec4      = \strokec5 getValueByAliases\strokec4 (\strokec5 rb\strokec4 , \strokec5 colB\strokec4 , [\cf8 \strokec8 'unitid'\cf4 \strokec4 , \cf8 \strokec8 'unit'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u21934 \u20803 '\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 bLessonVal\strokec4    = \strokec5 getValueByAliases\strokec4 (\strokec5 rb\strokec4 , \strokec5 colB\strokec4 , [\cf8 \strokec8 'lesson'\cf4 \strokec4 , \cf8 \strokec8 'stage'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u35506 \u22530 '\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 bFullTextVal\strokec4  = \strokec5 getValueByAliases\strokec4 (\strokec5 rb\strokec4 , \strokec5 colB\strokec4 , [\cf8 \strokec8 'fulltext'\cf4 \strokec4 , \cf8 \strokec8 'text'\cf4 \strokec4 , \cf8 \strokec8 'sentence'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u23436 \u25972 \u21477 \u23376 '\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 bVoiceVal\strokec4     = \strokec5 getValueByAliases\strokec4 (\strokec5 rb\strokec4 , \strokec5 colB\strokec4 , [\cf8 \strokec8 'voice'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u30332 \u38899 \u23383 \u20018 '\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u21816 \u27861 '\cf4 \strokec4 ]); \cf7 \strokec7 // \uc0\u55356 \u57119  \u25235 \u21462  voice \u27396 \u20301 \cf4 \cb1 \strokec4 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 bOptionsVal\strokec4   = \strokec5 getValueByAliases\strokec4 (\strokec5 rb\strokec4 , \strokec5 colB\strokec4 , [\cf8 \strokec8 'optionsjson'\cf4 \strokec4 , \cf8 \strokec8 'options'\cf4 \strokec4 , \cf8 \strokec8 'blocks'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u23383 \u22602 '\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 bZhVal\strokec4        = \strokec5 getValueByAliases\strokec4 (\strokec5 rb\strokec4 , \strokec5 colB\strokec4 , [\cf8 \strokec8 'zhtw'\cf4 \strokec4 , \cf8 \strokec8 'zh'\cf4 \strokec4 , \cf8 \strokec8 'tw'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u20013 \u25991 '\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 bEnVal\strokec4        = \strokec5 getValueByAliases\strokec4 (\strokec5 rb\strokec4 , \strokec5 colB\strokec4 , [\cf8 \strokec8 'en'\cf4 \strokec4 , \cf8 \strokec8 'english'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u33521 \u25991 '\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 bThirdVal\strokec4     = \strokec5 getValueByAliases\strokec4 (\strokec5 rb\strokec4 , \strokec5 colB\strokec4 , [\cf8 \strokec8 'kr'\cf4 \strokec4 , \cf8 \strokec8 'ja'\cf4 \strokec4 , \cf8 \strokec8 'jp'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u38867 \u25991 '\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u26085 \u25991 '\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 bAudioVal\strokec4     = \strokec5 getValueByAliases\strokec4 (\strokec5 rb\strokec4 , \strokec5 colB\strokec4 , [\cf8 \strokec8 'audiourl'\cf4 \strokec4 , \cf8 \strokec8 'audio'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u35486 \u38899 '\cf4 \strokec4 ]);\cb1 \
+\
+\cb3         \strokec5 rowsB\strokec4 .\strokec5 push\strokec4 ([\cb1 \
+\cb3           \strokec5 bIdVal\strokec4 , \strokec5 bLvlVal\strokec4 , \strokec5 bUnitVal\strokec4 , \strokec5 bLessonVal\strokec4 , \strokec5 bFullTextVal\strokec4 ,\cb1 \
+\cb3           \strokec5 bOptionsVal\strokec4 , \strokec5 bZhVal\strokec4 , \strokec5 bEnVal\strokec4 , \strokec5 bThirdVal\strokec4 , \strokec5 bAudioVal\strokec4 , \strokec5 bVoiceVal\strokec4  \cf7 \strokec7 // \uc0\u55356 \u57119  \u22238 \u20659 \u38499 \u21015 \u26032 \u22686  voice \u36039 \u26009  (index 10)\cf4 \cb1 \strokec4 \
+\cb3         ]);\cb1 \
+\cb3       \}\cb1 \
+\cb3       \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "success"\cf4 \strokec4 , \strokec5 data\strokec4 : \strokec5 rowsB\strokec4  \});\cb1 \
+\cb3     \}\cb1 \
+\
+\cb3     \cf7 \strokec7 //  3. \uc0\u35486 \u27861 \u35498 \u26126 \u38364 \u21345  (grammar \u24037 \u20316 \u34920 )\cf4 \cb1 \strokec4 \
+\cb3     \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 action\strokec4  === \cf8 \strokec8 'getGrammarData'\cf4 \strokec4 ) \{\cb1 \
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 sheetGrammar\strokec4  = \strokec5 getSheetCaseInsensitive\strokec4 (\strokec5 ss\strokec4 , \cf8 \strokec8 "grammar"\cf4 \strokec4 ) || \strokec5 getSheetCaseInsensitive\strokec4 (\strokec5 ss\strokec4 , \cf8 \strokec8 "grammer"\cf4 \strokec4 );\cb1 \
+\cb3       \cf2 \strokec2 if\cf4 \strokec4  (!\strokec5 sheetGrammar\strokec4 ) \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "success"\cf4 \strokec4 , \strokec5 data\strokec4 : [] \});\cb1 \
+\
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 dataG\strokec4  = \strokec5 sheetGrammar\strokec4 .\strokec5 getDataRange\strokec4 ().\strokec5 getValues\strokec4 ();\cb1 \
+\cb3       \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 dataG\strokec4 .\strokec5 length\strokec4  <= \cf9 \strokec9 1\cf4 \strokec4 ) \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "success"\cf4 \strokec4 , \strokec5 data\strokec4 : [] \});\cb1 \
+\
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 colG\strokec4  = \strokec5 buildHeaderIndexMap\strokec4 (\strokec5 dataG\strokec4 [\cf9 \strokec9 0\cf4 \strokec4 ]);\cb1 \
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 rowsG\strokec4  = [];\cb1 \
+\
+\cb3       \cf2 \strokec2 for\cf4 \strokec4  (\cf2 \strokec2 var\cf4 \strokec4  \strokec5 n\strokec4  = \cf9 \strokec9 1\cf4 \strokec4 ; \strokec5 n\strokec4  < \strokec5 dataG\strokec4 .\strokec5 length\strokec4 ; \strokec5 n\strokec4 ++) \{\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 rg\strokec4  = \strokec5 dataG\strokec4 [\strokec5 n\strokec4 ];\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 dialogs\strokec4  = [];\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 gramObj\strokec4  = \{\};\cb1 \
+\
+\cb3         \cf2 \strokec2 for\cf4 \strokec4  (\cf2 \strokec2 var\cf4 \strokec4  \strokec5 d\strokec4  = \cf9 \strokec9 1\cf4 \strokec4 ; \strokec5 d\strokec4  <= \cf9 \strokec9 10\cf4 \strokec4 ; \strokec5 d\strokec4 ++) \{\cb1 \
+\cb3           \cf2 \strokec2 var\cf4 \strokec4  \strokec5 val\strokec4  = \strokec5 getValueByAliases\strokec4 (\strokec5 rg\strokec4 , \strokec5 colG\strokec4 , [\cf8 \strokec8 'gram'\cf4 \strokec4  + \strokec5 d\strokec4 ]);\cb1 \
+\cb3           \strokec5 gramObj\strokec4 [\cf8 \strokec8 'gram'\cf4 \strokec4  + \strokec5 d\strokec4 ] = \strokec5 val\strokec4 ;\cb1 \
+\cb3           \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 val\strokec4  !== \cf8 \strokec8 ''\cf4 \strokec4 ) \{\cb1 \
+\cb3             \strokec5 dialogs\strokec4 .\strokec5 push\strokec4 (\{\cb1 \
+\cb3               \strokec5 gramNum\strokec4 : \strokec5 d\strokec4 ,\cb1 \
+\cb3               \strokec5 text\strokec4 : \strokec5 val\cb1 \strokec4 \
+\cb3             \});\cb1 \
+\cb3           \}\cb1 \
+\cb3         \}\cb1 \
+\
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 lessonG\strokec4  = \strokec5 getValueByAliases\strokec4 (\strokec5 rg\strokec4 , \strokec5 colG\strokec4 , [\cf8 \strokec8 'lesson'\cf4 \strokec4 , \cf8 \strokec8 'stage'\cf4 \strokec4 ]);\cb1 \
+\
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 rowObj\strokec4  = \{\cb1 \
+\cb3           \strokec5 level\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rg\strokec4 , \strokec5 colG\strokec4 , [\cf8 \strokec8 'level'\cf4 \strokec4 , \cf8 \strokec8 'lvl'\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 unit_id\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rg\strokec4 , \strokec5 colG\strokec4 , [\cf8 \strokec8 'unitid'\cf4 \strokec4 , \cf8 \strokec8 'unit'\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 lesson\strokec4 : \strokec5 lessonG\strokec4 ,\cb1 \
+\cb3           \strokec5 stage\strokec4 : \strokec5 lessonG\strokec4 ,\cb1 \
+\cb3           \strokec5 dialogs\strokec4 : \strokec5 dialogs\strokec4 ,\cb1 \
+\cb3           \strokec5 gram2_audio\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rg\strokec4 , \strokec5 colG\strokec4 , [\cf8 \strokec8 'gram2audio'\cf4 \strokec4 , \cf8 \strokec8 'gram2_audio'\cf4 \strokec4 , \cf8 \strokec8 'gramaudio'\cf4 \strokec4 , \cf8 \strokec8 'audiourl'\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 gram3_audio\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rg\strokec4 , \strokec5 colG\strokec4 , [\cf8 \strokec8 'gram3audio'\cf4 \strokec4 , \cf8 \strokec8 'gram3_audio'\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 example\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rg\strokec4 , \strokec5 colG\strokec4 , [\cf8 \strokec8 'example'\cf4 \strokec4 , \cf8 \strokec8 'examples'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u20363 \u21477 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 ready\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rg\strokec4 , \strokec5 colG\strokec4 , [\cf8 \strokec8 'ready'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u28310 \u20633 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 example_audio\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rg\strokec4 , \strokec5 colG\strokec4 , [\cf8 \strokec8 'exampleaudio'\cf4 \strokec4 , \cf8 \strokec8 'example_audio'\cf4 \strokec4 , \cf8 \strokec8 'audiourl'\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 question\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rg\strokec4 , \strokec5 colG\strokec4 , [\cf8 \strokec8 'question'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u38988 \u30446 '\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u21839 \u38988 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 choice\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rg\strokec4 , \strokec5 colG\strokec4 , [\cf8 \strokec8 'choice'\cf4 \strokec4 , \cf8 \strokec8 'choices'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u36984 \u38917 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 answer\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rg\strokec4 , \strokec5 colG\strokec4 , [\cf8 \strokec8 'answer'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u31572 \u26696 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 correct\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rg\strokec4 , \strokec5 colG\strokec4 , [\cf8 \strokec8 'correct'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u27491 \u30906 '\cf4 \strokec4 ], \cf8 \strokec8 '\uc0\u23436 \u20840 \u27491 \u30906 \u65281 '\cf4 \strokec4 ),\cb1 \
+\cb3           \strokec5 incorrect\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rg\strokec4 , \strokec5 colG\strokec4 , [\cf8 \strokec8 'incorrect'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u37679 \u35492 '\cf4 \strokec4 ], \cf8 \strokec8 '\uc0\u31572 \u37679 \u22217 \u65292 \u35531 \u20877 \u35430 \u19968 \u27425 \u65281 '\cf4 \strokec4 )\cb1 \
+\cb3         \};\cb1 \
+\
+\cb3         \cf2 \strokec2 for\cf4 \strokec4  (\cf2 \strokec2 var\cf4 \strokec4  \strokec5 k\strokec4  \cf2 \strokec2 in\cf4 \strokec4  \strokec5 gramObj\strokec4 ) \{\cb1 \
+\cb3           \strokec5 rowObj\strokec4 [\strokec5 k\strokec4 ] = \strokec5 gramObj\strokec4 [\strokec5 k\strokec4 ];\cb1 \
+\cb3         \}\cb1 \
+\
+\cb3         \strokec5 rowsG\strokec4 .\strokec5 push\strokec4 (\strokec5 rowObj\strokec4 );\cb1 \
+\cb3       \}\cb1 \
+\cb3       \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "success"\cf4 \strokec4 , \strokec5 data\strokec4 : \strokec5 rowsG\strokec4  \});\cb1 \
+\cb3     \}\cb1 \
+\
+\cb3     \cf7 \strokec7 //  4. \uc0\u23565 \u35441 \u32244 \u32722 \u38364 \u21345  (dialogue \u24037 \u20316 \u34920 )\cf4 \cb1 \strokec4 \
+\cb3     \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 action\strokec4  === \cf8 \strokec8 'getDialogueData'\cf4 \strokec4 ) \{\cb1 \
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 sheetDialogue\strokec4  = \strokec5 getSheetCaseInsensitive\strokec4 (\strokec5 ss\strokec4 , \cf8 \strokec8 "dialogue"\cf4 \strokec4 ) || \strokec5 getSheetCaseInsensitive\strokec4 (\strokec5 ss\strokec4 , \cf8 \strokec8 "dialogues"\cf4 \strokec4 );\cb1 \
+\cb3       \cf2 \strokec2 if\cf4 \strokec4  (!\strokec5 sheetDialogue\strokec4 ) \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "success"\cf4 \strokec4 , \strokec5 data\strokec4 : [] \});\cb1 \
+\
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 dataD\strokec4  = \strokec5 sheetDialogue\strokec4 .\strokec5 getDataRange\strokec4 ().\strokec5 getValues\strokec4 ();\cb1 \
+\cb3       \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 dataD\strokec4 .\strokec5 length\strokec4  <= \cf9 \strokec9 1\cf4 \strokec4 ) \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "success"\cf4 \strokec4 , \strokec5 data\strokec4 : [] \});\cb1 \
+\
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 colD\strokec4  = \strokec5 buildHeaderIndexMap\strokec4 (\strokec5 dataD\strokec4 [\cf9 \strokec9 0\cf4 \strokec4 ]);\cb1 \
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 rowsD\strokec4  = [];\cb1 \
+\
+\cb3       \cf2 \strokec2 for\cf4 \strokec4  (\cf2 \strokec2 var\cf4 \strokec4  \strokec5 p\strokec4  = \cf9 \strokec9 1\cf4 \strokec4 ; \strokec5 p\strokec4  < \strokec5 dataD\strokec4 .\strokec5 length\strokec4 ; \strokec5 p\strokec4 ++) \{\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 rd\strokec4  = \strokec5 dataD\strokec4 [\strokec5 p\strokec4 ];\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 lessonValD\strokec4  = \strokec5 getValueByAliases\strokec4 (\strokec5 rd\strokec4 , \strokec5 colD\strokec4 , [\cf8 \strokec8 'lesson'\cf4 \strokec4 , \cf8 \strokec8 'stage'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u35506 \u22530 '\cf4 \strokec4 ]);\cb1 \
+\
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 aText\strokec4  = \strokec5 getValueByAliases\strokec4 (\strokec5 rd\strokec4 , \strokec5 colD\strokec4 , [\cf8 \strokec8 'a1'\cf4 \strokec4 , \cf8 \strokec8 'a'\cf4 \strokec4 , \cf8 \strokec8 'speakera'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u21477 \u23376 a'\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 bText\strokec4  = \strokec5 getValueByAliases\strokec4 (\strokec5 rd\strokec4 , \strokec5 colD\strokec4 , [\cf8 \strokec8 'b1'\cf4 \strokec4 , \cf8 \strokec8 'b'\cf4 \strokec4 , \cf8 \strokec8 'speakerb'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u21477 \u23376 b'\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 axText\strokec4  = \strokec5 getValueByAliases\strokec4 (\strokec5 rd\strokec4 , \strokec5 colD\strokec4 , [\cf8 \strokec8 'a1x'\cf4 \strokec4 , \cf8 \strokec8 'ax'\cf4 \strokec4 , \cf8 \strokec8 'a_x'\cf4 \strokec4 ]);\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 bxText\strokec4  = \strokec5 getValueByAliases\strokec4 (\strokec5 rd\strokec4 , \strokec5 colD\strokec4 , [\cf8 \strokec8 'b1x'\cf4 \strokec4 , \cf8 \strokec8 'bx'\cf4 \strokec4 , \cf8 \strokec8 'b_x'\cf4 \strokec4 ]);\cb1 \
+\
+\cb3         \cf2 \strokec2 if\cf4 \strokec4  (!\strokec5 aText\strokec4  && !\strokec5 bText\strokec4 ) \cf2 \strokec2 continue\cf4 \strokec4 ;\cb1 \
+\
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 item\strokec4  = \{\cb1 \
+\cb3           \strokec5 category\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rd\strokec4 , \strokec5 colD\strokec4 , [\cf8 \strokec8 'category'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u35486 \u35328 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 level\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rd\strokec4 , \strokec5 colD\strokec4 , [\cf8 \strokec8 'level'\cf4 \strokec4 , \cf8 \strokec8 'lvl'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u31243 \u24230 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 unit_id\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rd\strokec4 , \strokec5 colD\strokec4 , [\cf8 \strokec8 'unitid'\cf4 \strokec4 , \cf8 \strokec8 'unit'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u21934 \u20803 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 lesson\strokec4 : \strokec5 lessonValD\strokec4 ,\cb1 \
+\cb3           \strokec5 stage\strokec4 : \strokec5 lessonValD\strokec4 ,\cb1 \
+\cb3           \strokec5 a1\strokec4 : \strokec5 aText\strokec4 ,\cb1 \
+\cb3           \strokec5 b1\strokec4 : \strokec5 bText\strokec4 ,\cb1 \
+\cb3           \strokec5 a1x\strokec4 : \strokec5 axText\strokec4  || \strokec5 aText\strokec4 ,\cb1 \
+\cb3           \strokec5 bx1\strokec4 : \strokec5 bxText\strokec4  || \strokec5 bText\strokec4 ,\cb1 \
+\cb3           \strokec5 a1_audio\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rd\strokec4 , \strokec5 colD\strokec4 , [\cf8 \strokec8 'a1audio'\cf4 \strokec4 , \cf8 \strokec8 'a_audio'\cf4 \strokec4 , \cf8 \strokec8 'aaudio'\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 b1_audio\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rd\strokec4 , \strokec5 colD\strokec4 , [\cf8 \strokec8 'b1audio'\cf4 \strokec4 , \cf8 \strokec8 'b_audio'\cf4 \strokec4 , \cf8 \strokec8 'baudio'\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 audio_url\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rd\strokec4 , \strokec5 colD\strokec4 , [\cf8 \strokec8 'audiourl'\cf4 \strokec4 , \cf8 \strokec8 'audio'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u38899 \u27284 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 hint_zh\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rd\strokec4 , \strokec5 colD\strokec4 , [\cf8 \strokec8 'hintzh'\cf4 \strokec4 , \cf8 \strokec8 'hint_zh'\cf4 \strokec4 , \cf8 \strokec8 'a1hintzh'\cf4 \strokec4 , \cf8 \strokec8 'a1_hint_zh'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u20013 \u25991 \u25552 \u31034 '\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u25552 \u31034 \u20013 \u25991 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 hint_en\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rd\strokec4 , \strokec5 colD\strokec4 , [\cf8 \strokec8 'hinten'\cf4 \strokec4 , \cf8 \strokec8 'hint_en'\cf4 \strokec4 , \cf8 \strokec8 'a1hinten'\cf4 \strokec4 , \cf8 \strokec8 'a1_hint_en'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u33521 \u25991 \u25552 \u31034 '\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u25552 \u31034 \u33521 \u25991 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 hint_jp\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rd\strokec4 , \strokec5 colD\strokec4 , [\cf8 \strokec8 'hintjp'\cf4 \strokec4 , \cf8 \strokec8 'hint_jp'\cf4 \strokec4 , \cf8 \strokec8 'hintja'\cf4 \strokec4 , \cf8 \strokec8 'hint_ja'\cf4 \strokec4 , \cf8 \strokec8 'a1hintjp'\cf4 \strokec4 , \cf8 \strokec8 'a1_hint_jp'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u26085 \u25991 \u25552 \u31034 '\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u25552 \u31034 \u26085 \u25991 '\cf4 \strokec4 ])\cb1 \
+\cb3         \};\cb1 \
+\
+\cb3         \strokec5 rowsD\strokec4 .\strokec5 push\strokec4 (\strokec5 item\strokec4 );\cb1 \
+\cb3       \}\cb1 \
+\cb3       \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "success"\cf4 \strokec4 , \strokec5 data\strokec4 : \strokec5 rowsD\strokec4  \});\cb1 \
+\cb3     \}\cb1 \
+\
+\cb3     \cf7 \strokec7 //  5. \uc0\u21934 \u23383 \u24235 \u38364 \u21345  (vocabulary \u24037 \u20316 \u34920 )\cf4 \cb1 \strokec4 \
+\cb3     \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 action\strokec4  === \cf8 \strokec8 'getVocabularyData'\cf4 \strokec4 ) \{\cb1 \
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 sheetVocab\strokec4  = \strokec5 getSheetCaseInsensitive\strokec4 (\strokec5 ss\strokec4 , \cf8 \strokec8 "vocabulary"\cf4 \strokec4 );\cb1 \
+\cb3       \cf2 \strokec2 if\cf4 \strokec4  (!\strokec5 sheetVocab\strokec4 ) \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "success"\cf4 \strokec4 , \strokec5 data\strokec4 : [] \});\cb1 \
+\
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 dataV\strokec4  = \strokec5 sheetVocab\strokec4 .\strokec5 getDataRange\strokec4 ().\strokec5 getValues\strokec4 ();\cb1 \
+\cb3       \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 dataV\strokec4 .\strokec5 length\strokec4  <= \cf9 \strokec9 1\cf4 \strokec4 ) \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "success"\cf4 \strokec4 , \strokec5 data\strokec4 : [] \});\cb1 \
+\
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 colV\strokec4  = \strokec5 buildHeaderIndexMap\strokec4 (\strokec5 dataV\strokec4 [\cf9 \strokec9 0\cf4 \strokec4 ]);\cb1 \
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 rowsV\strokec4  = [];\cb1 \
+\
+\cb3       \cf2 \strokec2 for\cf4 \strokec4  (\cf2 \strokec2 var\cf4 \strokec4  \strokec5 q\strokec4  = \cf9 \strokec9 1\cf4 \strokec4 ; \strokec5 q\strokec4  < \strokec5 dataV\strokec4 .\strokec5 length\strokec4 ; \strokec5 q\strokec4 ++) \{\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 rv\strokec4  = \strokec5 dataV\strokec4 [\strokec5 q\strokec4 ];\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 lessonValV\strokec4  = \strokec5 getValueByAliases\strokec4 (\strokec5 rv\strokec4 , \strokec5 colV\strokec4 , [\cf8 \strokec8 'lesson'\cf4 \strokec4 , \cf8 \strokec8 'stage'\cf4 \strokec4 ]);\cb1 \
+\
+\cb3         \strokec5 rowsV\strokec4 .\strokec5 push\strokec4 (\{\cb1 \
+\cb3           \strokec5 category\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rv\strokec4 , \strokec5 colV\strokec4 , [\cf8 \strokec8 'category'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u35486 \u35328 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 level\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rv\strokec4 , \strokec5 colV\strokec4 , [\cf8 \strokec8 'level'\cf4 \strokec4 , \cf8 \strokec8 'lvl'\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 unit_id\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rv\strokec4 , \strokec5 colV\strokec4 , [\cf8 \strokec8 'unitid'\cf4 \strokec4 , \cf8 \strokec8 'unit'\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 lesson\strokec4 : \strokec5 lessonValV\strokec4 ,\cb1 \
+\cb3           \strokec5 stage\strokec4 : \strokec5 lessonValV\strokec4 ,\cb1 \
+\cb3           \strokec5 text\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rv\strokec4 , \strokec5 colV\strokec4 , [\cf8 \strokec8 'text'\cf4 \strokec4 , \cf8 \strokec8 'word'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u21934 \u23383 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 zh_tw\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rv\strokec4 , \strokec5 colV\strokec4 , [\cf8 \strokec8 'zhtw'\cf4 \strokec4 , \cf8 \strokec8 'zh'\cf4 \strokec4 , \cf8 \strokec8 'tw'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u20013 \u25991 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 en\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rv\strokec4 , \strokec5 colV\strokec4 , [\cf8 \strokec8 'en'\cf4 \strokec4 , \cf8 \strokec8 'english'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u33521 \u25991 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 ja\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rv\strokec4 , \strokec5 colV\strokec4 , [\cf8 \strokec8 'ja'\cf4 \strokec4 , \cf8 \strokec8 'jp'\cf4 \strokec4 , \cf8 \strokec8 'japanese'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u26085 \u25991 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 audio_url\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rv\strokec4 , \strokec5 colV\strokec4 , [\cf8 \strokec8 'audiourl'\cf4 \strokec4 , \cf8 \strokec8 'audio'\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 choice\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 rv\strokec4 , \strokec5 colV\strokec4 , [\cf8 \strokec8 'choice'\cf4 \strokec4 , \cf8 \strokec8 'choices'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u36984 \u38917 '\cf4 \strokec4 ])\cb1 \
+\cb3         \});\cb1 \
+\cb3       \}\cb1 \
+\cb3       \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "success"\cf4 \strokec4 , \strokec5 data\strokec4 : \strokec5 rowsV\strokec4  \});\cb1 \
+\cb3     \}\cb1 \
+\
+\cb3     \cf7 \strokec7 //  6. 0A \uc0\u23560 \u23660 \u38867 \u35486 \u21934 \u23383 \u25361 \u25136 \u38364 \u21345  (0achoice \u24037 \u20316 \u34920 )\cf4 \cb1 \strokec4 \
+\cb3     \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 action\strokec4  === \cf8 \strokec8 'get0aChoiceData'\cf4 \strokec4 ) \{\cb1 \
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 sheet0a\strokec4  = \strokec5 getSheetCaseInsensitive\strokec4 (\strokec5 ss\strokec4 , \cf8 \strokec8 "0achoice"\cf4 \strokec4 ) || \strokec5 getSheetCaseInsensitive\strokec4 (\strokec5 ss\strokec4 , \cf8 \strokec8 "0a_choice"\cf4 \strokec4 );\cb1 \
+\cb3       \cf2 \strokec2 if\cf4 \strokec4  (!\strokec5 sheet0a\strokec4 ) \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "success"\cf4 \strokec4 , \strokec5 data\strokec4 : [] \});\cb1 \
+\
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 data0a\strokec4  = \strokec5 sheet0a\strokec4 .\strokec5 getDataRange\strokec4 ().\strokec5 getValues\strokec4 ();\cb1 \
+\cb3       \cf2 \strokec2 if\cf4 \strokec4  (\strokec5 data0a\strokec4 .\strokec5 length\strokec4  <= \cf9 \strokec9 1\cf4 \strokec4 ) \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "success"\cf4 \strokec4 , \strokec5 data\strokec4 : [] \});\cb1 \
+\
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 col0a\strokec4  = \strokec5 buildHeaderIndexMap\strokec4 (\strokec5 data0a\strokec4 [\cf9 \strokec9 0\cf4 \strokec4 ]);\cb1 \
+\cb3       \cf2 \strokec2 var\cf4 \strokec4  \strokec5 rows0a\strokec4  = [];\cb1 \
+\
+\cb3       \cf2 \strokec2 for\cf4 \strokec4  (\cf2 \strokec2 var\cf4 \strokec4  \strokec5 s\strokec4  = \cf9 \strokec9 1\cf4 \strokec4 ; \strokec5 s\strokec4  < \strokec5 data0a\strokec4 .\strokec5 length\strokec4 ; \strokec5 s\strokec4 ++) \{\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 ra\strokec4  = \strokec5 data0a\strokec4 [\strokec5 s\strokec4 ];\cb1 \
+\cb3         \cf2 \strokec2 var\cf4 \strokec4  \strokec5 lessonVal0a\strokec4  = \strokec5 getValueByAliases\strokec4 (\strokec5 ra\strokec4 , \strokec5 col0a\strokec4 , [\cf8 \strokec8 'lesson'\cf4 \strokec4 , \cf8 \strokec8 'stage'\cf4 \strokec4 ]);\cb1 \
+\
+\cb3         \strokec5 rows0a\strokec4 .\strokec5 push\strokec4 (\{\cb1 \
+\cb3           \strokec5 category\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 ra\strokec4 , \strokec5 col0a\strokec4 , [\cf8 \strokec8 'category'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u35486 \u35328 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 level\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 ra\strokec4 , \strokec5 col0a\strokec4 , [\cf8 \strokec8 'level'\cf4 \strokec4 , \cf8 \strokec8 'lvl'\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 unit_id\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 ra\strokec4 , \strokec5 col0a\strokec4 , [\cf8 \strokec8 'unitid'\cf4 \strokec4 , \cf8 \strokec8 'unit'\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 lesson\strokec4 : \strokec5 lessonVal0a\strokec4 ,\cb1 \
+\cb3           \strokec5 stage\strokec4 : \strokec5 lessonVal0a\strokec4 ,\cb1 \
+\cb3           \strokec5 text\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 ra\strokec4 , \strokec5 col0a\strokec4 , [\cf8 \strokec8 'text'\cf4 \strokec4 , \cf8 \strokec8 'word'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u21934 \u23383 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 romanization\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 ra\strokec4 , \strokec5 col0a\strokec4 , [\cf8 \strokec8 'romanization'\cf4 \strokec4 , \cf8 \strokec8 'roma'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u25340 \u38899 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 kr_pron\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 ra\strokec4 , \strokec5 col0a\strokec4 , [\cf8 \strokec8 'krpron'\cf4 \strokec4 , \cf8 \strokec8 'kr_pron'\cf4 \strokec4 , \cf8 \strokec8 'pron'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u38899 \u27161 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 pos_zh\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 ra\strokec4 , \strokec5 col0a\strokec4 , [\cf8 \strokec8 'poszh'\cf4 \strokec4 , \cf8 \strokec8 'pos_zh'\cf4 \strokec4 , \cf8 \strokec8 'pos'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u35422 \u24615 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 zh_tw\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 ra\strokec4 , \strokec5 col0a\strokec4 , [\cf8 \strokec8 'zhtw'\cf4 \strokec4 , \cf8 \strokec8 'zh'\cf4 \strokec4 , \cf8 \strokec8 'tw'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u20013 \u25991 '\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 en\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 ra\strokec4 , \strokec5 col0a\strokec4 , [\cf8 \strokec8 'en'\cf4 \strokec4 , \cf8 \strokec8 'english'\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 ja\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 ra\strokec4 , \strokec5 col0a\strokec4 , [\cf8 \strokec8 'ja'\cf4 \strokec4 , \cf8 \strokec8 'jp'\cf4 \strokec4 , \cf8 \strokec8 'japanese'\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 audio_url\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 ra\strokec4 , \strokec5 col0a\strokec4 , [\cf8 \strokec8 'audiourl'\cf4 \strokec4 , \cf8 \strokec8 'audio'\cf4 \strokec4 ]),\cb1 \
+\cb3           \strokec5 choice\strokec4 : \strokec5 getValueByAliases\strokec4 (\strokec5 ra\strokec4 , \strokec5 col0a\strokec4 , [\cf8 \strokec8 'choice'\cf4 \strokec4 , \cf8 \strokec8 'choices'\cf4 \strokec4 , \cf8 \strokec8 '\uc0\u36984 \u38917 '\cf4 \strokec4 ])\cb1 \
+\cb3         \});\cb1 \
+\cb3       \}\cb1 \
+\cb3       \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "success"\cf4 \strokec4 , \strokec5 data\strokec4 : \strokec5 rows0a\strokec4  \});\cb1 \
+\cb3     \}\cb1 \
+\
+\cb3     \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "error"\cf4 \strokec4 , \strokec5 message\strokec4 : \cf8 \strokec8 "\uc0\u28961 \u25928 \u25351 \u20196 \u65306 "\cf4 \strokec4  + \strokec5 action\strokec4  \});\cb1 \
+\
+\cb3   \} \cf2 \strokec2 catch\cf4 \strokec4  (\strokec5 error\strokec4 ) \{\cb1 \
+\cb3     \cf2 \strokec2 return\cf4 \strokec4  \strokec5 makeResponse\strokec4 (\{ \strokec5 status\strokec4 : \cf8 \strokec8 "error"\cf4 \strokec4 , \strokec5 message\strokec4 : \strokec5 error\strokec4 .\strokec5 toString\strokec4 () \});\cb1 \
+\cb3   \}\cb1 \
+\cb3 \}\cb1 \
+}
