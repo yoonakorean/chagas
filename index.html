@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>上下組合學習系統</title>
+    <title>voice學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -376,68 +376,66 @@
         .block-chip:active { transform: translateY(2px); border-bottom-width: 2px; }
         .block-chip.used { opacity: 0.3; pointer-events: none; background: #f3f4f6; }
 
-        /* 🌟 方案 A：0A 專屬韓文字塊積木托盤 (Hangul Tray) 樣式 */
+        /* 🌟 韓字積木插槽精準排版 */
         .hangul-tray-container {
             display: flex;
             justify-content: center;
             align-items: center;
             width: 100%;
-            padding: 8px 0;
+            padding: 6px 0;
         }
         .hangul-block-frame {
             background: #ffffff;
             border: 2.5px solid var(--duo-blue);
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(28, 176, 246, 0.15);
+            border-radius: 18px;
+            box-shadow: 0 4px 14px rgba(28, 176, 246, 0.12);
             padding: 8px;
             display: inline-grid;
             gap: 6px;
-            min-width: 130px;
-            min-height: 130px;
             align-items: center;
             justify-content: center;
         }
-        /* 版型 1：上下兩層 (例如: 우 = ㅇ + ㅜ) */
-        .hangul-frame-vertical {
-            grid-template-rows: repeat(2, 54px);
-            grid-template-columns: 85px;
-        }
-        /* 版型 2：上下三層 (例如: 좋 = ㅈ + ㅗ + ㅎ) */
-        .hangul-frame-vertical-3 {
-            grid-template-rows: repeat(3, 48px);
-            grid-template-columns: 85px;
-        }
-        /* 版型 3：左右兩層 (例如: 가 = ㄱ + ㅏ) */
+        /* 1. 左右結構 (如: 나, 가) */
         .hangul-frame-horizontal {
-            grid-template-columns: repeat(2, 54px);
-            grid-template-rows: 85px;
+            grid-template-columns: 56px 56px;
+            grid-template-rows: 80px;
         }
-        /* 版型 4：左右+下 (例如: 강 = (ㄱ+ㅏ)+ㅇ) */
+        /* 2. 上下結構 (如: 우, 고) */
+        .hangul-frame-vertical {
+            grid-template-columns: 82px;
+            grid-template-rows: 52px 52px;
+        }
+        /* 3. 上中下三層 (如: 좋, 문) */
+        .hangul-frame-vertical-batchim {
+            grid-template-columns: 82px;
+            grid-template-rows: 44px 44px 44px;
+        }
+        /* 4. 左右+收音 (如: 강, 달) */
         .hangul-frame-horizontal-batchim {
-            grid-template-columns: repeat(2, 50px);
-            grid-template-rows: 55px 44px;
+            grid-template-columns: 50px 50px;
+            grid-template-rows: 54px 44px;
         }
-        /* 版型 5：混合結構 (例如: 쉬 = (ㅅ+ㅜ)+ㅣ) */
+        /* 5. 混合 (如: 쉬, 과) */
         .hangul-frame-mixed {
-            grid-template-columns: 50px 45px;
-            grid-template-rows: repeat(2, 48px);
+            grid-template-columns: 48px 46px;
+            grid-template-rows: 46px 46px;
         }
-        /* 版型 6：混合+收音 (例如: 곽 = (ㄱ+ㅗ+ㅏ)+ㄱ) */
+        /* 6. 混合+收音 (如: 곽) */
         .hangul-frame-mixed-batchim {
-            grid-template-columns: 50px 45px;
-            grid-template-rows: repeat(2, 44px) 40px;
+            grid-template-columns: 48px 46px;
+            grid-template-rows: 42px 42px 38px;
         }
 
         .hangul-slot {
             background: #f8fafc;
             border: 2px dashed #cbd5e1;
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
             height: 100%;
-            font-size: 1.35rem;
+            font-size: 1.4rem;
             font-weight: 900;
             color: #94a3b8;
             user-select: none;
@@ -460,7 +458,7 @@
             display: block;
         }
         .vocab-input:focus { border-color: var(--duo-blue); }
-        .vocab-choice-list { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+        .vocab-choice-list { display: flex flex-direction: column; gap: 8px; margin: 12px 0; }
         .btn-vocab-choice {
             background: white; border: 2px solid #e5e7eb; border-bottom: 3px solid #e5e7eb;
             border-radius: 12px; padding: 11px; font-size: 0.95rem; font-weight: bold;
@@ -511,7 +509,7 @@
         .chat-bubble.active-target { outline: 2.5px solid var(--duo-blue); }
         .chat-bubble-row.speaker-B .chat-bubble.active-target { outline: 2.5px solid var(--duo-green); }
         .chat-bubble .btn-bubble-play {
-            display: inline-flex; align-items: center; justify-content: center;
+            display: inline-flex align-items: center; justify-content: center;
             background: rgba(0, 0, 0, 0.08); border: none; border-radius: 50%;
             width: 24px; height: 24px; font-size: 0.7rem; margin-left: 6px;
             cursor: pointer; color: inherit; vertical-align: middle;
@@ -2622,7 +2620,7 @@ function selectCategory(category) {
                     }
                     if (hasDialogue) {
                         btnGroup.appendChild(createActionButton('dialogue', '💬 對話', 'btn-dialogue-lesson'));
-                        btnGroup.appendChild(createActionButton('sentence_chat', '🗣️ 句子聊天挑戰', 'btn-chat-lesson'));
+                        btnGroup.appendChild(createActionButton('sentence_chat', '🗣️️ 句子聊天挑戰', 'btn-chat-lesson'));
                     }
                     if (hasQna) {
                         btnGroup.appendChild(createActionButton('qna', '❓ 句子問答', 'btn-qna-lesson'));
@@ -3968,36 +3966,100 @@ function selectCategory(category) {
 
         // ==================== 6. 跟讀與重組題邏輯 ====================
 
-        // 🌟 方案 A：韓文字母特性自動分類工具
-        const HANGUL_V_VOWELS = new Set(['ㅏ','ㅑ','ㅓ','ㅕ','ㅣ','ㅐ','ㅒ','ㅔ','ㅖ']); // 垂直母音
-        const HANGUL_H_VOWELS = new Set(['ㅗ','ㅛ','ㅜ','ㅠ','ㅡ']); // 水平母音
-        const HANGUL_MIXED_VOWELS = new Set(['ㅘ','ㅙ','ㅚ','ㅝ','ㅞ','ㅟ','ㅢ']); // 複合水平+垂直母音
+        // 🌟 方案 A 精準版：韓文 Unicode 音節精確拆解（初聲、中聲、終聲）
+        const CHOSUNG_LIST = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+        const JUNGSUNG_LIST = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+        const JONGSUNG_LIST = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
 
-        function analyzeHangulTargetLayout(optionsList, fullText) {
-            // 判定該題目中包含的字母結構
-            let hasV = false;
-            let hasH = false;
-            let hasMixed = false;
-            let consonantCount = 0;
+        // 母音分類
+        const VOWEL_VERTICAL_SET = new Set(['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅣ']);
+        const VOWEL_HORIZONTAL_SET = new Set(['ㅗ','ㅛ','ㅜ','ㅠ','ㅡ']);
+        const VOWEL_MIXED_MAP = {
+            'ㅘ': ['ㅗ', 'ㅏ'],
+            'ㅙ': ['ㅗ', 'ㅐ'],
+            'ㅚ': ['ㅗ', 'ㅣ'],
+            'ㅝ': ['ㅜ', 'ㅓ'],
+            'ㅞ': ['ㅜ', 'ㅔ'],
+            'ㅟ': ['ㅜ', 'ㅣ'],
+            'ㅢ': ['ㅡ', 'ㅣ']
+        };
 
-            optionsList.forEach(ch => {
-                const char = ch.trim();
-                if (HANGUL_V_VOWELS.has(char)) hasV = true;
-                else if (HANGUL_H_VOWELS.has(char)) hasH = true;
-                else if (HANGUL_MIXED_VOWELS.has(char)) { hasMixed = true; hasH = true; hasV = true; }
-                else consonantCount++;
-            });
-
-            const hasBatchim = consonantCount >= 2; // 超過一個子音，表示有收音(終聲)
-
-            if (hasH && hasV) {
-                return hasBatchim ? 'mixed-batchim' : 'mixed';
-            } else if (hasH) {
-                return hasBatchim ? 'vertical-3' : 'vertical';
-            } else if (hasV) {
-                return hasBatchim ? 'horizontal-batchim' : 'horizontal';
+        // 🌟 根據題目的完整答案（如 나, 우, 좋, 쉬）精準解析該字的版型架構與各插槽放置規則
+        function analyzeHangulSyllableStructure(fullTextChar) {
+            const code = fullTextChar.charCodeAt(0);
+            // 判斷是否為組合韓字 (AC00 - D7A3)
+            if (code < 0xAC00 || code > 0xD7A3) {
+                return { layout: 'horizontal', slots: [] };
             }
-            return 'vertical';
+
+            const syllableIndex = code - 0xAC00;
+            const choIndex = Math.floor(syllableIndex / (21 * 28));
+            const jungIndex = Math.floor((syllableIndex % (21 * 28)) / 28);
+            const jongIndex = syllableIndex % 28;
+
+            const cho = CHOSUNG_LIST[choIndex];
+            const jung = JUNGSUNG_LIST[jungIndex];
+            const jong = JONGSUNG_LIST[jongIndex];
+
+            const hasBatchim = jongIndex > 0;
+            const isMixedVowel = VOWEL_MIXED_MAP[jung] !== undefined;
+            const isHorizontalVowel = VOWEL_HORIZONTAL_SET.has(jung);
+
+            let layout = 'horizontal';
+            let slots = [];
+
+            if (isMixedVowel) {
+                const [hPart, vPart] = VOWEL_MIXED_MAP[jung];
+                if (hasBatchim) {
+                    layout = 'mixed-batchim';
+                    slots = [
+                        { type: 'cho', expected: cho, area: '1 / 1 / 2 / 2' },
+                        { type: 'jung_h', expected: hPart, area: '2 / 1 / 3 / 2' },
+                        { type: 'jung_v', expected: vPart, area: '1 / 2 / 3 / 3' },
+                        { type: 'jong', expected: jong, area: '3 / 1 / 4 / 3' }
+                    ];
+                } else {
+                    layout = 'mixed';
+                    slots = [
+                        { type: 'cho', expected: cho, area: '1 / 1 / 2 / 2' },
+                        { type: 'jung_h', expected: hPart, area: '2 / 1 / 3 / 2' },
+                        { type: 'jung_v', expected: vPart, area: '1 / 2 / 3 / 3' }
+                    ];
+                }
+            } else if (isHorizontalVowel) {
+                if (hasBatchim) {
+                    layout = 'vertical-batchim'; // 上中下 (如: 좋, 문)
+                    slots = [
+                        { type: 'cho', expected: cho, area: '1 / 1 / 2 / 2' },
+                        { type: 'jung', expected: jung, area: '2 / 1 / 3 / 2' },
+                        { type: 'jong', expected: jong, area: '3 / 1 / 4 / 2' }
+                    ];
+                } else {
+                    layout = 'vertical'; // 上下 (如: 우, 고)
+                    slots = [
+                        { type: 'cho', expected: cho, area: '1 / 1 / 2 / 2' },
+                        { type: 'jung', expected: jung, area: '2 / 1 / 3 / 2' }
+                    ];
+                }
+            } else {
+                // 垂直母音 (如: 나, 가, 이)
+                if (hasBatchim) {
+                    layout = 'horizontal-batchim'; // 左右+下 (如: 강)
+                    slots = [
+                        { type: 'cho', expected: cho, area: '1 / 1 / 2 / 2' },
+                        { type: 'jung', expected: jung, area: '1 / 2 / 2 / 3' },
+                        { type: 'jong', expected: jong, area: '2 / 1 / 3 / 3' }
+                    ];
+                } else {
+                    layout = 'horizontal'; // 左右純兩格 (如: 나, 가)
+                    slots = [
+                        { type: 'cho', expected: cho, area: '1 / 1 / 2 / 2' },
+                        { type: 'jung', expected: jung, area: '1 / 2 / 2 / 3' }
+                    ];
+                }
+            }
+
+            return { layout, slots };
         }
 
         function startMainQuiz() {
@@ -4108,7 +4170,7 @@ function selectCategory(category) {
             }
         }
 
-        // 🌟 方案 A 核心渲染：判斷是否為 0A 韓語單字積木
+        // 🌟 方案 A 升級版：精確根據目標題目字元做排版
         function renderBlocks() {
             const q = questions[currentIndex];
             const zoneOptions = document.getElementById('zone-options');
@@ -4128,44 +4190,25 @@ function selectCategory(category) {
             });
 
             if (is0AKorean) {
-                // 🌟 方案 A：韓文字母九宮格/積木排版
-                const layoutType = analyzeHangulTargetLayout(q.options, q.fullText);
+                // 🌟 直接分析正確目標單字（例如 '나'）的結構
+                const targetChar = (q.fullText || '').trim()[0] || '';
+                const structure = analyzeHangulSyllableStructure(targetChar);
 
                 const trayContainer = document.createElement('div');
                 trayContainer.className = 'hangul-tray-container';
 
                 const frame = document.createElement('div');
-                frame.className = `hangul-block-frame hangul-frame-${layoutType}`;
+                frame.className = `hangul-block-frame hangul-frame-${structure.layout}`;
 
-                // 定義插槽的放置區域 (CSS Grid 區域)
-                let slotAreas = [];
-                if (layoutType === 'vertical') {
-                    // 上下結構 (如: 우 = ㅇ + ㅜ)
-                    slotAreas = ['1 / 1 / 2 / 2', '2 / 1 / 3 / 2'];
-                } else if (layoutType === 'vertical-3') {
-                    // 上中下結構 (如: 좋 = ㅈ + ㅗ + ㅎ)
-                    slotAreas = ['1 / 1 / 2 / 2', '2 / 1 / 3 / 2', '3 / 1 / 4 / 2'];
-                } else if (layoutType === 'horizontal') {
-                    // 左右結構 (如: 가 = ㄱ + ㅏ)
-                    slotAreas = ['1 / 1 / 2 / 2', '1 / 2 / 2 / 3'];
-                } else if (layoutType === 'horizontal-batchim') {
-                    // 左右+下 (如: 강)
-                    slotAreas = ['1 / 1 / 2 / 2', '1 / 2 / 2 / 3', '2 / 1 / 3 / 3'];
-                } else if (layoutType === 'mixed') {
-                    // 左上 + 左下 + 右 (如: 쉬 = ㅅ + ㅜ + ㅣ)
-                    slotAreas = ['1 / 1 / 2 / 2', '2 / 1 / 3 / 2', '1 / 2 / 3 / 3'];
-                } else if (layoutType === 'mixed-batchim') {
-                    // 左上 + 左下 + 右 + 最下收音
-                    slotAreas = ['1 / 1 / 2 / 2', '2 / 1 / 3 / 2', '1 / 2 / 3 / 3', '3 / 1 / 4 / 3'];
-                }
+                // 建立托盤插槽
+                const slotCount = structure.slots.length > 0 ? structure.slots.length : q.options.length;
 
-                const totalSlots = Math.max(slotAreas.length, q.options.length);
-
-                for (let s = 0; s < totalSlots; s++) {
+                for (let s = 0; s < slotCount; s++) {
                     const slotDiv = document.createElement('div');
                     slotDiv.className = 'hangul-slot';
-                    if (slotAreas[s]) {
-                        slotDiv.style.gridArea = slotAreas[s];
+
+                    if (structure.slots[s]) {
+                        slotDiv.style.gridArea = structure.slots[s].area;
                     }
 
                     if (s < selectedBlockIndices.length) {
@@ -4188,7 +4231,7 @@ function selectCategory(category) {
                 zoneAnswer.appendChild(trayContainer);
 
             } else {
-                // 普通一般水平橫向字塊排列 (1A 以上整句重組)
+                // 一般水平字塊重組 (1A 以上整句重組)
                 selectedBlockIndices.forEach(idx => {
                     const btn = document.createElement('div');
                     btn.className = 'block-chip';
@@ -4199,6 +4242,7 @@ function selectCategory(category) {
             }
         }
 
+        // 🌟 核心調整：回答正確後在「完全正確！」後面顯示 voice 欄位的讀音
         function checkBlockAnswer() {
             const q = questions[currentIndex];
             
@@ -4209,7 +4253,9 @@ function selectCategory(category) {
             const scoreBadge = document.getElementById('lbl-block-score');
 
             if (cleanUserSentence === cleanTargetSentence) {
-                scoreBadge.innerText = "🎉 完全正確！";
+                // 🌟 抓取 voice 欄位文字（若有則顯示）
+                const voiceTip = (q.voice && q.voice.trim() !== '') ? ` [${q.voice.trim()}]` : '';
+                scoreBadge.innerText = `🎉 完全正確！${voiceTip}`;
                 scoreBadge.style.color = "#58cc02";
                 playBlockAudio();
                 passedSubQuestions.add(currentIndex);
