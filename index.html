@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>找回題型學習系統</title>
+    <title>voice學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -1274,12 +1274,13 @@
             const f = String(fieldName).toLowerCase().replace(/[\s_\-]/g, '');
 
             if (Array.isArray(item)) {
-                // GAS 回傳的陣列格式：[0:id, 1:level, 2:unit, 3:lesson, 4:text/fulltext, 5:zh/options, 6:en/zh, 7:third/en, 8:audio/third, 9:hint/audio]
+                // GAS 回傳的陣列格式：[0:id, 1:level, 2:unit, 3:lesson, 4:text/fulltext, 5:zh/options, 6:en/zh, 7:third/en, 8:audio/third, 9:hint/audio, 10:voice(blocks)]
                 if (f === 'id') return item[0] !== undefined ? String(item[0]) : '';
                 if (f === 'level' || f === 'lvl') return String(item[1] || '');
                 if (f === 'unitid' || f === 'unit') return String(item[2] || '');
                 if (f === 'lesson' || f === 'stage') return String(item[3] || '');
                 if (f === 'text' || f === 'fulltext') return String(item[4] || '');
+                if (f === 'voice') return String(item[10] || '');
                 return '';
             }
 
@@ -3865,6 +3866,7 @@
                     return {
                         id: getItemField(i, 'id') || idx + 1,
                         fullText: Array.isArray(i) ? i[4] : (i.fulltext || i.text || ''),
+                        voice: Array.isArray(i) ? (i[10] || '') : (i.voice || ''), // 🌟 讀取 voice 欄位 (陣列第 10 個位置)
                         options: shuffleArray(opts),
                         translation: trans,
                         audioUrl: Array.isArray(i) ? i[9] : (i.audiourl || i.audio_url || '')
@@ -3961,12 +3963,16 @@
             stopSpeechRecognition();
             const q = questions[currentIndex];
             if (!q) return;
+
+            // 🌟 優先抓取 voice 資料，若無或為空白則降級依照原來的 fullText 播放
+            const textToSpeak = (q.voice && q.voice.trim() !== '') ? q.voice : q.fullText;
+
             if (q.audioUrl && q.audioUrl.trim() !== '') {
                 const audio = new Audio(q.audioUrl);
                 audio.playbackRate = 0.85;
-                audio.play().catch(() => speakTTS(q.fullText, 0.85));
+                audio.play().catch(() => speakTTS(textToSpeak, 0.85));
             } else {
-                speakTTS(q.fullText, 0.85);
+                speakTTS(textToSpeak, 0.85);
             }
         }
 
