@@ -3959,20 +3959,24 @@
             }
         }
 
-        function playBlockAudio() {
+       function playBlockAudio() {
             stopSpeechRecognition();
             const q = questions[currentIndex];
             if (!q) return;
 
-            // 🌟 優先抓取 voice 資料，若無或為空白則降級依照原來的 fullText 播放
+            // 🌟 優先抓取 voice 資料，若無或為空白則自動退回播放 fullText
             const textToSpeak = (q.voice && q.voice.trim() !== '') ? q.voice : q.fullText;
+
+            // 🌟 判斷是否為 0A 程度：如果是 0A 的字塊重組，語速設為 1.0 (避免子音母音被拆開)；其餘保持 0.85
+            const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
+            const targetRate = is0ALevel ? 1.0 : 0.85;
 
             if (q.audioUrl && q.audioUrl.trim() !== '') {
                 const audio = new Audio(q.audioUrl);
-                audio.playbackRate = 0.85;
-                audio.play().catch(() => speakTTS(textToSpeak, 0.85));
+                audio.playbackRate = targetRate; // MP3 音檔播放速度同步調整
+                audio.play().catch(() => speakTTS(textToSpeak, targetRate));
             } else {
-                speakTTS(textToSpeak, 0.85);
+                speakTTS(textToSpeak, targetRate);
             }
         }
 
