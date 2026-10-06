@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>voice學習系統</title>
+    <title>上下組合學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -375,6 +375,84 @@
         }
         .block-chip:active { transform: translateY(2px); border-bottom-width: 2px; }
         .block-chip.used { opacity: 0.3; pointer-events: none; background: #f3f4f6; }
+
+        /* 🌟 方案 A：0A 專屬韓文字塊積木托盤 (Hangul Tray) 樣式 */
+        .hangul-tray-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 8px 0;
+        }
+        .hangul-block-frame {
+            background: #ffffff;
+            border: 2.5px solid var(--duo-blue);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(28, 176, 246, 0.15);
+            padding: 8px;
+            display: inline-grid;
+            gap: 6px;
+            min-width: 130px;
+            min-height: 130px;
+            align-items: center;
+            justify-content: center;
+        }
+        /* 版型 1：上下兩層 (例如: 우 = ㅇ + ㅜ) */
+        .hangul-frame-vertical {
+            grid-template-rows: repeat(2, 54px);
+            grid-template-columns: 85px;
+        }
+        /* 版型 2：上下三層 (例如: 좋 = ㅈ + ㅗ + ㅎ) */
+        .hangul-frame-vertical-3 {
+            grid-template-rows: repeat(3, 48px);
+            grid-template-columns: 85px;
+        }
+        /* 版型 3：左右兩層 (例如: 가 = ㄱ + ㅏ) */
+        .hangul-frame-horizontal {
+            grid-template-columns: repeat(2, 54px);
+            grid-template-rows: 85px;
+        }
+        /* 版型 4：左右+下 (例如: 강 = (ㄱ+ㅏ)+ㅇ) */
+        .hangul-frame-horizontal-batchim {
+            grid-template-columns: repeat(2, 50px);
+            grid-template-rows: 55px 44px;
+        }
+        /* 版型 5：混合結構 (例如: 쉬 = (ㅅ+ㅜ)+ㅣ) */
+        .hangul-frame-mixed {
+            grid-template-columns: 50px 45px;
+            grid-template-rows: repeat(2, 48px);
+        }
+        /* 版型 6：混合+收音 (例如: 곽 = (ㄱ+ㅗ+ㅏ)+ㄱ) */
+        .hangul-frame-mixed-batchim {
+            grid-template-columns: 50px 45px;
+            grid-template-rows: repeat(2, 44px) 40px;
+        }
+
+        .hangul-slot {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: #94a3b8;
+            user-select: none;
+            transition: all 0.15s ease;
+        }
+        .hangul-slot.filled {
+            background: #ddf4ff;
+            border: 2px solid var(--duo-blue);
+            color: #0369a1;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+        }
+        .hangul-slot.filled:active {
+            transform: scale(0.95);
+        }
 
         .vocab-input {
             width: 88%; max-width: 320px; padding: 10px; font-size: 1.1rem; border: 2px solid #cbd5e1;
@@ -2428,7 +2506,7 @@ function selectCategory(category) {
             }
         }
 
-        // 🌟 核心調整：動態判定試算表是否「確實有該關卡資料」，有才顯示按鈕！
+        // 🌟 僅在試算表有該關卡資料時才渲染對應按鈕
         function selectUnit(unitId) {
             stopSpeechRecognition();
             currentConfig.unit_id = unitId;
@@ -2455,7 +2533,6 @@ function selectCategory(category) {
                     const lesStr = String(les);
                     const unitStr = String(unitId);
 
-                    // 1. 檢查語法資料是否存在
                     const hasGrammar = globalGrammarData.some(g => {
                         return normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
                                String(getItemField(g, 'unit_id')) === unitStr &&
@@ -2466,21 +2543,18 @@ function selectCategory(category) {
                                 (g.question && g.question.trim() !== ''));
                     });
 
-                    // 2. 檢查句子跟讀資料是否存在
                     const hasShadow = rawShadowData.some(i => {
                         return normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized &&
                                String(getItemField(i, 'unit_id')) === unitStr &&
                                String(getItemField(i, 'lesson')) === lesStr;
                     });
 
-                    // 3. 檢查字塊重組資料是否存在
                     const hasBlocks = rawBlocksData.some(i => {
                         return normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized &&
                                String(getItemField(i, 'unit_id')) === unitStr &&
                                String(getItemField(i, 'lesson')) === lesStr;
                     });
 
-                    // 4. 檢查對話資料是否存在
                     const hasDialogue = rawDialogueData.some(d => {
                         return normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
                                String(getItemField(d, 'unit_id')) === unitStr &&
@@ -2488,7 +2562,6 @@ function selectCategory(category) {
                                ((d.a1 && d.a1.trim() !== '') || (d.b1 && d.b1.trim() !== ''));
                     });
 
-                    // 5. 檢查句子問答資料是否存在
                     const hasQna = rawQnaData.some(d => {
                         return normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
                                String(getItemField(d, 'unit_id')) === unitStr &&
@@ -2496,14 +2569,12 @@ function selectCategory(category) {
                                ((d.a1 && d.a1.trim() !== '') || (d.b1 && d.b1.trim() !== ''));
                     });
 
-                    // 6. 檢查一般單字庫資料是否存在
                     const hasVocab = rawVocabData.some(v => {
                         return normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
                                String(getItemField(v, 'unit_id')) === unitStr &&
                                String(getItemField(v, 'lesson')) === lesStr;
                     });
 
-                    // 7. 檢查 0A 專屬單字資料是否存在
                     const has0aChoice = raw0aChoiceData.some(v => {
                         return normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
                                String(getItemField(v, 'unit_id')) === unitStr &&
@@ -2540,7 +2611,6 @@ function selectCategory(category) {
                         return btn;
                     };
 
-                    // 🌟 僅在有資料時才將按鈕加進選單
                     if (hasGrammar) {
                         btnGroup.appendChild(createActionButton('grammar', '📖 語法', 'btn-grammar-lesson'));
                     }
@@ -3898,6 +3968,38 @@ function selectCategory(category) {
 
         // ==================== 6. 跟讀與重組題邏輯 ====================
 
+        // 🌟 方案 A：韓文字母特性自動分類工具
+        const HANGUL_V_VOWELS = new Set(['ㅏ','ㅑ','ㅓ','ㅕ','ㅣ','ㅐ','ㅒ','ㅔ','ㅖ']); // 垂直母音
+        const HANGUL_H_VOWELS = new Set(['ㅗ','ㅛ','ㅜ','ㅠ','ㅡ']); // 水平母音
+        const HANGUL_MIXED_VOWELS = new Set(['ㅘ','ㅙ','ㅚ','ㅝ','ㅞ','ㅟ','ㅢ']); // 複合水平+垂直母音
+
+        function analyzeHangulTargetLayout(optionsList, fullText) {
+            // 判定該題目中包含的字母結構
+            let hasV = false;
+            let hasH = false;
+            let hasMixed = false;
+            let consonantCount = 0;
+
+            optionsList.forEach(ch => {
+                const char = ch.trim();
+                if (HANGUL_V_VOWELS.has(char)) hasV = true;
+                else if (HANGUL_H_VOWELS.has(char)) hasH = true;
+                else if (HANGUL_MIXED_VOWELS.has(char)) { hasMixed = true; hasH = true; hasV = true; }
+                else consonantCount++;
+            });
+
+            const hasBatchim = consonantCount >= 2; // 超過一個子音，表示有收音(終聲)
+
+            if (hasH && hasV) {
+                return hasBatchim ? 'mixed-batchim' : 'mixed';
+            } else if (hasH) {
+                return hasBatchim ? 'vertical-3' : 'vertical';
+            } else if (hasV) {
+                return hasBatchim ? 'horizontal-batchim' : 'horizontal';
+            }
+            return 'vertical';
+        }
+
         function startMainQuiz() {
             stopSpeechRecognition();
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
@@ -4006,6 +4108,7 @@ function selectCategory(category) {
             }
         }
 
+        // 🌟 方案 A 核心渲染：判斷是否為 0A 韓語單字積木
         function renderBlocks() {
             const q = questions[currentIndex];
             const zoneOptions = document.getElementById('zone-options');
@@ -4013,6 +4116,9 @@ function selectCategory(category) {
             zoneOptions.innerHTML = "";
             zoneAnswer.innerHTML = "";
 
+            const is0AKorean = (normalizeLevelStr(currentConfig.level) === '0A' && currentConfig.category === 'korean');
+
+            // 渲染下方可選字塊
             q.options.forEach((optText, idx) => {
                 const btn = document.createElement('div');
                 btn.className = 'block-chip' + (selectedBlockIndices.includes(idx) ? ' used' : '');
@@ -4021,13 +4127,76 @@ function selectCategory(category) {
                 zoneOptions.appendChild(btn);
             });
 
-            selectedBlockIndices.forEach(idx => {
-                const btn = document.createElement('div');
-                btn.className = 'block-chip';
-                btn.innerText = q.options[idx];
-                btn.onclick = () => { selectedBlockIndices = selectedBlockIndices.filter(i => i !== idx); renderBlocks(); };
-                zoneAnswer.appendChild(btn);
-            });
+            if (is0AKorean) {
+                // 🌟 方案 A：韓文字母九宮格/積木排版
+                const layoutType = analyzeHangulTargetLayout(q.options, q.fullText);
+
+                const trayContainer = document.createElement('div');
+                trayContainer.className = 'hangul-tray-container';
+
+                const frame = document.createElement('div');
+                frame.className = `hangul-block-frame hangul-frame-${layoutType}`;
+
+                // 定義插槽的放置區域 (CSS Grid 區域)
+                let slotAreas = [];
+                if (layoutType === 'vertical') {
+                    // 上下結構 (如: 우 = ㅇ + ㅜ)
+                    slotAreas = ['1 / 1 / 2 / 2', '2 / 1 / 3 / 2'];
+                } else if (layoutType === 'vertical-3') {
+                    // 上中下結構 (如: 좋 = ㅈ + ㅗ + ㅎ)
+                    slotAreas = ['1 / 1 / 2 / 2', '2 / 1 / 3 / 2', '3 / 1 / 4 / 2'];
+                } else if (layoutType === 'horizontal') {
+                    // 左右結構 (如: 가 = ㄱ + ㅏ)
+                    slotAreas = ['1 / 1 / 2 / 2', '1 / 2 / 2 / 3'];
+                } else if (layoutType === 'horizontal-batchim') {
+                    // 左右+下 (如: 강)
+                    slotAreas = ['1 / 1 / 2 / 2', '1 / 2 / 2 / 3', '2 / 1 / 3 / 3'];
+                } else if (layoutType === 'mixed') {
+                    // 左上 + 左下 + 右 (如: 쉬 = ㅅ + ㅜ + ㅣ)
+                    slotAreas = ['1 / 1 / 2 / 2', '2 / 1 / 3 / 2', '1 / 2 / 3 / 3'];
+                } else if (layoutType === 'mixed-batchim') {
+                    // 左上 + 左下 + 右 + 最下收音
+                    slotAreas = ['1 / 1 / 2 / 2', '2 / 1 / 3 / 2', '1 / 2 / 3 / 3', '3 / 1 / 4 / 3'];
+                }
+
+                const totalSlots = Math.max(slotAreas.length, q.options.length);
+
+                for (let s = 0; s < totalSlots; s++) {
+                    const slotDiv = document.createElement('div');
+                    slotDiv.className = 'hangul-slot';
+                    if (slotAreas[s]) {
+                        slotDiv.style.gridArea = slotAreas[s];
+                    }
+
+                    if (s < selectedBlockIndices.length) {
+                        const optIndex = selectedBlockIndices[s];
+                        slotDiv.classList.add('filled');
+                        slotDiv.innerText = q.options[optIndex];
+                        slotDiv.title = "點擊移除此字塊";
+                        slotDiv.onclick = () => {
+                            selectedBlockIndices = selectedBlockIndices.filter(i => i !== optIndex);
+                            renderBlocks();
+                        };
+                    } else {
+                        slotDiv.innerText = "";
+                    }
+
+                    frame.appendChild(slotDiv);
+                }
+
+                trayContainer.appendChild(frame);
+                zoneAnswer.appendChild(trayContainer);
+
+            } else {
+                // 普通一般水平橫向字塊排列 (1A 以上整句重組)
+                selectedBlockIndices.forEach(idx => {
+                    const btn = document.createElement('div');
+                    btn.className = 'block-chip';
+                    btn.innerText = q.options[idx];
+                    btn.onclick = () => { selectedBlockIndices = selectedBlockIndices.filter(i => i !== idx); renderBlocks(); };
+                    zoneAnswer.appendChild(btn);
+                });
+            }
         }
 
         function checkBlockAnswer() {
