@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>v無對話問答習系統</title>
+    <title>精簡學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -32,9 +32,7 @@
             --duo-teal: #0d9488;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -57,7 +55,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             text-align: center;
             position: relative;
-            box-sizing: border-box;
             display: flex;
             flex-direction: column;
         }
@@ -121,32 +118,24 @@
 
         input, select {
             width: 100%; padding: 10px 12px; margin: 6px 0; border-radius: 12px;
-            border: 2px solid #e5e7eb; box-sizing: border-box; font-size: 0.95rem;
-            font-family: inherit; outline: none;
+            border: 2px solid #e5e7eb; font-size: 0.95rem; font-family: inherit; outline: none;
         }
         input:focus, select:focus { border-color: var(--duo-blue); }
 
         .level-select-box {
             width: 100%; padding: 10px 12px; margin: 12px 0 14px 0; border-radius: 14px;
-            border: 2px solid var(--duo-blue) !important; box-sizing: border-box; font-size: 0.95rem;
-            font-weight: bold; color: #1e293b; background: #fff; outline: none;
-            cursor: pointer;
+            border: 2px solid var(--duo-blue) !important; font-size: 0.95rem;
+            font-weight: bold; color: #1e293b; background: #fff; outline: none; cursor: pointer;
         }
 
         .btn-3d {
             font-size: 0.95rem; font-weight: bold; border: none;
             border-radius: 14px; cursor: pointer; transition: all 0.1s ease;
-            user-select: none; touch-action: manipulation; box-sizing: border-box;
+            user-select: none; touch-action: manipulation;
         }
-        .btn-3d-primary { 
-            background: var(--duo-green); color: white; 
-            box-shadow: 0 4px 0 var(--duo-green-shadow); 
-        }
+        .btn-3d-primary { background: var(--duo-green); color: white; box-shadow: 0 4px 0 var(--duo-green-shadow); }
         .btn-3d-primary:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--duo-green-shadow); }
-        .btn-3d-blue { 
-            background: var(--duo-blue); color: white; 
-            box-shadow: 0 4px 0 var(--duo-blue-shadow); 
-        }
+        .btn-3d-blue { background: var(--duo-blue); color: white; box-shadow: 0 4px 0 var(--duo-blue-shadow); }
         .btn-3d-blue:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--duo-blue-shadow); }
         .btn-3d-secondary { background: #ffffff; color: #4b5563; border: 2px solid #e5e7eb; box-shadow: 0 4px 0 #e5e7eb; }
         .btn-3d-secondary:active { transform: translateY(2px); box-shadow: 0 1px 0 #e5e7eb; }
@@ -181,22 +170,14 @@
         }
 
         .profile-container-card {
-            background: #ffffff;
-            border: 2px solid #e5e7eb;
-            border-radius: 20px;
-            padding: 18px 14px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            text-align: left;
-            margin-top: 10px;
+            background: #ffffff; border: 2px solid #e5e7eb; border-radius: 20px;
+            padding: 18px 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); text-align: left; margin-top: 10px;
         }
         .nav-pill-btn {
             padding: 7px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: bold;
-            border: 2px solid #e5e7eb; background: #ffffff; color: #64748b; cursor: pointer;
-            transition: all 0.15s ease;
+            border: 2px solid #e5e7eb; background: #ffffff; color: #64748b; cursor: pointer; transition: all 0.15s ease;
         }
-        .nav-pill-btn.active {
-            background: var(--duo-blue); color: white; border-color: var(--duo-blue);
-        }
+        .nav-pill-btn.active { background: var(--duo-blue); color: white; border-color: var(--duo-blue); }
 
         .tab-segmented {
             display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 14px;
@@ -209,19 +190,14 @@
 
         .course-pill {
             background: #e0f2fe; color: #0369a1; border: 1.5px solid #bae6fd;
-            border-radius: 25px; padding: 8px 14px; font-weight: bold; font-size: 0.85rem;
-            margin-bottom: 8px; display: block;
+            border-radius: 25px; padding: 8px 14px; font-weight: bold; font-size: 0.85rem; margin-bottom: 8px; display: block;
         }
 
         .rank-item-row {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 9px 10px; border-radius: 12px; background: #ffffff;
-            border: 1px solid #f1f5f9; margin-bottom: 6px; gap: 8px;
+            padding: 9px 10px; border-radius: 12px; background: #ffffff; border: 1px solid #f1f5f9; margin-bottom: 6px; gap: 8px;
         }
-        .rank-item-row.me-row {
-            background: #f0fdf4;
-            border: 1.5px solid #86efac;
-        }
+        .rank-item-row.me-row { background: #f0fdf4; border: 1.5px solid #86efac; }
         .rank-num { font-size: 1.1rem; font-weight: 900; width: 24px; text-align: center; flex-shrink: 0; }
         .rank-num.rank-1 { color: #f59e0b; }
         .rank-num.rank-2 { color: #94a3b8; }
@@ -231,26 +207,17 @@
         .step-page.active { display: block; }
         h2.step-title { color: var(--duo-dark); font-size: 1.25rem; margin-top: 0; margin-bottom: 16px; }
         .option-grid { display: grid; gap: 10px; margin-bottom: 16px; }
-        .grid-1 { grid-template-columns: 1fr; }
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
         .grid-3 { grid-template-columns: repeat(3, 1fr); }
 
         .btn-option {
             background: white; border: 2px solid #e5e7eb; border-bottom: 4px solid #e5e7eb;
             border-radius: 14px; padding: 12px 8px; font-size: 0.95rem; font-weight: bold;
-            color: var(--duo-dark); cursor: pointer; transition: all 0.15s ease;
-            text-align: center; word-break: break-word;
+            color: var(--duo-dark); cursor: pointer; transition: all 0.15s ease; text-align: center; word-break: break-word;
         }
         .btn-option:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
-        .btn-option.selected {
-            border-color: var(--duo-blue) !important;
-            border-bottom-color: #1899d6 !important;
-            background-color: #ddf4ff !important;
-            color: var(--duo-blue) !important;
-        }
         .btn-option.locked {
-            opacity: 0.55; background-color: #f3f4f6; border-color: #d1d5db; color: #9ca3af;
-            cursor: not-allowed;
+            opacity: 0.55; background-color: #f3f4f6; border-color: #d1d5db; color: #9ca3af; cursor: not-allowed;
         }
 
         .lesson-card-item {
@@ -262,8 +229,7 @@
         .btn-lesson-action {
             background: white; border: 2px solid #cbd5e1; border-bottom: 3px solid #cbd5e1;
             border-radius: 10px; padding: 8px 4px; font-size: 0.82rem; font-weight: bold;
-            color: #334155; cursor: pointer; transition: all 0.15s ease;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            color: #334155; cursor: pointer; transition: all 0.15s ease; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .btn-lesson-action:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
         .btn-lesson-action.btn-grammar-lesson:hover { border-color: var(--duo-purple); color: var(--duo-purple); }
@@ -279,20 +245,10 @@
         .btn-confirm:active { transform: translateY(2px); border-bottom-width: 2px; }
 
         .btn-finish-challenge {
-            width: 100%;
-            background: #f59e0b;
-            color: white;
-            border: none;
-            border-bottom: 4px solid #d97706;
-            padding: 14px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border-radius: 14px;
-            cursor: pointer;
-            margin-top: 14px;
-            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
-            display: none;
-            animation: popIn 0.3s ease-out;
+            width: 100%; background: #f59e0b; color: white; border: none;
+            border-bottom: 4px solid #d97706; padding: 14px; font-size: 1.1rem;
+            font-weight: bold; border-radius: 14px; cursor: pointer; margin-top: 14px;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); display: none; animation: modalPopIn 0.3s ease-out;
         }
         .btn-finish-challenge:active { transform: translateY(2px); border-bottom-width: 2px; }
 
@@ -374,59 +330,28 @@
         .block-chip:active { transform: translateY(2px); border-bottom-width: 2px; }
         .block-chip.used { opacity: 0.3; pointer-events: none; background: #f3f4f6; }
 
-        /* 3 * 9 自由拼字棋盤樣式 */
         .hangul-grid-board-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            padding: 6px 0;
-            display: flex;
-            justify-content: center;
-            -webkit-overflow-scrolling: touch;
+            width: 100%; overflow-x: auto; padding: 6px 0; display: flex; justify-content: center; -webkit-overflow-scrolling: touch;
         }
         .hangul-grid-board {
-            display: grid;
-            grid-template-rows: repeat(3, 44px);
-            grid-template-columns: repeat(9, 44px);
-            gap: 4px;
-            background: #ffffff;
-            border: 2px solid #bae6fd;
-            border-radius: 16px;
-            padding: 8px;
-            box-shadow: 0 4px 12px rgba(28, 176, 246, 0.08);
-            margin: 0 auto;
+            display: grid; grid-template-rows: repeat(3, 44px); grid-template-columns: repeat(9, 44px);
+            gap: 4px; background: #ffffff; border: 2px solid #bae6fd; border-radius: 16px; padding: 8px;
+            box-shadow: 0 4px 12px rgba(28, 176, 246, 0.08); margin: 0 auto;
         }
         .hangul-grid-cell {
-            background: #f8fafc;
-            border: 1.5px dashed #cbd5e1;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            font-weight: 900;
-            color: #94a3b8;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.12s ease;
+            background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 8px; display: flex;
+            align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 900;
+            color: #94a3b8; cursor: pointer; user-select: none; transition: all 0.12s ease;
         }
-        .hangul-grid-cell:hover:not(.filled) {
-            background: #f1f5f9;
-            border-color: var(--duo-blue);
-        }
+        .hangul-grid-cell:hover:not(.filled) { background: #f1f5f9; border-color: var(--duo-blue); }
         .hangul-grid-cell.filled {
-            background: #ddf4ff;
-            border: 2px solid var(--duo-blue);
-            color: #0369a1;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            background: #ddf4ff; border: 2px solid var(--duo-blue); color: #0369a1; box-shadow: 0 2px 4px rgba(0,0,0,0.06);
         }
-        .hangul-grid-cell.filled:active {
-            transform: scale(0.92);
-        }
+        .hangul-grid-cell.filled:active { transform: scale(0.92); }
 
         .vocab-input {
             width: 88%; max-width: 320px; padding: 10px; font-size: 1.1rem; border: 2px solid #cbd5e1;
-            border-radius: 12px; text-align: center; outline: none; margin: 12px auto; font-weight: bold;
-            display: block;
+            border-radius: 12px; text-align: center; outline: none; margin: 12px auto; font-weight: bold; display: block;
         }
         .vocab-input:focus { border-color: var(--duo-blue); }
         .vocab-choice-list { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
@@ -450,13 +375,11 @@
             cursor: pointer; transition: all 0.15s; margin-bottom: 8px;
         }
         .btn-keyword-toggle:hover { background: #e2e8f0; }
-        .btn-keyword-toggle.active {
-            background: #fee2e2; border-color: #f87171; color: #dc2626;
-        }
+        .btn-keyword-toggle.active { background: #fee2e2; border-color: #f87171; color: #dc2626; }
 
         .grammar-dialog-box {
             background: #eef2ff; border: 2px solid #818cf8; border-radius: 16px;
-            padding: 16px 14px; padding-bottom: 35px; font-size: 1.05rem; color: #312e81;
+            padding: 16px 14px 35px 14px; font-size: 1.05rem; color: #312e81;
             text-align: left !important; margin-bottom: 12px; min-height: 85px; line-height: 1.6;
             position: relative; cursor: pointer; white-space: pre-wrap; word-break: break-word;
         }
@@ -466,24 +389,14 @@
         }
 
         #container-grammar-questions {
-            text-align: left !important;
-            margin-bottom: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            text-align: left !important; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px;
         }
         .grammar-q-item {
-            text-align: left !important;
-            font-size: 1rem;
-            color: var(--duo-dark);
-            line-height: 1.7;
-            font-weight: 600;
-            word-break: break-word;
+            text-align: left !important; font-size: 1rem; color: var(--duo-dark); line-height: 1.7; font-weight: 600; word-break: break-word;
         }
         .blank-slot {
             display: inline-block; min-width: 60px; border-bottom: 2.5px solid var(--duo-blue);
-            color: var(--duo-blue); text-align: center; padding: 0 4px; cursor: pointer; font-weight: bold;
-            margin: 0 2px;
+            color: var(--duo-blue); text-align: center; padding: 0 4px; cursor: pointer; font-weight: bold; margin: 0 2px;
         }
 
         .grammar-nav-btns { display: flex; gap: 8px; margin-top: 8px; }
@@ -502,17 +415,11 @@
 
         .profile-avatar-large {
             width: 72px; height: 72px; border-radius: 50%;
-            border: 3px solid var(--duo-blue); margin: 0 auto 8px auto; object-fit: cover;
-            display: block;
+            border: 3px solid var(--duo-blue); margin: 0 auto 8px auto; object-fit: cover; display: block;
         }
 
         @media (max-width: 440px) {
-            .hangul-grid-board {
-                grid-template-rows: repeat(3, 38px);
-                grid-template-columns: repeat(9, 38px);
-                gap: 3px;
-                padding: 6px;
-            }
+            .hangul-grid-board { grid-template-rows: repeat(3, 38px); grid-template-columns: repeat(9, 38px); gap: 3px; padding: 6px; }
             .hangul-grid-cell { font-size: 1.1rem; }
         }
 
@@ -675,7 +582,7 @@
         </div>
     </div>
 
-    <!-- 離開挑戰二次確認彈窗 -->
+    <!-- 😭 離開挑戰二次確認彈窗 -->
     <div id="modal-quit-challenge" class="custom-modal">
         <div class="custom-modal-card" style="padding: 26px 20px;">
             <div style="margin-bottom: 14px;">
@@ -723,8 +630,7 @@
             </div>
         </div>
     </div>
-
-    <!-- 📱 主介面容器 -->
+<!-- 📱 主介面容器 -->
     <div class="shadowing-card">
         <div class="user-meta-bar" id="app-user-meta-bar">
             <div class="user-meta-item" id="btn-profile-trigger" onclick="openProfileView()">
@@ -751,12 +657,11 @@
 
         <!-- 🌟 視圖 A：學習與題目挑戰區塊 -->
         <div id="learning-content-view">
-            <!-- 步驟 1：已隱藏至背景，平常不顯示 -->
             <div id="step-learn-lang" class="step-page hidden">
                 <div id="cache-status" style="font-size: 0.75rem; color: #6b7280; margin-top: 8px;"></div>
             </div>
 
-            <!-- 步驟 2：首頁預設直接為程度選擇 -->
+            <!-- 步驟 2：程度選擇 -->
             <div id="step-level" class="step-page active">
                 <div class="top-nav" style="justify-content: flex-end;">
                     <button class="btn-sync-refresh" onclick="forceClearAndSync()" style="margin: 0; font-size: 0.8rem;"><i class="fa-solid fa-arrows-rotate"></i> 更新本課程資料</button>
@@ -951,7 +856,8 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
-<!-- 步驟 6-D：單字跟讀挑戰畫面 (含 0A 韓語單字跟讀) -->
+
+            <!-- 步驟 6-D：單字跟讀畫面 -->
             <div id="step-quiz-vocab-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -982,7 +888,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-vocab-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 步驟 6-E：單字聽打挑戰畫面 -->
+            <!-- 步驟 6-E：單字聽打畫面 -->
             <div id="step-quiz-vocab-type" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1010,7 +916,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-vocab-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 步驟 6-F：單字意思選擇題畫面 (含 0A 韓語單字聽音選擇) -->
+            <!-- 步驟 6-F：單字選擇題畫面 -->
             <div id="step-quiz-vocab-choice" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1033,7 +939,7 @@
                 <div class="target-text" id="lbl-vocab-choice-text">載入中...</div>
                 <div id="lbl-vocab-choice-sub" style="font-size: 0.95rem; color: #475569; font-weight: bold; margin-bottom: 6px; display: none;"></div>
                 <div class="vocab-choice-list" id="container-vocab-choices"></div>
-                <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-vocab-choice-score">請選擇正確韓語單字</div></div>
+                <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-vocab-choice-score">請選擇正確單字</div></div>
                 <div class="nav-controls">
                     <button class="btn-nav" id="btn-vocab-choice-prev" onclick="prevVocabQuestion()">上一題</button>
                     <span class="lbl-progress" id="lbl-vocab-choice-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
@@ -1082,13 +988,12 @@
                 <div style="text-align: center; border-bottom: 1.5px dashed #e2e8f0; padding-bottom: 14px; margin-bottom: 14px;">
                     <img id="myaccount-avatar" src="https://lh3.googleusercontent.com/a/default-user" class="profile-avatar-large" alt="User Avatar">
                     <h3 style="margin: 0; color: #1e293b; font-size: 1.2rem;">
-                        <span id="myaccount-nickname">UWEI</span>
+                        <span id="myaccount-nickname">學生</span>
                         <button onclick="openModal('modal-edit-nickname')" style="border:none; background:none; color:var(--duo-blue); cursor:pointer; font-size:0.95rem;"><i class="fa-solid fa-pen-to-square"></i></button>
                     </h3>
                     <p style="font-size: 0.85rem; color: #64748b; margin: 4px 0 0 0;" id="myaccount-email">email@example.com</p>
                 </div>
 
-                <!-- 🌟 學習語言與顯示母語設定區塊 -->
                 <div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 14px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 10px;">
                     <div>
                         <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
@@ -1140,7 +1045,6 @@
                 </button>
             </div>
         </div>
-
     </div>
 <!-- 核心邏輯腳本 -->
     <script>
@@ -1199,7 +1103,6 @@
         let currentFullDialogText = "";
 
         let currentRankSubTab = 'global';
-
         let passedSubQuestions = new Set();
         let totalChallengeQuestions = 0;
 
@@ -1207,9 +1110,7 @@
             const array = [...arr];
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                const temp = array[i];
-                array[i] = array[j];
-                array[j] = temp;
+                [array[i], array[j]] = [array[j], array[i]];
             }
             return array;
         }
@@ -1228,15 +1129,9 @@
                 return '';
             }
 
-            if (f === 'lesson' || f === 'stage') {
-                return String(item.lesson || item.stage || '');
-            }
-            if (f === 'unitid' || f === 'unit') {
-                return String(item.unit_id || item.unitid || item.unit || '');
-            }
-            if (f === 'level' || f === 'lvl') {
-                return String(item.level || item.lvl || '');
-            }
+            if (f === 'lesson' || f === 'stage') return String(item.lesson || item.stage || '');
+            if (f === 'unitid' || f === 'unit') return String(item.unit_id || item.unitid || item.unit || '');
+            if (f === 'level' || f === 'lvl') return String(item.level || item.lvl || '');
             return item[fieldName] !== undefined ? String(item[fieldName]) : (item[f] !== undefined ? String(item[f]) : '');
         }
 
@@ -1244,19 +1139,14 @@
             loadProgress: async (uid) => {
                 try {
                     const doc = await db.collection("users").doc(uid).get();
-                    if (doc.exists) return doc.data();
-                    return null;
+                    return doc.exists ? doc.data() : null;
                 } catch (error) {
                     console.error("載入進度失敗:", error);
                     return null;
                 }
             },
             saveProgress: async (uid, data) => {
-                try {
-                    await db.collection("users").doc(uid).update(data);
-                } catch (error) {
-                    console.error("儲存進度失敗:", error);
-                }
+                try { await db.collection("users").doc(uid).update(data); } catch (e) { console.error("儲存失敗:", e); }
             },
             updateUnitProgress: async (uid, unit, lesson) => {
                 try {
@@ -1266,11 +1156,9 @@
                         maxStage: lesson,
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     };
-                    await db.collection("users").doc(uid).update({
-                        "unitProgress": window.currentUserData.unitProgress
-                    });
-                } catch (error) {
-                    console.error("更新單元解鎖狀態失敗:", error);
+                    await db.collection("users").doc(uid).update({ "unitProgress": window.currentUserData.unitProgress });
+                } catch (e) {
+                    console.error("更新進度失敗:", e);
                 }
             }
         };
@@ -1281,14 +1169,12 @@
                 if (snap.empty) return false;
                 if (excludeUid) {
                     let hasOtherUser = false;
-                    snap.forEach(doc => {
-                        if (doc.id !== excludeUid) hasOtherUser = true;
-                    });
+                    snap.forEach(doc => { if (doc.id !== excludeUid) hasOtherUser = true; });
                     return hasOtherUser;
                 }
                 return true;
             } catch (err) {
-                console.error("檢查暱稱重複失敗:", err);
+                console.error("檢查暱稱失敗:", err);
                 return false;
             }
         }
@@ -1300,47 +1186,50 @@
 
             if (extraParams) {
                 const clean = extraParams.startsWith('&') ? extraParams.slice(1) : extraParams;
-                const sp = new URLSearchParams(clean);
-                sp.forEach((v, k) => url.searchParams.set(k, v));
+                new URLSearchParams(clean).forEach((v, k) => url.searchParams.set(k, v));
             }
 
             try {
                 const res = await fetch(url.toString(), { method: 'GET', redirect: 'follow' });
                 if (res.ok) {
-                    const text = await res.text();
-                    const trimmed = text.trim();
-                    if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
-                        return JSON.parse(trimmed);
-                    }
-                    const match = trimmed.match(/^[a-zA-Z0-9_]+\s*\(([\s\S]*)\)\s*;?$/);
-                    if (match && match[1]) {
-                        return JSON.parse(match[1]);
-                    }
+                    const text = (await res.text()).trim();
+                    if (text.startsWith('{') || text.startsWith('[')) return JSON.parse(text);
+                    const match = text.match(/^[a-zA-Z0-9_]+\s*\(([\s\S]*)\)\s*;?$/);
+                    if (match && match[1]) return JSON.parse(match[1]);
                 }
             } catch (e) {
-                console.warn("fetch 失敗，切換為動態 script 載入 (JSONP):", e);
+                console.warn("切換至 JSONP 模式:", e);
             }
 
             return new Promise((resolve, reject) => {
                 const callbackName = 'gas_cb_' + Date.now() + Math.floor(Math.random() * 1000);
                 const script = document.createElement('script');
-
                 window[callbackName] = function(data) {
                     delete window[callbackName];
                     if (document.body.contains(script)) document.body.removeChild(script);
                     resolve(data);
                 };
-
                 script.onerror = function() {
                     delete window[callbackName];
                     if (document.body.contains(script)) document.body.removeChild(script);
-                    reject(new Error("API 連線失敗，請確認網路環境！"));
+                    reject(new Error("API 連線失敗，請確認網路！"));
                 };
-
                 url.searchParams.set('prefix', callbackName);
                 script.src = url.toString();
                 document.body.appendChild(script);
             });
+        }
+
+        // 🌟 整合共用語音播放輔助函式
+        function playAudioOrTTS(audioUrl, fallbackText, rate = 0.85) {
+            stopSpeechRecognition();
+            if (audioUrl && audioUrl.trim() !== '') {
+                const audio = new Audio(audioUrl);
+                audio.playbackRate = rate;
+                audio.play().catch(() => { if (fallbackText) speakTTS(fallbackText, rate); });
+            } else if (fallbackText) {
+                speakTTS(fallbackText, rate);
+            }
         }
 
         let authMode = 'login';
@@ -1380,7 +1269,6 @@
             document.getElementById('lbl-username').innerText = "驗證白名單中...";
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
-
                 if (!gasResult || gasResult.status !== "success") {
                     alert("您不在系統白名單內或帳號已被停權！\n請聯繫管理員開通。");
                     await auth.signOut();
@@ -1398,18 +1286,15 @@
                         }
                     });
                 }
-
                 if (unlockedLevels.length === 0) unlockedLevels = ['0A'];
 
-                const expireDate = gasResult.expireAt || "2027-12-31";
                 const memberships = unlockedLevels.map(lvl => ({
                     courseId: lvl,
-                    expireDate: expireDate,
+                    expireDate: gasResult.expireAt || "2027-12-31",
                     status: "active"
                 }));
 
                 const firestoreData = await ProgressModel.loadProgress(user.uid);
-
                 if (!firestoreData) {
                     window.tempMemberInfo = {
                         realName: gasResult.realName || "",
@@ -1419,7 +1304,6 @@
                     };
                     window.tempMemberships = memberships;
                     window.tempUnlockedLevels = unlockedLevels;
-
                     closeModal('login-modal');
                     openModal('modal-setup-nickname');
                 } else {
@@ -1432,22 +1316,14 @@
                     if (!window.currentUserData.friends) window.currentUserData.friends = [];
                     if (!window.currentUserData.completedLessons) window.currentUserData.completedLessons = [];
 
-                    if (window.currentUserData.learnCategory) {
-                        setLearnCategory(window.currentUserData.learnCategory);
-                    }
-                    if (window.currentUserData.nativeLanguage) {
-                        setUserLang(window.currentUserData.nativeLanguage);
-                    }
-
-                    if (!unlockedLevels.includes(currentConfig.level)) {
-                        currentConfig.level = unlockedLevels[0];
-                    }
+                    if (window.currentUserData.learnCategory) setLearnCategory(window.currentUserData.learnCategory);
+                    if (window.currentUserData.nativeLanguage) setUserLang(window.currentUserData.nativeLanguage);
+                    if (!unlockedLevels.includes(currentConfig.level)) currentConfig.level = unlockedLevels[0];
 
                     closeModal('login-modal');
                     renderUserInfo();
                     await autoLoadCurrentCategory();
                 }
-
             } catch (err) {
                 console.error("驗證失敗:", err);
                 alert("伺服器連線驗證失敗：" + err.message);
@@ -1472,12 +1348,9 @@
             submitBtn.innerText = "檢查暱稱中...";
 
             try {
-                const taken = await isNicknameTaken(nickname, currentUser.uid);
-                if (taken) {
+                if (await isNicknameTaken(nickname, currentUser.uid)) {
                     errDiv.innerText = "此暱稱已被其他學員使用，請換一個再試！";
                     errDiv.classList.remove('hidden');
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = "完成設定並開始學習";
                     return;
                 }
 
@@ -1525,15 +1398,9 @@
             setLearnCategory(cat);
             if (currentUser) {
                 try {
-                    await db.collection('users').doc(currentUser.uid).update({
-                        learnCategory: cat
-                    });
-                    if (window.currentUserData) {
-                        window.currentUserData.learnCategory = cat;
-                    }
-                } catch (e) {
-                    console.error("更新學習語言偏好失敗:", e);
-                }
+                    await db.collection('users').doc(currentUser.uid).update({ learnCategory: cat });
+                    if (window.currentUserData) window.currentUserData.learnCategory = cat;
+                } catch (e) { console.error("更新學習語言偏好失敗:", e); }
             }
             alert(`已切換學習語言！即將載入該語言課程。`);
             await autoLoadCurrentCategory();
@@ -1543,18 +1410,11 @@
         async function updateAccountNativeLang(lang) {
             setUserLang(lang);
             localStorage.setItem('preferred_user_lang', lang);
-
             if (currentUser) {
                 try {
-                    await db.collection('users').doc(currentUser.uid).update({
-                        nativeLanguage: lang
-                    });
-                    if (window.currentUserData) {
-                        window.currentUserData.nativeLanguage = lang;
-                    }
-                } catch (e) {
-                    console.error("更新母語偏好失敗:", e);
-                }
+                    await db.collection('users').doc(currentUser.uid).update({ nativeLanguage: lang });
+                    if (window.currentUserData) window.currentUserData.nativeLanguage = lang;
+                } catch (e) { console.error("更新母語偏好失敗:", e); }
             }
         }
 
@@ -1568,16 +1428,12 @@
             const savedLang = window.currentUserData.nativeLanguage || localStorage.getItem('preferred_user_lang') || 'zh';
             setUserLang(savedLang);
             const accountLangSelect = document.getElementById('select-account-language');
-            if (accountLangSelect) {
-                accountLangSelect.value = savedLang;
-            }
+            if (accountLangSelect) accountLangSelect.value = savedLang;
 
             const savedCategory = window.currentUserData.learnCategory || localStorage.getItem('preferred_learn_category') || 'korean';
             setLearnCategory(savedCategory);
             const accountLearnLangSelect = document.getElementById('select-account-learn-language');
-            if (accountLearnLangSelect) {
-                accountLearnLangSelect.value = savedCategory;
-            }
+            if (accountLearnLangSelect) accountLearnLangSelect.value = savedCategory;
 
             document.getElementById('lbl-username').innerText = displayName;
             document.getElementById('lbl-streak-days').innerText = streakDays;
@@ -1620,16 +1476,13 @@
                 errDiv.classList.remove('hidden');
                 return;
             }
-
             if (newName === (window.currentUserData.displayName || '')) {
                 errDiv.innerText = "新暱稱與現有暱稱相同！";
                 errDiv.classList.remove('hidden');
                 return;
             }
-
             const lastUpdated = window.currentUserData.lastNicknameUpdatedAt || 0;
             const diffSeconds = Math.floor((now - lastUpdated) / 1000);
-
             if (diffSeconds < 30) {
                 errDiv.innerText = `冷卻中！請等待 ${30 - diffSeconds} 秒後再修改。`;
                 errDiv.classList.remove('hidden');
@@ -1638,21 +1491,13 @@
 
             btnSave.disabled = true;
             btnSave.innerText = "檢查重複中...";
-
             try {
-                const taken = await isNicknameTaken(newName, currentUser.uid);
-                if (taken) {
+                if (await isNicknameTaken(newName, currentUser.uid)) {
                     errDiv.innerText = "此暱稱已被其他學員使用，請換一個再試！";
                     errDiv.classList.remove('hidden');
-                    btnSave.disabled = false;
-                    btnSave.innerText = "儲存修改";
                     return;
                 }
-
-                await ProgressModel.saveProgress(currentUser.uid, {
-                    displayName: newName,
-                    lastNicknameUpdatedAt: now
-                });
+                await ProgressModel.saveProgress(currentUser.uid, { displayName: newName, lastNicknameUpdatedAt: now });
                 window.currentUserData.displayName = newName;
                 window.currentUserData.lastNicknameUpdatedAt = now;
                 renderUserInfo();
@@ -1668,24 +1513,16 @@
         };
 
         document.getElementById('btn-google-login').onclick = async () => {
-            try {
-                await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-            } catch (err) {
-                showLoginError(err.message);
-            }
+            try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); } catch (err) { showLoginError(err.message); }
         };
 
         btnAuthSubmit.onclick = async () => {
             const email = document.getElementById('email-input').value.trim();
             const password = document.getElementById('password-input').value;
             if (!email || !password) return showLoginError("請輸入信箱與密碼！");
-
             try {
-                if (authMode === 'login') {
-                    await auth.signInWithEmailAndPassword(email, password);
-                } else {
-                    await auth.createUserWithEmailAndPassword(email, password);
-                }
+                if (authMode === 'login') await auth.signInWithEmailAndPassword(email, password);
+                else await auth.createUserWithEmailAndPassword(email, password);
             } catch (err) {
                 showLoginError(err.message);
             }
@@ -1719,17 +1556,11 @@
 
         function openModal(modalId) {
             const m = document.getElementById(modalId);
-            if (m) {
-                m.classList.add('show');
-                m.classList.remove('hidden');
-            }
+            if (m) { m.classList.add('show'); m.classList.remove('hidden'); }
         }
         function closeModal(modalId) {
             const m = document.getElementById(modalId);
-            if (m) {
-                m.classList.remove('show');
-                m.classList.add('hidden');
-            }
+            if (m) { m.classList.remove('show'); m.classList.add('hidden'); }
         }
 
         function openProfileView() {
@@ -1786,18 +1617,12 @@
         async function loadLeaderboardData() {
             const container = document.getElementById('leaderboard-list-container');
             container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>載入排行榜中...</div>";
-
             try {
-                const snapshot = await db.collection("users")
-                    .orderBy("xp", "desc")
-                    .limit(20)
-                    .get();
-
+                const snapshot = await db.collection("users").orderBy("xp", "desc").limit(20).get();
                 if (snapshot.empty) {
                     container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>暫無榜單資料</div>";
                     return;
                 }
-
                 container.innerHTML = "";
                 let rank = 1;
                 snapshot.forEach(doc => {
@@ -1805,7 +1630,6 @@
                     const isMe = currentUser && doc.id === currentUser.uid;
                     const row = document.createElement('div');
                     row.className = "rank-item-row" + (isMe ? " me-row" : "");
-
                     let rankClass = rank === 1 ? "rank-1" : (rank === 2 ? "rank-2" : (rank === 3 ? "rank-3" : ""));
 
                     row.innerHTML = `
@@ -1820,20 +1644,14 @@
                             </div>
                         </div>
                         <div style="text-align: right; flex-shrink: 0;">
-                            <div style="font-weight: 800; color: var(--duo-gold); font-size: 0.92rem;">
-                                <i class="fa-solid fa-star"></i> ${data.xp || 0}
-                            </div>
-                            <div style="font-size: 0.75rem; color: var(--duo-fire-red); font-weight: bold;">
-                                <i class="fa-solid fa-fire"></i> ${data.streakDays || 1} 天
-                            </div>
+                            <div style="font-weight: 800; color: var(--duo-gold); font-size: 0.92rem;"><i class="fa-solid fa-star"></i> ${data.xp || 0}</div>
+                            <div style="font-size: 0.75rem; color: var(--duo-fire-red); font-weight: bold;"><i class="fa-solid fa-fire"></i> ${data.streakDays || 1} 天</div>
                         </div>
                     `;
                     container.appendChild(row);
                     rank++;
                 });
-
             } catch (e) {
-                console.error("載入排行榜失敗:", e);
                 container.innerHTML = "<div style='text-align:center; color:#ef4444; padding:20px 0;'>載入失敗，請確認網路！</div>";
             }
         }
@@ -1841,23 +1659,20 @@
         async function loadFriendsLeaderboardData() {
             const container = document.getElementById('leaderboard-list-container');
             container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>載入好友排行中...</div>";
-
             if (!currentUser || !window.currentUserData) {
                 container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>請先登入後查看好友</div>";
                 return;
             }
 
             const friendsEmails = window.currentUserData.friends || [];
-            let targetUsers = [];
-
-            targetUsers.push({
+            let targetUsers = [{
                 email: currentUser.email,
                 displayName: window.currentUserData.displayName || "我",
                 xp: window.currentUserData.xp || 0,
                 streakDays: window.currentUserData.streakDays || 1,
                 level: window.currentUserData.unlockedLevels ? window.currentUserData.unlockedLevels[0] : '1A',
                 isMe: true
-            });
+            }];
 
             try {
                 if (friendsEmails.length > 0) {
@@ -1879,13 +1694,11 @@
                 }
 
                 targetUsers.sort((a, b) => (b.xp || 0) - (a.xp || 0));
-
                 container.innerHTML = "";
                 let rank = 1;
                 targetUsers.forEach(u => {
                     const row = document.createElement('div');
                     row.className = "rank-item-row" + (u.isMe ? " me-row" : "");
-
                     let rankClass = rank === 1 ? "rank-1" : (rank === 2 ? "rank-2" : (rank === 3 ? "rank-3" : ""));
 
                     row.innerHTML = `
@@ -1901,12 +1714,8 @@
                         </div>
                         <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                             <div style="text-align: right;">
-                                <div style="font-weight: 800; color: var(--duo-gold); font-size: 0.92rem;">
-                                    <i class="fa-solid fa-star"></i> ${u.xp || 0}
-                                </div>
-                                <div style="font-size: 0.75rem; color: var(--duo-fire-red); font-weight: bold;">
-                                    <i class="fa-solid fa-fire"></i> ${u.streakDays || 1} 天
-                                </div>
+                                <div style="font-weight: 800; color: var(--duo-gold); font-size: 0.92rem;"><i class="fa-solid fa-star"></i> ${u.xp || 0}</div>
+                                <div style="font-size: 0.75rem; color: var(--duo-fire-red); font-weight: bold;"><i class="fa-solid fa-fire"></i> ${u.streakDays || 1} 天</div>
                             </div>
                             ${!u.isMe ? `<button onclick="removeFriend('${u.email}')" title="刪除好友" style="background:none; border:none; color:#9ca3af; cursor:pointer; padding:4px;"><i class="fa-solid fa-user-xmark"></i></button>` : ''}
                         </div>
@@ -1921,9 +1730,7 @@
                     notice.innerHTML = `目前只有你一人喔！點擊右上角「<strong>+ 加好友</strong>」與好友一同切磋！`;
                     container.appendChild(notice);
                 }
-
             } catch (err) {
-                console.error("載入好友榜失敗:", err);
                 container.innerHTML = "<div style='text-align:center; color:#ef4444; padding:20px 0;'>載入好友資料失敗，請確認網路！</div>";
             }
         }
@@ -1933,51 +1740,32 @@
             const errDiv = document.getElementById('add-friend-error-msg');
             const targetEmail = input.value.trim().toLowerCase();
 
-            if (!targetEmail) {
-                errDiv.innerText = "請輸入好友的電子信箱！";
-                errDiv.classList.remove('hidden');
-                return;
-            }
-
-            if (targetEmail === currentUser.email.toLowerCase()) {
-                errDiv.innerText = "不能將自己加為好友喔！";
-                errDiv.classList.remove('hidden');
-                return;
-            }
+            if (!targetEmail) return (errDiv.innerText = "請輸入好友的電子信箱！", errDiv.classList.remove('hidden'));
+            if (targetEmail === currentUser.email.toLowerCase()) return (errDiv.innerText = "不能將自己加為好友喔！", errDiv.classList.remove('hidden'));
 
             const currentFriends = window.currentUserData.friends || [];
             if (currentFriends.map(e => e.toLowerCase()).includes(targetEmail)) {
-                errDiv.innerText = "此使用者已經在您的好友名單中囉！";
-                errDiv.classList.remove('hidden');
-                return;
+                return (errDiv.innerText = "此使用者已經在您的好友名單中囉！", errDiv.classList.remove('hidden'));
             }
 
             const btnConfirm = document.getElementById('btn-confirm-add-friend');
             btnConfirm.disabled = true;
             btnConfirm.innerText = "驗證中...";
-
             try {
                 const querySnap = await db.collection("users").where("email", "==", targetEmail).limit(1).get();
                 if (querySnap.empty) {
                     errDiv.innerText = "找不到此帳號！請確認對方是否已登入系統建立角色。";
                     errDiv.classList.remove('hidden');
-                    btnConfirm.disabled = false;
-                    btnConfirm.innerText = "確認新增";
                     return;
                 }
-
                 currentFriends.push(targetEmail);
-                await db.collection("users").doc(currentUser.uid).update({
-                    friends: currentFriends
-                });
-
+                await db.collection("users").doc(currentUser.uid).update({ friends: currentFriends });
                 window.currentUserData.friends = currentFriends;
                 input.value = "";
                 errDiv.classList.add('hidden');
                 closeModal('modal-add-friend');
                 alert("已成功加入好友！");
                 loadFriendsLeaderboardData();
-
             } catch (e) {
                 errDiv.innerText = "新增好友失敗：" + e.message;
                 errDiv.classList.remove('hidden');
@@ -1989,15 +1777,9 @@
 
         async function removeFriend(email) {
             if (!confirm(`確定要將 ${email} 從好友名單中移除嗎？`)) return;
-
             try {
-                let currentFriends = window.currentUserData.friends || [];
-                currentFriends = currentFriends.filter(e => e.toLowerCase() !== email.toLowerCase());
-
-                await db.collection("users").doc(currentUser.uid).update({
-                    friends: currentFriends
-                });
-
+                let currentFriends = (window.currentUserData.friends || []).filter(e => e.toLowerCase() !== email.toLowerCase());
+                await db.collection("users").doc(currentUser.uid).update({ friends: currentFriends });
                 window.currentUserData.friends = currentFriends;
                 loadFriendsLeaderboardData();
             } catch (e) {
@@ -2030,13 +1812,9 @@
                 const dayCell = document.createElement('div');
                 dayCell.className = "calendar-day";
                 dayCell.innerText = day;
-
-                if (day === 1 && month === 9 && year === 2026) {
-                    dayCell.classList.add('checked');
-                } else if (today.getFullYear() === year && today.getMonth() === month && today.getDate() === day) {
+                if ((day === 1 && month === 9 && year === 2026) || (today.getFullYear() === year && today.getMonth() === month && today.getDate() === day)) {
                     dayCell.classList.add('checked');
                 }
-
                 container.appendChild(dayCell);
             }
         }
@@ -2050,7 +1828,6 @@
             calendarCurrentDate.setMonth(calendarCurrentDate.getMonth() - 1);
             renderStreakCalendar(calendarCurrentDate);
         };
-
         document.getElementById('btn-cal-next').onclick = () => {
             calendarCurrentDate.setMonth(calendarCurrentDate.getMonth() + 1);
             renderStreakCalendar(calendarCurrentDate);
@@ -2080,20 +1857,11 @@
                 const opt = document.createElement('option');
                 opt.value = item.code;
                 const isUnlocked = userUnlocked.includes(item.code.toUpperCase());
-
-                if (isUnlocked) {
-                    opt.innerText = item.title;
-                } else {
-                    opt.innerText = `🔒 ${item.title} (未開通)`;
-                    opt.disabled = true;
-                }
-
-                if (item.code.toUpperCase() === (currentConfig.level || '1A').toUpperCase()) {
-                    opt.selected = true;
-                }
+                opt.innerText = isUnlocked ? item.title : `🔒 ${item.title} (未開通)`;
+                opt.disabled = !isUnlocked;
+                if (item.code.toUpperCase() === (currentConfig.level || '1A').toUpperCase()) opt.selected = true;
                 initialLevelSelect.appendChild(opt);
             });
-
             openModal('modal-select-initial-level');
         }
 
@@ -2120,19 +1888,13 @@
             window.currentUserData.xp = (window.currentUserData.xp || 0) + amount;
             renderUserInfo();
             try {
-                await db.collection('users').doc(currentUser.uid).update({
-                    xp: firebase.firestore.FieldValue.increment(amount)
-                });
-            } catch (e) {
-                console.error("更新 XP 失敗:", e);
-            }
+                await db.collection('users').doc(currentUser.uid).update({ xp: firebase.firestore.FieldValue.increment(amount) });
+            } catch (e) { console.error("更新 XP 失敗:", e); }
         }
 
         function toggleGearDropdown(dropdownId) {
             const dropdown = document.getElementById(dropdownId);
-            document.querySelectorAll('.gear-dropdown').forEach(d => {
-                if (d.id !== dropdownId) d.classList.remove('show');
-            });
+            document.querySelectorAll('.gear-dropdown').forEach(d => { if (d.id !== dropdownId) d.classList.remove('show'); });
             if (dropdown) dropdown.classList.toggle('show');
         }
 
@@ -2166,11 +1928,7 @@
 
             const metaBar = document.getElementById('app-user-meta-bar');
             if (metaBar) {
-                if (stepId.startsWith('step-quiz-') || stepId === 'step-grammar') {
-                    metaBar.style.display = 'none';
-                } else {
-                    metaBar.style.display = 'flex';
-                }
+                metaBar.style.display = (stepId.startsWith('step-quiz-') || stepId === 'step-grammar') ? 'none' : 'flex';
             }
         }
 
@@ -2179,93 +1937,77 @@
             localStorage.setItem('preferred_user_lang', lang);
         }
 
-        function selectCategory(category) {
-            stopSpeechRecognition();
-            setLearnCategory(category);
-        }
-
         async function forceClearAndSync() {
-            localStorage.removeItem(`all_data_${currentConfig.category}`);
-            localStorage.removeItem(`grammar_data_${currentConfig.category}`);
-            localStorage.removeItem(`dialogue_data_${currentConfig.category}`);
-            localStorage.removeItem(`vocab_data_${currentConfig.category}`);
-            localStorage.removeItem(`0achoice_data_${currentConfig.category}`);
+            ['all_data_', 'grammar_data_', 'dialogue_data_', 'vocab_data_', '0achoice_data_'].forEach(k => {
+                localStorage.removeItem(k + currentConfig.category);
+            });
             alert(`已清除當前語言快取！正在重新連線同步最新試算表...`);
             await autoLoadCurrentCategory(true);
         }
 
+        // 🌟 精簡後的快取讀取與網路請求邏輯
         async function autoLoadCurrentCategory(forceRefresh = false) {
             const targetApi = API_URLS[currentConfig.category];
-            if (!targetApi) {
-                alert(`該語言 API 尚未設定！`);
-                return;
-            }
+            if (!targetApi) return alert(`該語言 API 尚未設定！`);
 
-            const cacheKey = `all_data_${currentConfig.category}`;
-            const grammarCacheKey = `grammar_data_${currentConfig.category}`;
-            const dialogueCacheKey = `dialogue_data_${currentConfig.category}`;
-            const vocabCacheKey = `vocab_data_${currentConfig.category}`;
-            const choice0aCacheKey = `0achoice_data_${currentConfig.category}`;
+            const cat = currentConfig.category;
+            const cacheMap = {
+                all: `all_data_${cat}`,
+                grammar: `grammar_data_${cat}`,
+                dialogue: `dialogue_data_${cat}`,
+                vocab: `vocab_data_${cat}`,
+                choice0a: `0achoice_data_${cat}`
+            };
 
-            const cachedData = localStorage.getItem(cacheKey);
-            const cachedGrammar = localStorage.getItem(grammarCacheKey);
-            const cachedDialogue = localStorage.getItem(dialogueCacheKey);
-            const cachedVocab = localStorage.getItem(vocabCacheKey);
-            const cached0aChoice = localStorage.getItem(choice0aCacheKey);
+            const readCache = (key) => {
+                try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch(e) { return null; }
+            };
 
-            if (!forceRefresh && cachedData) {
-                try {
-                    const parsed = JSON.parse(cachedData);
-                    if (parsed && (parsed.shadow || parsed.blocks)) {
-                        rawShadowData = parsed.shadow || [];
-                        rawBlocksData = parsed.blocks || [];
-                        if (cachedGrammar) try { globalGrammarData = JSON.parse(cachedGrammar); } catch(e) {}
-                        if (cachedDialogue) try { rawDialogueData = JSON.parse(cachedDialogue); } catch(e) {}
-                        if (cachedVocab) try { rawVocabData = JSON.parse(cachedVocab); } catch(e) {}
-                        if (cached0aChoice) try { raw0aChoiceData = JSON.parse(cached0aChoice); } catch(e) {}
-                        renderLevelMenu();
-                        goToStep('step-level');
-                        return;
-                    }
-                } catch(e) {}
+            if (!forceRefresh) {
+                const cachedAll = readCache(cacheMap.all);
+                if (cachedAll && (cachedAll.shadow || cachedAll.blocks)) {
+                    rawShadowData = cachedAll.shadow || [];
+                    rawBlocksData = cachedAll.blocks || [];
+                    globalGrammarData = readCache(cacheMap.grammar) || [];
+                    rawDialogueData = readCache(cacheMap.dialogue) || [];
+                    rawVocabData = readCache(cacheMap.vocab) || [];
+                    raw0aChoiceData = readCache(cacheMap.choice0a) || [];
+                    renderLevelMenu();
+                    goToStep('step-level');
+                    return;
+                }
             }
 
             try {
                 const [shadowRes, blocksRes, grammarRes, dialogueRes, vocabRes, choice0aRes] = await Promise.all([
-                    requestGAS(targetApi, 'getLanguageData').catch(()=>null),
-                    requestGAS(targetApi, 'getBlocksData').catch(()=>null),
-                    requestGAS(targetApi, 'getGrammarData').catch(()=>null),
-                    requestGAS(targetApi, 'getDialogueData').catch(()=>null),
-                    requestGAS(targetApi, 'getVocabularyData').catch(()=>null),
-                    requestGAS(targetApi, 'get0aChoiceData').catch(()=>null)
+                    requestGAS(targetApi, 'getLanguageData').catch(() => null),
+                    requestGAS(targetApi, 'getBlocksData').catch(() => null),
+                    requestGAS(targetApi, 'getGrammarData').catch(() => null),
+                    requestGAS(targetApi, 'getDialogueData').catch(() => null),
+                    requestGAS(targetApi, 'getVocabularyData').catch(() => null),
+                    requestGAS(targetApi, 'get0aChoiceData').catch(() => null)
                 ]);
 
                 if (shadowRes && shadowRes.status === 'success') rawShadowData = shadowRes.data || [];
                 if (blocksRes && blocksRes.status === 'success') rawBlocksData = blocksRes.data || [];
                 if (grammarRes && grammarRes.status === 'success') {
                     globalGrammarData = grammarRes.data || [];
-                    try { localStorage.setItem(grammarCacheKey, JSON.stringify(grammarRes.data)); } catch(e){}
+                    localStorage.setItem(cacheMap.grammar, JSON.stringify(grammarRes.data));
                 }
                 if (dialogueRes && dialogueRes.status === 'success') {
                     rawDialogueData = dialogueRes.data || [];
-                    try { localStorage.setItem(dialogueCacheKey, JSON.stringify(dialogueRes.data)); } catch(e){}
+                    localStorage.setItem(cacheMap.dialogue, JSON.stringify(dialogueRes.data));
                 }
                 if (vocabRes && vocabRes.status === 'success') {
                     rawVocabData = vocabRes.data || [];
-                    try { localStorage.setItem(vocabCacheKey, JSON.stringify(vocabRes.data)); } catch(e){}
+                    localStorage.setItem(cacheMap.vocab, JSON.stringify(vocabRes.data));
                 }
                 if (choice0aRes && choice0aRes.status === 'success') {
                     raw0aChoiceData = choice0aRes.data || [];
-                    try { localStorage.setItem(choice0aCacheKey, JSON.stringify(choice0aRes.data)); } catch(e){}
+                    localStorage.setItem(cacheMap.choice0a, JSON.stringify(choice0aRes.data));
                 }
 
-                try {
-                    localStorage.setItem(cacheKey, JSON.stringify({
-                        shadow: rawShadowData,
-                        blocks: rawBlocksData
-                    }));
-                } catch(err) {}
-
+                localStorage.setItem(cacheMap.all, JSON.stringify({ shadow: rawShadowData, blocks: rawBlocksData }));
                 renderLevelMenu();
                 goToStep('step-level');
             } catch(e) {
@@ -2276,7 +2018,6 @@
         function renderLevelMenu() {
             const container = document.getElementById('container-levels');
             container.innerHTML = "";
-
             const userUnlocked = (window.currentUserData && window.currentUserData.unlockedLevels)
                 ? window.currentUserData.unlockedLevels.map(l => l.toUpperCase())
                 : ['0A'];
@@ -2296,7 +2037,6 @@
             krLevels.forEach(item => {
                 const btn = document.createElement('button');
                 const isUnlocked = userUnlocked.includes(item.code.toUpperCase());
-
                 if (isUnlocked) {
                     btn.className = "btn-option";
                     btn.innerText = item.title;
@@ -2304,9 +2044,7 @@
                 } else {
                     btn.className = "btn-option locked";
                     btn.innerHTML = `<i class="fa-solid fa-lock"></i> ${item.title}`;
-                    btn.onclick = () => {
-                        alert(`「${item.title}」未開通！\n請聯繫管理員購買該程度課程。`);
-                    };
+                    btn.onclick = () => alert(`「${item.title}」未開通！\n請聯繫管理員購買該程度課程。`);
                 }
                 container.appendChild(btn);
             });
@@ -2315,8 +2053,7 @@
         function normalizeLevelStr(val) {
             if (!val) return "";
             let s = String(val).trim().toUpperCase().replace(/[\s_\-\/]/g, '');
-            if (s === 'JLPT' || s === 'TOPIK' || s === 'JLPTTOPIK') return 'JLPTTOPIK';
-            return s;
+            return (s === 'JLPT' || s === 'TOPIK' || s === 'JLPTTOPIK') ? 'JLPTTOPIK' : s;
         }
 
         function selectLevel(levelCode, levelTitle) {
@@ -2331,14 +2068,10 @@
         function renderUnits(level) {
             const container = document.getElementById('container-units');
             container.innerHTML = "";
-
             const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawVocabData, ...raw0aChoiceData];
             const targetLevelNormalized = normalizeLevelStr(level);
 
-            const filtered = combinedData.filter(i => {
-                const l = getItemField(i, 'level');
-                return normalizeLevelStr(l) === targetLevelNormalized;
-            });
+            const filtered = combinedData.filter(i => normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized);
             const units = [...new Set(filtered.map(i => getItemField(i, 'unit_id')))].filter(Boolean).sort((a,b) => a - b);
 
             if (units.length > 0) {
@@ -2366,9 +2099,7 @@
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
             const filtered = combinedData.filter(i => {
-                const l = getItemField(i, 'level');
-                const u = getItemField(i, 'unit_id');
-                return normalizeLevelStr(l) === targetLevelNormalized && String(u) === String(unitId);
+                return normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized && String(getItemField(i, 'unit_id')) === String(unitId);
             });
             const lessons = [...new Set(filtered.map(i => getItemField(i, 'lesson')))].filter(Boolean).sort((a,b) => a - b);
 
@@ -2380,46 +2111,29 @@
                     const lesStr = String(les);
                     const unitStr = String(unitId);
 
-                    const hasGrammar = globalGrammarData.some(g => {
-                        return normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
-                               String(getItemField(g, 'unit_id')) === unitStr &&
-                               String(getItemField(g, 'lesson')) === lesStr &&
-                               ((g.dialogs && g.dialogs.length > 0) || 
-                                (g.example && g.example.trim() !== '') ||
-                                (g.ready && g.ready.trim() !== '') ||
-                                (g.question && g.question.trim() !== ''));
-                    });
+                    const matchFilter = (list) => list.some(item => 
+                        normalizeLevelStr(getItemField(item, 'level')) === targetLevelNormalized &&
+                        String(getItemField(item, 'unit_id')) === unitStr &&
+                        String(getItemField(item, 'lesson')) === lesStr
+                    );
 
-                    const hasShadow = rawShadowData.some(i => {
-                        return normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized &&
-                               String(getItemField(i, 'unit_id')) === unitStr &&
-                               String(getItemField(i, 'lesson')) === lesStr;
-                    });
+                    const hasGrammar = globalGrammarData.some(g => 
+                        normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
+                        String(getItemField(g, 'unit_id')) === unitStr &&
+                        String(getItemField(g, 'lesson')) === lesStr &&
+                        ((g.dialogs && g.dialogs.length > 0) || (g.example && g.example.trim()) || (g.ready && g.ready.trim()) || (g.question && g.question.trim()))
+                    );
 
-                    const hasBlocks = rawBlocksData.some(i => {
-                        return normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized &&
-                               String(getItemField(i, 'unit_id')) === unitStr &&
-                               String(getItemField(i, 'lesson')) === lesStr;
-                    });
-
-                    const hasDialogue = rawDialogueData.some(d => {
-                        return normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
-                               String(getItemField(d, 'unit_id')) === unitStr &&
-                               String(getItemField(d, 'lesson')) === lesStr &&
-                               ((d.a1 && d.a1.trim() !== '') || (d.b1 && d.b1.trim() !== ''));
-                    });
-
-                    const hasVocab = rawVocabData.some(v => {
-                        return normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
-                               String(getItemField(v, 'unit_id')) === unitStr &&
-                               String(getItemField(v, 'lesson')) === lesStr;
-                    });
-
-                    const has0aChoice = raw0aChoiceData.some(v => {
-                        return normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
-                               String(getItemField(v, 'unit_id')) === unitStr &&
-                               String(getItemField(v, 'lesson')) === lesStr;
-                    });
+                    const hasShadow = matchFilter(rawShadowData);
+                    const hasBlocks = matchFilter(rawBlocksData);
+                    const hasDialogue = rawDialogueData.some(d => 
+                        normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
+                        String(getItemField(d, 'unit_id')) === unitStr &&
+                        String(getItemField(d, 'lesson')) === lesStr &&
+                        ((d.a1 && d.a1.trim()) || (d.b1 && d.b1.trim()))
+                    );
+                    const hasVocab = matchFilter(rawVocabData);
+                    const has0aChoice = matchFilter(raw0aChoiceData);
 
                     const card = document.createElement('div');
                     card.className = "lesson-card-item";
@@ -2433,11 +2147,8 @@
 
                     const createActionButton = (mode, label, defaultClass = '') => {
                         const btn = document.createElement('button');
-                        const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${les}_${mode}`;
-                        const isCompleted = completedList.includes(lessonKey);
-
+                        const isCompleted = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${les}_${mode}`);
                         btn.className = `btn-lesson-action ${defaultClass}`;
-                        
                         if (isCompleted) {
                             btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${label}`;
                             btn.style.backgroundColor = '#f59e0b';
@@ -2446,29 +2157,18 @@
                         } else {
                             btn.innerHTML = label;
                         }
-
                         btn.onclick = () => selectLessonAndMode(les, mode);
                         return btn;
                     };
 
-                    if (hasGrammar) {
-                        btnGroup.appendChild(createActionButton('grammar', '📖 語法', 'btn-grammar-lesson'));
-                    }
-                    if (hasShadow) {
-                        btnGroup.appendChild(createActionButton('shadow', '🎙 跟讀'));
-                    }
-                    if (hasBlocks) {
-                        btnGroup.appendChild(createActionButton('blocks', '🧩 重組'));
-                    }
-                    if (hasDialogue) {
-                        btnGroup.appendChild(createActionButton('sentence_chat', '🗣 句子聊天挑戰', 'btn-chat-lesson'));
-                    }
-
+                    if (hasGrammar) btnGroup.appendChild(createActionButton('grammar', '📖 語法', 'btn-grammar-lesson'));
+                    if (hasShadow) btnGroup.appendChild(createActionButton('shadow', '🎙 跟讀'));
+                    if (hasBlocks) btnGroup.appendChild(createActionButton('blocks', '🧩 重組'));
+                    if (hasDialogue) btnGroup.appendChild(createActionButton('sentence_chat', '🗣 句子聊天挑戰', 'btn-chat-lesson'));
                     if (is0ALevel && has0aChoice) {
                         btnGroup.appendChild(createActionButton('0a_shadow', '🗣 韓語單字跟讀', 'btn-0a-special'));
                         btnGroup.appendChild(createActionButton('0a_choice', '🎯 韓語單字選擇', 'btn-0a-special'));
                     }
-
                     if (hasVocab) {
                         btnGroup.appendChild(createActionButton('vocab_shadow', '🗣 單字跟讀', 'btn-vocab-lesson'));
                         btnGroup.appendChild(createActionButton('vocab_type', '⌨ 單字聽打', 'btn-vocab-lesson'));
@@ -2489,17 +2189,12 @@
             } else {
                 container.innerHTML = `<div style="color: #6b7280; padding: 20px 0;">此單元尚無課堂資料</div>`;
             }
-
             goToStep('step-lesson');
         }
 
         function resetChallengeProgress() {
             passedSubQuestions.clear();
             document.querySelectorAll('.btn-finish-challenge').forEach(btn => btn.style.display = 'none');
-        }
-
-        function getCurrentLessonKey() {
-            return `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_${currentConfig.mode}`;
         }
 
         function checkAndShowFinishButton() {
@@ -2510,7 +2205,7 @@
 
         async function finishCurrentChallenge() {
             stopSpeechRecognition();
-            const lessonKey = getCurrentLessonKey();
+            const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_${currentConfig.mode}`;
             const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
 
             if (completedList.includes(lessonKey)) {
@@ -2521,12 +2216,9 @@
                     completedList.push(lessonKey);
                     window.currentUserData.completedLessons = completedList;
                     await addXP(100);
-                    await db.collection("users").doc(currentUser.uid).update({
-                        completedLessons: completedList
-                    });
+                    await db.collection("users").doc(currentUser.uid).update({ completedLessons: completedList });
                 }
             }
-
             selectUnit(currentConfig.unit_id);
         }
 
@@ -2536,9 +2228,7 @@
             currentConfig.mode = mode;
             resetChallengeProgress();
 
-            if (currentUser) {
-                ProgressModel.updateUnitProgress(currentUser.uid, currentConfig.unit_id, lesson);
-            }
+            if (currentUser) ProgressModel.updateUnitProgress(currentUser.uid, currentConfig.unit_id, lesson);
 
             if (mode === 'grammar') {
                 const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
@@ -2548,12 +2238,7 @@
                     String(getItemField(g, 'lesson')) === String(lesson)
                 );
 
-                if (matchGrammar && (
-                    (matchGrammar.dialogs && matchGrammar.dialogs.length > 0) || 
-                    (matchGrammar.example && matchGrammar.example.trim() !== '') ||
-                    (matchGrammar.ready && matchGrammar.ready.trim() !== '') ||
-                    (matchGrammar.question && matchGrammar.question.trim() !== '')
-                )) {
+                if (matchGrammar && ((matchGrammar.dialogs && matchGrammar.dialogs.length) || matchGrammar.example || matchGrammar.ready || matchGrammar.question)) {
                     startGrammarChallenge(matchGrammar);
                 } else {
                     alert("此課堂目前沒有設定獨立語法觀念喔！");
@@ -2569,7 +2254,7 @@
             }
         }
 
-        // ==================== 0A 專屬韓語單字挑戰邏輯 ====================
+        // ==================== 0A 專屬韓語單字挑戰 ====================
 
         function start0aSpecialChallenge(specialMode) {
             stopSpeechRecognition();
@@ -2586,22 +2271,17 @@
             vocabIndex = 0;
             totalChallengeQuestions = vocabQuestions.length;
             const modeTitle = specialMode === '0a_shadow' ? '🗣 韓語單字跟讀 (0A專屬)' : '🎯 韓語單字選擇 (0A專屬)';
+            document.querySelectorAll('.lbl-quiz-info').forEach(e => {
+                e.innerText = `韓文 | Level 0A | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (${modeTitle})`;
+            });
 
-            const infoText = `韓文 | Level 0A | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (${modeTitle})`;
-            document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
-
-            if (specialMode === '0a_shadow') {
-                goToStep('step-quiz-vocab-shadow');
-            } else {
-                goToStep('step-quiz-vocab-choice');
-            }
-
+            goToStep(specialMode === '0a_shadow' ? 'step-quiz-vocab-shadow' : 'step-quiz-vocab-choice');
             display0aQuestion();
         }
 
         function display0aQuestion() {
             stopSpeechRecognition();
-            if (!vocabQuestions || vocabQuestions.length === 0) return;
+            if (!vocabQuestions.length) return;
 
             const item = vocabQuestions[vocabIndex];
             const total = vocabQuestions.length;
@@ -2616,12 +2296,8 @@
                 if (item.kr_pron) pronParts.push(`音標: [${item.kr_pron}]`);
                 if (item.pos_zh) pronParts.push(`(${item.pos_zh})`);
 
-                if (pronParts.length > 0) {
-                    subElem.innerText = pronParts.join(' ');
-                    subElem.style.display = 'block';
-                } else {
-                    subElem.style.display = 'none';
-                }
+                subElem.innerText = pronParts.join(' ');
+                subElem.style.display = pronParts.length ? 'block' : 'none';
 
                 document.getElementById('lbl-vocab-translation').innerText = "";
                 document.getElementById('lbl-vocab-recognized-text').innerText = "-";
@@ -2633,9 +2309,7 @@
 
             } else if (currentConfig.mode === '0a_choice') {
                 document.getElementById('lbl-vocab-choice-progress').innerText = `${vocabIndex + 1} / ${total}`;
-                
-                const targetTextElem = document.getElementById('lbl-vocab-choice-text');
-                targetTextElem.innerText = "??? (聽音選擇韓文單字)";
+                document.getElementById('lbl-vocab-choice-text').innerText = "??? (聽音選擇韓文單字)";
 
                 const audioPlayerBox = document.getElementById('box-0a-audio-player');
                 if (audioPlayerBox) audioPlayerBox.style.display = 'block';
@@ -2652,11 +2326,7 @@
 
                 let choices = (item.choice || '').split('/').map(s => s.trim()).filter(Boolean);
                 const correctKoreanWord = (item.text || '').trim();
-                
-                if (correctKoreanWord && !choices.includes(correctKoreanWord)) {
-                    choices.push(correctKoreanWord);
-                }
-                
+                if (correctKoreanWord && !choices.includes(correctKoreanWord)) choices.push(correctKoreanWord);
                 choices = shuffleArray(choices);
 
                 choices.forEach(kText => {
@@ -2669,31 +2339,25 @@
 
                 document.getElementById('btn-vocab-choice-prev').disabled = vocabIndex === 0;
                 document.getElementById('btn-vocab-choice-next').disabled = vocabIndex === total - 1;
-
-                setTimeout(() => {
-                    playVocabAudio();
-                }, 300);
+                setTimeout(() => playVocabAudio(), 300);
             }
         }
 
         function get0aTranslationByNativeLang(item) {
             if (!item) return "";
-            if (currentConfig.lang === 'en') return item.en || item.zh_tw || "";
-            if (currentConfig.lang === 'ja') return item.ja || item.zh_tw || "";
-            return item.zh_tw || "";
+            return (currentConfig.lang === 'en') ? (item.en || item.zh_tw || "") :
+                   (currentConfig.lang === 'ja') ? (item.ja || item.zh_tw || "") : (item.zh_tw || "");
         }
 
         function check0aChoiceAnswer(selectedKoreanText) {
             const item = vocabQuestions[vocabIndex];
-            const correctWord = (item.text || '').trim();
             const scoreBadge = document.getElementById('lbl-vocab-choice-score');
             const targetTextElem = document.getElementById('lbl-vocab-choice-text');
             const choiceSubElem = document.getElementById('lbl-vocab-choice-sub');
 
-            if (selectedKoreanText.trim() === correctWord) {
+            if (selectedKoreanText.trim() === (item.text || '').trim()) {
                 scoreBadge.innerText = "🎉 答對了！";
                 scoreBadge.style.color = "#58cc02";
-                
                 targetTextElem.innerText = item.text || "";
 
                 const nativeTrans = get0aTranslationByNativeLang(item);
@@ -2702,10 +2366,8 @@
                 if (item.pos_zh) pronParts.push(`(${item.pos_zh})`);
                 if (nativeTrans) pronParts.push(`💡 翻譯：${nativeTrans}`);
 
-                if (pronParts.length > 0) {
-                    choiceSubElem.innerText = pronParts.join(' ');
-                    choiceSubElem.style.display = 'block';
-                }
+                choiceSubElem.innerText = pronParts.join(' ');
+                choiceSubElem.style.display = pronParts.length ? 'block' : 'none';
 
                 playVocabAudio();
                 passedSubQuestions.add(vocabIndex);
@@ -2716,12 +2378,11 @@
             }
         }
 
-        // ==================== 🌟 句子聊天挑戰邏輯 ====================
+        // ==================== 句子聊天挑戰邏輯 ====================
 
         function startSentenceChatChallenge() {
             stopSpeechRecognition();
             chatRounds = [];
-
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
             const rows = rawDialogueData.filter(d => 
@@ -2733,28 +2394,18 @@
             rows.forEach((d, idx) => {
                 const aText = (d.a1 || '').trim();
                 const bText = (d.b1 || '').trim();
-                const axText = (d.a1x || aText).trim();
-                const bxText = (d.bx1 || bText).trim();
-
-                const aAudio = d.a1_audio || d.audio_url || '';
-                const bAudio = d.b1_audio || d.audio_url || '';
-
-                const hintZh = d.hint_zh || '';
-                const hintEn = d.hint_en || '';
-                const hintJp = d.hint_jp || '';
-
                 if (aText || bText) {
                     chatRounds.push({
                         roundNum: idx + 1,
                         aText: aText,
                         bText: bText,
-                        axText: axText,
-                        bxText: bxText,
-                        aAudio: aAudio,
-                        bAudio: bAudio,
-                        hintZh: hintZh,
-                        hintEn: hintEn,
-                        hintJp: hintJp
+                        axText: (d.a1x || aText).trim(),
+                        bxText: (d.bx1 || bText).trim(),
+                        aAudio: d.a1_audio || d.audio_url || '',
+                        bAudio: d.b1_audio || d.audio_url || '',
+                        hintZh: d.hint_zh || '',
+                        hintEn: d.hint_en || '',
+                        hintJp: d.hint_jp || ''
                     });
                 }
             });
@@ -2767,8 +2418,9 @@
             isChatChallengeMode = false;
 
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
-            const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (🗣 句子聊天挑戰)`;
-            document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
+            document.querySelectorAll('.lbl-quiz-info').forEach(e => {
+                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (🗣 句子聊天挑戰)`;
+            });
 
             updateChallengeModeButtonUI();
             switchChatRole('A');
@@ -2778,10 +2430,7 @@
         function switchChatRole(role) {
             stopSpeechRecognition();
             chatRole = role;
-            ['a', 'b'].forEach(r => {
-                const btn = document.getElementById(`btn-chat-role-${r.toLowerCase()}`);
-                if (btn) btn.classList.remove('active');
-            });
+            ['a', 'b'].forEach(r => document.getElementById(`btn-chat-role-${r}`).classList.remove('active'));
             document.getElementById(`btn-chat-role-${role.toLowerCase()}`).classList.add('active');
             chatRoundIndex = 0;
             displayChatRound();
@@ -2796,18 +2445,13 @@
         function updateChallengeModeButtonUI() {
             const btn = document.getElementById('btn-toggle-keywords');
             if (!btn) return;
-            if (isChatChallengeMode) {
-                btn.innerHTML = `<i class="fa-solid fa-fire"></i> 挑戰模式中 (點擊關閉)`;
-                btn.classList.add('active');
-            } else {
-                btn.innerHTML = `<i class="fa-solid fa-bolt"></i> 開啟挑戰模式`;
-                btn.classList.remove('active');
-            }
+            btn.innerHTML = isChatChallengeMode ? `<i class="fa-solid fa-fire"></i> 挑戰模式中 (點擊關閉)` : `<i class="fa-solid fa-bolt"></i> 開啟挑戰模式`;
+            btn.classList.toggle('active', isChatChallengeMode);
         }
 
         function displayChatRound(autoPlayOpponent = true) {
             stopSpeechRecognition();
-            if (!chatRounds || chatRounds.length === 0) return;
+            if (!chatRounds.length) return;
 
             chatRoundPassed = false;
             const curRound = chatRounds[chatRoundIndex];
@@ -2816,7 +2460,6 @@
             document.getElementById('lbl-chat-progress').innerText = `${chatRoundIndex + 1} / ${total}`;
             document.getElementById('btn-chat-prev').disabled = chatRoundIndex === 0;
             document.getElementById('btn-chat-next').disabled = chatRoundIndex === total - 1;
-
             document.getElementById('lbl-chat-recognized-text').innerText = "-";
             document.getElementById('lbl-chat-score').innerText = "判定結果：--";
             document.getElementById('lbl-chat-score').style.color = "#58cc02";
@@ -2827,32 +2470,17 @@
             const transElem = document.getElementById('lbl-chat-translation');
             const playAudioBtn = document.getElementById('btn-chat-play-audio');
 
-            if (playAudioBtn) {
-                playAudioBtn.style.display = isChatChallengeMode ? 'none' : 'flex';
-            }
+            if (playAudioBtn) playAudioBtn.style.display = isChatChallengeMode ? 'none' : 'flex';
 
             if (chatRole === 'A') {
                 partnerBubble.style.display = 'none';
-
                 if (isChatChallengeMode) {
                     targetTextElem.innerText = "??? (挑戰模式中，請念出完整句子)";
                     transElem.innerText = `【角色 A】挑戰模式：請參考下方關鍵字提示回答：`;
+                    const activeHint = (currentConfig.lang === 'en') ? (curRound.hintEn || curRound.hintZh) :
+                                       (currentConfig.lang === 'ja') ? (curRound.hintJp || curRound.hintZh) : curRound.hintZh;
 
-                    let activeHint = curRound.hintZh;
-                    let hintTitleText = "💡 提示：";
-
-                    if (currentConfig.lang === 'en') {
-                        activeHint = curRound.hintEn || curRound.hintZh;
-                        hintTitleText = "💡 Keyword Hint (EN):";
-                    } else if (currentConfig.lang === 'ja') {
-                        activeHint = curRound.hintJp || curRound.hintZh;
-                        hintTitleText = "💡 キーワードヒント (JP):";
-                    } else {
-                        hintTitleText = "💡 關鍵字提示 (中文)：";
-                    }
-
-                    if (activeHint && activeHint.trim() !== '') {
-                        document.getElementById('lbl-chat-a-hint-title').innerText = hintTitleText;
+                    if (activeHint && activeHint.trim()) {
                         document.getElementById('lbl-chat-a-hint-text').innerText = activeHint.trim();
                         hintBubble.style.display = 'block';
                     } else {
@@ -2863,51 +2491,23 @@
                     targetTextElem.innerText = curRound.axText || curRound.aText;
                     transElem.innerText = `【角色 A】請依關鍵字提示念出句子：`;
                 }
-
             } else {
                 hintBubble.style.display = 'none';
+                partnerBubble.style.display = isChatChallengeMode ? 'none' : 'block';
+                document.getElementById('lbl-partner-title').innerText = `對方 (Speaker A)：`;
+                document.getElementById('lbl-partner-text').innerText = curRound.aText;
 
-                if (isChatChallengeMode) {
-                    partnerBubble.style.display = 'none';
-                } else {
-                    partnerBubble.style.display = 'block';
-                    document.getElementById('lbl-partner-title').innerText = `對方 (Speaker A)：`;
-                    document.getElementById('lbl-partner-text').innerText = curRound.aText;
-                }
-
-                let displayText = isChatChallengeMode ? "??? (聽取對方語音後直接回應)" : (curRound.bxText || curRound.bText);
-                targetTextElem.innerText = displayText;
+                targetTextElem.innerText = isChatChallengeMode ? "??? (聽取對方語音後直接回應)" : (curRound.bxText || curRound.bText);
                 transElem.innerText = isChatChallengeMode ? `【角色 B】挑戰模式：請聽 Speaker A 語音並念出回答：` : `【角色 B】請聽取 Speaker A 語音並念出回答：`;
 
-                if (autoPlayOpponent) {
-                    setTimeout(() => {
-                        playOpponentAudio(curRound.aAudio, curRound.aText);
-                    }, 350);
-                }
-            }
-        }
-
-        function playOpponentAudio(audioUrl, fallbackText) {
-            stopSpeechRecognition();
-            if (audioUrl && audioUrl.trim() !== '') {
-                const audio = new Audio(audioUrl);
-                audio.playbackRate = 0.85;
-                audio.play().catch(() => speakTTS(fallbackText, 0.85));
-            } else {
-                speakTTS(fallbackText, 0.85);
+                if (autoPlayOpponent) setTimeout(() => playAudioOrTTS(curRound.aAudio, curRound.aText, 0.85), 350);
             }
         }
 
         function playChatTargetAudio() {
-            stopSpeechRecognition();
             const curRound = chatRounds[chatRoundIndex];
             if (!curRound) return;
-
-            if (chatRole === 'A') {
-                playOpponentAudio(curRound.aAudio, curRound.aText);
-            } else {
-                playOpponentAudio(curRound.bAudio, curRound.bText);
-            }
+            playAudioOrTTS(chatRole === 'A' ? curRound.aAudio : curRound.bAudio, chatRole === 'A' ? curRound.aText : curRound.bText, 0.85);
         }
 
         function handleChatSpeechSuccess(userSpeech) {
@@ -2927,11 +2527,7 @@
                 partnerBubble.style.display = 'block';
                 document.getElementById('lbl-partner-title').innerText = `對方 (Speaker B) 回覆：`;
                 document.getElementById('lbl-partner-text').innerText = curRound.bText;
-
-                setTimeout(() => {
-                    playOpponentAudio(curRound.bAudio, curRound.bText);
-                }, 400);
-
+                setTimeout(() => playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85), 400);
             } else {
                 document.getElementById('lbl-chat-score').innerText = "🎉 回應合格！";
                 document.getElementById('lbl-chat-score').style.color = "#58cc02";
@@ -2943,27 +2539,15 @@
             }
         }
 
-        function prevChatRound() {
-            if (chatRoundIndex > 0) {
-                chatRoundIndex--;
-                displayChatRound();
-            }
-        }
-
-        function nextChatRound() {
-            if (chatRoundIndex < chatRounds.length - 1) {
-                chatRoundIndex++;
-                displayChatRound();
-            }
-        }
+        function prevChatRound() { if (chatRoundIndex > 0) { chatRoundIndex--; displayChatRound(); } }
+        function nextChatRound() { if (chatRoundIndex < chatRounds.length - 1) { chatRoundIndex++; displayChatRound(); } }
 
         // ==================== 一般單字測驗邏輯 ====================
 
         function getTranslationByLang(item) {
             if (!item) return "";
-            if (currentConfig.lang === 'en') return item.en || item.zh_tw || "";
-            if (currentConfig.lang === 'ja') return item.ja || item.zh_tw || "";
-            return item.zh_tw || "";
+            return (currentConfig.lang === 'en') ? (item.en || item.zh_tw || "") :
+                   (currentConfig.lang === 'ja') ? (item.ja || item.zh_tw || "") : (item.zh_tw || "");
         }
 
         function startVocabChallenge(vocabMode) {
@@ -2981,28 +2565,22 @@
             vocabIndex = 0;
             totalChallengeQuestions = vocabQuestions.length;
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
-            const modeTitleMap = {
-                'vocab_shadow': '🗣 單字跟讀',
-                'vocab_type': '⌨ 單字聽打',
-                'vocab_choice': '🎯 單字選擇'
-            };
+            const modeTitleMap = { 'vocab_shadow': '🗣 單字跟讀', 'vocab_type': '⌨ 單字聽打', 'vocab_choice': '🎯 單字選擇' };
 
-            const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (${modeTitleMap[vocabMode]})`;
-            document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
+            document.querySelectorAll('.lbl-quiz-info').forEach(e => {
+                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (${modeTitleMap[vocabMode]})`;
+            });
 
             const audioPlayerBox = document.getElementById('box-0a-audio-player');
             if (audioPlayerBox) audioPlayerBox.style.display = 'none';
 
-            if (vocabMode === 'vocab_shadow') goToStep('step-quiz-vocab-shadow');
-            else if (vocabMode === 'vocab_type') goToStep('step-quiz-vocab-type');
-            else if (vocabMode === 'vocab_choice') goToStep('step-quiz-vocab-choice');
-
+            goToStep(vocabMode === 'vocab_shadow' ? 'step-quiz-vocab-shadow' : (vocabMode === 'vocab_type' ? 'step-quiz-vocab-type' : 'step-quiz-vocab-choice'));
             displayVocabQuestion();
         }
 
         function displayVocabQuestion() {
             stopSpeechRecognition();
-            if (!vocabQuestions || vocabQuestions.length === 0) return;
+            if (!vocabQuestions.length) return;
 
             const currentVocab = vocabQuestions[vocabIndex];
             const total = vocabQuestions.length;
@@ -3045,7 +2623,6 @@
                 let choices = (currentVocab.choice || '').split('/').map(s => s.trim()).filter(Boolean);
                 const correctAns = (currentVocab.zh_tw || '').trim();
                 if (correctAns && !choices.includes(correctAns)) choices.push(correctAns);
-                
                 choices = shuffleArray(choices);
 
                 choices.forEach(cText => {
@@ -3062,32 +2639,21 @@
         }
 
         function playVocabAudio() {
-            stopSpeechRecognition();
             const currentVocab = vocabQuestions[vocabIndex];
             if (!currentVocab) return;
-            if (currentVocab.audio_url && currentVocab.audio_url.trim() !== '') {
-                const audio = new Audio(currentVocab.audio_url);
-                audio.playbackRate = 0.85;
-                audio.play().catch(() => speakTTS(currentVocab.text, 0.85));
-            } else {
-                speakTTS(currentVocab.text, 0.85);
-            }
+            playAudioOrTTS(currentVocab.audio_url, currentVocab.text, 0.85);
         }
 
         function checkVocabTypeAnswer() {
             const currentVocab = vocabQuestions[vocabIndex];
-            const userText = cleanStringForCompare(document.getElementById('input-vocab-type').value);
-            const targetText = cleanStringForCompare(currentVocab.text);
-
+            const isMatch = cleanStringForCompare(document.getElementById('input-vocab-type').value) === cleanStringForCompare(currentVocab.text);
             const scoreBadge = document.getElementById('lbl-vocab-type-score');
-            const transLbl = document.getElementById('lbl-vocab-type-translation');
-            const typeTextElem = document.getElementById('lbl-vocab-type-text');
 
-            if (userText === targetText) {
+            if (isMatch) {
                 scoreBadge.innerText = "🎉 完全正確！";
                 scoreBadge.style.color = "#58cc02";
-                typeTextElem.style.display = 'block';
-                transLbl.innerText = `💡 翻譯：${getTranslationByLang(currentVocab)}`;
+                document.getElementById('lbl-vocab-type-text').style.display = 'block';
+                document.getElementById('lbl-vocab-type-translation').innerText = `💡 翻譯：${getTranslationByLang(currentVocab)}`;
                 playVocabAudio();
                 passedSubQuestions.add(vocabIndex);
                 checkAndShowFinishButton();
@@ -3117,15 +2683,13 @@
         function prevVocabQuestion() { 
             if (vocabIndex > 0) { 
                 vocabIndex--; 
-                if (currentConfig.mode.startsWith('0a_')) display0aQuestion();
-                else displayVocabQuestion(); 
+                if (currentConfig.mode.startsWith('0a_')) display0aQuestion(); else displayVocabQuestion(); 
             } 
         }
         function nextVocabQuestion() { 
             if (vocabIndex < vocabQuestions.length - 1) { 
                 vocabIndex++; 
-                if (currentConfig.mode.startsWith('0a_')) display0aQuestion();
-                else displayVocabQuestion(); 
+                if (currentConfig.mode.startsWith('0a_')) display0aQuestion(); else displayVocabQuestion(); 
             } 
         }
 
@@ -3137,75 +2701,47 @@
             currentDialogIndex = 0;
             
             document.getElementById('lbl-grammar-info').innerText = `語法教室 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Lesson ${currentConfig.lesson}`;
-            document.getElementById('area-grammar-all-history').style.display = 'none';
-            document.getElementById('area-grammar-example').style.display = 'none';
-            document.getElementById('area-grammar-ready').style.display = 'none';
-            document.getElementById('area-grammar-quiz').style.display = 'none';
+            ['area-grammar-all-history', 'area-grammar-example', 'area-grammar-ready', 'area-grammar-quiz'].forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
 
-            if (grammarData.dialogs && grammarData.dialogs.length > 0) {
+            if (grammarData.dialogs && grammarData.dialogs.length) {
                 currentGrammarItem.structuredDialogs = grammarData.dialogs.map((d, idx) => {
                     if (typeof d === 'object' && d !== null && d.text !== undefined) {
-                        return {
-                            gramNum: Number(d.gramNum) || (idx + 1),
-                            text: cleanInitialWhitespace(String(d.text))
-                        };
+                        return { gramNum: Number(d.gramNum) || (idx + 1), text: cleanInitialWhitespace(String(d.text)) };
                     }
-                    let matchedGramNum = null;
+                    let matched = null;
                     const dClean = String(d).trim();
                     for (let g = 1; g <= 10; g++) {
-                        const originalVal = grammarData[`gram${g}`];
-                        if (originalVal && String(originalVal).trim() === dClean) {
-                            matchedGramNum = g;
-                            break;
-                        }
+                        if (String(grammarData[`gram${g}`] || '').trim() === dClean) { matched = g; break; }
                     }
-                    return {
-                        gramNum: matchedGramNum !== null ? matchedGramNum : (idx + 1),
-                        text: cleanInitialWhitespace(dClean)
-                    };
+                    return { gramNum: matched !== null ? matched : (idx + 1), text: cleanInitialWhitespace(dClean) };
                 });
             } else {
                 currentGrammarItem.structuredDialogs = [];
             }
 
-            if (currentGrammarItem.structuredDialogs && currentGrammarItem.structuredDialogs.length > 0) {
+            if (currentGrammarItem.structuredDialogs.length) {
                 document.getElementById('area-grammar-dialog').style.display = 'block';
                 showCurrentGrammarDialog();
-            } else if (grammarData.example && grammarData.example.trim() !== '') {
+            } else if (grammarData.example && grammarData.example.trim()) {
                 showExampleArea();
-            } else if (grammarData.ready && grammarData.ready.trim() !== '') {
+            } else if (grammarData.ready && grammarData.ready.trim()) {
                 showReadyArea();
             } else {
                 showGrammarQuizArea();
             }
-
             goToStep('step-grammar');
         }
 
         function cleanInitialWhitespace(str) {
-            if (!str) return "";
-            return str.replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
+            return (str || '').replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
         }
 
         function playGrammarAudio(gramNum, dialogText) {
-            stopSpeechRecognition();
             if (!currentGrammarItem) return;
-            let audioUrl = "";
-            if (gramNum === 2) {
-                audioUrl = currentGrammarItem.gram2_audio || "";
-            } else if (gramNum === 3) {
-                audioUrl = currentGrammarItem.gram3_audio || "";
-            }
-
-            const textToSpeak = dialogText ? cleanInitialWhitespace(dialogText) : "";
-
-            if (audioUrl && audioUrl.trim() !== '') {
-                const audio = new Audio(audioUrl);
-                audio.playbackRate = 0.85;
-                audio.play().catch(() => { if (textToSpeak) speakTTS(textToSpeak, 0.85); });
-            } else if (textToSpeak) {
-                speakTTS(textToSpeak, 0.85);
-            }
+            const audioUrl = (gramNum === 2) ? (currentGrammarItem.gram2_audio || "") : (gramNum === 3 ? (currentGrammarItem.gram3_audio || "") : "");
+            playAudioOrTTS(audioUrl, dialogText ? cleanInitialWhitespace(dialogText) : "", 0.85);
         }
 
         function showCurrentGrammarDialog() {
@@ -3216,15 +2752,9 @@
 
             const nextBtn = document.getElementById('btn-next-dialog');
             if (currentDialogIndex === total - 1) {
-                if (currentGrammarItem.example && currentGrammarItem.example.trim() !== '') {
-                    nextBtn.innerHTML = `看例句 <i class="fa-solid fa-arrow-right"></i>`;
-                } else if (currentGrammarItem.ready && currentGrammarItem.ready.trim() !== '') {
-                    nextBtn.innerHTML = `準備測驗 <i class="fa-solid fa-arrow-right"></i>`;
-                } else if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') {
-                    nextBtn.innerHTML = `進入測驗 <i class="fa-solid fa-pen-to-square"></i>`;
-                } else {
-                    nextBtn.innerHTML = `完成課堂 <i class="fa-solid fa-check"></i>`;
-                }
+                nextBtn.innerHTML = (currentGrammarItem.example && currentGrammarItem.example.trim()) ? `看例句 <i class="fa-solid fa-arrow-right"></i>` :
+                                   (currentGrammarItem.ready && currentGrammarItem.ready.trim()) ? `準備測驗 <i class="fa-solid fa-arrow-right"></i>` :
+                                   (currentGrammarItem.question && currentGrammarItem.question.trim()) ? `進入測驗 <i class="fa-solid fa-pen-to-square"></i>` : `完成課堂 <i class="fa-solid fa-check"></i>`;
             } else {
                 nextBtn.innerHTML = `下一步 <i class="fa-solid fa-arrow-right"></i>`;
             }
@@ -3237,15 +2767,11 @@
 
             if (targetGramNum === 2 || targetGramNum === 3) {
                 audioBtn.style.display = 'block';
-                audioBtn.onclick = (e) => { 
-                    e.stopPropagation(); 
-                    playGrammarAudio(targetGramNum, currentFullDialogText); 
-                };
+                audioBtn.onclick = (e) => { e.stopPropagation(); playGrammarAudio(targetGramNum, currentFullDialogText); };
                 playGrammarAudio(targetGramNum, currentFullDialogText);
             } else {
                 audioBtn.style.display = 'none';
             }
-
             startTypewriter(currentFullDialogText);
         }
 
@@ -3300,9 +2826,9 @@
         function processAfterDialogs() {
             renderGrammarHistoryList();
             document.getElementById('area-grammar-dialog').style.display = 'none';
-            if (currentGrammarItem.example && currentGrammarItem.example.trim() !== '') showExampleArea();
-            else if (currentGrammarItem.ready && currentGrammarItem.ready.trim() !== '') showReadyArea();
-            else if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') showGrammarQuizArea();
+            if (currentGrammarItem.example && currentGrammarItem.example.trim()) showExampleArea();
+            else if (currentGrammarItem.ready && currentGrammarItem.ready.trim()) showReadyArea();
+            else if (currentGrammarItem.question && currentGrammarItem.question.trim()) showGrammarQuizArea();
             else finishCurrentChallenge();
         }
 
@@ -3325,18 +2851,7 @@
                 playBtn.className = 'btn-circle btn-listen';
                 playBtn.style.cssText = "width: 38px; height: 38px; font-size: 0.85rem; flex-shrink: 0;";
                 playBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
-                
-                const audioUrl = audioUrls[idx] || '';
-                playBtn.onclick = () => {
-                    stopSpeechRecognition();
-                    if (audioUrl) {
-                        const audio = new Audio(audioUrl);
-                        audio.playbackRate = 0.85;
-                        audio.play().catch(() => speakTTS(exText, 0.85));
-                    } else {
-                        speakTTS(exText, 0.85);
-                    }
-                };
+                playBtn.onclick = () => playAudioOrTTS(audioUrls[idx] || '', exText, 0.85);
 
                 row.appendChild(textSpan);
                 row.appendChild(playBtn);
@@ -3346,8 +2861,8 @@
 
         function goToReadyPage() {
             document.getElementById('area-grammar-example').style.display = 'none';
-            if (currentGrammarItem.ready && currentGrammarItem.ready.trim() !== '') showReadyArea();
-            else if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') showGrammarQuizArea();
+            if (currentGrammarItem.ready && currentGrammarItem.ready.trim()) showReadyArea();
+            else if (currentGrammarItem.question && currentGrammarItem.question.trim()) showGrammarQuizArea();
             else finishCurrentChallenge();
         }
 
@@ -3360,7 +2875,7 @@
 
         function enterGrammarQuizFromReady() {
             document.getElementById('area-grammar-ready').style.display = 'none';
-            if (currentGrammarItem.question && currentGrammarItem.question.trim() !== '') showGrammarQuizArea();
+            if (currentGrammarItem.question && currentGrammarItem.question.trim()) showGrammarQuizArea();
             else finishCurrentChallenge();
         }
 
@@ -3383,14 +2898,13 @@
         }
 
         function showGrammarQuizArea() {
-            document.getElementById('area-grammar-dialog').style.display = 'none';
-            document.getElementById('area-grammar-example').style.display = 'none';
-            document.getElementById('area-grammar-ready').style.display = 'none';
+            ['area-grammar-dialog', 'area-grammar-example', 'area-grammar-ready'].forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
             document.getElementById('area-grammar-quiz').style.display = 'block';
             document.getElementById('box-grammar-result').style.display = 'none';
 
             renderGrammarHistoryList();
-
             const rawQuestions = currentGrammarItem.question.split('/').map(s => s.trim()).filter(Boolean);
             userGrammarAnswers = new Array(rawQuestions.length).fill('');
             activeBlankIndex = 0;
@@ -3406,10 +2920,7 @@
 
             const cContainer = document.getElementById('container-grammar-choices');
             cContainer.innerHTML = '';
-            let choices = currentGrammarItem.choice.split('/').map(s => s.trim()).filter(Boolean);
-            choices = shuffleArray(choices);
-
-            choices.forEach(opt => {
+            shuffleArray(currentGrammarItem.choice.split('/').map(s => s.trim()).filter(Boolean)).forEach(opt => {
                 const btn = document.createElement('div');
                 btn.className = 'block-chip';
                 btn.innerText = opt;
@@ -3436,8 +2947,7 @@
             if (userGrammarAnswers.includes('')) return alert('請填寫完所有空格後再送出！');
 
             rawQuestions.forEach((qStr, idx) => {
-                const builtSentence = qStr.replace(/__/g, userGrammarAnswers[idx]).replace(/\s+/g, '');
-                if (builtSentence !== correctAnswers[idx]) isAllCorrect = false;
+                if (qStr.replace(/__/g, userGrammarAnswers[idx]).replace(/\s+/g, '') !== correctAnswers[idx]) isAllCorrect = false;
             });
 
             const resultBox = document.getElementById('box-grammar-result');
@@ -3481,15 +2991,12 @@
                 ).map((i, idx) => {
                     let trans = '';
                     if (Array.isArray(i)) {
-                        const langIndexMap = { 'zh': 5, 'en': 6, 'ja': 7 };
-                        const langIdx = langIndexMap[currentConfig.lang] !== undefined ? langIndexMap[currentConfig.lang] : 5;
-                        trans = i[langIdx] || i[5] || '';
+                        const langMap = { 'zh': 5, 'en': 6, 'ja': 7 };
+                        trans = i[langMap[currentConfig.lang] || 5] || '';
                     } else {
-                        trans = currentConfig.lang === 'en' ? (i.en || i.zh_tw || '') :
-                                (currentConfig.lang === 'ja') ? (i.ja || i.kr || i.zh_tw || '') :
-                                (i.zh_tw || i.zh || '');
+                        trans = (currentConfig.lang === 'en') ? (i.en || i.zh_tw || '') :
+                                (currentConfig.lang === 'ja') ? (i.ja || i.kr || i.zh_tw || '') : (i.zh_tw || i.zh || '');
                     }
-
                     return {
                         id: getItemField(i, 'id') || idx + 1,
                         text: Array.isArray(i) ? i[4] : (i.text || ''),
@@ -3507,15 +3014,12 @@
                 ).map((i, idx) => {
                     let trans = '';
                     if (Array.isArray(i)) {
-                        const blockLangIndexMap = { 'zh': 6, 'en': 7, 'ja': 8 };
-                        const bLangIdx = blockLangIndexMap[currentConfig.lang] !== undefined ? blockLangIndexMap[currentConfig.lang] : 6;
-                        trans = i[bLangIdx] || i[6] || '';
+                        const bLangMap = { 'zh': 6, 'en': 7, 'ja': 8 };
+                        trans = i[bLangMap[currentConfig.lang] || 6] || '';
                     } else {
-                        trans = currentConfig.lang === 'en' ? (i.en || i.zh_tw || '') :
-                                (currentConfig.lang === 'ja') ? (i.ja || i.kr || i.zh_tw || '') :
-                                (i.zh_tw || i.zh || '');
+                        trans = (currentConfig.lang === 'en') ? (i.en || i.zh_tw || '') :
+                                (currentConfig.lang === 'ja') ? (i.ja || i.kr || i.zh_tw || '') : (i.zh_tw || i.zh || '');
                     }
-
                     const optRaw = Array.isArray(i) ? i[5] : (i.optionsjson || i.options || '');
                     const opts = typeof optRaw === 'string' ? optRaw.split(',').map(s => s.trim()).filter(Boolean) : (Array.isArray(optRaw) ? optRaw : []);
 
@@ -3532,13 +3036,12 @@
 
             currentIndex = 0;
             totalChallengeQuestions = questions.length;
-            if (questions.length > 0) displayQuestion();
-            else alert("該課堂尚無練習題目！");
+            if (questions.length > 0) displayQuestion(); else alert("該課堂尚無練習題目！");
         }
 
         function displayQuestion() {
             stopSpeechRecognition();
-            if (!questions || questions.length === 0) return;
+            if (!questions.length) return;
             const q = questions[currentIndex];
 
             document.querySelectorAll('.lbl-progress').forEach(e => e.innerText = `${currentIndex + 1} / ${questions.length}`);
@@ -3547,12 +3050,9 @@
                 document.getElementById('lbl-target-text').innerText = q.text || "";
                 document.getElementById('lbl-translation').innerText = q.translation || "";
                 const hintElem = document.getElementById('lbl-hint');
-                if (q.hint && q.hint.trim() !== '') {
-                    hintElem.innerText = `💡 提示：${q.hint.trim()}`;
-                    hintElem.style.display = "inline-block";
-                } else {
-                    hintElem.style.display = "none";
-                }
+                hintElem.innerText = q.hint ? `💡 提示：${q.hint.trim()}` : '';
+                hintElem.style.display = q.hint ? "inline-block" : "none";
+
                 document.getElementById('lbl-recognized-text').innerText = "-";
                 document.getElementById('lbl-score').innerText = "判定結果：--";
                 document.getElementById('btn-prev').disabled = currentIndex === 0;
@@ -3583,7 +3083,6 @@
 
             q.options.forEach((optText, optIdx) => {
                 const isUsed = is0AKorean ? gridBoardCells.includes(optIdx) : selectedBlockIndices.includes(optIdx);
-
                 const btn = document.createElement('div');
                 btn.className = 'block-chip' + (isUsed ? ' used' : '');
                 btn.innerText = optText;
@@ -3611,25 +3110,19 @@
             if (is0AKorean) {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'hangul-grid-board-wrapper';
-
                 const board = document.createElement('div');
                 board.className = 'hangul-grid-board';
 
                 for (let i = 0; i < 27; i++) {
                     const cell = document.createElement('div');
                     cell.className = 'hangul-grid-cell';
-
                     const assignedOptIdx = gridBoardCells[i];
 
                     if (assignedOptIdx !== null) {
                         cell.classList.add('filled');
                         cell.innerText = q.options[assignedOptIdx];
                         cell.title = "點擊收回此字塊";
-                        cell.onclick = () => {
-                            gridBoardCells[i] = null;
-                            selectedTargetGridIndex = i;
-                            renderBlocks();
-                        };
+                        cell.onclick = () => { gridBoardCells[i] = null; selectedTargetGridIndex = i; renderBlocks(); };
                     } else {
                         cell.innerText = "";
                         if (selectedTargetGridIndex === i) {
@@ -3637,18 +3130,12 @@
                             cell.style.backgroundColor = "#e0f2fe";
                         }
                         cell.title = "點擊選取放置位置";
-                        cell.onclick = () => {
-                            selectedTargetGridIndex = i;
-                            renderBlocks();
-                        };
+                        cell.onclick = () => { selectedTargetGridIndex = i; renderBlocks(); };
                     }
-
                     board.appendChild(cell);
                 }
-
                 wrapper.appendChild(board);
                 zoneAnswer.appendChild(wrapper);
-
             } else {
                 selectedBlockIndices.forEach(idx => {
                     const btn = document.createElement('div');
@@ -3667,24 +3154,11 @@
             const q = questions[currentIndex];
             const is0AKorean = (normalizeLevelStr(currentConfig.level) === '0A' && currentConfig.category === 'korean');
             
-            let userSentence = "";
-            if (is0AKorean) {
-                userSentence = gridBoardCells
-                    .filter(idx => idx !== null)
-                    .map(idx => q.options[idx])
-                    .join('');
-            } else {
-                userSentence = selectedBlockIndices.map(i => q.options[i]).join('');
-            }
-
-            const cleanUserSentence = cleanStringForCompare(userSentence);
-            const cleanTargetSentence = cleanStringForCompare(q.fullText);
-            
+            const userSentence = is0AKorean ? gridBoardCells.filter(idx => idx !== null).map(idx => q.options[idx]).join('') : selectedBlockIndices.map(i => q.options[i]).join('');
             const scoreBadge = document.getElementById('lbl-block-score');
 
-            if (cleanUserSentence === cleanTargetSentence) {
-                const voiceTip = (q.voice && q.voice.trim() !== '') ? ` [${q.voice.trim()}]` : '';
-                scoreBadge.innerText = `🎉 完全正確！${voiceTip}`;
+            if (cleanStringForCompare(userSentence) === cleanStringForCompare(q.fullText)) {
+                scoreBadge.innerText = `🎉 完全正確！${(q.voice && q.voice.trim()) ? ` [${q.voice.trim()}]` : ''}`;
                 scoreBadge.style.color = "#58cc02";
                 playBlockAudio();
                 passedSubQuestions.add(currentIndex);
@@ -3696,34 +3170,15 @@
         }
 
         function playBlockAudio() {
-            stopSpeechRecognition();
             const q = questions[currentIndex];
             if (!q) return;
-
-            const textToSpeak = (q.voice && q.voice.trim() !== '') ? q.voice : q.fullText;
-            const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
-            const targetRate = is0ALevel ? 1.0 : 0.85;
-
-            if (q.audioUrl && q.audioUrl.trim() !== '') {
-                const audio = new Audio(q.audioUrl);
-                audio.playbackRate = targetRate;
-                audio.play().catch(() => speakTTS(textToSpeak, targetRate));
-            } else {
-                speakTTS(textToSpeak, targetRate);
-            }
+            const textToSpeak = (q.voice && q.voice.trim()) ? q.voice : q.fullText;
+            playAudioOrTTS(q.audioUrl, textToSpeak, (normalizeLevelStr(currentConfig.level) === '0A') ? 1.0 : 0.85);
         }
 
         function playAudio() {
-            stopSpeechRecognition();
             const q = questions[currentIndex];
-            if (!q) return;
-            if (q.audioUrl && q.audioUrl.trim() !== '') {
-                const audio = new Audio(q.audioUrl);
-                audio.playbackRate = 0.85;
-                audio.play().catch(() => speakTTS(q.text, 0.85));
-            } else {
-                speakTTS(q.text, 0.85);
-            }
+            if (q) playAudioOrTTS(q.audioUrl, q.text, 0.85);
         }
 
         function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; displayQuestion(); } }
@@ -3742,15 +3197,13 @@
         }
 
         function cleanStringForCompare(str) {
-            if (!str) return "";
-            return str.replace(/[.,?!~\s\r\n\t]/g, '').toLowerCase();
+            return (str || '').replace(/[.,?!~\s\r\n\t]/g, '').toLowerCase();
         }
 
         function isSpeechPass(str1, str2) {
             const s1 = cleanStringForCompare(str1);
             const s2 = cleanStringForCompare(str2);
-            if (!s1 || !s2) return false;
-            return s1 === s2 || s1.includes(s2) || s2.includes(s1);
+            return (s1 && s2) ? (s1 === s2 || s1.includes(s2) || s2.includes(s1)) : false;
         }
 
         // ==================== 語音辨識錄音 ====================
@@ -3770,13 +3223,10 @@
             recognition.onstart = () => {
                 isRecording = true;
                 document.querySelectorAll('.btn-record').forEach(b => b.classList.add('recording'));
-                if (currentConfig.mode === 'vocab_shadow' || currentConfig.mode === '0a_shadow') {
-                    document.getElementById('lbl-vocab-recognized-text').innerText = "聆聽中...";
-                } else if (currentConfig.mode === 'sentence_chat') {
-                    document.getElementById('lbl-chat-recognized-text').innerText = "聆聽中...";
-                } else {
-                    document.getElementById('lbl-recognized-text').innerText = "聆聽中...";
-                }
+                const targetLblId = (currentConfig.mode === 'vocab_shadow' || currentConfig.mode === '0a_shadow') ? 'lbl-vocab-recognized-text' :
+                                    (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-recognized-text' : 'lbl-recognized-text';
+                const lbl = document.getElementById(targetLblId);
+                if (lbl) lbl.innerText = "聆聽中...";
             };
 
             recognition.onend = () => stopSpeechRecognition();
@@ -3792,29 +3242,22 @@
                 if (currentConfig.mode === 'sentence_chat') {
                     document.getElementById('lbl-chat-recognized-text').innerText = userSpeech;
                     const curRound = chatRounds[chatRoundIndex];
-                    if (!curRound) return;
-
-                    const expectedFullText = (chatRole === 'A') ? curRound.aText : curRound.bText;
-                    const pass = isSpeechPass(expectedFullText, userSpeech);
-
-                    if (pass) {
-                        handleChatSpeechSuccess(userSpeech);
-                    } else {
-                        document.getElementById('lbl-chat-score').innerText = "⚠ 發音未達標，請再念一次！";
-                        document.getElementById('lbl-chat-score').style.color = "#ff4b4b";
+                    if (curRound) {
+                        const expectedText = (chatRole === 'A') ? curRound.aText : curRound.bText;
+                        if (isSpeechPass(expectedText, userSpeech)) {
+                            handleChatSpeechSuccess(userSpeech);
+                        } else {
+                            document.getElementById('lbl-chat-score').innerText = "⚠ 發音未達標，請再念一次！";
+                            document.getElementById('lbl-chat-score').style.color = "#ff4b4b";
+                        }
                     }
-
                 } else if (currentConfig.mode === 'vocab_shadow' || currentConfig.mode === '0a_shadow') {
                     document.getElementById('lbl-vocab-recognized-text').innerText = userSpeech;
                     const currentVocab = vocabQuestions[vocabIndex];
-                    const targetText = currentVocab ? (currentVocab.text || "") : "";
-                    const pass = isSpeechPass(targetText, userSpeech);
-
-                    if (pass) {
+                    if (isSpeechPass(currentVocab ? currentVocab.text : "", userSpeech)) {
                         document.getElementById('lbl-vocab-score').innerText = "🎉 發音合格！";
                         document.getElementById('lbl-vocab-score').style.color = "#58cc02";
-                        
-                        const trans = currentConfig.mode === '0a_shadow' ? get0aTranslationByNativeLang(currentVocab) : getTranslationByLang(currentVocab);
+                        const trans = (currentConfig.mode === '0a_shadow') ? get0aTranslationByNativeLang(currentVocab) : getTranslationByLang(currentVocab);
                         document.getElementById('lbl-vocab-translation').innerText = `💡 翻譯：${trans}`;
                         passedSubQuestions.add(vocabIndex);
                         checkAndShowFinishButton();
@@ -3822,14 +3265,10 @@
                         document.getElementById('lbl-vocab-score').innerText = "⚠ 發音未達標，再試一次！";
                         document.getElementById('lbl-vocab-score').style.color = "#ff4b4b";
                     }
-
                 } else {
                     document.getElementById('lbl-recognized-text').innerText = userSpeech;
                     const currentQ = questions[currentIndex];
-                    const targetText = currentQ ? (currentQ.text || "") : "";
-                    const pass = isSpeechPass(targetText, userSpeech);
-
-                    if (pass) {
+                    if (isSpeechPass(currentQ ? currentQ.text : "", userSpeech)) {
                         document.getElementById('lbl-score').innerText = "🎉 發音合格！";
                         document.getElementById('lbl-score').style.color = "#58cc02";
                         passedSubQuestions.add(currentIndex);
@@ -3839,7 +3278,6 @@
                         document.getElementById('lbl-score').style.color = "#ff4b4b";
                     }
                 }
-
                 stopSpeechRecognition();
             };
 
@@ -3870,12 +3308,8 @@
         }
 
         window.onload = () => {
-            const savedLang = localStorage.getItem('preferred_user_lang') || 'zh';
-            setUserLang(savedLang);
-
-            const savedCategory = localStorage.getItem('preferred_learn_category') || 'korean';
-            setLearnCategory(savedCategory);
-
+            setUserLang(localStorage.getItem('preferred_user_lang') || 'zh');
+            setLearnCategory(localStorage.getItem('preferred_learn_category') || 'korean');
             goToStep('step-level');
         };
     </script>
