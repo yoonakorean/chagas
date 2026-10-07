@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>voice學習系統</title>
+    <title>v無對話問答習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -267,9 +267,7 @@
         }
         .btn-lesson-action:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
         .btn-lesson-action.btn-grammar-lesson:hover { border-color: var(--duo-purple); color: var(--duo-purple); }
-        .btn-lesson-action.btn-dialogue-lesson:hover { border-color: var(--duo-orange); color: var(--duo-orange); }
         .btn-lesson-action.btn-chat-lesson:hover { border-color: #ec4899; color: #ec4899; }
-        .btn-lesson-action.btn-qna-lesson:hover { border-color: #06b6d4; color: #06b6d4; }
         .btn-lesson-action.btn-vocab-lesson:hover { border-color: #10b981; color: #10b981; }
         .btn-lesson-action.btn-0a-special:hover { border-color: var(--duo-teal); color: var(--duo-teal); }
 
@@ -376,7 +374,7 @@
         .block-chip:active { transform: translateY(2px); border-bottom-width: 2px; }
         .block-chip.used { opacity: 0.3; pointer-events: none; background: #f3f4f6; }
 
-        /* 🌟 3 * 9 自由拼字棋盤樣式 (3 Rows x 9 Columns) */
+        /* 3 * 9 自由拼字棋盤樣式 */
         .hangul-grid-board-wrapper {
             width: 100%;
             overflow-x: auto;
@@ -439,12 +437,6 @@
         }
         .btn-vocab-choice:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
 
-        .dialogue-sub-nav { display: flex; gap: 6px; margin-bottom: 8px; justify-content: center; flex-wrap: wrap; }
-        .btn-dialogue-mode {
-            padding: 5px 10px; font-size: 0.78rem; border-radius: 8px; border: 1px solid #d1d5db;
-            background: #f9fafb; cursor: pointer; font-weight: bold;
-        }
-        .btn-dialogue-mode.active { background: var(--duo-orange); color: white; border-color: #d97706; }
         .role-switch-box { display: flex; justify-content: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
         .btn-role {
             padding: 5px 12px; border-radius: 20px; border: 2px solid #e5e7eb; background: white;
@@ -460,32 +452,6 @@
         .btn-keyword-toggle:hover { background: #e2e8f0; }
         .btn-keyword-toggle.active {
             background: #fee2e2; border-color: #f87171; color: #dc2626;
-        }
-
-        .chat-window {
-            background: #f0f2f5; border: 2px solid #e5e7eb; border-radius: 16px; height: 280px;
-            overflow-y: auto; padding: 10px; margin-bottom: 10px; display: flex;
-            flex-direction: column; gap: 10px; text-align: left; scroll-behavior: smooth;
-        }
-        .chat-bubble-row { display: flex; flex-direction: column; max-width: 86%; animation: popIn 0.25s ease-out; }
-        @keyframes popIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        .chat-bubble-row.speaker-A { align-self: flex-start; }
-        .chat-bubble-row.speaker-B { align-self: flex-end; }
-        .chat-speaker-label { font-size: 0.7rem; color: #6b7280; margin-bottom: 2px; font-weight: bold; padding: 0 4px; }
-        .chat-bubble-row.speaker-B .chat-speaker-label { text-align: right; }
-        .chat-bubble {
-            padding: 9px 12px; border-radius: 16px; font-size: 0.98rem; line-height: 1.4;
-            position: relative; word-break: break-word; box-shadow: 0 2px 4px rgba(0,0,0,0.04); font-weight: 600;
-        }
-        .chat-bubble-row.speaker-A .chat-bubble { background-color: #ffffff; color: #1f2937; border-bottom-left-radius: 4px; border: 1px solid #e5e7eb; }
-        .chat-bubble-row.speaker-B .chat-bubble { background-color: #0084ff; color: #ffffff; border-bottom-right-radius: 4px; }
-        .chat-bubble.active-target { outline: 2.5px solid var(--duo-blue); }
-        .chat-bubble-row.speaker-B .chat-bubble.active-target { outline: 2.5px solid var(--duo-green); }
-        .chat-bubble .btn-bubble-play {
-            display: inline-flex; align-items: center; justify-content: center;
-            background: rgba(0, 0, 0, 0.08); border: none; border-radius: 50%;
-            width: 24px; height: 24px; font-size: 0.7rem; margin-left: 6px;
-            cursor: pointer; color: inherit; vertical-align: middle;
         }
 
         .grammar-dialog-box {
@@ -564,7 +530,6 @@
             .block-chip { padding: 6px 10px; font-size: 0.88rem; }
             .grammar-dialog-box { font-size: 0.98rem; padding: 14px 12px 32px 12px; }
             .grammar-q-item { font-size: 0.94rem; }
-            .chat-window { height: 250px; }
         }
     </style>
 </head>
@@ -710,7 +675,7 @@
         </div>
     </div>
 
-    <!-- 😭 離開挑戰二次確認彈窗 -->
+    <!-- 離開挑戰二次確認彈窗 -->
     <div id="modal-quit-challenge" class="custom-modal">
         <div class="custom-modal-card" style="padding: 26px 20px;">
             <div style="margin-bottom: 14px;">
@@ -758,7 +723,8 @@
             </div>
         </div>
     </div>
-<!-- 📱 主介面容器 -->
+
+    <!-- 📱 主介面容器 -->
     <div class="shadowing-card">
         <div class="user-meta-bar" id="app-user-meta-bar">
             <div class="user-meta-item" id="btn-profile-trigger" onclick="openProfileView()">
@@ -985,86 +951,7 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
-
-            <!-- 步驟 6-C：聊天視窗風【對話】練習 -->
-            <div id="step-quiz-dialogue" class="step-page">
-                <div class="challenge-top-bar">
-                    <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
-                    <div class="gear-menu-container">
-                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-dialogue')"><i class="fa-solid fa-gear"></i></button>
-                        <div class="gear-dropdown" id="gear-dropdown-dialogue">
-                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-dialogue')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
-                            <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="dialogue-sub-nav">
-                    <button class="btn-dialogue-mode active" id="btn-mode-basic" onclick="switchDialogueMode('basic')">基礎對話</button>
-                    <button class="btn-dialogue-mode" id="btn-mode-fill" onclick="switchDialogueMode('fill')">挖空填空</button>
-                    <button class="btn-dialogue-mode" id="btn-mode-blind" onclick="switchDialogueMode('blind')">盲測聽力</button>
-                </div>
-                <div class="role-switch-box">
-                    <button class="btn-role active" id="btn-role-a" onclick="switchUserRole('A')">扮演 Speaker A</button>
-                    <button class="btn-role" id="btn-role-b" onclick="switchUserRole('B')">扮演 Speaker B</button>
-                </div>
-                <div class="chat-window" id="chat-window"></div>
-                <div id="box-blind-unlock" style="display: none; margin-bottom: 8px;">
-                    <button class="btn-lesson-action" style="width: 100%; border-color: var(--duo-orange); color: var(--duo-orange);" onclick="unlockBlindTextManually()">
-                        <i class="fa-solid fa-eye"></i> 解鎖當前句子內容
-                    </button>
-                </div>
-                <div class="controls">
-                    <button class="btn-circle btn-listen" id="btn-dialogue-play" onclick="playDialogueAudio()"><i class="fa-solid fa-volume-high"></i></button>
-                    <button class="btn-circle btn-record" id="btn-dialogue-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
-                </div>
-                <div class="nav-controls">
-                    <button class="btn-dialogue-prev" id="btn-dialogue-prev" onclick="prevDialogueSentence()">上一句</button>
-                    <span class="lbl-progress" id="lbl-dialogue-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
-                    <button class="btn-nav" id="btn-dialogue-next" onclick="nextDialogueSentence()">下一句</button>
-                </div>
-                <button class="btn-finish-challenge" id="btn-finish-dialogue" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
-            </div>
-
-            <!-- 步驟 6-C2：聊天視窗風【句子問答】練習 -->
-            <div id="step-quiz-qna" class="step-page">
-                <div class="challenge-top-bar">
-                    <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
-                    <div class="gear-menu-container">
-                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-qna')"><i class="fa-solid fa-gear"></i></button>
-                        <div class="gear-dropdown" id="gear-dropdown-qna">
-                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-qna')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
-                            <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="dialogue-sub-nav">
-                    <button class="btn-dialogue-mode active" id="btn-qna-mode-basic" onclick="switchQnaMode('basic')">基礎問答</button>
-                    <button class="btn-dialogue-mode" id="btn-qna-mode-fill" onclick="switchQnaMode('fill')">挖空填空</button>
-                    <button class="btn-dialogue-mode" id="btn-qna-mode-blind" onclick="switchQnaMode('blind')">盲測聽力</button>
-                </div>
-                <div class="role-switch-box">
-                    <button class="btn-role active" id="btn-qna-role-a" onclick="switchQnaUserRole('A')">扮演 Speaker A</button>
-                    <button class="btn-role" id="btn-qna-role-b" onclick="switchQnaUserRole('B')">扮演 Speaker B</button>
-                </div>
-                <div class="chat-window" id="qna-chat-window"></div>
-                <div id="box-qna-blind-unlock" style="display: none; margin-bottom: 8px;">
-                    <button class="btn-lesson-action" style="width: 100%; border-color: #06b6d4; color: #06b6d4;" onclick="unlockQnaBlindTextManually()">
-                        <i class="fa-solid fa-eye"></i> 解鎖當前句子內容
-                    </button>
-                </div>
-                <div class="controls">
-                    <button class="btn-circle btn-listen" id="btn-qna-play" onclick="playQnaAudio()"><i class="fa-solid fa-volume-high"></i></button>
-                    <button class="btn-circle btn-record" id="btn-qna-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
-                </div>
-                <div class="nav-controls">
-                    <button class="btn-nav" id="btn-qna-prev" onclick="prevQnaSentence()">上一句</button>
-                    <span class="lbl-progress" id="lbl-qna-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
-                    <button class="btn-nav" id="btn-qna-next" onclick="nextQnaSentence()">下一句</button>
-                </div>
-                <button class="btn-finish-challenge" id="btn-finish-qna" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
-            </div>
-
-            <!-- 步驟 6-D：單字跟讀挑戰畫面 (含 0A 韓語單字跟讀) -->
+<!-- 步驟 6-D：單字跟讀挑戰畫面 (含 0A 韓語單字跟讀) -->
             <div id="step-quiz-vocab-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1268,7 +1155,6 @@
         let currentUser = null;
         window.currentUserData = null;
 
-        // 🌟 學習語言與母語均優先讀取本機快取
         let currentConfig = {
             mode: 'shadow',
             category: localStorage.getItem('preferred_learn_category') || 'korean',
@@ -1282,7 +1168,6 @@
         let rawBlocksData = [];  
         let globalGrammarData = []; 
         let rawDialogueData = []; 
-        let rawQnaData = []; 
         let rawVocabData = [];
         let raw0aChoiceData = [];
 
@@ -1293,21 +1178,8 @@
         let isToggling = false; 
         let selectedBlockIndices = [];
 
-        // 🌟 3x9 矩陣棋盤狀態管理：記錄 27 個格子分別放了哪個 optionIndex (null 代表空格)
         let gridBoardCells = new Array(27).fill(null);
         let selectedTargetGridIndex = null;
-
-        let dialogueList = []; 
-        let dialogueIndex = 0;
-        let dialogueSubMode = 'basic'; 
-        let userRole = 'A'; 
-        let isBlindUnlocked = false;
-
-        let qnaList = [];
-        let qnaIndex = 0;
-        let qnaSubMode = 'basic';
-        let qnaUserRole = 'A';
-        let qnaUnlockedIndices = new Set();
 
         let chatRounds = [];
         let chatRoundIndex = 0;
@@ -2306,7 +2178,8 @@
             currentConfig.lang = lang;
             localStorage.setItem('preferred_user_lang', lang);
         }
-function selectCategory(category) {
+
+        function selectCategory(category) {
             stopSpeechRecognition();
             setLearnCategory(category);
         }
@@ -2315,14 +2188,12 @@ function selectCategory(category) {
             localStorage.removeItem(`all_data_${currentConfig.category}`);
             localStorage.removeItem(`grammar_data_${currentConfig.category}`);
             localStorage.removeItem(`dialogue_data_${currentConfig.category}`);
-            localStorage.removeItem(`qna_data_${currentConfig.category}`);
             localStorage.removeItem(`vocab_data_${currentConfig.category}`);
             localStorage.removeItem(`0achoice_data_${currentConfig.category}`);
             alert(`已清除當前語言快取！正在重新連線同步最新試算表...`);
             await autoLoadCurrentCategory(true);
         }
 
-        // 🌟 自動根據使用者偏好的學習語言載入課程資料，直接進到程度頁面
         async function autoLoadCurrentCategory(forceRefresh = false) {
             const targetApi = API_URLS[currentConfig.category];
             if (!targetApi) {
@@ -2333,14 +2204,12 @@ function selectCategory(category) {
             const cacheKey = `all_data_${currentConfig.category}`;
             const grammarCacheKey = `grammar_data_${currentConfig.category}`;
             const dialogueCacheKey = `dialogue_data_${currentConfig.category}`;
-            const qnaCacheKey = `qna_data_${currentConfig.category}`;
             const vocabCacheKey = `vocab_data_${currentConfig.category}`;
             const choice0aCacheKey = `0achoice_data_${currentConfig.category}`;
 
             const cachedData = localStorage.getItem(cacheKey);
             const cachedGrammar = localStorage.getItem(grammarCacheKey);
             const cachedDialogue = localStorage.getItem(dialogueCacheKey);
-            const cachedQna = localStorage.getItem(qnaCacheKey);
             const cachedVocab = localStorage.getItem(vocabCacheKey);
             const cached0aChoice = localStorage.getItem(choice0aCacheKey);
 
@@ -2352,7 +2221,6 @@ function selectCategory(category) {
                         rawBlocksData = parsed.blocks || [];
                         if (cachedGrammar) try { globalGrammarData = JSON.parse(cachedGrammar); } catch(e) {}
                         if (cachedDialogue) try { rawDialogueData = JSON.parse(cachedDialogue); } catch(e) {}
-                        if (cachedQna) try { rawQnaData = JSON.parse(cachedQna); } catch(e) {}
                         if (cachedVocab) try { rawVocabData = JSON.parse(cachedVocab); } catch(e) {}
                         if (cached0aChoice) try { raw0aChoiceData = JSON.parse(cached0aChoice); } catch(e) {}
                         renderLevelMenu();
@@ -2363,11 +2231,10 @@ function selectCategory(category) {
             }
 
             try {
-                const [shadowRes, blocksRes, grammarRes, dialogueRes, qnaRes, vocabRes, choice0aRes] = await Promise.all([
+                const [shadowRes, blocksRes, grammarRes, dialogueRes, vocabRes, choice0aRes] = await Promise.all([
                     requestGAS(targetApi, 'getLanguageData').catch(()=>null),
                     requestGAS(targetApi, 'getBlocksData').catch(()=>null),
                     requestGAS(targetApi, 'getGrammarData').catch(()=>null),
-                    requestGAS(targetApi, 'getDialogueData').catch(()=>null),
                     requestGAS(targetApi, 'getDialogueData').catch(()=>null),
                     requestGAS(targetApi, 'getVocabularyData').catch(()=>null),
                     requestGAS(targetApi, 'get0aChoiceData').catch(()=>null)
@@ -2382,10 +2249,6 @@ function selectCategory(category) {
                 if (dialogueRes && dialogueRes.status === 'success') {
                     rawDialogueData = dialogueRes.data || [];
                     try { localStorage.setItem(dialogueCacheKey, JSON.stringify(dialogueRes.data)); } catch(e){}
-                }
-                if (qnaRes && qnaRes.status === 'success') {
-                    rawQnaData = qnaRes.data || [];
-                    try { localStorage.setItem(qnaCacheKey, JSON.stringify(qnaRes.data)); } catch(e){}
                 }
                 if (vocabRes && vocabRes.status === 'success') {
                     rawVocabData = vocabRes.data || [];
@@ -2469,7 +2332,7 @@ function selectCategory(category) {
             const container = document.getElementById('container-units');
             container.innerHTML = "";
 
-            const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawQnaData, ...rawVocabData, ...raw0aChoiceData];
+            const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawVocabData, ...raw0aChoiceData];
             const targetLevelNormalized = normalizeLevelStr(level);
 
             const filtered = combinedData.filter(i => {
@@ -2491,7 +2354,6 @@ function selectCategory(category) {
             }
         }
 
-        // 🌟 僅在試算表有該關卡資料時才渲染對應按鈕
         function selectUnit(unitId) {
             stopSpeechRecognition();
             currentConfig.unit_id = unitId;
@@ -2500,7 +2362,7 @@ function selectCategory(category) {
             const container = document.getElementById('container-lessons');
             container.innerHTML = "";
 
-            const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawQnaData, ...rawVocabData, ...raw0aChoiceData];
+            const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawVocabData, ...raw0aChoiceData];
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
             const filtered = combinedData.filter(i => {
@@ -2541,13 +2403,6 @@ function selectCategory(category) {
                     });
 
                     const hasDialogue = rawDialogueData.some(d => {
-                        return normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
-                               String(getItemField(d, 'unit_id')) === unitStr &&
-                               String(getItemField(d, 'lesson')) === lesStr &&
-                               ((d.a1 && d.a1.trim() !== '') || (d.b1 && d.b1.trim() !== ''));
-                    });
-
-                    const hasQna = rawQnaData.some(d => {
                         return normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
                                String(getItemField(d, 'unit_id')) === unitStr &&
                                String(getItemField(d, 'lesson')) === lesStr &&
@@ -2606,11 +2461,7 @@ function selectCategory(category) {
                         btnGroup.appendChild(createActionButton('blocks', '🧩 重組'));
                     }
                     if (hasDialogue) {
-                        btnGroup.appendChild(createActionButton('dialogue', '💬 對話', 'btn-dialogue-lesson'));
                         btnGroup.appendChild(createActionButton('sentence_chat', '🗣 句子聊天挑戰', 'btn-chat-lesson'));
-                    }
-                    if (hasQna) {
-                        btnGroup.appendChild(createActionButton('qna', '❓ 句子問答', 'btn-qna-lesson'));
                     }
 
                     if (is0ALevel && has0aChoice) {
@@ -2707,10 +2558,6 @@ function selectCategory(category) {
                 } else {
                     alert("此課堂目前沒有設定獨立語法觀念喔！");
                 }
-            } else if (mode === 'dialogue') {
-                startDialogueChallenge();
-            } else if (mode === 'qna') {
-                startQnaChallenge();
             } else if (mode === 'sentence_chat') {
                 startSentenceChatChallenge();
             } else if (mode === '0a_shadow' || mode === '0a_choice') {
@@ -2722,7 +2569,7 @@ function selectCategory(category) {
             }
         }
 
-        // ==================== 🌟 0A 專屬韓語單字挑戰邏輯 ====================
+        // ==================== 0A 專屬韓語單字挑戰邏輯 ====================
 
         function start0aSpecialChallenge(specialMode) {
             stopSpeechRecognition();
@@ -2869,344 +2716,6 @@ function selectCategory(category) {
             }
         }
 
-        // ==================== 4. 原版對話練習邏輯 ====================
-
-        function startDialogueChallenge() {
-            stopSpeechRecognition();
-            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-
-            const rows = rawDialogueData.filter(d => 
-                normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
-                String(getItemField(d, 'unit_id')) === String(currentConfig.unit_id) &&
-                String(getItemField(d, 'lesson')) === String(currentConfig.lesson)
-            );
-
-            dialogueList = [];
-            rows.forEach(d => {
-                const aText = (d.a1 || '').trim();
-                const bText = (d.b1 || '').trim();
-                const axText = (d.a1x || aText).trim();
-                const bxText = (d.bx1 || bText).trim();
-                const aAudio = d.a1_audio || d.audio_url || '';
-                const bAudio = d.b1_audio || d.audio_url || '';
-
-                if (aText) dialogueList.push({ speaker: 'A', targetText: aText, fillText: axText, audioUrl: aAudio });
-                if (bText) dialogueList.push({ speaker: 'B', targetText: bText, fillText: bxText, audioUrl: bAudio });
-            });
-
-            if (dialogueList.length === 0) return alert("此課堂 dialogue 分頁無題目資料！");
-
-            dialogueIndex = 0;
-            totalChallengeQuestions = dialogueList.length;
-            switchDialogueMode('basic');
-            switchUserRole('A');
-
-            const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
-            document.querySelectorAll('.lbl-quiz-info').forEach(e => {
-                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (💬 對話挑戰)`;
-            });
-
-            goToStep('step-quiz-dialogue');
-            renderChatWindow();
-        }
-
-        function switchDialogueMode(mode) {
-            stopSpeechRecognition();
-            dialogueSubMode = mode;
-            dialogueIndex = 0;
-            ['basic', 'fill', 'blind'].forEach(m => {
-                const btn = document.getElementById(`btn-mode-${m}`);
-                if (btn) btn.classList.remove('active');
-            });
-            document.getElementById(`btn-mode-${mode}`).classList.add('active');
-            isBlindUnlocked = false;
-            renderChatWindow();
-        }
-
-        function switchUserRole(role) {
-            stopSpeechRecognition();
-            userRole = role;
-            dialogueIndex = 0;
-            ['a', 'b'].forEach(r => {
-                const btn = document.getElementById(`btn-role-${r.toLowerCase()}`);
-                if (btn) btn.classList.remove('active');
-            });
-            document.getElementById(`btn-role-${role.toLowerCase()}`).classList.add('active');
-            renderChatWindow();
-        }
-
-        function renderChatWindow() {
-            stopSpeechRecognition();
-            if (!dialogueList || dialogueList.length === 0) return;
-
-            const chatWin = document.getElementById('chat-window');
-            chatWin.innerHTML = '';
-
-            for (let idx = 0; idx <= dialogueIndex; idx++) {
-                const item = dialogueList[idx];
-                const isCurrentTarget = (idx === dialogueIndex);
-
-                const row = document.createElement('div');
-                row.className = `chat-bubble-row speaker-${item.speaker}`;
-
-                const label = document.createElement('div');
-                label.className = 'chat-speaker-label';
-                const isUser = (item.speaker === userRole);
-                label.innerText = `Speaker ${item.speaker}${isUser ? ' (你)' : ''}`;
-
-                const bubble = document.createElement('div');
-                bubble.className = 'chat-bubble';
-                if (isCurrentTarget) bubble.classList.add('active-target');
-
-                let bubbleText = item.targetText;
-                if (dialogueSubMode === 'fill' && isCurrentTarget && !isBlindUnlocked) {
-                    bubbleText = item.fillText;
-                } else if (dialogueSubMode === 'blind' && isCurrentTarget && !isBlindUnlocked) {
-                    bubbleText = "??? (聽音或對話解鎖)";
-                }
-
-                const textSpan = document.createElement('span');
-                textSpan.innerText = bubbleText;
-                bubble.appendChild(textSpan);
-
-                const playBtn = document.createElement('button');
-                playBtn.className = 'btn-bubble-play';
-                playBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
-                playBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    playSpecificDialogueAudio(idx);
-                };
-                bubble.appendChild(playBtn);
-
-                row.appendChild(label);
-                row.appendChild(bubble);
-                chatWin.appendChild(row);
-            }
-
-            setTimeout(() => { chatWin.scrollTop = chatWin.scrollHeight; }, 50);
-
-            const blindBox = document.getElementById('box-blind-unlock');
-            blindBox.style.display = (dialogueSubMode === 'blind' && !isBlindUnlocked) ? 'block' : 'none';
-
-            document.getElementById('lbl-dialogue-progress').innerText = `${dialogueIndex + 1} / ${dialogueList.length}`;
-            document.getElementById('btn-dialogue-prev').disabled = dialogueIndex === 0;
-            document.getElementById('btn-dialogue-next').disabled = dialogueIndex === dialogueList.length - 1;
-
-            const currentItem = dialogueList[dialogueIndex];
-            if (currentItem && currentItem.speaker !== userRole) playDialogueAudio();
-        }
-
-        function unlockBlindTextManually() { isBlindUnlocked = true; renderChatWindow(); }
-
-        function playSpecificDialogueAudio(idx) {
-            stopSpeechRecognition();
-            if (!dialogueList || !dialogueList[idx]) return;
-            const target = dialogueList[idx];
-            if (target.audioUrl && target.audioUrl.trim() !== '') {
-                const audio = new Audio(target.audioUrl);
-                audio.playbackRate = 0.85;
-                audio.play().catch(() => speakTTS(target.targetText, 0.85));
-            } else {
-                speakTTS(target.targetText, 0.85);
-            }
-        }
-
-        function playDialogueAudio() { playSpecificDialogueAudio(dialogueIndex); }
-        function prevDialogueSentence() { if (dialogueIndex > 0) { dialogueIndex--; isBlindUnlocked = false; renderChatWindow(); } }
-        function nextDialogueSentence() { if (dialogueIndex < dialogueList.length - 1) { dialogueIndex++; isBlindUnlocked = false; renderChatWindow(); } }
-
-        // ==================== 4.5 原版句子問答 (QnA) 邏輯 ====================
-
-        function startQnaChallenge() {
-            stopSpeechRecognition();
-            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-
-            const rows = rawQnaData.filter(d => 
-                normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
-                String(getItemField(d, 'unit_id')) === String(currentConfig.unit_id) &&
-                String(getItemField(d, 'lesson')) === String(currentConfig.lesson)
-            );
-
-            qnaList = [];
-            qnaUnlockedIndices.clear();
-
-            rows.forEach((d, idx) => {
-                const aText = (d.a1 || '').trim();
-                const bText = (d.b1 || '').trim();
-                const axText = (d.a1x || aText).trim();
-                const bxText = (d.bx1 || bText).trim();
-                const aAudio = d.a1_audio || d.audio_url || '';
-                const bAudio = d.b1_audio || d.audio_url || '';
-
-                if (aText) qnaList.push({ index: qnaList.length, speaker: 'A', targetText: aText, fillText: axText, audioUrl: aAudio });
-                if (bText) qnaList.push({ index: qnaList.length, speaker: 'B', targetText: bText, fillText: bxText, audioUrl: bAudio });
-            });
-
-            if (qnaList.length === 0) return alert("此課堂問答資料為空！");
-
-            totalChallengeQuestions = qnaList.length;
-            switchQnaMode('basic');
-            switchQnaUserRole('A');
-
-            const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
-            document.querySelectorAll('.lbl-quiz-info').forEach(e => {
-                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (❓ 句子問答)`;
-            });
-
-            goToStep('step-quiz-qna');
-        }
-
-        function switchQnaMode(mode) {
-            stopSpeechRecognition();
-            qnaSubMode = mode;
-            qnaUnlockedIndices.clear();
-            ['basic', 'fill', 'blind'].forEach(m => {
-                const btn = document.getElementById(`btn-qna-mode-${m}`);
-                if (btn) btn.classList.remove('active');
-            });
-            document.getElementById(`btn-qna-mode-${mode}`).classList.add('active');
-            resetQnaIndexByRole();
-        }
-
-        function switchQnaUserRole(role) {
-            stopSpeechRecognition();
-            qnaUserRole = role;
-            qnaUnlockedIndices.clear();
-            ['a', 'b'].forEach(r => {
-                const btn = document.getElementById(`btn-qna-role-${r.toLowerCase()}`);
-                if (btn) btn.classList.remove('active');
-            });
-            document.getElementById(`btn-qna-role-${role.toLowerCase()}`).classList.add('active');
-            resetQnaIndexByRole();
-        }
-
-        function resetQnaIndexByRole() {
-            if (qnaUserRole === 'A') {
-                qnaIndex = 0;
-            } else {
-                qnaIndex = (qnaList.length > 1) ? 1 : 0;
-            }
-            renderQnaChatWindow();
-        }
-
-        function renderQnaChatWindow() {
-            stopSpeechRecognition();
-            if (!qnaList || qnaList.length === 0) return;
-
-            const chatWin = document.getElementById('qna-chat-window');
-            chatWin.innerHTML = '';
-
-            for (let idx = 0; idx <= qnaIndex; idx++) {
-                const item = qnaList[idx];
-                const isCurrentTarget = (idx === qnaIndex);
-                const isUser = (item.speaker === qnaUserRole);
-                const isUnlocked = qnaUnlockedIndices.has(idx);
-
-                const row = document.createElement('div');
-                row.className = `chat-bubble-row speaker-${item.speaker}`;
-
-                const label = document.createElement('div');
-                label.className = 'chat-speaker-label';
-                label.innerText = `Speaker ${item.speaker}${isUser ? ' (你)' : ''}`;
-
-                const bubble = document.createElement('div');
-                bubble.className = 'chat-bubble';
-                if (isCurrentTarget) bubble.classList.add('active-target');
-
-                let bubbleText = item.targetText;
-
-                if (qnaSubMode === 'fill') {
-                    if (isUser) {
-                        bubbleText = isUnlocked ? item.targetText : item.fillText;
-                    } else {
-                        bubbleText = item.targetText;
-                    }
-                } else if (qnaSubMode === 'blind' && isCurrentTarget && !isUnlocked) {
-                    bubbleText = "??? (聽音或問答解鎖)";
-                }
-
-                const textSpan = document.createElement('span');
-                textSpan.innerText = bubbleText;
-                bubble.appendChild(textSpan);
-
-                const playBtn = document.createElement('button');
-                playBtn.className = 'btn-bubble-play';
-                playBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
-                playBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    playSpecificQnaAudio(idx);
-                };
-                bubble.appendChild(playBtn);
-
-                row.appendChild(label);
-                row.appendChild(bubble);
-                chatWin.appendChild(row);
-            }
-
-            setTimeout(() => { chatWin.scrollTop = chatWin.scrollHeight; }, 60);
-
-            const blindBox = document.getElementById('box-qna-blind-unlock');
-            blindBox.style.display = (qnaSubMode === 'blind' && !qnaUnlockedIndices.has(qnaIndex)) ? 'block' : 'none';
-
-            document.getElementById('lbl-qna-progress').innerText = `${qnaIndex + 1} / ${qnaList.length}`;
-            document.getElementById('btn-qna-prev').disabled = qnaIndex === 0;
-            document.getElementById('btn-qna-next').disabled = qnaIndex === qnaList.length - 1;
-
-            let targetAudioIdx = qnaIndex;
-            if (qnaList[qnaIndex].speaker === qnaUserRole && qnaIndex > 0) {
-                targetAudioIdx = qnaIndex - 1;
-            }
-            if (qnaList[targetAudioIdx] && qnaList[targetAudioIdx].speaker !== qnaUserRole) {
-                setTimeout(() => {
-                    playSpecificQnaAudio(targetAudioIdx);
-                }, 300);
-            }
-        }
-
-        function unlockQnaBlindTextManually() {
-            qnaUnlockedIndices.add(qnaIndex);
-            renderQnaChatWindow();
-        }
-
-        function handleQnaSpeechSuccess() {
-            qnaUnlockedIndices.add(qnaIndex);
-            passedSubQuestions.add(qnaIndex);
-            checkAndShowFinishButton();
-
-            renderQnaChatWindow();
-
-            if (qnaIndex < qnaList.length - 1) {
-                setTimeout(() => {
-                    qnaIndex++;
-                    renderQnaChatWindow();
-
-                    if (qnaIndex < qnaList.length - 1 && qnaList[qnaIndex].speaker !== qnaUserRole) {
-                        setTimeout(() => {
-                            qnaIndex++;
-                            renderQnaChatWindow();
-                        }, 1200);
-                    }
-                }, 800);
-            }
-        }
-
-        function playSpecificQnaAudio(idx) {
-            stopSpeechRecognition();
-            if (!qnaList || !qnaList[idx]) return;
-            const target = qnaList[idx];
-            if (target.audioUrl && target.audioUrl.trim() !== '') {
-                const audio = new Audio(target.audioUrl);
-                audio.playbackRate = 0.85;
-                audio.play().catch(() => speakTTS(target.targetText, 0.85));
-            } else {
-                speakTTS(target.targetText, 0.85);
-            }
-        }
-
-        function playQnaAudio() { playSpecificQnaAudio(qnaIndex); }
-        function prevQnaSentence() { if (qnaIndex > 0) { qnaIndex--; renderQnaChatWindow(); } }
-        function nextQnaSentence() { if (qnaIndex < qnaList.length - 1) { qnaIndex++; renderQnaChatWindow(); } }
-
         // ==================== 🌟 句子聊天挑戰邏輯 ====================
 
         function startSentenceChatChallenge() {
@@ -3258,7 +2767,7 @@ function selectCategory(category) {
             isChatChallengeMode = false;
 
             const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
-            const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (${modeTitle})`;
+            const infoText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (🗣 句子聊天挑戰)`;
             document.querySelectorAll('.lbl-quiz-info').forEach(e => e.innerText = infoText);
 
             updateChallengeModeButtonUI();
@@ -3448,7 +2957,7 @@ function selectCategory(category) {
             }
         }
 
-        // ==================== 3. 一般單字測驗邏輯 ====================
+        // ==================== 一般單字測驗邏輯 ====================
 
         function getTranslationByLang(item) {
             if (!item) return "";
@@ -3620,7 +3129,7 @@ function selectCategory(category) {
             } 
         }
 
-        // ==================== 5. 語法小教室邏輯 ====================
+        // ==================== 語法小教室邏輯 ====================
 
         function startGrammarChallenge(grammarData) {
             stopSpeechRecognition();
@@ -3951,7 +3460,7 @@ function selectCategory(category) {
             }
         }
 
-        // ==================== 6. 跟讀與重組題邏輯 ====================
+        // ==================== 跟讀與重組題邏輯 ====================
 
         function startMainQuiz() {
             stopSpeechRecognition();
@@ -4056,7 +3565,6 @@ function selectCategory(category) {
                 document.getElementById('btn-block-next').disabled = currentIndex === questions.length - 1;
 
                 selectedBlockIndices = [];
-                // 🌟 初始化 3x9 網格與定位
                 gridBoardCells = new Array(27).fill(null);
                 selectedTargetGridIndex = null;
                 renderBlocks();
@@ -4064,7 +3572,6 @@ function selectCategory(category) {
             }
         }
 
-        // 🌟 3x9 自由棋盤渲染邏輯 (0A 專屬：3行 x 9列)
         function renderBlocks() {
             const q = questions[currentIndex];
             const zoneOptions = document.getElementById('zone-options');
@@ -4074,9 +3581,7 @@ function selectCategory(category) {
 
             const is0AKorean = (normalizeLevelStr(currentConfig.level) === '0A' && currentConfig.category === 'korean');
 
-            // 1. 渲染下方選項字塊
             q.options.forEach((optText, optIdx) => {
-                // 檢查是否已被放入 3x9 棋盤或已被選用
                 const isUsed = is0AKorean ? gridBoardCells.includes(optIdx) : selectedBlockIndices.includes(optIdx);
 
                 const btn = document.createElement('div');
@@ -4085,20 +3590,17 @@ function selectCategory(category) {
 
                 btn.onclick = () => {
                     if (is0AKorean) {
-                        // 🌟 若有點選特定的格子，直接放入該格；若無則自動尋找第一個空格
                         let targetIdx = selectedTargetGridIndex;
                         if (targetIdx === null || gridBoardCells[targetIdx] !== null) {
                             targetIdx = gridBoardCells.findIndex(val => val === null);
                         }
                         if (targetIdx !== -1) {
                             gridBoardCells[targetIdx] = optIdx;
-                            // 自動尋找下一個空白格選取
                             const nextEmpty = gridBoardCells.findIndex((val, i) => val === null && i > targetIdx);
                             selectedTargetGridIndex = (nextEmpty !== -1) ? nextEmpty : null;
                             renderBlocks();
                         }
                     } else {
-                        // 1A 以上一般模式
                         selectedBlockIndices.push(optIdx);
                         renderBlocks();
                     }
@@ -4106,7 +3608,6 @@ function selectCategory(category) {
                 zoneOptions.appendChild(btn);
             });
 
-            // 2. 渲染上方答案區域
             if (is0AKorean) {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'hangul-grid-board-wrapper';
@@ -4126,7 +3627,7 @@ function selectCategory(category) {
                         cell.title = "點擊收回此字塊";
                         cell.onclick = () => {
                             gridBoardCells[i] = null;
-                            selectedTargetGridIndex = i; // 移出後預設焦點留在該格
+                            selectedTargetGridIndex = i;
                             renderBlocks();
                         };
                     } else {
@@ -4149,7 +3650,6 @@ function selectCategory(category) {
                 zoneAnswer.appendChild(wrapper);
 
             } else {
-                // 1A 以上一般水平橫向字塊排列
                 selectedBlockIndices.forEach(idx => {
                     const btn = document.createElement('div');
                     btn.className = 'block-chip';
@@ -4163,14 +3663,12 @@ function selectCategory(category) {
             }
         }
 
-        // 🌟 檢查答案並在回答正確後顯示 voice 欄位文字
         function checkBlockAnswer() {
             const q = questions[currentIndex];
             const is0AKorean = (normalizeLevelStr(currentConfig.level) === '0A' && currentConfig.category === 'korean');
             
             let userSentence = "";
             if (is0AKorean) {
-                // 依棋盤由左至右、由上至下收集字元
                 userSentence = gridBoardCells
                     .filter(idx => idx !== null)
                     .map(idx => q.options[idx])
@@ -4185,7 +3683,6 @@ function selectCategory(category) {
             const scoreBadge = document.getElementById('lbl-block-score');
 
             if (cleanUserSentence === cleanTargetSentence) {
-                // 🌟 正確後在「完全正確！」後顯示 voice 讀音
                 const voiceTip = (q.voice && q.voice.trim() !== '') ? ` [${q.voice.trim()}]` : '';
                 scoreBadge.innerText = `🎉 完全正確！${voiceTip}`;
                 scoreBadge.style.color = "#58cc02";
@@ -4198,7 +3695,7 @@ function selectCategory(category) {
             }
         }
 
-       function playBlockAudio() {
+        function playBlockAudio() {
             stopSpeechRecognition();
             const q = questions[currentIndex];
             if (!q) return;
@@ -4256,7 +3753,7 @@ function selectCategory(category) {
             return s1 === s2 || s1.includes(s2) || s2.includes(s1);
         }
 
-        // ==================== 7. 語音辨識錄音 ====================
+        // ==================== 語音辨識錄音 ====================
 
         function initSpeechRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -4277,7 +3774,7 @@ function selectCategory(category) {
                     document.getElementById('lbl-vocab-recognized-text').innerText = "聆聽中...";
                 } else if (currentConfig.mode === 'sentence_chat') {
                     document.getElementById('lbl-chat-recognized-text').innerText = "聆聽中...";
-                } else if (currentConfig.mode !== 'dialogue' && currentConfig.mode !== 'qna') {
+                } else {
                     document.getElementById('lbl-recognized-text').innerText = "聆聽中...";
                 }
             };
@@ -4307,27 +3804,6 @@ function selectCategory(category) {
                         document.getElementById('lbl-chat-score').style.color = "#ff4b4b";
                     }
 
-                } else if (currentConfig.mode === 'dialogue') {
-                    const currentSentence = dialogueList[dialogueIndex];
-                    if (currentSentence) {
-                        const targetText = currentSentence.targetText || "";
-                        const pass = isSpeechPass(targetText, userSpeech);
-                        if (pass || dialogueSubMode === 'basic') {
-                            isBlindUnlocked = true;
-                            renderChatWindow();
-                            passedSubQuestions.add(dialogueIndex);
-                            checkAndShowFinishButton();
-                        }
-                    }
-                } else if (currentConfig.mode === 'qna') {
-                    const currentSentence = qnaList[qnaIndex];
-                    if (currentSentence) {
-                        const targetText = currentSentence.targetText || "";
-                        const pass = isSpeechPass(targetText, userSpeech);
-                        if (pass || qnaSubMode === 'basic') {
-                            handleQnaSpeechSuccess();
-                        }
-                    }
                 } else if (currentConfig.mode === 'vocab_shadow' || currentConfig.mode === '0a_shadow') {
                     document.getElementById('lbl-vocab-recognized-text').innerText = userSpeech;
                     const currentVocab = vocabQuestions[vocabIndex];
