@@ -51,7 +51,7 @@
             justify-content: center;
         }
 
-        /* 🌟 2. 主卡片容器：鎖定滿版高度，縱向 flex 排版 */
+        /* 🌟 2. 主卡片容器：鎖定滿版高度，縱向 flex 排版，預設全局居中 */
         .shadowing-card {
             background: white;
             border: 2px solid #e5e7eb;
@@ -67,6 +67,7 @@
             box-sizing: border-box;
             position: relative;
             overflow: hidden;
+            text-align: center;
         }
 
         /* 🌟 3. 上方藍色固定區塊：頂部狀態列 */
@@ -178,7 +179,7 @@
             background: #f1f5f9;
         }
 
-        /* 🌟 5. 中間紅色滾動區塊：各學習頁面與挑戰視圖 */
+        /* 🌟 5. 中間紅色滾動區塊：預設所有題目與內容置中對齊 */
         #learning-content-view {
             flex: 1;
             overflow-y: auto;
@@ -187,11 +188,13 @@
             padding-right: 2px;
             display: flex;
             flex-direction: column;
+            text-align: center; /* 恢復預設置中 */
         }
 
         .step-page { 
             display: none; 
             width: 100%;
+            text-align: center; /* 恢復預設置中 */
         }
         .step-page.active { 
             display: block; 
@@ -203,6 +206,7 @@
             flex-direction: column;
             flex: 1;
             min-height: 100%;
+            text-align: center;
         }
 
         #area-grammar-dialog {
@@ -210,9 +214,9 @@
             flex-direction: column;
             flex: 1;
             width: 100%;
-            text-align: left !important;
         }
 
+        /* 🌟 只有「觀念說明」的第一句話對話框靠左對齊，保留所有空格與縮排 */
         .grammar-dialog-box {
             background: #eef2ff;
             border: 2px solid #818cf8;
@@ -220,7 +224,6 @@
             padding: 16px 14px 44px 14px;
             font-size: 1.05rem;
             color: #312e81;
-            text-align: left !important;
             display: block !important;
             margin-bottom: 12px;
             flex: 1;
@@ -232,10 +235,11 @@
             cursor: pointer;
             white-space: pre-wrap !important;
             word-break: break-word;
+            text-align: left !important; /* 🌟 僅此處向左靠齊 */
         }
         #lbl-grammar-dialog {
             display: block !important;
-            text-align: left !important;
+            text-align: left !important; /* 🌟 僅此處向左靠齊 */
             white-space: pre-wrap !important;
         }
         .btn-gram-audio {
@@ -376,7 +380,7 @@
         .rank-num.rank-2 { color: #94a3b8; }
         .rank-num.rank-3 { color: #d97706; }
 
-        h2.step-title { color: var(--duo-dark); font-size: 1.25rem; margin-top: 0; margin-bottom: 16px; }
+        h2.step-title { color: var(--duo-dark); font-size: 1.25rem; margin-top: 0; margin-bottom: 16px; text-align: center; }
         .option-grid { display: grid; gap: 10px; margin-bottom: 16px; }
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
         .grid-3 { grid-template-columns: repeat(3, 1fr); }
@@ -437,6 +441,23 @@
         }
         .btn-back-step:hover { color: var(--duo-blue); }
 
+        /* 🌟 題目、翻譯、文字一律保持置中對齊 */
+        .target-text,
+        .translation-text,
+        #lbl-target-text,
+        #lbl-translation,
+        #lbl-chat-target-text,
+        #lbl-chat-translation,
+        #lbl-word-shadow-target-text,
+        #lbl-word-shadow-translation,
+        #lbl-word-type-text,
+        #lbl-word-type-translation,
+        #lbl-word-choice-text,
+        #container-grammar-questions,
+        .grammar-q-item {
+            text-align: center !important;
+        }
+
         .target-text {
             font-size: 1.85rem; font-weight: bold; color: #1f2937; margin: 12px 0 5px 0;
             min-height: 2.2rem; word-break: break-word; line-height: 1.3;
@@ -458,7 +479,7 @@
         .btn-record.recording { animation: pulse 1s infinite; background: #dc2626; }
         @keyframes pulse { 0%{transform: scale(1);} 50%{transform: scale(1.08);} 100%{transform: scale(1);} }
 
-        .result-box { background: #f3f4f6; border-radius: 12px; padding: 10px; margin-top: 10px; font-size: 0.9rem; }
+        .result-box { background: #f3f4f6; border-radius: 12px; padding: 10px; margin-top: 10px; font-size: 0.9rem; text-align: center; }
         .score-badge { font-size: 1.05rem; font-weight: bold; color: var(--duo-green); margin-top: 4px; }
 
         .nav-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
@@ -530,7 +551,7 @@
         .btn-vocab-choice {
             background: white; border: 2px solid #e5e7eb; border-bottom: 3px solid #e5e7eb;
             border-radius: 12px; padding: 11px; font-size: 0.95rem; font-weight: bold;
-            color: var(--duo-dark); cursor: pointer; transition: all 0.15s ease;
+            color: var(--duo-dark); cursor: pointer; transition: all 0.15s ease; text-align: center;
         }
         .btn-vocab-choice:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
 
@@ -549,11 +570,8 @@
         .btn-keyword-toggle:hover { background: #e2e8f0; }
         .btn-keyword-toggle.active { background: #fee2e2; border-color: #f87171; color: #dc2626; }
 
-        #container-grammar-questions {
-            text-align: left !important; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px;
-        }
         .grammar-q-item {
-            text-align: left !important; font-size: 1.05rem; color: var(--duo-dark); line-height: 1.8; font-weight: 600; word-break: break-word;
+            font-size: 1.05rem; color: var(--duo-dark); line-height: 1.8; font-weight: 600; word-break: break-word;
         }
         .blank-slot {
             display: inline-block; min-width: 44px; border-bottom: 2.5px solid var(--duo-blue);
@@ -833,7 +851,7 @@
             </div>
         </div>
 
-        <!-- 🌟 2. 中間紅色滾動區塊：地圖、課堂清單與挑戰頁面 (在內部平滑滑動) -->
+        <!-- 🌟 2. 中間紅色滾動區塊：地圖、課堂清單與挑戰頁面 (在內部平滑滑動，預設置中) -->
         <div id="learning-content-view">
             <div id="step-learn-lang" class="step-page hidden">
                 <div id="cache-status" style="font-size: 0.75rem; color: #6b7280; margin-top: 8px;"></div>
@@ -868,7 +886,7 @@
                 <div id="container-lessons"></div>
             </div>
 
-            <!-- 🌟 步驟 5.5：語法介紹教室 (下一步/上一步/跳過對話 固定置於最下方) -->
+            <!-- 🌟 步驟 5.5：語法介紹教室 (第一句說明靠左，按鈕群固定於最下方) -->
             <div id="step-grammar" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-lesson')"><i class="fa-solid fa-arrow-left"></i> 回課堂選擇</button>
@@ -882,7 +900,7 @@
                         <span id="lbl-dialog-counter" style="font-size: 0.85rem; color: #6b7280; font-weight: bold;">1 / 1</span>
                     </div>
 
-                    <!-- 對話顯示框：彈性延展，句子再多也不會推動按鍵 -->
+                    <!-- 🌟 只有此處內容向左對齊並保留格式 -->
                     <div class="grammar-dialog-box" onclick="completeTypewriterImmediately()">
                         <span id="lbl-grammar-dialog">...</span>
                         <button class="btn-gram-audio" id="btn-gram-audio" style="display: none;"><i class="fa-solid fa-volume-high"></i> 播放聲音</button>
@@ -898,12 +916,12 @@
                     </div>
                 </div>
 
-                <!-- 填空測驗挑戰區塊 -->
+                <!-- 填空測驗挑戰區塊 (恢復居中對齊) -->
                 <div id="area-grammar-quiz" style="display: none; margin-top: 15px;">
                     <h3 style="margin-top: 0; color: var(--duo-dark); text-align: center; font-size: 1.15rem;"><i class="fa-solid fa-pen-to-square"></i> 語法測驗</h3>
-                    <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
+                    <p style="font-size: 0.85rem; color: #6b7280; text-align: center; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
                     <div id="container-grammar-questions"></div>
-                    <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin: 15px 0 5px 0;">選項：</p>
+                    <p style="font-size: 0.85rem; color: #6b7280; text-align: center; margin: 15px 0 5px 0;">選項：</p>
                     <div id="container-grammar-choices" style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;"></div>
                     <button class="btn-confirm btn-grammar-action-narrow" id="btn-check-grammar" onclick="checkGrammarQuiz()"><i class="fa-solid fa-check"></i> 送出答案</button>
                     <div class="result-box" id="box-grammar-result" style="display: none; margin-top: 15px;">
@@ -918,7 +936,7 @@
                     <div class="dialog-history-list" id="container-dialog-history"></div>
                 </div>
             </div>
-<!-- 步驟 6-A：Sentence 跟讀畫面 -->
+<!-- 步驟 6-A：Sentence 跟讀畫面 (所有內容保持置中) -->
             <div id="step-quiz-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -949,7 +967,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-G：句子聊天挑戰畫面 -->
+            <!-- 🌟 步驟 6-G：句子聊天挑戰畫面 (內容保持置中) -->
             <div id="step-quiz-sentence-chat" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1004,7 +1022,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 步驟 6-B：字塊重組畫面 -->
+            <!-- 步驟 6-B：字塊重組畫面 (保持置中) -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1020,21 +1038,21 @@
                     <button class="btn-circle btn-listen" onclick="playBlockAudio()" style="margin: 0 auto;"><i class="fa-solid fa-volume-high"></i></button>
                 </div>
                 <div class="translation-text" id="lbl-block-translation">...</div>
-                <p style="font-size: 0.8rem; color: #9ca3af; text-align: left; margin: 0;">排列結果：</p>
+                <p style="font-size: 0.8rem; color: #9ca3af; text-align: center; margin: 0;">排列結果：</p>
                 <div id="zone-answer" class="block-zone"></div>
-                <p style="font-size: 0.8rem; color: #9ca3af; text-align: left; margin: 0;">點擊字塊組句：</p>
+                <p style="font-size: 0.8rem; color: #9ca3af; text-align: center; margin: 0;">點擊字塊組句：</p>
                 <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
                 <button class="btn-confirm" onclick="checkBlockAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
                 <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-block-score">等待回答...</div></div>
                 <div class="nav-controls">
-                    <button class="btn-block-prev" id="btn-block-prev" onclick="prevQuestion()">上一題</button>
+                    <button class="btn-nav" id="btn-block-prev" onclick="prevQuestion()">上一題</button>
                     <span class="lbl-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
-                    <button class="btn-block-next" id="btn-block-next" onclick="nextQuestion()">下一題</button>
+                    <button class="btn-nav" id="btn-block-next" onclick="nextQuestion()">下一題</button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-D：通用單字跟讀畫面 -->
+            <!-- 🌟 步驟 6-D：通用單字跟讀畫面 (保持置中) -->
             <div id="step-quiz-word-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1061,14 +1079,14 @@
                     <div class="score-badge" id="lbl-word-shadow-score">判定結果：--</div>
                 </div>
                 <div class="nav-controls">
-                    <button class="btn-word-shadow-prev" id="btn-word-shadow-prev" onclick="prevWordQuestion()">上一題</button>
+                    <button class="btn-nav" id="btn-word-shadow-prev" onclick="prevWordQuestion()">上一題</button>
                     <span class="lbl-progress" id="lbl-word-shadow-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
-                    <button class="btn-word-shadow-next" id="btn-word-shadow-next" onclick="nextWordQuestion()">下一題</button>
+                    <button class="btn-nav" id="btn-word-shadow-next" onclick="nextWordQuestion()">下一題</button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-word-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-E：通用單字聽打畫面 -->
+            <!-- 🌟 步驟 6-E：通用單字聽打畫面 (保持置中) -->
             <div id="step-quiz-word-type" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1090,14 +1108,14 @@
                 <div class="translation-text" id="lbl-word-type-translation" style="margin-top: 12px; font-size: 1.05rem; font-weight: bold;"></div>
                 <div class="result-box" style="margin-top: 8px;"><div class="score-badge" id="lbl-word-type-score">等待輸入...</div></div>
                 <div class="nav-controls">
-                    <button class="btn-word-type-prev" id="btn-word-type-prev" onclick="prevWordQuestion()">上一題</button>
+                    <button class="btn-nav" id="btn-word-type-prev" onclick="prevWordQuestion()">上一題</button>
                     <span class="lbl-progress" id="lbl-word-type-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
-                    <button class="btn-word-type-next" id="btn-word-type-next" onclick="nextWordQuestion()">下一題</button>
+                    <button class="btn-nav" id="btn-word-type-next" onclick="nextWordQuestion()">下一題</button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-word-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-F：通用單字選擇題畫面 -->
+            <!-- 🌟 步驟 6-F：通用單字選擇題畫面 (保持置中) -->
             <div id="step-quiz-word-choice" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -2691,7 +2709,7 @@
 
                 const qElem = document.createElement('div');
                 qElem.className = 'grammar-q-item';
-                qElem.style.cssText = "margin-bottom: 12px; font-size: 1.05rem; line-height: 1.8; text-align: left;";
+                qElem.style.cssText = "margin-bottom: 12px; font-size: 1.05rem; line-height: 1.8; text-align: center;";
                 qElem.innerHTML = `<span style="color:var(--duo-blue); font-weight:800; margin-right:4px;">${qIdx + 1}.</span> ${formattedHtml}`;
                 qContainer.appendChild(qElem);
             });
