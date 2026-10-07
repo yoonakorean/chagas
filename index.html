@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>鎖定格挑戰系統</title>
+    <title>多語挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -35,44 +35,55 @@
 
         * { box-sizing: border-box; }
 
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #f9fafb;
-            display: flex;
-            justify-content: center;
-            padding: 12px 8px 75px 8px; /* 底部預留固定列空間 */
+        /* 🌟 1. 鎖定外層頁面不彈跳，畫面全螢幕滿版 */
+        html, body {
+            height: 100%;
             margin: 0;
-            min-height: 100vh;
+            padding: 0;
+            overflow: hidden;
+            background: #f9fafb;
             -webkit-tap-highlight-color: transparent;
         }
 
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* 🌟 2. 主卡片容器：鎖定滿版高度，縱向 flex 排版 */
         .shadowing-card {
             background: white;
             border: 2px solid #e5e7eb;
             border-radius: 20px;
-            padding: 18px 14px;
             width: 100%;
             max-width: 480px;
+            height: 100vh;
+            height: 100dvh;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            text-align: center;
-            position: relative;
             display: flex;
             flex-direction: column;
-            min-height: calc(100vh - 95px); /* 保持穩定卡片高度，防止長句子推擠跳動 */
+            padding: 12px 14px 0 14px;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* 頂部狀態列 */
+        /* 🌟 3. 上方藍色固定區塊：頂部狀態列 */
         .user-meta-bar {
+            flex-shrink: 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding-bottom: 10px;
-            margin-bottom: 14px;
+            margin-bottom: 8px;
             border-bottom: 2px solid #e5e7eb;
             font-size: 0.9rem;
             font-weight: 800;
             gap: 4px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            background: #ffffff;
+            z-index: 20;
         }
         .user-meta-item {
             display: inline-flex;
@@ -89,12 +100,10 @@
         }
         .user-meta-item:hover { background: #f3f4f6; }
 
-        /* 完全隱藏所有挑戰頁面頂部的資訊標題 */
         .lbl-quiz-info {
             display: none !important;
         }
 
-        /* 確保頂部操作列將齒輪固定在右上角 */
         .challenge-top-bar {
             display: flex;
             justify-content: flex-end !important;
@@ -103,17 +112,18 @@
             position: relative;
         }
 
-        /* 底部固定列容器 */
+        /* 🌟 4. 下方藍色固定區塊：底部固定導航列 */
         .bottom-fixed-bar-wrapper {
-            position: fixed;
+            position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
             display: flex;
             justify-content: center;
-            z-index: 999;
-            padding: 0 8px 10px 8px;
+            z-index: 100;
+            padding: 0 12px calc(10px + env(safe-area-inset-bottom)) 12px;
             pointer-events: none;
+            background: linear-gradient(to top, rgba(255,255,255,1) 70%, rgba(255,255,255,0) 100%);
         }
 
         .bottom-fixed-bar {
@@ -167,6 +177,87 @@
             transform: translateY(2px);
             background: #f1f5f9;
         }
+
+        /* 🌟 5. 中間紅色滾動區塊：各學習頁面與挑戰視圖 */
+        #learning-content-view {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 90px;
+            padding-right: 2px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .step-page { 
+            display: none; 
+            width: 100%;
+        }
+        .step-page.active { 
+            display: block; 
+        }
+
+        /* 語法教室特別設定：充滿剩餘高度，按鈕推到最下方 */
+        #step-grammar.active {
+            display: flex !important;
+            flex-direction: column;
+            flex: 1;
+            min-height: 100%;
+        }
+
+        #area-grammar-dialog {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            width: 100%;
+            text-align: left !important;
+        }
+
+        .grammar-dialog-box {
+            background: #eef2ff;
+            border: 2px solid #818cf8;
+            border-radius: 16px;
+            padding: 16px 14px 44px 14px;
+            font-size: 1.05rem;
+            color: #312e81;
+            text-align: left !important;
+            display: block !important;
+            margin-bottom: 12px;
+            flex: 1;
+            min-height: 160px;
+            max-height: 48vh;
+            overflow-y: auto;
+            line-height: 1.6;
+            position: relative;
+            cursor: pointer;
+            white-space: pre-wrap !important;
+            word-break: break-word;
+        }
+        #lbl-grammar-dialog {
+            display: block !important;
+            text-align: left !important;
+            white-space: pre-wrap !important;
+        }
+        .btn-gram-audio {
+            position: absolute; bottom: 10px; right: 10px; background: #818cf8; color: white;
+            border: none; border-radius: 8px; padding: 5px 11px; font-size: 0.82rem; font-weight: bold; cursor: pointer;
+        }
+
+        .grammar-bottom-actions-container {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-top: 10px;
+            width: 100%;
+        }
+
+        .grammar-nav-btns { display: flex; gap: 8px; width: 100%; }
+        .btn-grammar-sub {
+            flex: 1; background: #f3f4f6; border: 1px solid #d1d5db; border-bottom: 3px solid #d1d5db;
+            padding: 10px 8px; font-size: 0.9rem; font-weight: bold; color: #4b5563; border-radius: 12px; cursor: pointer;
+        }
+        .btn-grammar-sub:active { transform: translateY(2px); border-bottom-width: 1px; }
 
         .custom-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -285,8 +376,6 @@
         .rank-num.rank-2 { color: #94a3b8; }
         .rank-num.rank-3 { color: #d97706; }
 
-        .step-page { display: none; }
-        .step-page.active { display: block; }
         h2.step-title { color: var(--duo-dark); font-size: 1.25rem; margin-top: 0; margin-bottom: 16px; }
         .option-grid { display: grid; gap: 10px; margin-bottom: 16px; }
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
@@ -338,7 +427,10 @@
             font-weight: bold; cursor: pointer; margin-top: 12px; text-decoration: underline;
         }
 
-        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .top-nav { 
+            position: sticky; top: 0; background: #ffffff; z-index: 10;
+            padding: 4px 0 8px 0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; 
+        }
         .btn-back-step {
             background: none; border: none; color: #6b7280; font-size: 0.9rem;
             cursor: pointer; display: flex; align-items: center; gap: 5px; font-weight: bold;
@@ -457,80 +549,6 @@
         .btn-keyword-toggle:hover { background: #e2e8f0; }
         .btn-keyword-toggle.active { background: #fee2e2; border-color: #f87171; color: #dc2626; }
 
-        /* 🌟 語法介紹全新佈局：將按鈕固定在最下方，防跳動設計 */
-        #step-grammar {
-            display: none;
-            flex-direction: column;
-            flex: 1;
-            min-height: calc(100vh - 150px);
-        }
-        #step-grammar.active {
-            display: flex !important;
-        }
-
-        #area-grammar-dialog {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            width: 100%;
-            text-align: left !important;
-        }
-
-        .grammar-dialog-box {
-            background: #eef2ff;
-            border: 2px solid #818cf8;
-            border-radius: 16px;
-            padding: 16px 14px 44px 14px;
-            font-size: 1.05rem;
-            color: #312e81;
-            text-align: left !important;
-            display: block !important;
-            margin-bottom: 12px;
-            flex: 1; /* 自動填滿剩餘高度 */
-            min-height: 180px;
-            max-height: 48vh; /* 超過時在框內順暢滾動，不推擠底部按鈕 */
-            overflow-y: auto;
-            line-height: 1.6;
-            position: relative;
-            cursor: pointer;
-            white-space: pre-wrap !important;
-            word-break: break-word;
-        }
-        #lbl-grammar-dialog {
-            display: block !important;
-            text-align: left !important;
-            white-space: pre-wrap !important;
-        }
-        .btn-gram-audio {
-            position: absolute; bottom: 10px; right: 10px; background: #818cf8; color: white;
-            border: none; border-radius: 8px; padding: 5px 11px; font-size: 0.82rem; font-weight: bold; cursor: pointer;
-        }
-
-        /* 🌟 固定於最下方的按鈕群組容器 */
-        .grammar-bottom-actions-container {
-            margin-top: auto; /* 保證貼齊最下方 */
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding-top: 10px;
-            width: 100%;
-        }
-
-        .grammar-nav-btns { 
-            display: flex; 
-            gap: 8px; 
-            width: 100%;
-        }
-        .btn-grammar-sub {
-            flex: 1; background: #f3f4f6; border: 1px solid #d1d5db; border-bottom: 3px solid #d1d5db;
-            padding: 10px 8px; font-size: 0.9rem; font-weight: bold; color: #4b5563; border-radius: 12px; cursor: pointer;
-            transition: all 0.1s ease;
-        }
-        .btn-grammar-sub:active {
-            transform: translateY(2px);
-            border-bottom-width: 1px;
-        }
-
         #container-grammar-questions {
             text-align: left !important; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px;
         }
@@ -542,7 +560,6 @@
             color: var(--duo-blue); text-align: center; padding: 0 4px; cursor: pointer; font-weight: bold; margin: 0 3px;
         }
 
-        /* 觀念總覽：緊湊排版，序號與內容緊密相連（僅空一行） */
         .dialog-history-list {
             text-align: left !important; max-height: 220px; overflow-y: auto; background: #ffffff;
             border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; margin-bottom: 12px;
@@ -582,9 +599,8 @@
         }
 
         @media (max-width: 420px) {
-            body { padding: 8px 4px 75px 4px; }
-            .shadowing-card { padding: 14px 10px; border-radius: 16px; min-height: calc(100vh - 85px); }
-            .user-meta-bar { font-size: 0.82rem; padding-bottom: 8px; margin-bottom: 10px; }
+            .shadowing-card { padding: 10px 8px 0 8px; border-radius: 16px; }
+            .user-meta-bar { font-size: 0.82rem; padding-bottom: 6px; margin-bottom: 6px; }
             .user-meta-item { padding: 4px 6px; font-size: 0.8rem; }
             h2.step-title { font-size: 1.15rem; margin-bottom: 14px; }
             .target-text { font-size: 1.5rem; }
@@ -790,9 +806,10 @@
             </div>
         </div>
     </div>
-
-    <!-- 📱 主介面容器 -->
+<!-- 📱 主介面容器 -->
     <div class="shadowing-card">
+        
+        <!-- 🌟 1. 上方藍色固定區塊：使用者狀態列 (永遠固定在最上方) -->
         <div class="user-meta-bar" id="app-user-meta-bar">
             <div class="user-meta-item" id="btn-profile-trigger" onclick="openProfileView()">
                 <i class="fa-solid fa-user" style="color: var(--duo-blue);"></i>
@@ -816,7 +833,7 @@
             </div>
         </div>
 
-        <!-- 🌟 視圖 A：學習與題目挑戰區塊 -->
+        <!-- 🌟 2. 中間紅色滾動區塊：地圖、課堂清單與挑戰頁面 (在內部平滑滑動) -->
         <div id="learning-content-view">
             <div id="step-learn-lang" class="step-page hidden">
                 <div id="cache-status" style="font-size: 0.75rem; color: #6b7280; margin-top: 8px;"></div>
@@ -841,7 +858,7 @@
                 <div id="container-units" class="option-grid grid-3"></div>
             </div>
 
-            <!-- 步驟 4：選擇課堂關卡與模式 -->
+            <!-- 步驟 4：選擇課堂關卡與模式 (圖片中紅框滾動主區域) -->
             <div id="step-lesson" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-unit')"><i class="fa-solid fa-arrow-left"></i> 回單元選擇</button>
@@ -850,7 +867,8 @@
                 <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇課堂挑戰 (Lesson)</h2>
                 <div id="container-lessons"></div>
             </div>
-<!-- 🌟 步驟 5.5：全新架構「語法介紹」教室 (按鈕固定在最下方，防跳動) -->
+
+            <!-- 🌟 步驟 5.5：語法介紹教室 (下一步/上一步/跳過對話 固定置於最下方) -->
             <div id="step-grammar" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-lesson')"><i class="fa-solid fa-arrow-left"></i> 回課堂選擇</button>
@@ -864,13 +882,13 @@
                         <span id="lbl-dialog-counter" style="font-size: 0.85rem; color: #6b7280; font-weight: bold;">1 / 1</span>
                     </div>
 
-                    <!-- 對話內容顯示框：自動延展高度，句子過長時內部平滑滾動 -->
+                    <!-- 對話顯示框：彈性延展，句子再多也不會推動按鍵 -->
                     <div class="grammar-dialog-box" onclick="completeTypewriterImmediately()">
                         <span id="lbl-grammar-dialog">...</span>
                         <button class="btn-gram-audio" id="btn-gram-audio" style="display: none;"><i class="fa-solid fa-volume-high"></i> 播放聲音</button>
                     </div>
 
-                    <!-- 🌟 固定在最底部的操作按鈕區 -->
+                    <!-- 🌟 固定在最底部的操作按鈕容器 -->
                     <div class="grammar-bottom-actions-container">
                         <button class="btn-confirm" id="btn-next-dialog" onclick="nextGrammarDialog()">下一步 <i class="fa-solid fa-arrow-right"></i></button>
                         <div class="grammar-nav-btns">
@@ -900,8 +918,7 @@
                     <div class="dialog-history-list" id="container-dialog-history"></div>
                 </div>
             </div>
-
-            <!-- 步驟 6-A：Sentence 跟讀畫面 -->
+<!-- 步驟 6-A：Sentence 跟讀畫面 -->
             <div id="step-quiz-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1010,14 +1027,14 @@
                 <button class="btn-confirm" onclick="checkBlockAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
                 <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-block-score">等待回答...</div></div>
                 <div class="nav-controls">
-                    <button class="btn-nav" id="btn-block-prev" onclick="prevQuestion()">上一題</button>
+                    <button class="btn-block-prev" id="btn-block-prev" onclick="prevQuestion()">上一題</button>
                     <span class="lbl-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
-                    <button class="btn-nav" id="btn-block-next" onclick="nextQuestion()">下一題</button>
+                    <button class="btn-block-next" id="btn-block-next" onclick="nextQuestion()">下一題</button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-D：通用單字跟讀畫面 (全級別適用) -->
+            <!-- 🌟 步驟 6-D：通用單字跟讀畫面 -->
             <div id="step-quiz-word-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1046,12 +1063,12 @@
                 <div class="nav-controls">
                     <button class="btn-word-shadow-prev" id="btn-word-shadow-prev" onclick="prevWordQuestion()">上一題</button>
                     <span class="lbl-progress" id="lbl-word-shadow-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
-                    <button class="btn-nav" id="btn-word-shadow-next" onclick="nextWordQuestion()">下一題</button>
+                    <button class="btn-word-shadow-next" id="btn-word-shadow-next" onclick="nextWordQuestion()">下一題</button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-word-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-E：通用單字聽打畫面 (全級別適用) -->
+            <!-- 🌟 步驟 6-E：通用單字聽打畫面 -->
             <div id="step-quiz-word-type" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1073,14 +1090,14 @@
                 <div class="translation-text" id="lbl-word-type-translation" style="margin-top: 12px; font-size: 1.05rem; font-weight: bold;"></div>
                 <div class="result-box" style="margin-top: 8px;"><div class="score-badge" id="lbl-word-type-score">等待輸入...</div></div>
                 <div class="nav-controls">
-                    <button class="btn-nav" id="btn-word-type-prev" onclick="prevWordQuestion()">上一題</button>
+                    <button class="btn-word-type-prev" id="btn-word-type-prev" onclick="prevWordQuestion()">上一題</button>
                     <span class="lbl-progress" id="lbl-word-type-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
-                    <button class="btn-nav" id="btn-word-type-next" onclick="nextWordQuestion()">下一題</button>
+                    <button class="btn-word-type-next" id="btn-word-type-next" onclick="nextWordQuestion()">下一題</button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-word-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-F：通用單字選擇題畫面 (全級別適用) -->
+            <!-- 🌟 步驟 6-F：通用單字選擇題畫面 -->
             <div id="step-quiz-word-choice" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1114,7 +1131,7 @@
         </div>
 
         <!-- 🌟 視圖 B：會員中心與排行榜大視圖 -->
-        <div id="profile-view" class="hidden" style="text-align: left;">
+        <div id="profile-view" class="hidden" style="text-align: left; flex: 1; overflow-y: auto; padding-bottom: 80px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px;">
                 <button class="btn-3d btn-3d-secondary" onclick="closeProfileView()" style="padding: 7px 12px; font-size: 0.85rem;">
                     <i class="fa-solid fa-arrow-left"></i> 返回地圖
@@ -1209,21 +1226,22 @@
                 </button>
             </div>
         </div>
-    </div>
 
-    <!-- 🌟 畫面下方固定列 (Bottom Bar) -->
-    <div class="bottom-fixed-bar-wrapper" id="app-bottom-bar">
-        <div class="bottom-fixed-bar">
-            <div class="bottom-nav-item grammar-btn" id="btn-bottom-grammar" onclick="triggerBottomGrammarAction()">
-                <i class="fa-solid fa-book-open-reader"></i>
-                <span id="lbl-bottom-grammar">📖 語法介紹</span>
-            </div>
-            <div class="bottom-nav-item map-btn" onclick="goToStep('step-level')">
-                <i class="fa-solid fa-map-location-dot" style="color: var(--duo-blue);"></i>
-                <span>課程地圖</span>
+        <!-- 🌟 3. 下方藍色固定區塊：Bottom Bar (永遠固定在卡片最底層) -->
+        <div class="bottom-fixed-bar-wrapper" id="app-bottom-bar">
+            <div class="bottom-fixed-bar">
+                <div class="bottom-nav-item grammar-btn" id="btn-bottom-grammar" onclick="triggerBottomGrammarAction()">
+                    <i class="fa-solid fa-book-open-reader"></i>
+                    <span id="lbl-bottom-grammar">📖 語法介紹</span>
+                </div>
+                <div class="bottom-nav-item map-btn" onclick="goToStep('step-level')">
+                    <i class="fa-solid fa-map-location-dot" style="color: var(--duo-blue);"></i>
+                    <span>課程地圖</span>
+                </div>
             </div>
         </div>
-    </div>
+
+    </div> <!-- shadowing-card 結束 -->
 <!-- 核心邏輯腳本 -->
     <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
@@ -1922,11 +1940,11 @@
                         <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
                             <div class="rank-num ${rankClass}">${rank}</div>
                             <img src="https://lh3.googleusercontent.com/a/default-user" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
-                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                <div style="font-weight: 800; color: #1e293b; font-size: 0.92rem; overflow: hidden; text-overflow: ellipsis;">
+                            <div style="display: flex; flex-direction: column; overflow: hidden;">
+                                <div style="font-weight: 800; color: #1e293b; font-size: 0.92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                     ${u.displayName}${u.isMe ? ' <span style="font-size:0.75rem; color:var(--duo-green);">(你)</span>' : ''}
                                 </div>
-                                <div style="font-size: 0.75rem; color: #94a3b8; overflow: hidden; text-overflow: ellipsis;">${u.email}</div>
+                                <div style="font-size: 0.75rem; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${u.email}</div>
                             </div>
                         </div>
                         <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
@@ -2768,8 +2786,7 @@
                 actionBtn.onclick = () => showGrammarQuizArea();
             }
         }
-
-        // ==================== 通用單字挑戰邏輯 ====================
+// ==================== 通用單字挑戰邏輯 ====================
 
         function getWordTranslation(item) {
             if (!item) return "";
