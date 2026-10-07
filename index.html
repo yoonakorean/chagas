@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>語法挑戰系統</title>
+    <title>語法迢迢挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -458,11 +458,27 @@
         .btn-keyword-toggle:hover { background: #e2e8f0; }
         .btn-keyword-toggle.active { background: #fee2e2; border-color: #f87171; color: #dc2626; }
 
+        /* 🌟 強制打字機對話框向左對齊，保留內部空白排版 */
         .grammar-dialog-box {
-            background: #eef2ff; border: 2px solid #818cf8; border-radius: 16px;
-            padding: 16px 14px 35px 14px; font-size: 1.05rem; color: #312e81;
-            text-align: left !important; margin-bottom: 12px; min-height: 85px; line-height: 1.6;
-            position: relative; cursor: pointer; white-space: pre-wrap; word-break: break-word;
+            background: #eef2ff;
+            border: 2px solid #818cf8;
+            border-radius: 16px;
+            padding: 16px 14px 38px 14px;
+            font-size: 1.05rem;
+            color: #312e81;
+            text-align: left !important;
+            display: block !important;
+            margin-bottom: 12px;
+            min-height: 85px;
+            line-height: 1.6;
+            position: relative;
+            cursor: pointer;
+            white-space: pre-wrap !important;
+            word-break: break-word;
+        }
+        #lbl-grammar-dialog {
+            display: inline;
+            text-align: left !important;
         }
         .btn-gram-audio {
             position: absolute; bottom: 8px; right: 10px; background: #818cf8; color: white;
@@ -476,7 +492,7 @@
             text-align: left !important; font-size: 1rem; color: var(--duo-dark); line-height: 1.7; font-weight: 600; word-break: break-word;
         }
         .blank-slot {
-            display: inline-block; min-width: 60px; border-bottom: 2.5px solid var(--duo-blue);
+            display: inline-block; min-width: 48px; border-bottom: 2.5px solid var(--duo-blue);
             color: var(--duo-blue); text-align: center; padding: 0 4px; cursor: pointer; font-weight: bold; margin: 0 2px;
         }
 
@@ -485,14 +501,35 @@
             flex: 1; background: #f3f4f6; border: 1px solid #d1d5db; border-bottom: 3px solid #d1d5db;
             padding: 9px; font-size: 0.88rem; font-weight: bold; color: #4b5563; border-radius: 12px; cursor: pointer;
         }
+
+        /* 🌟 觀念總覽序號獨立一行，內容從第二行開始 */
         .dialog-history-list {
-            text-align: left; max-height: 220px; overflow-y: auto; background: #ffffff;
+            text-align: left !important; max-height: 240px; overflow-y: auto; background: #ffffff;
             border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; margin-bottom: 12px;
-            white-space: pre-wrap; word-break: break-word;
         }
-        .dialog-history-item { padding: 7px 8px; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; color: #374151; line-height: 1.5; text-align: left; }
-        .dialog-history-item:last-child { border-bottom: none; }
-        .dialog-history-item span.num { font-weight: bold; color: var(--duo-blue); margin-right: 4px; }
+        .dialog-history-item {
+            padding: 8px 10px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 0.92rem;
+            color: #374151;
+            line-height: 1.6;
+            text-align: left !important;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .dialog-history-item:last-child {
+            border-bottom: none;
+        }
+        .dialog-history-item .num-title {
+            font-weight: 800;
+            color: var(--duo-blue);
+            margin-bottom: 3px;
+            display: block;
+        }
+        .dialog-history-item .text-body {
+            display: block;
+            color: #334155;
+        }
 
         .profile-avatar-large {
             width: 72px; height: 72px; border-radius: 50%;
@@ -516,7 +553,7 @@
             .lesson-btn-group { grid-template-columns: repeat(2, 1fr); gap: 4px; }
             .btn-lesson-action { font-size: 0.78rem; padding: 7px 2px; }
             .block-chip { padding: 6px 10px; font-size: 0.88rem; }
-            .grammar-dialog-box { font-size: 0.98rem; padding: 14px 12px 32px 12px; }
+            .grammar-dialog-box { font-size: 0.98rem; padding: 14px 12px 35px 12px; }
             .grammar-q-item { font-size: 0.94rem; }
             .bottom-fixed-bar { padding: 6px 10px; }
             .bottom-nav-item { font-size: 0.82rem; padding: 7px 8px; }
@@ -773,7 +810,7 @@
                 <div id="container-lessons"></div>
             </div>
 
-            <!-- 🌟 步驟 5.5：全新簡化「語法介紹」教室 (對話與測驗整合) -->
+            <!-- 🌟 步驟 5.5：全新架構「語法介紹」教室 (左對齊說明 + 底線填空挑戰) -->
             <div id="step-grammar" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-lesson')"><i class="fa-solid fa-arrow-left"></i> 回課堂選擇</button>
@@ -1189,7 +1226,7 @@
         let wordIndex = 0;
         let currentWordPronMode = 'kr_pron';
 
-        // 🌟 語法小教室全新狀態管理變數
+        // 🌟 語法介紹全新狀態管理變數
         let currentGrammarItem = null;
         let currentDialogIndex = 0;
         let userGrammarAnswers = [];
@@ -2249,7 +2286,7 @@
                         String(getItemField(item, 'lesson')) === lesStr
                     );
 
-                    // 🌟 判斷全新語法介紹分頁中是否有該關卡資料
+                    // 🌟 判斷語法介紹中是否有該關卡資料
                     const hasGrammar = globalGrammarData.some(g => 
                         normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
                         String(getItemField(g, 'unit_id')) === unitStr &&
@@ -2381,10 +2418,11 @@
             }
         }
 
-        // ==================== 🌟 全新「語法介紹」邏輯 (多列 gram / audio_url / question) ====================
+        // ==================== 🌟 全新「語法介紹」邏輯 (向左對齊保留空格 + 單底線填空 + 序號換行) ====================
 
+        // 🌟 1. 僅移除開頭的純換行符號，完整保留首行空格與縮排
         function cleanInitialWhitespace(str) {
-            return (str || '').replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
+            return (str || '').replace(/^[\r\n]+/g, '').trimEnd();
         }
 
         function startGrammarChallenge(grammarGroup) {
@@ -2435,7 +2473,7 @@
             const currentDialogObj = currentGrammarItem.dialogs[currentDialogIndex];
             currentFullDialogText = cleanInitialWhitespace(currentDialogObj.text || "");
 
-            // 🌟 判斷該列的 audio_url 是否填入 yes：若有則顯示發音按鈕並發音
+            // 🌟 判斷該列的 audio_url 是否填入 yes：若有則顯示發音按鈕並朗讀
             const audioBtn = document.getElementById('btn-gram-audio');
             if (currentDialogObj.hasAudio) {
                 audioBtn.style.display = 'block';
@@ -2514,6 +2552,7 @@
             }
         }
 
+        // 🌟 2. 觀念總覽：序號單獨成第一行，內容從第 2 行開始
         function renderGrammarHistoryList() {
             const container = document.getElementById('container-dialog-history');
             container.innerHTML = "";
@@ -2522,13 +2561,17 @@
                 list.forEach((itemObj, idx) => {
                     const item = document.createElement('div');
                     item.className = 'dialog-history-item';
-                    item.innerHTML = `<span class="num">${idx + 1}.</span> ${cleanInitialWhitespace(itemObj.text)}`;
+                    item.innerHTML = `
+                        <div class="num-title">${idx + 1}.</div>
+                        <div class="text-body">${cleanInitialWhitespace(itemObj.text)}</div>
+                    `;
                     container.appendChild(item);
                 });
                 document.getElementById('area-grammar-all-history').style.display = 'block';
             }
         }
 
+        // 🌟 3. 測驗題目呈現：支援單底線 "_" 與雙底線 "__" 自動轉成填空槽
         function showGrammarQuizArea() {
             document.getElementById('area-grammar-dialog').style.display = 'none';
             document.getElementById('area-grammar-quiz').style.display = 'block';
@@ -2544,15 +2587,17 @@
 
             const currentQ = quizList[grammarQuizIndex];
             const qStr = currentQ.question || "";
-            const parts = qStr.split('__');
-            userGrammarAnswers = new Array(parts.length - 1).fill('');
+            
+            // 正則匹配底線（支援 _ 或 __ 等連續底線）
+            const blankMatches = qStr.match(/_+/g) || [];
+            userGrammarAnswers = new Array(blankMatches.length).fill('');
             activeBlankIndex = 0;
 
             const qContainer = document.getElementById('container-grammar-questions');
             qContainer.innerHTML = '';
             
             let slotCount = 0;
-            let formattedHtml = qStr.replace(/__/g, () => {
+            let formattedHtml = qStr.replace(/_+/g, () => {
                 const s = `<span class="blank-slot" id="blank-slot-${slotCount}" onclick="setActiveBlank(${slotCount})">___</span>`;
                 slotCount++;
                 return s;
@@ -2587,6 +2632,7 @@
             if (nextBlank !== -1) activeBlankIndex = nextBlank;
         }
 
+        // 🌟 4. 測驗答案檢查：對比底線替換後的結果或直接對比答案串
         function checkGrammarQuiz() {
             const quizList = currentGrammarItem.quizzes || [];
             const currentQ = quizList[grammarQuizIndex];
@@ -2598,13 +2644,17 @@
 
             const expectedAnswer = (currentQ.answer || '').replace(/\s+/g, '');
             let slotIdx = 0;
-            const fullUserAnswer = (currentQ.question || '').replace(/__/g, () => {
+            const fullUserAnswer = (currentQ.question || '').replace(/_+/g, () => {
                 const ans = userGrammarAnswers[slotIdx] || '';
                 slotIdx++;
                 return ans;
             }).replace(/\s+/g, '');
 
-            const isCorrect = (fullUserAnswer === expectedAnswer) || (userGrammarAnswers.join('/').replace(/\s+/g, '') === expectedAnswer);
+            const userAnswersJoined = userGrammarAnswers.join('').replace(/\s+/g, '');
+            const userAnswersSlash = userGrammarAnswers.join('/').replace(/\s+/g, '');
+            const isCorrect = (fullUserAnswer === expectedAnswer) || 
+                              (userAnswersJoined === expectedAnswer) || 
+                              (userAnswersSlash === expectedAnswer);
 
             const resultBox = document.getElementById('box-grammar-result');
             const resultText = document.getElementById('lbl-grammar-result-text');
