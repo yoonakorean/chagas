@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>固定習系統</title>
+    <title>voice學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -40,38 +40,43 @@
             background: #f9fafb;
             display: flex;
             justify-content: center;
-            padding: 12px 8px 75px 8px; /* 底部預留固定列空間 */
+            padding: 8px;
             margin: 0;
-            min-height: 100vh;
+            height: 100vh;
+            height: 100dvh; /* 適應 iOS Safari 網址列高度 */
+            overflow: hidden; /* 防止整頁外層反彈滾動 */
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* 🌟 視窗型主卡片容器：填滿高度、內部彈性排版 */
         .shadowing-card {
             background: white;
             border: 2px solid #e5e7eb;
-            border-radius: 20px;
-            padding: 18px 14px;
+            border-radius: 24px;
+            padding: 16px 14px 10px 14px;
             width: 100%;
             max-width: 480px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            text-align: center;
-            position: relative;
+            height: 100%;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
             display: flex;
             flex-direction: column;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* 頂部狀態列 */
+        /* 頂部固定狀態列 */
         .user-meta-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding-bottom: 10px;
-            margin-bottom: 14px;
+            margin-bottom: 8px;
             border-bottom: 2px solid #e5e7eb;
             font-size: 0.9rem;
             font-weight: 800;
             gap: 4px;
             flex-wrap: wrap;
+            flex-shrink: 0; /* 永不被壓縮 */
         }
         .user-meta-item {
             display: inline-flex;
@@ -88,33 +93,46 @@
         }
         .user-meta-item:hover { background: #f3f4f6; }
 
-        /* 🌟 底部固定列容器 */
+        /* 🌟 中間獨立滾動視窗：所有的課堂與題目均在此滾動 */
+        #learning-content-view,
+        #profile-view {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            padding-right: 2px;
+            padding-bottom: 6px;
+        }
+
+        /* 滾動條樣式美化 */
+        #learning-content-view::-webkit-scrollbar,
+        #profile-view::-webkit-scrollbar {
+            width: 5px;
+        }
+        #learning-content-view::-webkit-scrollbar-thumb,
+        #profile-view::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        /* 🌟 底部固定導覽列（不再浮動，整齊貼在卡片底部內側） */
         .bottom-fixed-bar-wrapper {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            z-index: 999;
-            padding: 0 8px 10px 8px;
-            pointer-events: none; /* 允許穿透空白處 */
+            flex-shrink: 0;
+            padding-top: 8px;
+            border-top: 1.5px solid #f1f5f9;
+            background: #ffffff;
+            width: 100%;
         }
 
         .bottom-fixed-bar {
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(12px);
-            border: 2px solid #e5e7eb;
-            border-radius: 20px;
-            padding: 8px 14px;
-            width: 100%;
-            max-width: 480px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 6px 10px;
             display: flex;
             justify-content: space-around;
             align-items: center;
             gap: 8px;
-            pointer-events: auto;
             box-sizing: border-box;
         }
 
@@ -126,7 +144,7 @@
             gap: 6px;
             padding: 8px 10px;
             border-radius: 12px;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             font-weight: 800;
             cursor: pointer;
             border: 1.5px solid transparent;
@@ -144,7 +162,7 @@
             background: #e0e7ff;
         }
         .bottom-nav-item.map-btn {
-            background: #f8fafc;
+            background: #ffffff;
             color: #475569;
             border-color: #e2e8f0;
         }
@@ -491,11 +509,11 @@
         }
 
         @media (max-width: 420px) {
-            body { padding: 8px 4px 75px 4px; }
-            .shadowing-card { padding: 14px 10px; border-radius: 16px; }
-            .user-meta-bar { font-size: 0.82rem; padding-bottom: 8px; margin-bottom: 10px; }
+            body { padding: 4px; }
+            .shadowing-card { padding: 12px 10px 8px 10px; border-radius: 18px; }
+            .user-meta-bar { font-size: 0.82rem; padding-bottom: 6px; margin-bottom: 6px; }
             .user-meta-item { padding: 4px 6px; font-size: 0.8rem; }
-            h2.step-title { font-size: 1.15rem; margin-bottom: 14px; }
+            h2.step-title { font-size: 1.12rem; margin-bottom: 12px; }
             .target-text { font-size: 1.35rem; }
             .translation-text { font-size: 0.92rem; }
             .btn-option { padding: 10px 6px; font-size: 0.88rem; border-radius: 12px; }
@@ -504,8 +522,8 @@
             .block-chip { padding: 6px 10px; font-size: 0.88rem; }
             .grammar-dialog-box { font-size: 0.98rem; padding: 14px 12px 32px 12px; }
             .grammar-q-item { font-size: 0.94rem; }
-            .bottom-fixed-bar { padding: 6px 10px; }
-            .bottom-nav-item { font-size: 0.82rem; padding: 7px 8px; }
+            .bottom-fixed-bar { padding: 5px 8px; }
+            .bottom-nav-item { font-size: 0.8rem; padding: 6px 6px; }
         }
     </style>
 </head>
@@ -1318,7 +1336,6 @@
         function triggerBottomGrammarAction() {
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
             
-            // 優先尋找當前選定單元與課堂的語法
             let matchGrammar = globalGrammarData.find(g => 
                 normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
                 String(getItemField(g, 'unit_id')) === String(currentConfig.unit_id) &&
@@ -1326,7 +1343,6 @@
                 ((g.dialogs && g.dialogs.length > 0) || (g.example && g.example.trim()) || (g.ready && g.ready.trim()) || (g.question && g.question.trim()))
             );
 
-            // 若目前課堂沒有，則找該單元的第一個語法
             if (!matchGrammar) {
                 matchGrammar = globalGrammarData.find(g => 
                     normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
@@ -2031,7 +2047,7 @@
             document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
         }
 
-        // 🌟 連動控制頂部狀態列與新增的「底部固定列」顯示狀態
+        // 🌟 連動控制頂部狀態列與「底部固定列」的顯示隱藏
         function goToStep(stepId) {
             stopSpeechRecognition();
             document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
@@ -2048,7 +2064,7 @@
 
             const bottomBar = document.getElementById('app-bottom-bar');
             if (bottomBar) {
-                bottomBar.style.display = isDoingQuiz ? 'none' : 'flex';
+                bottomBar.style.display = isDoingQuiz ? 'none' : 'block';
             }
         }
 
