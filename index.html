@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>隱藏挑戰系統</title>
+    <title>靠右挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -91,6 +91,15 @@
         /* 🌟 隱藏所有挑戰頁面頂部的資訊標題 */
         .lbl-quiz-info {
             display: none !important;
+        }
+
+        /* 🌟 確保頂部操作列將齒輪固定靠右 */
+        .challenge-top-bar {
+            display: flex;
+            justify-content: flex-end !important;
+            align-items: center;
+            margin-bottom: 10px;
+            position: relative;
         }
 
         /* 🌟 底部固定列容器 */
@@ -367,7 +376,6 @@
         .btn-nav:hover:not(:disabled) { background: #e5e7eb; }
         .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        .challenge-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; position: relative; }
         .gear-menu-container { position: relative; }
         .btn-gear {
             background: #f3f4f6; border: 1px solid #d1d5db; width: 34px; height: 34px;
@@ -2510,28 +2518,30 @@
             playAudioOrTTS(item.audio_url, item.text, 0.85);
         }
 
+        // 🌟 單字聽打檢查：回答正確時按鈕旁不顯示韓文、音標/詞性不出現，下方呈現：💡 [韓文答案] [翻譯]
         function checkWordTypeAnswer() {
             const item = wordQuestions[wordIndex];
             const isMatch = cleanStringForCompare(document.getElementById('input-word-type').value) === cleanStringForCompare(item.text);
             const scoreBadge = document.getElementById('lbl-word-type-score');
             const typeTextElem = document.getElementById('lbl-word-type-text');
             const subTextElem = document.getElementById('lbl-word-type-subtext');
+            const transElem = document.getElementById('lbl-word-type-translation');
 
             if (isMatch) {
                 scoreBadge.innerText = "🎉 完全正確！";
                 scoreBadge.style.color = "#58cc02";
-                typeTextElem.style.display = 'block';
+                
+                // 1. 藍色按鈕旁邊不顯示韓文
+                if (typeTextElem) typeTextElem.style.display = 'none';
 
+                // 2. 音標、詞性等不顯示
+                if (subTextElem) subTextElem.style.display = 'none';
+
+                // 3. 下方呈現：正確的韓語答案 + 翻譯 (例如：💡 아이 小孩)
                 const nativeTrans = getWordTranslation(item);
-                const pronParts = [];
-                if (item.romanization) pronParts.push(`[${item.romanization}]`);
-                if (item.pos_zh) pronParts.push(`(${item.pos_zh})`);
-                if (pronParts.length && subTextElem) {
-                    subTextElem.innerText = pronParts.join(' ');
-                    subTextElem.style.display = 'block';
-                }
+                const correctKorean = item.text || "";
+                transElem.innerText = `💡 ${correctKorean} ${nativeTrans}`.trim();
 
-                document.getElementById('lbl-word-type-translation').innerText = nativeTrans ? `💡 翻譯：${nativeTrans}` : "";
                 playWordAudio();
                 passedSubQuestions.add(wordIndex);
                 checkAndShowFinishButton();
