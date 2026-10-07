@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>靠右挑戰系統</title>
+    <title>多語挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -88,12 +88,12 @@
         }
         .user-meta-item:hover { background: #f3f4f6; }
 
-        /* 🌟 隱藏所有挑戰頁面頂部的資訊標題 */
+        /* 🌟 完全隱藏所有挑戰頁面頂部的資訊標題 */
         .lbl-quiz-info {
             display: none !important;
         }
 
-        /* 🌟 確保頂部操作列將齒輪固定靠右 */
+        /* 🌟 確保頂部操作列將齒輪固定在右上角 */
         .challenge-top-bar {
             display: flex;
             justify-content: flex-end !important;
@@ -1015,10 +1015,11 @@
                     <button class="btn-circle btn-listen" id="btn-word-choice-play" onclick="playWordAudio()" style="margin: 0 auto; width: 62px; height: 62px; font-size: 1.35rem;">
                         <i class="fa-solid fa-volume-high"></i>
                     </button>
-                    <div style="font-size: 0.85rem; color: #64748b; font-weight: bold; margin-top: 6px;">點擊重播題目語音</div>
+                    <!-- 🌟 已隱藏「點擊重播題目語音」字樣 -->
+                    <div style="display: none; font-size: 0.85rem; color: #64748b; font-weight: bold; margin-top: 6px;">點擊重播題目語音</div>
                 </div>
 
-                <div class="target-text" id="lbl-word-choice-text">載入中...</div>
+                <div class="target-text" id="lbl-word-choice-text">???</div>
                 <div id="lbl-word-choice-sub" style="font-size: 0.95rem; color: #475569; font-weight: bold; margin-bottom: 6px; display: none;"></div>
                 <div class="vocab-choice-list" id="container-word-choices"></div>
                 <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-word-choice-score">請選擇正確單字</div></div>
@@ -1200,6 +1201,18 @@
         let currentRankSubTab = 'global';
         let passedSubQuestions = new Set();
         let totalChallengeQuestions = 0;
+
+        // 🌟 答對時的隨機誇獎語句清單
+        const PRAISE_MESSAGES = [
+            "🎉 你真的太厲害了！",
+            "🎉 你到底是怎麼做到的？你真的太強了",
+            "🎉 我真的太崇拜你了",
+            "🎉 簡直是天才！"
+        ];
+
+        function getRandomPraise() {
+            return PRAISE_MESSAGES[Math.floor(Math.random() * PRAISE_MESSAGES.length)];
+        }
 
         function shuffleArray(arr) {
             const array = [...arr];
@@ -2251,7 +2264,7 @@
                         String(getItemField(d, 'lesson')) === lesStr &&
                         ((d.a1 && d.a1.trim()) || (d.b1 && d.b1.trim()))
                     );
-                    const hasWord = matchFilter(rawWordData); // 🌟 所有程度皆可開放通用單字練習
+                    const hasWord = matchFilter(rawWordData);
 
                     const card = document.createElement('div');
                     card.className = "lesson-card-item";
@@ -2461,11 +2474,13 @@
 
                 if (audioPlayerBox) audioPlayerBox.style.display = 'block';
 
+                // 🌟 題目標題一律簡化為純 "???"
+                targetTextElem.innerText = "???";
+                choiceSubElem.innerText = "";
+                choiceSubElem.style.display = 'none';
+
                 if (is0ALevel) {
-                    // 🌟 0A 程度：聽音選韓文單字 (正確答案對比 text)
-                    targetTextElem.innerText = "??? (聽音選擇韓文單字)";
-                    choiceSubElem.innerText = "";
-                    choiceSubElem.style.display = 'none';
+                    // 0A 程度：聽音選韓文單字 (正確答案對比 text)
                     document.getElementById('lbl-word-choice-score').innerText = "請聽音選擇正確的單字";
                     document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
 
@@ -2483,10 +2498,7 @@
                     });
 
                 } else {
-                    // 🌟 1A 及以上程度：播放 text 單字音檔，但選項與答案對比為中文 (zh_tw)
-                    targetTextElem.innerText = "??? (聽音選擇中文意思)";
-                    choiceSubElem.innerText = "";
-                    choiceSubElem.style.display = 'none';
+                    // 1A 及以上程度：播放 text 單字音檔，選項與答案對比為中文 (zh_tw)
                     document.getElementById('lbl-word-choice-score').innerText = "請聽音選擇正確的中文意思";
                     document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
 
@@ -2558,52 +2570,48 @@
             const targetTextElem = document.getElementById('lbl-word-choice-text');
             const choiceSubElem = document.getElementById('lbl-word-choice-sub');
 
+            // 🌟 答錯時的固定說明文字
+            const wrongTipHtml = "差一點點就答對囉！<br>再聽一次，仔細聽聽看裡面的聲音。";
+
             if (is0ALevel) {
                 // 0A 程度：對比韓文單字 (text)
                 const correctKorean = (item.text || '').trim();
                 if (selectedText.trim() === correctKorean) {
-                    scoreBadge.innerText = "🎉 答對了！";
+                    scoreBadge.innerText = getRandomPraise(); // 🌟 隨機誇獎
                     scoreBadge.style.color = "#58cc02";
                     targetTextElem.innerText = correctKorean;
 
+                    // 🌟 拼音、詞性不要，僅顯示翻譯
                     const nativeTrans = getWordTranslation(item);
-                    const pronParts = [];
-                    if (item.romanization) pronParts.push(`[${item.romanization}]`);
-                    if (item.pos_zh) pronParts.push(`(${item.pos_zh})`);
-                    if (nativeTrans) pronParts.push(`💡 翻譯：${nativeTrans}`);
-
-                    choiceSubElem.innerText = pronParts.join(' ');
-                    choiceSubElem.style.display = pronParts.length ? 'block' : 'none';
+                    choiceSubElem.innerText = nativeTrans ? `💡 ${nativeTrans}` : "";
+                    choiceSubElem.style.display = nativeTrans ? 'block' : 'none';
 
                     playWordAudio();
                     passedSubQuestions.add(wordIndex);
                     checkAndShowFinishButton();
                 } else {
-                    scoreBadge.innerText = `❌ 選錯囉，再聽一次試試看！`;
+                    scoreBadge.innerHTML = wrongTipHtml; // 🌟 新版答錯提示
                     scoreBadge.style.color = "#ff4b4b";
                 }
             } else {
-                // 🌟 1A 及以上程度：播放 text 單字音檔，對比中文翻譯 (zh_tw)
+                // 🌟 1A 及以上程度：對比中文翻譯 (zh_tw)
                 const correctZh = (item.zh_tw || '').trim();
                 if (selectedText.trim() === correctZh) {
-                    scoreBadge.innerText = "🎉 完全正確！";
+                    scoreBadge.innerText = getRandomPraise(); // 🌟 隨機誇獎
                     scoreBadge.style.color = "#58cc02";
                     
                     // 答對時將題目揭曉為原本的韓文單字
                     targetTextElem.innerText = item.text || "";
 
-                    const pronParts = [];
-                    if (item.romanization) pronParts.push(`[${item.romanization}]`);
-                    if (item.pos_zh) pronParts.push(`(${item.pos_zh})`);
-                    if (correctZh) pronParts.push(`💡 中文：${correctZh}`);
-                    choiceSubElem.innerText = pronParts.join(' ');
-                    choiceSubElem.style.display = 'block';
+                    // 🌟 拼音、詞性不要，僅顯示翻譯
+                    choiceSubElem.innerText = correctZh ? `💡 ${correctZh}` : "";
+                    choiceSubElem.style.display = correctZh ? 'block' : 'none';
 
                     playWordAudio();
                     passedSubQuestions.add(wordIndex);
                     checkAndShowFinishButton();
                 } else {
-                    scoreBadge.innerText = `❌ 選錯囉，請再聽一次！`;
+                    scoreBadge.innerHTML = wrongTipHtml; // 🌟 新版答錯提示
                     scoreBadge.style.color = "#ff4b4b";
                 }
             }
