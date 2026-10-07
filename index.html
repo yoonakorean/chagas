@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>0a固定下排學習系統</title>
+    <title>多語挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -301,8 +301,7 @@
         .btn-lesson-action:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
         .btn-lesson-action.btn-grammar-lesson:hover { border-color: var(--duo-purple); color: var(--duo-purple); }
         .btn-lesson-action.btn-chat-lesson:hover { border-color: #ec4899; color: #ec4899; }
-        .btn-lesson-action.btn-vocab-lesson:hover { border-color: #10b981; color: #10b981; }
-        .btn-lesson-action.btn-0a-special:hover { border-color: var(--duo-teal); color: var(--duo-teal); }
+        .btn-lesson-action.btn-word-action:hover { border-color: var(--duo-teal); color: var(--duo-teal); }
 
         .btn-confirm {
             width: 100%; background: var(--duo-green); color: white; border: none;
@@ -699,8 +698,7 @@
             </div>
         </div>
     </div>
-
-    <!-- 📱 主介面容器 -->
+<!-- 📱 主介面容器 -->
     <div class="shadowing-card">
         <div class="user-meta-bar" id="app-user-meta-bar">
             <div class="user-meta-item" id="btn-profile-trigger" onclick="openProfileView()">
@@ -927,96 +925,96 @@
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 步驟 6-D：單字跟讀畫面 (通用 1A+ 與 0A) -->
-            <div id="step-quiz-vocab-shadow" class="step-page">
+            <!-- 🌟 步驟 6-D：通用單字跟讀畫面 (全級別適用) -->
+            <div id="step-quiz-word-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
                     <div class="gear-menu-container">
-                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-shadow')"><i class="fa-solid fa-gear"></i></button>
-                        <div class="gear-dropdown" id="gear-dropdown-vocab-shadow">
-                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-vocab-shadow')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-word-shadow')"><i class="fa-solid fa-gear"></i></button>
+                        <div class="gear-dropdown" id="gear-dropdown-word-shadow">
+                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-word-shadow')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
                             <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
                         </div>
                     </div>
                 </div>
-                <div class="target-text" id="lbl-vocab-target-text">載入中...</div>
-                <div id="lbl-vocab-subtext" style="font-size: 0.95rem; color: #475569; font-weight: bold; margin-bottom: 6px; display: none;"></div>
-                <div class="translation-text" id="lbl-vocab-translation" style="min-height: 1.5rem;"></div>
+                <div class="target-text" id="lbl-word-shadow-target-text">載入中...</div>
+                <div id="lbl-word-shadow-subtext" style="font-size: 0.95rem; color: #475569; font-weight: bold; margin-bottom: 6px; display: none;"></div>
+                <div class="translation-text" id="lbl-word-shadow-translation" style="min-height: 1.5rem;"></div>
                 <div class="controls">
-                    <button class="btn-circle btn-listen" id="btn-vocab-play-audio" onclick="playVocabAudio()"><i class="fa-solid fa-volume-high"></i></button>
-                    <button class="btn-circle btn-record" id="btn-vocab-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
+                    <button class="btn-circle btn-listen" id="btn-word-shadow-play-audio" onclick="playWordAudio()"><i class="fa-solid fa-volume-high"></i></button>
+                    <button class="btn-circle btn-record" id="btn-word-shadow-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
                 </div>
                 <div class="result-box">
-                    <div>辨識結果：<span id="lbl-vocab-recognized-text" style="font-weight: bold; color: #374151;">-</span></div>
-                    <div class="score-badge" id="lbl-vocab-score">判定結果：--</div>
+                    <div>辨識結果：<span id="lbl-word-shadow-recognized-text" style="font-weight: bold; color: #374151;">-</span></div>
+                    <div class="score-badge" id="lbl-word-shadow-score">判定結果：--</div>
                 </div>
                 <div class="nav-controls">
-                    <button class="btn-nav" id="btn-vocab-prev" onclick="prevVocabQuestion()">上一題</button>
-                    <span class="lbl-progress" id="lbl-vocab-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
-                    <button class="btn-nav" id="btn-vocab-next" onclick="nextVocabQuestion()">下一題</button>
+                    <button class="btn-nav" id="btn-word-shadow-prev" onclick="prevWordQuestion()">上一題</button>
+                    <span class="lbl-progress" id="lbl-word-shadow-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
+                    <button class="btn-nav" id="btn-word-shadow-next" onclick="nextWordQuestion()">下一題</button>
                 </div>
-                <button class="btn-finish-challenge" id="btn-finish-vocab-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
+                <button class="btn-finish-challenge" id="btn-finish-word-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 步驟 6-E：單字聽打畫面 (通用 1A+ 與 0A) -->
-            <div id="step-quiz-vocab-type" class="step-page">
+            <!-- 🌟 步驟 6-E：通用單字聽打畫面 (全級別適用) -->
+            <div id="step-quiz-word-type" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
                     <div class="gear-menu-container">
-                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-type')"><i class="fa-solid fa-gear"></i></button>
-                        <div class="gear-dropdown" id="gear-dropdown-vocab-type">
-                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-vocab-type')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-word-type')"><i class="fa-solid fa-gear"></i></button>
+                        <div class="gear-dropdown" id="gear-dropdown-word-type">
+                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-word-type')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
                             <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
                         </div>
                     </div>
                 </div>
                 <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 18px 0 10px 0;">
-                    <div class="target-text" id="lbl-vocab-type-text" style="margin: 0; min-height: auto; display: none;">...</div>
-                    <button class="btn-circle btn-listen" onclick="playVocabAudio()" style="width: 58px; height: 58px; font-size: 1.35rem; flex-shrink: 0;"><i class="fa-solid fa-volume-high"></i></button>
+                    <div class="target-text" id="lbl-word-type-text" style="margin: 0; min-height: auto; display: none;">...</div>
+                    <button class="btn-circle btn-listen" onclick="playWordAudio()" style="width: 58px; height: 58px; font-size: 1.35rem; flex-shrink: 0;"><i class="fa-solid fa-volume-high"></i></button>
                 </div>
-                <div id="lbl-vocab-type-subtext" style="font-size: 0.95rem; color: #475569; font-weight: bold; margin-bottom: 6px; display: none;"></div>
-                <input type="text" id="input-vocab-type" class="vocab-input" placeholder="請輸入聽到的單字" autocomplete="off" autocorrect="off" autocapitalize="none">
-                <button class="btn-confirm" id="btn-submit-vocab-type" onclick="checkVocabTypeDispatcher()"><i class="fa-solid fa-check"></i> 檢查答案</button>
-                <div class="translation-text" id="lbl-vocab-type-translation" style="margin-top: 12px; font-size: 1.05rem; font-weight: bold;"></div>
-                <div class="result-box" style="margin-top: 8px;"><div class="score-badge" id="lbl-vocab-type-score">等待輸入...</div></div>
+                <div id="lbl-word-type-subtext" style="font-size: 0.95rem; color: #475569; font-weight: bold; margin-bottom: 6px; display: none;"></div>
+                <input type="text" id="input-word-type" class="vocab-input" placeholder="請輸入聽到的單字" autocomplete="off" autocorrect="off" autocapitalize="none">
+                <button class="btn-confirm" id="btn-submit-word-type" onclick="checkWordTypeAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
+                <div class="translation-text" id="lbl-word-type-translation" style="margin-top: 12px; font-size: 1.05rem; font-weight: bold;"></div>
+                <div class="result-box" style="margin-top: 8px;"><div class="score-badge" id="lbl-word-type-score">等待輸入...</div></div>
                 <div class="nav-controls">
-                    <button class="btn-nav" id="btn-vocab-type-prev" onclick="prevVocabQuestion()">上一題</button>
-                    <span class="lbl-progress" id="lbl-vocab-type-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
-                    <button class="btn-nav" id="btn-vocab-type-next" onclick="nextVocabQuestion()">下一題</button>
+                    <button class="btn-nav" id="btn-word-type-prev" onclick="prevWordQuestion()">上一題</button>
+                    <span class="lbl-progress" id="lbl-word-type-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
+                    <button class="btn-nav" id="btn-word-type-next" onclick="nextWordQuestion()">下一題</button>
                 </div>
-                <button class="btn-finish-challenge" id="btn-finish-vocab-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
+                <button class="btn-finish-challenge" id="btn-finish-word-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 步驟 6-F：單字選擇題畫面 (通用 1A+ 與 0A) -->
-            <div id="step-quiz-vocab-choice" class="step-page">
+            <!-- 🌟 步驟 6-F：通用單字選擇題畫面 (全級別適用) -->
+            <div id="step-quiz-word-choice" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
                     <div class="gear-menu-container">
-                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-vocab-choice')"><i class="fa-solid fa-gear"></i></button>
-                        <div class="gear-dropdown" id="gear-dropdown-vocab-choice">
-                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-vocab-choice')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-word-choice')"><i class="fa-solid fa-gear"></i></button>
+                        <div class="gear-dropdown" id="gear-dropdown-word-choice">
+                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-word-choice')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
                             <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
                         </div>
                     </div>
                 </div>
 
-                <div id="box-0a-audio-player" style="display: none; margin: 10px 0 14px 0;">
-                    <button class="btn-circle btn-listen" id="btn-0a-choice-play" onclick="playVocabAudio()" style="margin: 0 auto; width: 62px; height: 62px; font-size: 1.35rem;">
+                <div id="box-word-audio-player" style="margin: 10px 0 14px 0;">
+                    <button class="btn-circle btn-listen" id="btn-word-choice-play" onclick="playWordAudio()" style="margin: 0 auto; width: 62px; height: 62px; font-size: 1.35rem;">
                         <i class="fa-solid fa-volume-high"></i>
                     </button>
                     <div style="font-size: 0.85rem; color: #64748b; font-weight: bold; margin-top: 6px;">點擊重播題目語音</div>
                 </div>
 
-                <div class="target-text" id="lbl-vocab-choice-text">載入中...</div>
-                <div id="lbl-vocab-choice-sub" style="font-size: 0.95rem; color: #475569; font-weight: bold; margin-bottom: 6px; display: none;"></div>
-                <div class="vocab-choice-list" id="container-vocab-choices"></div>
-                <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-vocab-choice-score">請選擇正確單字</div></div>
+                <div class="target-text" id="lbl-word-choice-text">載入中...</div>
+                <div id="lbl-word-choice-sub" style="font-size: 0.95rem; color: #475569; font-weight: bold; margin-bottom: 6px; display: none;"></div>
+                <div class="vocab-choice-list" id="container-word-choices"></div>
+                <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-word-choice-score">請選擇正確單字</div></div>
                 <div class="nav-controls">
-                    <button class="btn-nav" id="btn-vocab-choice-prev" onclick="prevVocabQuestion()">上一題</button>
-                    <span class="lbl-progress" id="lbl-vocab-choice-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
-                    <button class="btn-nav" id="btn-vocab-choice-next" onclick="nextVocabQuestion()">下一題</button>
+                    <button class="btn-nav" id="btn-word-choice-prev" onclick="prevWordQuestion()">上一題</button>
+                    <span class="lbl-progress" id="lbl-word-choice-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
+                    <button class="btn-nav" id="btn-word-choice-next" onclick="nextWordQuestion()">下一題</button>
                 </div>
-                <button class="btn-finish-challenge" id="btn-finish-vocab-choice" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
+                <button class="btn-finish-challenge" id="btn-finish-word-choice" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
         </div>
 
@@ -1157,8 +1155,7 @@
         let rawBlocksData = [];  
         let globalGrammarData = []; 
         let rawDialogueData = []; 
-        let rawVocabData = [];
-        let raw0aChoiceData = [];
+        let rawWordData = []; // 🌟 通用單字資料 (所有程度共用)
 
         let questions = [];
         let currentIndex = 0;
@@ -1176,8 +1173,8 @@
         let isChatChallengeMode = false;
         let chatRoundPassed = false;
 
-        let vocabQuestions = [];
-        let vocabIndex = 0;
+        let wordQuestions = [];
+        let wordIndex = 0;
 
         let currentGrammarItem = null;
         let currentDialogIndex = 0;
@@ -2056,7 +2053,7 @@
         }
 
         async function forceClearAndSync() {
-            ['all_data_', 'grammar_data_', 'dialogue_data_', 'vocab_data_', '0achoice_data_'].forEach(k => {
+            ['all_data_', 'grammar_data_', 'dialogue_data_', 'word_data_'].forEach(k => {
                 localStorage.removeItem(k + currentConfig.category);
             });
             alert(`已清除當前語言快取！正在重新連線同步最新試算表...`);
@@ -2072,8 +2069,7 @@
                 all: `all_data_${cat}`,
                 grammar: `grammar_data_${cat}`,
                 dialogue: `dialogue_data_${cat}`,
-                vocab: `vocab_data_${cat}`,
-                choice0a: `0achoice_data_${cat}`
+                word: `word_data_${cat}`
             };
 
             const readCache = (key) => {
@@ -2087,8 +2083,7 @@
                     rawBlocksData = cachedAll.blocks || [];
                     globalGrammarData = readCache(cacheMap.grammar) || [];
                     rawDialogueData = readCache(cacheMap.dialogue) || [];
-                    rawVocabData = readCache(cacheMap.vocab) || [];
-                    raw0aChoiceData = readCache(cacheMap.choice0a) || [];
+                    rawWordData = readCache(cacheMap.word) || [];
                     renderLevelMenu();
                     goToStep('step-level');
                     return;
@@ -2096,13 +2091,12 @@
             }
 
             try {
-                const [shadowRes, blocksRes, grammarRes, dialogueRes, vocabRes, choice0aRes] = await Promise.all([
+                const [shadowRes, blocksRes, grammarRes, dialogueRes, wordRes] = await Promise.all([
                     requestGAS(targetApi, 'getLanguageData').catch(() => null),
                     requestGAS(targetApi, 'getBlocksData').catch(() => null),
                     requestGAS(targetApi, 'getGrammarData').catch(() => null),
                     requestGAS(targetApi, 'getDialogueData').catch(() => null),
-                    requestGAS(targetApi, 'getVocabularyData').catch(() => null),
-                    requestGAS(targetApi, 'get0aChoiceData').catch(() => null)
+                    requestGAS(targetApi, 'getWordData').catch(() => null)
                 ]);
 
                 if (shadowRes && shadowRes.status === 'success') rawShadowData = shadowRes.data || [];
@@ -2115,13 +2109,9 @@
                     rawDialogueData = dialogueRes.data || [];
                     localStorage.setItem(cacheMap.dialogue, JSON.stringify(dialogueRes.data));
                 }
-                if (vocabRes && vocabRes.status === 'success') {
-                    rawVocabData = vocabRes.data || [];
-                    localStorage.setItem(cacheMap.vocab, JSON.stringify(vocabRes.data));
-                }
-                if (choice0aRes && choice0aRes.status === 'success') {
-                    raw0aChoiceData = choice0aRes.data || [];
-                    localStorage.setItem(cacheMap.choice0a, JSON.stringify(choice0aRes.data));
+                if (wordRes && wordRes.status === 'success') {
+                    rawWordData = wordRes.data || [];
+                    localStorage.setItem(cacheMap.word, JSON.stringify(wordRes.data));
                 }
 
                 localStorage.setItem(cacheMap.all, JSON.stringify({ shadow: rawShadowData, blocks: rawBlocksData }));
@@ -2185,7 +2175,7 @@
         function renderUnits(level) {
             const container = document.getElementById('container-units');
             container.innerHTML = "";
-            const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawVocabData, ...raw0aChoiceData];
+            const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawWordData];
             const targetLevelNormalized = normalizeLevelStr(level);
 
             const filtered = combinedData.filter(i => normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized);
@@ -2212,7 +2202,7 @@
             const container = document.getElementById('container-lessons');
             container.innerHTML = "";
 
-            const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawVocabData, ...raw0aChoiceData];
+            const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawWordData];
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
             const filtered = combinedData.filter(i => {
@@ -2221,7 +2211,6 @@
             const lessons = [...new Set(filtered.map(i => getItemField(i, 'lesson')))].filter(Boolean).sort((a,b) => a - b);
 
             const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
-            const is0ALevel = (targetLevelNormalized === '0A');
 
             if (lessons.length > 0) {
                 lessons.forEach(les => {
@@ -2249,8 +2238,7 @@
                         String(getItemField(d, 'lesson')) === lesStr &&
                         ((d.a1 && d.a1.trim()) || (d.b1 && d.b1.trim()))
                     );
-                    const hasVocab = matchFilter(rawVocabData);
-                    const has0aChoice = matchFilter(raw0aChoiceData);
+                    const hasWord = matchFilter(rawWordData); // 🌟 所有程度均可開放單字練習
 
                     const card = document.createElement('div');
                     card.className = "lesson-card-item";
@@ -2283,16 +2271,11 @@
                     if (hasBlocks) btnGroup.appendChild(createActionButton('blocks', '🧩 重組'));
                     if (hasDialogue) btnGroup.appendChild(createActionButton('sentence_chat', '🗣 句子聊天挑戰', 'btn-chat-lesson'));
                     
-                    // 🌟 0A 專屬按鈕：跟讀、聽打、選擇
-                    if (is0ALevel && has0aChoice) {
-                        btnGroup.appendChild(createActionButton('0a_shadow', '🗣 韓語單字跟讀', 'btn-0a-special'));
-                        btnGroup.appendChild(createActionButton('0a_type', '⌨ 韓語單字聽打', 'btn-0a-special'));
-                        btnGroup.appendChild(createActionButton('0a_choice', '🎯 韓語單字選擇', 'btn-0a-special'));
-                    }
-                    if (hasVocab) {
-                        btnGroup.appendChild(createActionButton('vocab_shadow', '🗣 單字跟讀', 'btn-vocab-lesson'));
-                        btnGroup.appendChild(createActionButton('vocab_type', '⌨ 單字聽打', 'btn-vocab-lesson'));
-                        btnGroup.appendChild(createActionButton('vocab_choice', '🎯 單字選擇', 'btn-vocab-lesson'));
+                    // 🌟 通用單字挑戰：所有程度皆有此三個模式
+                    if (hasWord) {
+                        btnGroup.appendChild(createActionButton('word_shadow', '🗣 單字跟讀', 'btn-word-action'));
+                        btnGroup.appendChild(createActionButton('word_type', '⌨ 單字聽打', 'btn-word-action'));
+                        btnGroup.appendChild(createActionButton('word_choice', '🎯 單字選擇', 'btn-word-action'));
                     }
 
                     if (btnGroup.children.length === 0) {
@@ -2365,60 +2348,64 @@
                 }
             } else if (mode === 'sentence_chat') {
                 startSentenceChatChallenge();
-            } else if (mode === '0a_shadow' || mode === '0a_type' || mode === '0a_choice') {
-                start0aSpecialChallenge(mode);
-            } else if (mode.startsWith('vocab_')) {
-                startVocabChallenge(mode);
+            } else if (mode.startsWith('word_')) {
+                startWordChallenge(mode);
             } else {
                 startMainQuiz();
             }
         }
 
-        // ==================== 0A 專屬韓語單字挑戰 ====================
+        // ==================== 🌟 全新通用單字挑戰邏輯 (適用所有程度) ====================
 
-        function start0aSpecialChallenge(specialMode) {
+        function getWordTranslation(item) {
+            if (!item) return "";
+            return (currentConfig.lang === 'en') ? (item.en || item.zh_tw || "") :
+                   (currentConfig.lang === 'ja') ? (item.ja || item.zh_tw || "") : (item.zh_tw || "");
+        }
+
+        function startWordChallenge(wordMode) {
             stopSpeechRecognition();
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
-            vocabQuestions = raw0aChoiceData.filter(v => 
+            wordQuestions = rawWordData.filter(v => 
                 normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
                 String(getItemField(v, 'unit_id')) === String(currentConfig.unit_id) &&
                 String(getItemField(v, 'lesson')) === String(currentConfig.lesson)
             );
 
-            if (vocabQuestions.length === 0) return alert("0achoice 分頁尚無此課堂的韓語單字資料！");
+            if (wordQuestions.length === 0) return alert("此課堂尚無單字題目資料！");
 
-            vocabIndex = 0;
-            totalChallengeQuestions = vocabQuestions.length;
-            const modeTitle = specialMode === '0a_shadow' ? '🗣 韓語單字跟讀 (0A專屬)' :
-                              specialMode === '0a_type' ? '⌨ 韓語單字聽打 (0A專屬)' : '🎯 韓語單字選擇 (0A專屬)';
+            wordIndex = 0;
+            totalChallengeQuestions = wordQuestions.length;
+            const modeTitleMap = { 'word_shadow': '🗣 單字跟讀', 'word_type': '⌨ 單字聽打', 'word_choice': '🎯 單字選擇' };
+            const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
 
             document.querySelectorAll('.lbl-quiz-info').forEach(e => {
-                e.innerText = `韓文 | Level 0A | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (${modeTitle})`;
+                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (${modeTitleMap[wordMode]})`;
             });
 
-            if (specialMode === '0a_shadow') {
-                goToStep('step-quiz-vocab-shadow');
-            } else if (specialMode === '0a_type') {
-                goToStep('step-quiz-vocab-type');
+            if (wordMode === 'word_shadow') {
+                goToStep('step-quiz-word-shadow');
+            } else if (wordMode === 'word_type') {
+                goToStep('step-quiz-word-type');
             } else {
-                goToStep('step-quiz-vocab-choice');
+                goToStep('step-quiz-word-choice');
             }
-            display0aQuestion();
+            displayWordQuestion();
         }
 
-        function display0aQuestion() {
+        function displayWordQuestion() {
             stopSpeechRecognition();
-            if (!vocabQuestions.length) return;
+            if (!wordQuestions.length) return;
 
-            const item = vocabQuestions[vocabIndex];
-            const total = vocabQuestions.length;
+            const item = wordQuestions[wordIndex];
+            const total = wordQuestions.length;
 
-            if (currentConfig.mode === '0a_shadow') {
-                document.getElementById('lbl-vocab-progress').innerText = `${vocabIndex + 1} / ${total}`;
-                document.getElementById('lbl-vocab-target-text').innerText = item.text || "";
+            if (currentConfig.mode === 'word_shadow') {
+                document.getElementById('lbl-word-shadow-progress').innerText = `${wordIndex + 1} / ${total}`;
+                document.getElementById('lbl-word-shadow-target-text').innerText = item.text || "";
 
-                const subElem = document.getElementById('lbl-vocab-subtext');
+                const subElem = document.getElementById('lbl-word-shadow-subtext');
                 const pronParts = [];
                 if (item.romanization) pronParts.push(`拼音: [${item.romanization}]`);
                 if (item.kr_pron) pronParts.push(`音標: [${item.kr_pron}]`);
@@ -2427,92 +2414,87 @@
                 subElem.innerText = pronParts.join(' ');
                 subElem.style.display = pronParts.length ? 'block' : 'none';
 
-                document.getElementById('lbl-vocab-translation').innerText = "";
-                document.getElementById('lbl-vocab-recognized-text').innerText = "-";
-                document.getElementById('lbl-vocab-score').innerText = "判定結果：--";
-                document.getElementById('lbl-vocab-score').style.color = "#58cc02";
+                document.getElementById('lbl-word-shadow-translation').innerText = "";
+                document.getElementById('lbl-word-shadow-recognized-text').innerText = "-";
+                document.getElementById('lbl-word-shadow-score').innerText = "判定結果：--";
+                document.getElementById('lbl-word-shadow-score').style.color = "#58cc02";
 
-                document.getElementById('btn-vocab-prev').disabled = vocabIndex === 0;
-                document.getElementById('btn-vocab-next').disabled = vocabIndex === total - 1;
+                document.getElementById('btn-word-shadow-prev').disabled = wordIndex === 0;
+                document.getElementById('btn-word-shadow-next').disabled = wordIndex === total - 1;
 
-            } else if (currentConfig.mode === '0a_type') {
-                // 🌟 0A 專屬單字聽打介面渲染
-                document.getElementById('lbl-vocab-type-progress').innerText = `${vocabIndex + 1} / ${total}`;
-                const typeTextElem = document.getElementById('lbl-vocab-type-text');
+            } else if (currentConfig.mode === 'word_type') {
+                document.getElementById('lbl-word-type-progress').innerText = `${wordIndex + 1} / ${total}`;
+                const typeTextElem = document.getElementById('lbl-word-type-text');
                 typeTextElem.innerText = item.text || "";
                 typeTextElem.style.display = 'none';
 
-                const subTextElem = document.getElementById('lbl-vocab-type-subtext');
+                const subTextElem = document.getElementById('lbl-word-type-subtext');
                 if (subTextElem) {
                     subTextElem.innerText = "";
                     subTextElem.style.display = 'none';
                 }
 
-                document.getElementById('input-vocab-type').value = "";
-                document.getElementById('lbl-vocab-type-translation').innerText = "";
-                document.getElementById('lbl-vocab-type-score').innerText = "等待輸入...";
-                document.getElementById('lbl-vocab-type-score').style.color = "#58cc02";
+                document.getElementById('input-word-type').value = "";
+                document.getElementById('lbl-word-type-translation').innerText = "";
+                document.getElementById('lbl-word-type-score').innerText = "等待輸入...";
+                document.getElementById('lbl-word-type-score').style.color = "#58cc02";
 
-                document.getElementById('btn-vocab-type-prev').disabled = vocabIndex === 0;
-                document.getElementById('btn-vocab-type-next').disabled = vocabIndex === total - 1;
-                playVocabAudio();
+                document.getElementById('btn-word-type-prev').disabled = wordIndex === 0;
+                document.getElementById('btn-word-type-next').disabled = wordIndex === total - 1;
+                playWordAudio();
 
-            } else if (currentConfig.mode === '0a_choice') {
-                document.getElementById('lbl-vocab-choice-progress').innerText = `${vocabIndex + 1} / ${total}`;
-                document.getElementById('lbl-vocab-choice-text').innerText = "??? (聽音選擇韓文單字)";
+            } else if (currentConfig.mode === 'word_choice') {
+                document.getElementById('lbl-word-choice-progress').innerText = `${wordIndex + 1} / ${total}`;
+                document.getElementById('lbl-word-choice-text').innerText = "??? (聽音選擇單字)";
 
-                const audioPlayerBox = document.getElementById('box-0a-audio-player');
-                if (audioPlayerBox) audioPlayerBox.style.display = 'block';
-
-                const choiceSubElem = document.getElementById('lbl-vocab-choice-sub');
+                const choiceSubElem = document.getElementById('lbl-word-choice-sub');
                 choiceSubElem.innerText = "";
                 choiceSubElem.style.display = 'none';
 
-                document.getElementById('lbl-vocab-choice-score').innerText = "請聽音選擇正確的韓語單字";
-                document.getElementById('lbl-vocab-choice-score').style.color = "#58cc02";
+                document.getElementById('lbl-word-choice-score').innerText = "請聽音選擇正確的單字";
+                document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
 
-                const container = document.getElementById('container-vocab-choices');
+                const container = document.getElementById('container-word-choices');
                 container.innerHTML = "";
 
                 let choices = (item.choice || '').split('/').map(s => s.trim()).filter(Boolean);
-                const correctKoreanWord = (item.text || '').trim();
-                if (correctKoreanWord && !choices.includes(correctKoreanWord)) choices.push(correctKoreanWord);
+                const correctWord = (item.text || '').trim();
+                if (correctWord && !choices.includes(correctWord)) choices.push(correctWord);
                 choices = shuffleArray(choices);
 
-                choices.forEach(kText => {
+                choices.forEach(wText => {
                     const btn = document.createElement('button');
                     btn.className = 'btn-vocab-choice';
-                    btn.innerText = kText;
-                    btn.onclick = () => check0aChoiceAnswer(kText);
+                    btn.innerText = wText;
+                    btn.onclick = () => checkWordChoiceAnswer(wText);
                     container.appendChild(btn);
                 });
 
-                document.getElementById('btn-vocab-choice-prev').disabled = vocabIndex === 0;
-                document.getElementById('btn-vocab-choice-next').disabled = vocabIndex === total - 1;
-                setTimeout(() => playVocabAudio(), 300);
+                document.getElementById('btn-word-choice-prev').disabled = wordIndex === 0;
+                document.getElementById('btn-word-choice-next').disabled = wordIndex === total - 1;
+                setTimeout(() => playWordAudio(), 300);
             }
         }
 
-        function get0aTranslationByNativeLang(item) {
-            if (!item) return "";
-            return (currentConfig.lang === 'en') ? (item.en || item.zh_tw || "") :
-                   (currentConfig.lang === 'ja') ? (item.ja || item.zh_tw || "") : (item.zh_tw || "");
+        function playWordAudio() {
+            const item = wordQuestions[wordIndex];
+            if (!item) return;
+            playAudioOrTTS(item.audio_url, item.text, 0.85);
         }
 
-        // 🌟 檢查 0A 專屬單字聽打答案
-        function check0aTypeAnswer() {
-            const item = vocabQuestions[vocabIndex];
-            const isMatch = cleanStringForCompare(document.getElementById('input-vocab-type').value) === cleanStringForCompare(item.text);
-            const scoreBadge = document.getElementById('lbl-vocab-type-score');
-            const typeTextElem = document.getElementById('lbl-vocab-type-text');
-            const subTextElem = document.getElementById('lbl-vocab-type-subtext');
+        function checkWordTypeAnswer() {
+            const item = wordQuestions[wordIndex];
+            const isMatch = cleanStringForCompare(document.getElementById('input-word-type').value) === cleanStringForCompare(item.text);
+            const scoreBadge = document.getElementById('lbl-word-type-score');
+            const typeTextElem = document.getElementById('lbl-word-type-text');
+            const subTextElem = document.getElementById('lbl-word-type-subtext');
 
             if (isMatch) {
                 scoreBadge.innerText = "🎉 完全正確！";
                 scoreBadge.style.color = "#58cc02";
                 typeTextElem.style.display = 'block';
 
-                const nativeTrans = get0aTranslationByNativeLang(item);
+                const nativeTrans = getWordTranslation(item);
                 const pronParts = [];
                 if (item.romanization) pronParts.push(`[${item.romanization}]`);
                 if (item.pos_zh) pronParts.push(`(${item.pos_zh})`);
@@ -2521,9 +2503,9 @@
                     subTextElem.style.display = 'block';
                 }
 
-                document.getElementById('lbl-vocab-type-translation').innerText = nativeTrans ? `💡 翻譯：${nativeTrans}` : "";
-                playVocabAudio();
-                passedSubQuestions.add(vocabIndex);
+                document.getElementById('lbl-word-type-translation').innerText = nativeTrans ? `💡 翻譯：${nativeTrans}` : "";
+                playWordAudio();
+                passedSubQuestions.add(wordIndex);
                 checkAndShowFinishButton();
             } else {
                 scoreBadge.innerText = "❌ 答案不太對喔，再試試看！";
@@ -2531,18 +2513,18 @@
             }
         }
 
-        function check0aChoiceAnswer(selectedKoreanText) {
-            const item = vocabQuestions[vocabIndex];
-            const scoreBadge = document.getElementById('lbl-vocab-choice-score');
-            const targetTextElem = document.getElementById('lbl-vocab-choice-text');
-            const choiceSubElem = document.getElementById('lbl-vocab-choice-sub');
+        function checkWordChoiceAnswer(selectedText) {
+            const item = wordQuestions[wordIndex];
+            const scoreBadge = document.getElementById('lbl-word-choice-score');
+            const targetTextElem = document.getElementById('lbl-word-choice-text');
+            const choiceSubElem = document.getElementById('lbl-word-choice-sub');
 
-            if (selectedKoreanText.trim() === (item.text || '').trim()) {
+            if (selectedText.trim() === (item.text || '').trim()) {
                 scoreBadge.innerText = "🎉 答對了！";
                 scoreBadge.style.color = "#58cc02";
                 targetTextElem.innerText = item.text || "";
 
-                const nativeTrans = get0aTranslationByNativeLang(item);
+                const nativeTrans = getWordTranslation(item);
                 const pronParts = [];
                 if (item.romanization) pronParts.push(`[${item.romanization}]`);
                 if (item.pos_zh) pronParts.push(`(${item.pos_zh})`);
@@ -2551,13 +2533,26 @@
                 choiceSubElem.innerText = pronParts.join(' ');
                 choiceSubElem.style.display = pronParts.length ? 'block' : 'none';
 
-                playVocabAudio();
-                passedSubQuestions.add(vocabIndex);
+                playWordAudio();
+                passedSubQuestions.add(wordIndex);
                 checkAndShowFinishButton();
             } else {
                 scoreBadge.innerText = `❌ 選錯囉，再聽一次試試看！`;
                 scoreBadge.style.color = "#ff4b4b";
             }
+        }
+
+        function prevWordQuestion() { 
+            if (wordIndex > 0) { 
+                wordIndex--; 
+                displayWordQuestion(); 
+            } 
+        }
+        function nextWordQuestion() { 
+            if (wordIndex < wordQuestions.length - 1) { 
+                wordIndex++; 
+                displayWordQuestion(); 
+            } 
         }
 
         // ==================== 句子聊天挑戰邏輯 ====================
@@ -2723,172 +2718,6 @@
 
         function prevChatRound() { if (chatRoundIndex > 0) { chatRoundIndex--; displayChatRound(); } }
         function nextChatRound() { if (chatRoundIndex < chatRounds.length - 1) { chatRoundIndex++; displayChatRound(); } }
-
-        // ==================== 一般單字測驗邏輯 ====================
-
-        function getTranslationByLang(item) {
-            if (!item) return "";
-            return (currentConfig.lang === 'en') ? (item.en || item.zh_tw || "") :
-                   (currentConfig.lang === 'ja') ? (item.ja || item.zh_tw || "") : (item.zh_tw || "");
-        }
-
-        function startVocabChallenge(vocabMode) {
-            stopSpeechRecognition();
-            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-
-            vocabQuestions = rawVocabData.filter(v => 
-                normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
-                String(getItemField(v, 'unit_id')) === String(currentConfig.unit_id) &&
-                String(getItemField(v, 'lesson')) === String(currentConfig.lesson)
-            );
-
-            if (vocabQuestions.length === 0) return alert("此課堂目前沒有設定單字練習喔！");
-
-            vocabIndex = 0;
-            totalChallengeQuestions = vocabQuestions.length;
-            const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
-            const modeTitleMap = { 'vocab_shadow': '🗣 單字跟讀', 'vocab_type': '⌨ 單字聽打', 'vocab_choice': '🎯 單字選擇' };
-
-            document.querySelectorAll('.lbl-quiz-info').forEach(e => {
-                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (${modeTitleMap[vocabMode]})`;
-            });
-
-            const audioPlayerBox = document.getElementById('box-0a-audio-player');
-            if (audioPlayerBox) audioPlayerBox.style.display = 'none';
-
-            goToStep(vocabMode === 'vocab_shadow' ? 'step-quiz-vocab-shadow' : (vocabMode === 'vocab_type' ? 'step-quiz-vocab-type' : 'step-quiz-vocab-choice'));
-            displayVocabQuestion();
-        }
-
-        function displayVocabQuestion() {
-            stopSpeechRecognition();
-            if (!vocabQuestions.length) return;
-
-            const currentVocab = vocabQuestions[vocabIndex];
-            const total = vocabQuestions.length;
-
-            if (currentConfig.mode === 'vocab_shadow') {
-                document.getElementById('lbl-vocab-progress').innerText = `${vocabIndex + 1} / ${total}`;
-                document.getElementById('lbl-vocab-target-text').innerText = currentVocab.text || "";
-                document.getElementById('lbl-vocab-subtext').style.display = 'none';
-                document.getElementById('lbl-vocab-translation').innerText = "";
-                document.getElementById('lbl-vocab-recognized-text').innerText = "-";
-                document.getElementById('lbl-vocab-score').innerText = "判定結果：--";
-                document.getElementById('btn-vocab-prev').disabled = vocabIndex === 0;
-                document.getElementById('btn-vocab-next').disabled = vocabIndex === total - 1;
-
-            } else if (currentConfig.mode === 'vocab_type') {
-                document.getElementById('lbl-vocab-type-progress').innerText = `${vocabIndex + 1} / ${total}`;
-                const typeTextElem = document.getElementById('lbl-vocab-type-text');
-                typeTextElem.innerText = currentVocab.text || "";
-                typeTextElem.style.display = 'none';
-
-                const subTextElem = document.getElementById('lbl-vocab-type-subtext');
-                if (subTextElem) {
-                    subTextElem.innerText = "";
-                    subTextElem.style.display = 'none';
-                }
-
-                document.getElementById('input-vocab-type').value = "";
-                document.getElementById('lbl-vocab-type-translation').innerText = "";
-                document.getElementById('lbl-vocab-type-score').innerText = "等待輸入...";
-                document.getElementById('lbl-vocab-type-score').style.color = "#58cc02";
-
-                document.getElementById('btn-vocab-type-prev').disabled = vocabIndex === 0;
-                document.getElementById('btn-vocab-type-next').disabled = vocabIndex === total - 1;
-                playVocabAudio();
-
-            } else if (currentConfig.mode === 'vocab_choice') {
-                document.getElementById('lbl-vocab-choice-progress').innerText = `${vocabIndex + 1} / ${total}`;
-                document.getElementById('lbl-vocab-choice-text').innerText = currentVocab.text || "";
-                document.getElementById('lbl-vocab-choice-sub').style.display = 'none';
-                document.getElementById('lbl-vocab-choice-score').innerText = "請選擇正確意思";
-                document.getElementById('lbl-vocab-choice-score').style.color = "#58cc02";
-
-                const container = document.getElementById('container-vocab-choices');
-                container.innerHTML = "";
-
-                let choices = (currentVocab.choice || '').split('/').map(s => s.trim()).filter(Boolean);
-                const correctAns = (currentVocab.zh_tw || '').trim();
-                if (correctAns && !choices.includes(correctAns)) choices.push(correctAns);
-                choices = shuffleArray(choices);
-
-                choices.forEach(cText => {
-                    const btn = document.createElement('button');
-                    btn.className = 'btn-vocab-choice';
-                    btn.innerText = cText;
-                    btn.onclick = () => checkVocabChoiceAnswer(cText);
-                    container.appendChild(btn);
-                });
-
-                document.getElementById('btn-vocab-choice-prev').disabled = vocabIndex === 0;
-                document.getElementById('btn-vocab-choice-next').disabled = vocabIndex === total - 1;
-            }
-        }
-
-        function playVocabAudio() {
-            const currentVocab = vocabQuestions[vocabIndex];
-            if (!currentVocab) return;
-            playAudioOrTTS(currentVocab.audio_url, currentVocab.text, 0.85);
-        }
-
-        // 🌟 智慧派發聽打答案檢查 (通用 1A+ 與 0A)
-        function checkVocabTypeDispatcher() {
-            if (currentConfig.mode === '0a_type') {
-                check0aTypeAnswer();
-            } else {
-                checkVocabTypeAnswer();
-            }
-        }
-
-        function checkVocabTypeAnswer() {
-            const currentVocab = vocabQuestions[vocabIndex];
-            const isMatch = cleanStringForCompare(document.getElementById('input-vocab-type').value) === cleanStringForCompare(currentVocab.text);
-            const scoreBadge = document.getElementById('lbl-vocab-type-score');
-
-            if (isMatch) {
-                scoreBadge.innerText = "🎉 完全正確！";
-                scoreBadge.style.color = "#58cc02";
-                document.getElementById('lbl-vocab-type-text').style.display = 'block';
-                document.getElementById('lbl-vocab-type-translation').innerText = `💡 翻譯：${getTranslationByLang(currentVocab)}`;
-                playVocabAudio();
-                passedSubQuestions.add(vocabIndex);
-                checkAndShowFinishButton();
-            } else {
-                scoreBadge.innerText = "❌ 答案不太對喔，再試試看！";
-                scoreBadge.style.color = "#ff4b4b";
-            }
-        }
-
-        function checkVocabChoiceAnswer(selectedText) {
-            const currentVocab = vocabQuestions[vocabIndex];
-            const correctAns = (currentVocab.zh_tw || '').trim();
-            const scoreBadge = document.getElementById('lbl-vocab-choice-score');
-
-            if (selectedText.trim() === correctAns) {
-                scoreBadge.innerText = "🎉 正確答案！";
-                scoreBadge.style.color = "#58cc02";
-                playVocabAudio();
-                passedSubQuestions.add(vocabIndex);
-                checkAndShowFinishButton();
-            } else {
-                scoreBadge.innerText = `❌ 選錯囉！正確答案是：${correctAns}`;
-                scoreBadge.style.color = "#ff4b4b";
-            }
-        }
-
-        function prevVocabQuestion() { 
-            if (vocabIndex > 0) { 
-                vocabIndex--; 
-                if (currentConfig.mode.startsWith('0a_')) display0aQuestion(); else displayVocabQuestion(); 
-            } 
-        }
-        function nextVocabQuestion() { 
-            if (vocabIndex < vocabQuestions.length - 1) { 
-                vocabIndex++; 
-                if (currentConfig.mode.startsWith('0a_')) display0aQuestion(); else displayVocabQuestion(); 
-            } 
-        }
 
         // ==================== 語法小教室邏輯 ====================
 
@@ -3420,7 +3249,7 @@
             recognition.onstart = () => {
                 isRecording = true;
                 document.querySelectorAll('.btn-record').forEach(b => b.classList.add('recording'));
-                const targetLblId = (currentConfig.mode === 'vocab_shadow' || currentConfig.mode === '0a_shadow') ? 'lbl-vocab-recognized-text' :
+                const targetLblId = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-recognized-text' :
                                     (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-recognized-text' : 'lbl-recognized-text';
                 const lbl = document.getElementById(targetLblId);
                 if (lbl) lbl.innerText = "聆聽中...";
@@ -3448,19 +3277,19 @@
                             document.getElementById('lbl-chat-score').style.color = "#ff4b4b";
                         }
                     }
-                } else if (currentConfig.mode === 'vocab_shadow' || currentConfig.mode === '0a_shadow') {
-                    document.getElementById('lbl-vocab-recognized-text').innerText = userSpeech;
-                    const currentVocab = vocabQuestions[vocabIndex];
-                    if (isSpeechPass(currentVocab ? currentVocab.text : "", userSpeech)) {
-                        document.getElementById('lbl-vocab-score').innerText = "🎉 發音合格！";
-                        document.getElementById('lbl-vocab-score').style.color = "#58cc02";
-                        const trans = (currentConfig.mode === '0a_shadow') ? get0aTranslationByNativeLang(currentVocab) : getTranslationByLang(currentVocab);
-                        document.getElementById('lbl-vocab-translation').innerText = `💡 翻譯：${trans}`;
-                        passedSubQuestions.add(vocabIndex);
+                } else if (currentConfig.mode === 'word_shadow') {
+                    document.getElementById('lbl-word-shadow-recognized-text').innerText = userSpeech;
+                    const currentWord = wordQuestions[wordIndex];
+                    if (isSpeechPass(currentWord ? currentWord.text : "", userSpeech)) {
+                        document.getElementById('lbl-word-shadow-score').innerText = "🎉 發音合格！";
+                        document.getElementById('lbl-word-shadow-score').style.color = "#58cc02";
+                        const trans = getWordTranslation(currentWord);
+                        document.getElementById('lbl-word-shadow-translation').innerText = trans ? `💡 翻譯：${trans}` : "";
+                        passedSubQuestions.add(wordIndex);
                         checkAndShowFinishButton();
                     } else {
-                        document.getElementById('lbl-vocab-score').innerText = "⚠ 發音未達標，再試一次！";
-                        document.getElementById('lbl-vocab-score').style.color = "#ff4b4b";
+                        document.getElementById('lbl-word-shadow-score').innerText = "⚠ 發音未達標，再試一次！";
+                        document.getElementById('lbl-word-shadow-score').style.color = "#ff4b4b";
                     }
                 } else {
                     document.getElementById('lbl-recognized-text').innerText = userSpeech;
