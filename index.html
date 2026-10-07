@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>多程度挑戰系統</title>
+    <title>隱藏挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -87,6 +87,11 @@
             font-size: 0.88rem;
         }
         .user-meta-item:hover { background: #f3f4f6; }
+
+        /* 🌟 隱藏所有挑戰頁面頂部的資訊標題 */
+        .lbl-quiz-info {
+            display: none !important;
+        }
 
         /* 🌟 底部固定列容器 */
         .bottom-fixed-bar-wrapper {
@@ -2238,7 +2243,7 @@
                         String(getItemField(d, 'lesson')) === lesStr &&
                         ((d.a1 && d.a1.trim()) || (d.b1 && d.b1.trim()))
                     );
-                    const hasWord = matchFilter(rawWordData); // 🌟 所有程度均可開放單字練習
+                    const hasWord = matchFilter(rawWordData); // 🌟 所有程度皆可開放通用單字練習
 
                     const card = document.createElement('div');
                     card.className = "lesson-card-item";
@@ -2271,7 +2276,7 @@
                     if (hasBlocks) btnGroup.appendChild(createActionButton('blocks', '🧩 重組'));
                     if (hasDialogue) btnGroup.appendChild(createActionButton('sentence_chat', '🗣 句子聊天挑戰', 'btn-chat-lesson'));
                     
-                    // 🌟 通用單字挑戰：所有程度皆有此三個模式
+                    // 🌟 通用單字挑戰：所有程度皆呈現此 3 個模式
                     if (hasWord) {
                         btnGroup.appendChild(createActionButton('word_shadow', '🗣 單字跟讀', 'btn-word-action'));
                         btnGroup.appendChild(createActionButton('word_type', '⌨ 單字聽打', 'btn-word-action'));
@@ -2355,7 +2360,7 @@
             }
         }
 
-        // ==================== 🌟 全新通用單字挑戰邏輯 (適用所有程度) ====================
+        // ==================== 🌟 全新通用單字挑戰邏輯 (所有程度適用) ====================
 
         function getWordTranslation(item) {
             if (!item) return "";
@@ -2377,12 +2382,6 @@
 
             wordIndex = 0;
             totalChallengeQuestions = wordQuestions.length;
-            const modeTitleMap = { 'word_shadow': '🗣 單字跟讀', 'word_type': '⌨ 單字聽打', 'word_choice': '🎯 單字選擇' };
-            const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
-
-            document.querySelectorAll('.lbl-quiz-info').forEach(e => {
-                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (${modeTitleMap[wordMode]})`;
-            });
 
             if (wordMode === 'word_shadow') {
                 goToStep('step-quiz-word-shadow');
@@ -2400,6 +2399,7 @@
 
             const item = wordQuestions[wordIndex];
             const total = wordQuestions.length;
+            const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
 
             if (currentConfig.mode === 'word_shadow') {
                 document.getElementById('lbl-word-shadow-progress').innerText = `${wordIndex + 1} / ${total}`;
@@ -2445,34 +2445,62 @@
 
             } else if (currentConfig.mode === 'word_choice') {
                 document.getElementById('lbl-word-choice-progress').innerText = `${wordIndex + 1} / ${total}`;
-                document.getElementById('lbl-word-choice-text').innerText = "??? (聽音選擇單字)";
-
+                const audioPlayerBox = document.getElementById('box-word-audio-player');
+                const targetTextElem = document.getElementById('lbl-word-choice-text');
                 const choiceSubElem = document.getElementById('lbl-word-choice-sub');
-                choiceSubElem.innerText = "";
-                choiceSubElem.style.display = 'none';
-
-                document.getElementById('lbl-word-choice-score').innerText = "請聽音選擇正確的單字";
-                document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
-
                 const container = document.getElementById('container-word-choices');
                 container.innerHTML = "";
 
-                let choices = (item.choice || '').split('/').map(s => s.trim()).filter(Boolean);
-                const correctWord = (item.text || '').trim();
-                if (correctWord && !choices.includes(correctWord)) choices.push(correctWord);
-                choices = shuffleArray(choices);
+                if (audioPlayerBox) audioPlayerBox.style.display = 'block';
 
-                choices.forEach(wText => {
-                    const btn = document.createElement('button');
-                    btn.className = 'btn-vocab-choice';
-                    btn.innerText = wText;
-                    btn.onclick = () => checkWordChoiceAnswer(wText);
-                    container.appendChild(btn);
-                });
+                if (is0ALevel) {
+                    // 🌟 0A 程度：聽音選韓文單字 (正確答案對比 text)
+                    targetTextElem.innerText = "??? (聽音選擇韓文單字)";
+                    choiceSubElem.innerText = "";
+                    choiceSubElem.style.display = 'none';
+                    document.getElementById('lbl-word-choice-score').innerText = "請聽音選擇正確的單字";
+                    document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
+
+                    let choices = (item.choice || '').split('/').map(s => s.trim()).filter(Boolean);
+                    const correctWord = (item.text || '').trim();
+                    if (correctWord && !choices.includes(correctWord)) choices.push(correctWord);
+                    choices = shuffleArray(choices);
+
+                    choices.forEach(wText => {
+                        const btn = document.createElement('button');
+                        btn.className = 'btn-vocab-choice';
+                        btn.innerText = wText;
+                        btn.onclick = () => checkWordChoiceAnswer(wText);
+                        container.appendChild(btn);
+                    });
+
+                } else {
+                    // 🌟 1A 及以上程度：播放 text 單字音檔，但選項與答案對比為中文 (zh_tw)
+                    targetTextElem.innerText = "??? (聽音選擇中文意思)";
+                    choiceSubElem.innerText = "";
+                    choiceSubElem.style.display = 'none';
+                    document.getElementById('lbl-word-choice-score').innerText = "請聽音選擇正確的中文意思";
+                    document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
+
+                    const correctZh = (item.zh_tw || '').trim();
+                    let choices = (item.choice || '').split('/').map(s => s.trim()).filter(Boolean);
+                    if (correctZh && !choices.includes(correctZh)) choices.push(correctZh);
+                    choices = shuffleArray(choices);
+
+                    choices.forEach(cText => {
+                        const btn = document.createElement('button');
+                        btn.className = 'btn-vocab-choice';
+                        btn.innerText = cText;
+                        btn.onclick = () => checkWordChoiceAnswer(cText);
+                        container.appendChild(btn);
+                    });
+                }
+
+                // 自動播放該單字語音 (text)
+                setTimeout(() => playWordAudio(), 300);
 
                 document.getElementById('btn-word-choice-prev').disabled = wordIndex === 0;
                 document.getElementById('btn-word-choice-next').disabled = wordIndex === total - 1;
-                setTimeout(() => playWordAudio(), 300);
             }
         }
 
@@ -2515,30 +2543,59 @@
 
         function checkWordChoiceAnswer(selectedText) {
             const item = wordQuestions[wordIndex];
+            const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
             const scoreBadge = document.getElementById('lbl-word-choice-score');
             const targetTextElem = document.getElementById('lbl-word-choice-text');
             const choiceSubElem = document.getElementById('lbl-word-choice-sub');
 
-            if (selectedText.trim() === (item.text || '').trim()) {
-                scoreBadge.innerText = "🎉 答對了！";
-                scoreBadge.style.color = "#58cc02";
-                targetTextElem.innerText = item.text || "";
+            if (is0ALevel) {
+                // 0A 程度：對比韓文單字 (text)
+                const correctKorean = (item.text || '').trim();
+                if (selectedText.trim() === correctKorean) {
+                    scoreBadge.innerText = "🎉 答對了！";
+                    scoreBadge.style.color = "#58cc02";
+                    targetTextElem.innerText = correctKorean;
 
-                const nativeTrans = getWordTranslation(item);
-                const pronParts = [];
-                if (item.romanization) pronParts.push(`[${item.romanization}]`);
-                if (item.pos_zh) pronParts.push(`(${item.pos_zh})`);
-                if (nativeTrans) pronParts.push(`💡 翻譯：${nativeTrans}`);
+                    const nativeTrans = getWordTranslation(item);
+                    const pronParts = [];
+                    if (item.romanization) pronParts.push(`[${item.romanization}]`);
+                    if (item.pos_zh) pronParts.push(`(${item.pos_zh})`);
+                    if (nativeTrans) pronParts.push(`💡 翻譯：${nativeTrans}`);
 
-                choiceSubElem.innerText = pronParts.join(' ');
-                choiceSubElem.style.display = pronParts.length ? 'block' : 'none';
+                    choiceSubElem.innerText = pronParts.join(' ');
+                    choiceSubElem.style.display = pronParts.length ? 'block' : 'none';
 
-                playWordAudio();
-                passedSubQuestions.add(wordIndex);
-                checkAndShowFinishButton();
+                    playWordAudio();
+                    passedSubQuestions.add(wordIndex);
+                    checkAndShowFinishButton();
+                } else {
+                    scoreBadge.innerText = `❌ 選錯囉，再聽一次試試看！`;
+                    scoreBadge.style.color = "#ff4b4b";
+                }
             } else {
-                scoreBadge.innerText = `❌ 選錯囉，再聽一次試試看！`;
-                scoreBadge.style.color = "#ff4b4b";
+                // 🌟 1A 及以上程度：播放 text 單字音檔，對比中文翻譯 (zh_tw)
+                const correctZh = (item.zh_tw || '').trim();
+                if (selectedText.trim() === correctZh) {
+                    scoreBadge.innerText = "🎉 完全正確！";
+                    scoreBadge.style.color = "#58cc02";
+                    
+                    // 答對時將題目揭曉為原本的韓文單字
+                    targetTextElem.innerText = item.text || "";
+
+                    const pronParts = [];
+                    if (item.romanization) pronParts.push(`[${item.romanization}]`);
+                    if (item.pos_zh) pronParts.push(`(${item.pos_zh})`);
+                    if (correctZh) pronParts.push(`💡 中文：${correctZh}`);
+                    choiceSubElem.innerText = pronParts.join(' ');
+                    choiceSubElem.style.display = 'block';
+
+                    playWordAudio();
+                    passedSubQuestions.add(wordIndex);
+                    checkAndShowFinishButton();
+                } else {
+                    scoreBadge.innerText = `❌ 選錯囉，請再聽一次！`;
+                    scoreBadge.style.color = "#ff4b4b";
+                }
             }
         }
 
@@ -2593,11 +2650,6 @@
             totalChallengeQuestions = chatRounds.length;
             chatRole = 'A';
             isChatChallengeMode = false;
-
-            const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
-            document.querySelectorAll('.lbl-quiz-info').forEach(e => {
-                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (🗣 句子聊天挑戰)`;
-            });
 
             updateChallengeModeButtonUI();
             switchChatRole('A');
@@ -3000,12 +3052,6 @@
 
         function startMainQuiz() {
             stopSpeechRecognition();
-            const catMap = { 'korean': '韓文', 'japanese': '日文', 'english': '英文' };
-            const modeTitle = currentConfig.mode === 'shadow' ? '跟讀挑戰' : '重組挑戰';
-            document.querySelectorAll('.lbl-quiz-info').forEach(e => {
-                e.innerText = `${catMap[currentConfig.category] || currentConfig.category} | Level ${currentConfig.level} | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (${modeTitle})`;
-            });
-
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
             if (currentConfig.mode === 'shadow') {
