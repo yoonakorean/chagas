@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>固定下排學習系統</title>
+    <title>0a固定下排學習系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -98,7 +98,7 @@
             justify-content: center;
             z-index: 999;
             padding: 0 8px 10px 8px;
-            pointer-events: none; /* 允許穿透空白處 */
+            pointer-events: none;
         }
 
         .bottom-fixed-bar {
@@ -699,7 +699,8 @@
             </div>
         </div>
     </div>
-<!-- 📱 主介面容器 -->
+
+    <!-- 📱 主介面容器 -->
     <div class="shadowing-card">
         <div class="user-meta-bar" id="app-user-meta-bar">
             <div class="user-meta-item" id="btn-profile-trigger" onclick="openProfileView()">
@@ -926,7 +927,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 步驟 6-D：單字跟讀畫面 -->
+            <!-- 步驟 6-D：單字跟讀畫面 (通用 1A+ 與 0A) -->
             <div id="step-quiz-vocab-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -957,7 +958,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-vocab-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 步驟 6-E：單字聽打畫面 -->
+            <!-- 步驟 6-E：單字聽打畫面 (通用 1A+ 與 0A) -->
             <div id="step-quiz-vocab-type" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -973,8 +974,9 @@
                     <div class="target-text" id="lbl-vocab-type-text" style="margin: 0; min-height: auto; display: none;">...</div>
                     <button class="btn-circle btn-listen" onclick="playVocabAudio()" style="width: 58px; height: 58px; font-size: 1.35rem; flex-shrink: 0;"><i class="fa-solid fa-volume-high"></i></button>
                 </div>
+                <div id="lbl-vocab-type-subtext" style="font-size: 0.95rem; color: #475569; font-weight: bold; margin-bottom: 6px; display: none;"></div>
                 <input type="text" id="input-vocab-type" class="vocab-input" placeholder="請輸入聽到的單字" autocomplete="off" autocorrect="off" autocapitalize="none">
-                <button class="btn-confirm" onclick="checkVocabTypeAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
+                <button class="btn-confirm" id="btn-submit-vocab-type" onclick="checkVocabTypeDispatcher()"><i class="fa-solid fa-check"></i> 檢查答案</button>
                 <div class="translation-text" id="lbl-vocab-type-translation" style="margin-top: 12px; font-size: 1.05rem; font-weight: bold;"></div>
                 <div class="result-box" style="margin-top: 8px;"><div class="score-badge" id="lbl-vocab-type-score">等待輸入...</div></div>
                 <div class="nav-controls">
@@ -985,7 +987,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-vocab-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 步驟 6-F：單字選擇題畫面 -->
+            <!-- 步驟 6-F：單字選擇題畫面 (通用 1A+ 與 0A) -->
             <div id="step-quiz-vocab-choice" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1314,11 +1316,9 @@
             }
         }
 
-        // 🌟 點擊底部「語法介紹」捷徑按鈕的響應邏輯
         function triggerBottomGrammarAction() {
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
             
-            // 優先尋找當前選定單元與課堂的語法
             let matchGrammar = globalGrammarData.find(g => 
                 normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
                 String(getItemField(g, 'unit_id')) === String(currentConfig.unit_id) &&
@@ -1326,7 +1326,6 @@
                 ((g.dialogs && g.dialogs.length > 0) || (g.example && g.example.trim()) || (g.ready && g.ready.trim()) || (g.question && g.question.trim()))
             );
 
-            // 若目前課堂沒有，則找該單元的第一個語法
             if (!matchGrammar) {
                 matchGrammar = globalGrammarData.find(g => 
                     normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
@@ -2031,7 +2030,6 @@
             document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
         }
 
-        // 🌟 連動控制頂部狀態列與新增的「底部固定列」顯示狀態
         function goToStep(stepId) {
             stopSpeechRecognition();
             document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
@@ -2284,8 +2282,11 @@
                     if (hasShadow) btnGroup.appendChild(createActionButton('shadow', '🎙 跟讀'));
                     if (hasBlocks) btnGroup.appendChild(createActionButton('blocks', '🧩 重組'));
                     if (hasDialogue) btnGroup.appendChild(createActionButton('sentence_chat', '🗣 句子聊天挑戰', 'btn-chat-lesson'));
+                    
+                    // 🌟 0A 專屬按鈕：跟讀、聽打、選擇
                     if (is0ALevel && has0aChoice) {
                         btnGroup.appendChild(createActionButton('0a_shadow', '🗣 韓語單字跟讀', 'btn-0a-special'));
+                        btnGroup.appendChild(createActionButton('0a_type', '⌨ 韓語單字聽打', 'btn-0a-special'));
                         btnGroup.appendChild(createActionButton('0a_choice', '🎯 韓語單字選擇', 'btn-0a-special'));
                     }
                     if (hasVocab) {
@@ -2364,7 +2365,7 @@
                 }
             } else if (mode === 'sentence_chat') {
                 startSentenceChatChallenge();
-            } else if (mode === '0a_shadow' || mode === '0a_choice') {
+            } else if (mode === '0a_shadow' || mode === '0a_type' || mode === '0a_choice') {
                 start0aSpecialChallenge(mode);
             } else if (mode.startsWith('vocab_')) {
                 startVocabChallenge(mode);
@@ -2389,12 +2390,20 @@
 
             vocabIndex = 0;
             totalChallengeQuestions = vocabQuestions.length;
-            const modeTitle = specialMode === '0a_shadow' ? '🗣 韓語單字跟讀 (0A專屬)' : '🎯 韓語單字選擇 (0A專屬)';
+            const modeTitle = specialMode === '0a_shadow' ? '🗣 韓語單字跟讀 (0A專屬)' :
+                              specialMode === '0a_type' ? '⌨ 韓語單字聽打 (0A專屬)' : '🎯 韓語單字選擇 (0A專屬)';
+
             document.querySelectorAll('.lbl-quiz-info').forEach(e => {
                 e.innerText = `韓文 | Level 0A | 單元 ${currentConfig.unit_id} - Lesson ${currentConfig.lesson} (${modeTitle})`;
             });
 
-            goToStep(specialMode === '0a_shadow' ? 'step-quiz-vocab-shadow' : 'step-quiz-vocab-choice');
+            if (specialMode === '0a_shadow') {
+                goToStep('step-quiz-vocab-shadow');
+            } else if (specialMode === '0a_type') {
+                goToStep('step-quiz-vocab-type');
+            } else {
+                goToStep('step-quiz-vocab-choice');
+            }
             display0aQuestion();
         }
 
@@ -2425,6 +2434,28 @@
 
                 document.getElementById('btn-vocab-prev').disabled = vocabIndex === 0;
                 document.getElementById('btn-vocab-next').disabled = vocabIndex === total - 1;
+
+            } else if (currentConfig.mode === '0a_type') {
+                // 🌟 0A 專屬單字聽打介面渲染
+                document.getElementById('lbl-vocab-type-progress').innerText = `${vocabIndex + 1} / ${total}`;
+                const typeTextElem = document.getElementById('lbl-vocab-type-text');
+                typeTextElem.innerText = item.text || "";
+                typeTextElem.style.display = 'none';
+
+                const subTextElem = document.getElementById('lbl-vocab-type-subtext');
+                if (subTextElem) {
+                    subTextElem.innerText = "";
+                    subTextElem.style.display = 'none';
+                }
+
+                document.getElementById('input-vocab-type').value = "";
+                document.getElementById('lbl-vocab-type-translation').innerText = "";
+                document.getElementById('lbl-vocab-type-score').innerText = "等待輸入...";
+                document.getElementById('lbl-vocab-type-score').style.color = "#58cc02";
+
+                document.getElementById('btn-vocab-type-prev').disabled = vocabIndex === 0;
+                document.getElementById('btn-vocab-type-next').disabled = vocabIndex === total - 1;
+                playVocabAudio();
 
             } else if (currentConfig.mode === '0a_choice') {
                 document.getElementById('lbl-vocab-choice-progress').innerText = `${vocabIndex + 1} / ${total}`;
@@ -2466,6 +2497,38 @@
             if (!item) return "";
             return (currentConfig.lang === 'en') ? (item.en || item.zh_tw || "") :
                    (currentConfig.lang === 'ja') ? (item.ja || item.zh_tw || "") : (item.zh_tw || "");
+        }
+
+        // 🌟 檢查 0A 專屬單字聽打答案
+        function check0aTypeAnswer() {
+            const item = vocabQuestions[vocabIndex];
+            const isMatch = cleanStringForCompare(document.getElementById('input-vocab-type').value) === cleanStringForCompare(item.text);
+            const scoreBadge = document.getElementById('lbl-vocab-type-score');
+            const typeTextElem = document.getElementById('lbl-vocab-type-text');
+            const subTextElem = document.getElementById('lbl-vocab-type-subtext');
+
+            if (isMatch) {
+                scoreBadge.innerText = "🎉 完全正確！";
+                scoreBadge.style.color = "#58cc02";
+                typeTextElem.style.display = 'block';
+
+                const nativeTrans = get0aTranslationByNativeLang(item);
+                const pronParts = [];
+                if (item.romanization) pronParts.push(`[${item.romanization}]`);
+                if (item.pos_zh) pronParts.push(`(${item.pos_zh})`);
+                if (pronParts.length && subTextElem) {
+                    subTextElem.innerText = pronParts.join(' ');
+                    subTextElem.style.display = 'block';
+                }
+
+                document.getElementById('lbl-vocab-type-translation').innerText = nativeTrans ? `💡 翻譯：${nativeTrans}` : "";
+                playVocabAudio();
+                passedSubQuestions.add(vocabIndex);
+                checkAndShowFinishButton();
+            } else {
+                scoreBadge.innerText = "❌ 答案不太對喔，再試試看！";
+                scoreBadge.style.color = "#ff4b4b";
+            }
         }
 
         function check0aChoiceAnswer(selectedKoreanText) {
@@ -2720,6 +2783,12 @@
                 typeTextElem.innerText = currentVocab.text || "";
                 typeTextElem.style.display = 'none';
 
+                const subTextElem = document.getElementById('lbl-vocab-type-subtext');
+                if (subTextElem) {
+                    subTextElem.innerText = "";
+                    subTextElem.style.display = 'none';
+                }
+
                 document.getElementById('input-vocab-type').value = "";
                 document.getElementById('lbl-vocab-type-translation').innerText = "";
                 document.getElementById('lbl-vocab-type-score').innerText = "等待輸入...";
@@ -2761,6 +2830,15 @@
             const currentVocab = vocabQuestions[vocabIndex];
             if (!currentVocab) return;
             playAudioOrTTS(currentVocab.audio_url, currentVocab.text, 0.85);
+        }
+
+        // 🌟 智慧派發聽打答案檢查 (通用 1A+ 與 0A)
+        function checkVocabTypeDispatcher() {
+            if (currentConfig.mode === '0a_type') {
+                check0aTypeAnswer();
+            } else {
+                checkVocabTypeAnswer();
+            }
         }
 
         function checkVocabTypeAnswer() {
