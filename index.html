@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>切換語挑戰系統</title>
+    <title>語法挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -355,7 +355,7 @@
             padding: 5px 10px; border-radius: 10px; display: inline-block; margin-bottom: 16px;
         }
 
-        /* 🌟 聽音/錄音按鈕稍微縮小至 44px */
+        /* 🌟 聽音/錄音按鈕微縮至 44px */
         .controls { display: flex; justify-content: center; gap: 14px; margin-bottom: 12px; }
         .btn-circle {
             width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer;
@@ -464,7 +464,7 @@
             text-align: left !important; margin-bottom: 12px; min-height: 85px; line-height: 1.6;
             position: relative; cursor: pointer; white-space: pre-wrap; word-break: break-word;
         }
-        .btn-gram2-audio {
+        .btn-gram-audio {
             position: absolute; bottom: 8px; right: 10px; background: #818cf8; color: white;
             border: none; border-radius: 8px; padding: 4px 9px; font-size: 0.8rem; font-weight: bold; cursor: pointer;
         }
@@ -773,19 +773,23 @@
                 <div id="container-lessons"></div>
             </div>
 
-            <!-- 步驟 5.5：語法說明教室 -->
+            <!-- 🌟 步驟 5.5：全新簡化「語法介紹」教室 (對話與測驗整合) -->
             <div id="step-grammar" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-lesson')"><i class="fa-solid fa-arrow-left"></i> 回課堂選擇</button>
-                    <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-purple);">語法教室</span>
+                    <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-purple);">語法介紹</span>
                 </div>
 
+                <!-- 對話朗讀區塊 -->
                 <div id="area-grammar-dialog">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <h3 style="margin: 0; color: #4338ca; font-size: 1.1rem;"><i class="fa-solid fa-lightbulb"></i> 觀念小教室</h3>
+                        <h3 style="margin: 0; color: #4338ca; font-size: 1.1rem;"><i class="fa-solid fa-lightbulb"></i> 觀念說明</h3>
                         <span id="lbl-dialog-counter" style="font-size: 0.85rem; color: #6b7280; font-weight: bold;">1 / 1</span>
                     </div>
-                    <div class="grammar-dialog-box" onclick="completeTypewriterImmediately()"><span id="lbl-grammar-dialog">...</span><button class="btn-gram2-audio" id="btn-gram2-audio" style="display: none;"><i class="fa-solid fa-volume-high"></i> 播放聲音</button></div>
+                    <div class="grammar-dialog-box" onclick="completeTypewriterImmediately()">
+                        <span id="lbl-grammar-dialog">...</span>
+                        <button class="btn-gram-audio" id="btn-gram-audio" style="display: none;"><i class="fa-solid fa-volume-high"></i> 播放聲音</button>
+                    </div>
                     <button class="btn-confirm" id="btn-next-dialog" onclick="nextGrammarDialog()">下一步 <i class="fa-solid fa-arrow-right"></i></button>
                     <div class="grammar-nav-btns">
                         <button class="btn-grammar-sub" id="btn-prev-dialog" onclick="prevGrammarDialog()"><i class="fa-solid fa-arrow-left"></i> 上一步</button>
@@ -793,18 +797,7 @@
                     </div>
                 </div>
 
-                <div id="area-grammar-example" style="display: none;">
-                    <h3 style="margin-top: 10px; color: #4338ca; text-align: left; font-size: 1.1rem;"><i class="fa-solid fa-book-bookmark"></i> 例句練習</h3>
-                    <div id="container-example-list" style="text-align: left; margin-bottom: 20px;"></div>
-                    <button class="btn-confirm" onclick="goToReadyPage()"><i class="fa-solid fa-arrow-right"></i> 繼續</button>
-                </div>
-
-                <div id="area-grammar-ready" style="display: none; text-align: center; padding: 20px 10px;">
-                    <i class="fa-solid fa-flag-checkered" style="font-size: 3rem; color: #818cf8; margin-bottom: 15px;"></i>
-                    <div id="lbl-ready-text" style="font-size: 1.25rem; font-weight: bold; color: var(--duo-dark); margin-bottom: 25px; line-height: 1.6;"></div>
-                    <button class="btn-confirm" onclick="enterGrammarQuizFromReady()"><i class="fa-solid fa-pen-to-square"></i> 開始測驗</button>
-                </div>
-
+                <!-- 填空測驗挑戰區塊 -->
                 <div id="area-grammar-quiz" style="display: none; margin-top: 15px;">
                     <h3 style="margin-top: 0; color: var(--duo-dark); text-align: center; font-size: 1.15rem;"><i class="fa-solid fa-pen-to-square"></i> 語法測驗</h3>
                     <p style="font-size: 0.85rem; color: #6b7280; text-align: left; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
@@ -818,6 +811,7 @@
                     </div>
                 </div>
 
+                <!-- 觀念回顧清單 -->
                 <div id="area-grammar-all-history" style="display: none; margin-top: 20px;">
                     <h3 style="margin-top: 15px; margin-bottom: 10px; color: #4338ca; text-align: left; font-size: 1.1rem;"><i class="fa-solid fa-list-check"></i> 觀念總覽</h3>
                     <div class="dialog-history-list" id="container-dialog-history"></div>
@@ -947,7 +941,6 @@
                     <div class="gear-menu-container">
                         <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-word-shadow')"><i class="fa-solid fa-gear"></i></button>
                         <div class="gear-dropdown" id="gear-dropdown-word-shadow">
-                            <!-- 🌟 新增：切換羅馬拼音 / 音標 -->
                             <button class="gear-dropdown-item" id="btn-toggle-word-pron" onclick="toggleWordPronunciationMode()">
                                 <i class="fa-solid fa-font"></i> <span id="lbl-toggle-word-pron-text">切換 羅馬拼音</span>
                             </button>
@@ -1021,7 +1014,6 @@
                     <button class="btn-circle btn-listen" id="btn-word-choice-play" onclick="playWordAudio()" style="margin: 0 auto; width: 44px; height: 44px; font-size: 1rem;">
                         <i class="fa-solid fa-volume-high"></i>
                     </button>
-                    <!-- 🌟 隱藏「點擊重播題目語音」字樣 -->
                     <div style="display: none; font-size: 0.85rem; color: #64748b; font-weight: bold; margin-top: 6px;">點擊重播題目語音</div>
                 </div>
 
@@ -1175,7 +1167,7 @@
         let rawBlocksData = [];  
         let globalGrammarData = []; 
         let rawDialogueData = []; 
-        let rawWordData = []; // 🌟 通用單字資料 (所有程度共用)
+        let rawWordData = [];
 
         let questions = [];
         let currentIndex = 0;
@@ -1195,8 +1187,9 @@
 
         let wordQuestions = [];
         let wordIndex = 0;
-        let currentWordPronMode = 'kr_pron'; // 🌟 預設只顯示音標 ('kr_pron' / 'romanization')
+        let currentWordPronMode = 'kr_pron';
 
+        // 🌟 語法小教室全新狀態管理變數
         let currentGrammarItem = null;
         let currentDialogIndex = 0;
         let userGrammarAnswers = [];
@@ -1204,12 +1197,12 @@
         let typewriterTimer = null;
         let isTypewriterTyping = false;
         let currentFullDialogText = "";
+        let grammarQuizIndex = 0;
 
         let currentRankSubTab = 'global';
         let passedSubQuestions = new Set();
         let totalChallengeQuestions = 0;
 
-        // 🌟 答對時的隨機誇獎語句清單
         const PRAISE_MESSAGES = [
             "🎉 你真的太厲害了！",
             "🎉 你到底是怎麼做到的？你真的太強了",
@@ -1337,7 +1330,7 @@
 
         function playAudioOrTTS(audioUrl, fallbackText, rate = 0.85) {
             stopSpeechRecognition();
-            if (audioUrl && audioUrl.trim() !== '') {
+            if (audioUrl && audioUrl.trim() !== '' && audioUrl.toLowerCase() !== 'yes') {
                 const audio = new Audio(audioUrl);
                 audio.playbackRate = rate;
                 audio.play().catch(() => { if (fallbackText) speakTTS(fallbackText, rate); });
@@ -1353,14 +1346,14 @@
                 normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
                 String(getItemField(g, 'unit_id')) === String(currentConfig.unit_id) &&
                 String(getItemField(g, 'lesson')) === String(currentConfig.lesson) &&
-                ((g.dialogs && g.dialogs.length > 0) || (g.example && g.example.trim()) || (g.ready && g.ready.trim()) || (g.question && g.question.trim()))
+                ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0))
             );
 
             if (!matchGrammar) {
                 matchGrammar = globalGrammarData.find(g => 
                     normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
                     String(getItemField(g, 'unit_id')) === String(currentConfig.unit_id) &&
-                    ((g.dialogs && g.dialogs.length > 0) || (g.example && g.example.trim()) || (g.ready && g.ready.trim()) || (g.question && g.question.trim()))
+                    ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0))
                 );
             }
 
@@ -2256,11 +2249,12 @@
                         String(getItemField(item, 'lesson')) === lesStr
                     );
 
+                    // 🌟 判斷全新語法介紹分頁中是否有該關卡資料
                     const hasGrammar = globalGrammarData.some(g => 
                         normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
                         String(getItemField(g, 'unit_id')) === unitStr &&
                         String(getItemField(g, 'lesson')) === lesStr &&
-                        ((g.dialogs && g.dialogs.length > 0) || (g.example && g.example.trim()) || (g.ready && g.ready.trim()) || (g.question && g.question.trim()))
+                        ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0))
                     );
 
                     const hasShadow = matchFilter(rawShadowData);
@@ -2304,7 +2298,6 @@
                     if (hasBlocks) btnGroup.appendChild(createActionButton('blocks', '🧩 重組'));
                     if (hasDialogue) btnGroup.appendChild(createActionButton('sentence_chat', '🗣 句子聊天挑戰', 'btn-chat-lesson'));
                     
-                    // 🌟 通用單字挑戰：所有程度皆呈現此 3 個模式
                     if (hasWord) {
                         btnGroup.appendChild(createActionButton('word_shadow', '🗣 單字跟讀', 'btn-word-action'));
                         btnGroup.appendChild(createActionButton('word_type', '⌨ 單字聽打', 'btn-word-action'));
@@ -2374,7 +2367,7 @@
                     String(getItemField(g, 'lesson')) === String(lesson)
                 );
 
-                if (matchGrammar && ((matchGrammar.dialogs && matchGrammar.dialogs.length) || matchGrammar.example || matchGrammar.ready || matchGrammar.question)) {
+                if (matchGrammar && ((matchGrammar.dialogs && matchGrammar.dialogs.length) || (matchGrammar.quizzes && matchGrammar.quizzes.length))) {
                     startGrammarChallenge(matchGrammar);
                 } else {
                     alert("此課堂目前沒有設定獨立語法觀念喔！");
@@ -2388,7 +2381,262 @@
             }
         }
 
-        // ==================== 🌟 全新通用單字挑戰邏輯 (所有程度適用) ====================
+        // ==================== 🌟 全新「語法介紹」邏輯 (多列 gram / audio_url / question) ====================
+
+        function cleanInitialWhitespace(str) {
+            return (str || '').replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
+        }
+
+        function startGrammarChallenge(grammarGroup) {
+            stopSpeechRecognition();
+            currentGrammarItem = grammarGroup;
+            currentDialogIndex = 0;
+            grammarQuizIndex = 0;
+            
+            document.getElementById('lbl-grammar-info').innerText = `語法介紹 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Lesson ${currentConfig.lesson}`;
+            
+            document.getElementById('area-grammar-all-history').style.display = 'none';
+            document.getElementById('area-grammar-quiz').style.display = 'none';
+
+            if (currentGrammarItem.dialogs && currentGrammarItem.dialogs.length > 0) {
+                document.getElementById('area-grammar-dialog').style.display = 'block';
+                showCurrentGrammarDialog();
+            } else if (currentGrammarItem.quizzes && currentGrammarItem.quizzes.length > 0) {
+                document.getElementById('area-grammar-dialog').style.display = 'none';
+                showGrammarQuizArea();
+            } else {
+                alert("此關卡無可呈現的語法內容！");
+                goToStep('step-lesson');
+                return;
+            }
+
+            goToStep('step-grammar');
+        }
+
+        function showCurrentGrammarDialog() {
+            if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
+            const total = currentGrammarItem.dialogs.length;
+            const hasQuiz = (currentGrammarItem.quizzes && currentGrammarItem.quizzes.length > 0);
+
+            document.getElementById('lbl-dialog-counter').innerText = `${currentDialogIndex + 1} / ${total}`;
+            document.getElementById('btn-prev-dialog').disabled = currentDialogIndex === 0;
+
+            const nextBtn = document.getElementById('btn-next-dialog');
+            if (currentDialogIndex === total - 1) {
+                if (hasQuiz) {
+                    nextBtn.innerHTML = `進入挑戰 <i class="fa-solid fa-pen-to-square"></i>`;
+                } else {
+                    nextBtn.innerHTML = `🎉 完成課堂 <i class="fa-solid fa-check"></i>`;
+                }
+            } else {
+                nextBtn.innerHTML = `下一步 <i class="fa-solid fa-arrow-right"></i>`;
+            }
+
+            const currentDialogObj = currentGrammarItem.dialogs[currentDialogIndex];
+            currentFullDialogText = cleanInitialWhitespace(currentDialogObj.text || "");
+
+            // 🌟 判斷該列的 audio_url 是否填入 yes：若有則顯示發音按鈕並發音
+            const audioBtn = document.getElementById('btn-gram-audio');
+            if (currentDialogObj.hasAudio) {
+                audioBtn.style.display = 'block';
+                audioBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    speakTTS(currentFullDialogText, 0.85);
+                };
+                speakTTS(currentFullDialogText, 0.85);
+            } else {
+                audioBtn.style.display = 'none';
+            }
+
+            startTypewriter(currentFullDialogText);
+        }
+
+        function startTypewriter(text) {
+            if (typewriterTimer) clearInterval(typewriterTimer);
+            const box = document.getElementById('lbl-grammar-dialog');
+            box.textContent = "";
+            isTypewriterTyping = true;
+            let charIndex = 0;
+            typewriterTimer = setInterval(() => {
+                if (charIndex < text.length) {
+                    box.textContent = text.substring(0, charIndex + 1);
+                    charIndex++;
+                } else {
+                    clearInterval(typewriterTimer);
+                    isTypewriterTyping = false;
+                }
+            }, 35);
+        }
+
+        function completeTypewriterImmediately() {
+            if (isTypewriterTyping) {
+                clearInterval(typewriterTimer);
+                document.getElementById('lbl-grammar-dialog').textContent = currentFullDialogText;
+                isTypewriterTyping = false;
+            }
+        }
+
+        function nextGrammarDialog() {
+            if (isTypewriterTyping) { completeTypewriterImmediately(); return; }
+            if (!currentGrammarItem) return;
+
+            if (currentGrammarItem.dialogs && currentDialogIndex < currentGrammarItem.dialogs.length - 1) {
+                currentDialogIndex++;
+                showCurrentGrammarDialog();
+            } else {
+                processAfterDialogs();
+            }
+        }
+
+        function prevGrammarDialog() {
+            if (isTypewriterTyping) completeTypewriterImmediately();
+            if (currentDialogIndex > 0) {
+                currentDialogIndex--;
+                showCurrentGrammarDialog();
+            }
+        }
+
+        function skipGrammarDialog() {
+            if (typewriterTimer) clearInterval(typewriterTimer);
+            isTypewriterTyping = false;
+            processAfterDialogs();
+        }
+
+        function processAfterDialogs() {
+            renderGrammarHistoryList();
+            document.getElementById('area-grammar-dialog').style.display = 'none';
+            
+            // 🌟 若有測驗則進入測驗，若無測驗則直接完成課堂
+            if (currentGrammarItem.quizzes && currentGrammarItem.quizzes.length > 0) {
+                showGrammarQuizArea();
+            } else {
+                finishCurrentChallenge();
+            }
+        }
+
+        function renderGrammarHistoryList() {
+            const container = document.getElementById('container-dialog-history');
+            container.innerHTML = "";
+            const list = currentGrammarItem ? currentGrammarItem.dialogs : [];
+            if (list && list.length > 0) {
+                list.forEach((itemObj, idx) => {
+                    const item = document.createElement('div');
+                    item.className = 'dialog-history-item';
+                    item.innerHTML = `<span class="num">${idx + 1}.</span> ${cleanInitialWhitespace(itemObj.text)}`;
+                    container.appendChild(item);
+                });
+                document.getElementById('area-grammar-all-history').style.display = 'block';
+            }
+        }
+
+        function showGrammarQuizArea() {
+            document.getElementById('area-grammar-dialog').style.display = 'none';
+            document.getElementById('area-grammar-quiz').style.display = 'block';
+            document.getElementById('box-grammar-result').style.display = 'none';
+
+            renderGrammarHistoryList();
+
+            const quizList = currentGrammarItem.quizzes || [];
+            if (!quizList.length) {
+                finishCurrentChallenge();
+                return;
+            }
+
+            const currentQ = quizList[grammarQuizIndex];
+            const qStr = currentQ.question || "";
+            const parts = qStr.split('__');
+            userGrammarAnswers = new Array(parts.length - 1).fill('');
+            activeBlankIndex = 0;
+
+            const qContainer = document.getElementById('container-grammar-questions');
+            qContainer.innerHTML = '';
+            
+            let slotCount = 0;
+            let formattedHtml = qStr.replace(/__/g, () => {
+                const s = `<span class="blank-slot" id="blank-slot-${slotCount}" onclick="setActiveBlank(${slotCount})">___</span>`;
+                slotCount++;
+                return s;
+            });
+
+            const qElem = document.createElement('div');
+            qElem.className = 'grammar-q-item';
+            qElem.innerHTML = `${grammarQuizIndex + 1}. ${formattedHtml}`;
+            qContainer.appendChild(qElem);
+
+            const cContainer = document.getElementById('container-grammar-choices');
+            cContainer.innerHTML = '';
+            const choices = (currentQ.choice || '').split('/').map(s => s.trim()).filter(Boolean);
+            shuffleArray(choices).forEach(opt => {
+                const btn = document.createElement('div');
+                btn.className = 'block-chip';
+                btn.innerText = opt;
+                btn.onclick = () => fillGrammarAnswer(opt);
+                cContainer.appendChild(btn);
+            });
+        }
+
+        function setActiveBlank(index) {
+            activeBlankIndex = index;
+        }
+
+        function fillGrammarAnswer(optionText) {
+            userGrammarAnswers[activeBlankIndex] = optionText;
+            const slot = document.getElementById(`blank-slot-${activeBlankIndex}`);
+            if (slot) slot.innerText = optionText;
+            const nextBlank = userGrammarAnswers.findIndex(a => a === '');
+            if (nextBlank !== -1) activeBlankIndex = nextBlank;
+        }
+
+        function checkGrammarQuiz() {
+            const quizList = currentGrammarItem.quizzes || [];
+            const currentQ = quizList[grammarQuizIndex];
+            if (!currentQ) return;
+
+            if (userGrammarAnswers.includes('')) {
+                return alert('請填寫完所有空格後再送出答案！');
+            }
+
+            const expectedAnswer = (currentQ.answer || '').replace(/\s+/g, '');
+            let slotIdx = 0;
+            const fullUserAnswer = (currentQ.question || '').replace(/__/g, () => {
+                const ans = userGrammarAnswers[slotIdx] || '';
+                slotIdx++;
+                return ans;
+            }).replace(/\s+/g, '');
+
+            const isCorrect = (fullUserAnswer === expectedAnswer) || (userGrammarAnswers.join('/').replace(/\s+/g, '') === expectedAnswer);
+
+            const resultBox = document.getElementById('box-grammar-result');
+            const resultText = document.getElementById('lbl-grammar-result-text');
+            const actionBtn = document.getElementById('btn-grammar-action');
+            resultBox.style.display = 'block';
+
+            if (isCorrect) {
+                resultText.innerText = currentQ.correct || "🎉 完全正確！";
+                resultText.style.color = "#58cc02";
+
+                if (grammarQuizIndex < quizList.length - 1) {
+                    actionBtn.innerHTML = `下一題 <i class="fa-solid fa-arrow-right"></i>`;
+                    actionBtn.style.background = "#58cc02";
+                    actionBtn.onclick = () => {
+                        grammarQuizIndex++;
+                        showGrammarQuizArea();
+                    };
+                } else {
+                    actionBtn.innerHTML = `<i class="fa-solid fa-flag-checkered"></i> 完成挑戰並領取獎勵`;
+                    actionBtn.style.background = "#58cc02";
+                    actionBtn.onclick = () => finishCurrentChallenge();
+                }
+            } else {
+                resultText.innerText = currentQ.incorrect || "❌ 答案不太對喔，再試一次！";
+                resultText.style.color = "#ff4b4b";
+                actionBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> 再試一次`;
+                actionBtn.style.background = "#ff4b4b";
+                actionBtn.onclick = () => showGrammarQuizArea();
+            }
+        }
+
+        // ==================== 通用單字挑戰邏輯 ====================
 
         function getWordTranslation(item) {
             if (!item) return "";
@@ -2396,7 +2644,6 @@
                    (currentConfig.lang === 'ja') ? (item.ja || item.zh_tw || "") : (item.zh_tw || "");
         }
 
-        // 🌟 齒輪按鈕：切換羅馬拼音與音標
         function toggleWordPronunciationMode() {
             currentWordPronMode = (currentWordPronMode === 'kr_pron') ? 'romanization' : 'kr_pron';
             const lbl = document.getElementById('lbl-toggle-word-pron-text');
@@ -2407,7 +2654,6 @@
             renderWordShadowSubtext();
         }
 
-        // 🌟 渲染單字跟讀標音 (隱藏詞性，依模式切換顯示音標或羅馬拼音)
         function renderWordShadowSubtext() {
             if (!wordQuestions.length) return;
             const item = wordQuestions[wordIndex];
@@ -2447,7 +2693,7 @@
 
             wordIndex = 0;
             totalChallengeQuestions = wordQuestions.length;
-            currentWordPronMode = 'kr_pron'; // 預設進入為音標模式
+            currentWordPronMode = 'kr_pron';
 
             const lbl = document.getElementById('lbl-toggle-word-pron-text');
             if (lbl) lbl.innerText = '切換 羅馬拼音';
@@ -2474,7 +2720,6 @@
                 document.getElementById('lbl-word-shadow-progress').innerText = `${wordIndex + 1} / ${total}`;
                 document.getElementById('lbl-word-shadow-target-text').innerText = item.text || "";
 
-                // 🌟 依當前模式渲染標音 (隱藏詞性)
                 renderWordShadowSubtext();
 
                 document.getElementById('lbl-word-shadow-translation').innerText = "";
@@ -2516,13 +2761,11 @@
 
                 if (audioPlayerBox) audioPlayerBox.style.display = 'block';
 
-                // 🌟 題目標題一律簡化為純 "???"
                 targetTextElem.innerText = "???";
                 choiceSubElem.innerText = "";
                 choiceSubElem.style.display = 'none';
 
                 if (is0ALevel) {
-                    // 0A 程度：聽音選韓文單字 (正確答案對比 text)
                     document.getElementById('lbl-word-choice-score').innerText = "請聽音選擇正確的單字";
                     document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
 
@@ -2540,7 +2783,6 @@
                     });
 
                 } else {
-                    // 1A 及以上程度：播放 text 單字音檔，選項與答案對比為中文 (zh_tw)
                     document.getElementById('lbl-word-choice-score').innerText = "請聽音選擇正確的中文意思";
                     document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
 
@@ -2558,7 +2800,6 @@
                     });
                 }
 
-                // 自動播放該單字語音 (text)
                 setTimeout(() => playWordAudio(), 300);
 
                 document.getElementById('btn-word-choice-prev').disabled = wordIndex === 0;
@@ -2572,7 +2813,6 @@
             playAudioOrTTS(item.audio_url, item.text, 0.85);
         }
 
-        // 🌟 單字聽打檢查：回答正確時按鈕旁不顯示韓文、音標/詞性不出現，下方呈現：💡 [韓文答案] [翻譯]
         function checkWordTypeAnswer() {
             const item = wordQuestions[wordIndex];
             const isMatch = cleanStringForCompare(document.getElementById('input-word-type').value) === cleanStringForCompare(item.text);
@@ -2585,13 +2825,9 @@
                 scoreBadge.innerText = "🎉 完全正確！";
                 scoreBadge.style.color = "#58cc02";
                 
-                // 1. 藍色按鈕旁邊不顯示韓文
                 if (typeTextElem) typeTextElem.style.display = 'none';
-
-                // 2. 音標、詞性等不顯示
                 if (subTextElem) subTextElem.style.display = 'none';
 
-                // 3. 下方呈現：正確的韓語答案 + 翻譯 (例如：💡 아이 小孩)
                 const nativeTrans = getWordTranslation(item);
                 const correctKorean = item.text || "";
                 transElem.innerText = `💡 ${correctKorean} ${nativeTrans}`.trim();
@@ -2611,19 +2847,15 @@
             const scoreBadge = document.getElementById('lbl-word-choice-score');
             const targetTextElem = document.getElementById('lbl-word-choice-text');
             const choiceSubElem = document.getElementById('lbl-word-choice-sub');
-
-            // 🌟 答錯時的固定說明文字
             const wrongTipHtml = "差一點點就答對囉！<br>再聽一次，仔細聽聽看裡面的聲音。";
 
             if (is0ALevel) {
-                // 0A 程度：對比韓文單字 (text)
                 const correctKorean = (item.text || '').trim();
                 if (selectedText.trim() === correctKorean) {
-                    scoreBadge.innerText = getRandomPraise(); // 🌟 隨機 4 句誇獎
+                    scoreBadge.innerText = getRandomPraise();
                     scoreBadge.style.color = "#58cc02";
                     targetTextElem.innerText = correctKorean;
 
-                    // 🌟 僅顯示翻譯，詞性與拼音不顯示
                     const nativeTrans = getWordTranslation(item);
                     choiceSubElem.innerText = nativeTrans ? `💡 ${nativeTrans}` : "";
                     choiceSubElem.style.display = nativeTrans ? 'block' : 'none';
@@ -2632,20 +2864,17 @@
                     passedSubQuestions.add(wordIndex);
                     checkAndShowFinishButton();
                 } else {
-                    scoreBadge.innerHTML = wrongTipHtml; // 🌟 新版答錯提示
+                    scoreBadge.innerHTML = wrongTipHtml;
                     scoreBadge.style.color = "#ff4b4b";
                 }
             } else {
-                // 🌟 1A 及以上程度：對比中文翻譯 (zh_tw)
                 const correctZh = (item.zh_tw || '').trim();
                 if (selectedText.trim() === correctZh) {
-                    scoreBadge.innerText = getRandomPraise(); // 🌟 隨機 4 句誇獎
+                    scoreBadge.innerText = getRandomPraise();
                     scoreBadge.style.color = "#58cc02";
                     
-                    // 答對時將題目揭曉為原本的韓文單字
                     targetTextElem.innerText = item.text || "";
 
-                    // 🌟 僅顯示翻譯，詞性與拼音不顯示
                     choiceSubElem.innerText = correctZh ? `💡 ${correctZh}` : "";
                     choiceSubElem.style.display = correctZh ? 'block' : 'none';
 
@@ -2653,23 +2882,17 @@
                     passedSubQuestions.add(wordIndex);
                     checkAndShowFinishButton();
                 } else {
-                    scoreBadge.innerHTML = wrongTipHtml; // 🌟 新版答錯提示
+                    scoreBadge.innerHTML = wrongTipHtml;
                     scoreBadge.style.color = "#ff4b4b";
                 }
             }
         }
 
         function prevWordQuestion() { 
-            if (wordIndex > 0) { 
-                wordIndex--; 
-                displayWordQuestion(); 
-            } 
+            if (wordIndex > 0) { wordIndex--; displayWordQuestion(); } 
         }
         function nextWordQuestion() { 
-            if (wordIndex < wordQuestions.length - 1) { 
-                wordIndex++; 
-                displayWordQuestion(); 
-            } 
+            if (wordIndex < wordQuestions.length - 1) { wordIndex++; displayWordQuestion(); } 
         }
 
         // ==================== 句子聊天挑戰邏輯 ====================
@@ -2830,283 +3053,6 @@
 
         function prevChatRound() { if (chatRoundIndex > 0) { chatRoundIndex--; displayChatRound(); } }
         function nextChatRound() { if (chatRoundIndex < chatRounds.length - 1) { chatRoundIndex++; displayChatRound(); } }
-
-        // ==================== 語法小教室邏輯 ====================
-
-        function startGrammarChallenge(grammarData) {
-            stopSpeechRecognition();
-            currentGrammarItem = grammarData;
-            currentDialogIndex = 0;
-            
-            document.getElementById('lbl-grammar-info').innerText = `語法教室 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Lesson ${currentConfig.lesson}`;
-            ['area-grammar-all-history', 'area-grammar-example', 'area-grammar-ready', 'area-grammar-quiz'].forEach(id => {
-                document.getElementById(id).style.display = 'none';
-            });
-
-            if (grammarData.dialogs && grammarData.dialogs.length) {
-                currentGrammarItem.structuredDialogs = grammarData.dialogs.map((d, idx) => {
-                    if (typeof d === 'object' && d !== null && d.text !== undefined) {
-                        return { gramNum: Number(d.gramNum) || (idx + 1), text: cleanInitialWhitespace(String(d.text)) };
-                    }
-                    let matched = null;
-                    const dClean = String(d).trim();
-                    for (let g = 1; g <= 10; g++) {
-                        if (String(grammarData[`gram${g}`] || '').trim() === dClean) { matched = g; break; }
-                    }
-                    return { gramNum: matched !== null ? matched : (idx + 1), text: cleanInitialWhitespace(dClean) };
-                });
-            } else {
-                currentGrammarItem.structuredDialogs = [];
-            }
-
-            if (currentGrammarItem.structuredDialogs.length) {
-                document.getElementById('area-grammar-dialog').style.display = 'block';
-                showCurrentGrammarDialog();
-            } else if (grammarData.example && grammarData.example.trim()) {
-                showExampleArea();
-            } else if (grammarData.ready && grammarData.ready.trim()) {
-                showReadyArea();
-            } else {
-                showGrammarQuizArea();
-            }
-            goToStep('step-grammar');
-        }
-
-        function cleanInitialWhitespace(str) {
-            return (str || '').replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
-        }
-
-        function playGrammarAudio(gramNum, dialogText) {
-            if (!currentGrammarItem) return;
-            const audioUrl = (gramNum === 2) ? (currentGrammarItem.gram2_audio || "") : (gramNum === 3 ? (currentGrammarItem.gram3_audio || "") : "");
-            playAudioOrTTS(audioUrl, dialogText ? cleanInitialWhitespace(dialogText) : "", 0.85);
-        }
-
-        function showCurrentGrammarDialog() {
-            if (!currentGrammarItem || !currentGrammarItem.structuredDialogs) return;
-            const total = currentGrammarItem.structuredDialogs.length;
-            document.getElementById('lbl-dialog-counter').innerText = `${currentDialogIndex + 1} / ${total}`;
-            document.getElementById('btn-prev-dialog').disabled = currentDialogIndex === 0;
-
-            const nextBtn = document.getElementById('btn-next-dialog');
-            if (currentDialogIndex === total - 1) {
-                nextBtn.innerHTML = (currentGrammarItem.example && currentGrammarItem.example.trim()) ? `看例句 <i class="fa-solid fa-arrow-right"></i>` :
-                                   (currentGrammarItem.ready && currentGrammarItem.ready.trim()) ? `準備測驗 <i class="fa-solid fa-arrow-right"></i>` :
-                                   (currentGrammarItem.question && currentGrammarItem.question.trim()) ? `進入測驗 <i class="fa-solid fa-pen-to-square"></i>` : `完成課堂 <i class="fa-solid fa-check"></i>`;
-            } else {
-                nextBtn.innerHTML = `下一步 <i class="fa-solid fa-arrow-right"></i>`;
-            }
-
-            const currentDialogObj = currentGrammarItem.structuredDialogs[currentDialogIndex];
-            currentFullDialogText = cleanInitialWhitespace(currentDialogObj.text || "");
-
-            const audioBtn = document.getElementById('btn-gram2-audio');
-            const targetGramNum = currentDialogObj.gramNum;
-
-            if (targetGramNum === 2 || targetGramNum === 3) {
-                audioBtn.style.display = 'block';
-                audioBtn.onclick = (e) => { e.stopPropagation(); playGrammarAudio(targetGramNum, currentFullDialogText); };
-                playGrammarAudio(targetGramNum, currentFullDialogText);
-            } else {
-                audioBtn.style.display = 'none';
-            }
-            startTypewriter(currentFullDialogText);
-        }
-
-        function startTypewriter(text) {
-            if (typewriterTimer) clearInterval(typewriterTimer);
-            const box = document.getElementById('lbl-grammar-dialog');
-            box.textContent = "";
-            isTypewriterTyping = true;
-            let charIndex = 0;
-            typewriterTimer = setInterval(() => {
-                if (charIndex < text.length) {
-                    box.textContent = text.substring(0, charIndex + 1);
-                    charIndex++;
-                } else {
-                    clearInterval(typewriterTimer);
-                    isTypewriterTyping = false;
-                }
-            }, 35);
-        }
-
-        function completeTypewriterImmediately() {
-            if (isTypewriterTyping) {
-                clearInterval(typewriterTimer);
-                document.getElementById('lbl-grammar-dialog').textContent = currentFullDialogText;
-                isTypewriterTyping = false;
-            }
-        }
-
-        function nextGrammarDialog() {
-            if (isTypewriterTyping) { completeTypewriterImmediately(); return; }
-            if (!currentGrammarItem) return;
-
-            if (currentGrammarItem.structuredDialogs && currentDialogIndex < currentGrammarItem.structuredDialogs.length - 1) {
-                currentDialogIndex++;
-                showCurrentGrammarDialog();
-            } else {
-                processAfterDialogs();
-            }
-        }
-
-        function prevGrammarDialog() {
-            if (isTypewriterTyping) completeTypewriterImmediately();
-            if (currentDialogIndex > 0) { currentDialogIndex--; showCurrentGrammarDialog(); }
-        }
-
-        function skipGrammarDialog() {
-            if (typewriterTimer) clearInterval(typewriterTimer);
-            isTypewriterTyping = false;
-            processAfterDialogs();
-        }
-
-        function processAfterDialogs() {
-            renderGrammarHistoryList();
-            document.getElementById('area-grammar-dialog').style.display = 'none';
-            if (currentGrammarItem.example && currentGrammarItem.example.trim()) showExampleArea();
-            else if (currentGrammarItem.ready && currentGrammarItem.ready.trim()) showReadyArea();
-            else if (currentGrammarItem.question && currentGrammarItem.question.trim()) showGrammarQuizArea();
-            else finishCurrentChallenge();
-        }
-
-        function showExampleArea() {
-            document.getElementById('area-grammar-dialog').style.display = 'none';
-            document.getElementById('area-grammar-example').style.display = 'block';
-
-            const container = document.getElementById('container-example-list');
-            container.innerHTML = '';
-            const examples = currentGrammarItem.example.split('/').map(s => s.trim()).filter(Boolean);
-            const audioUrls = (currentGrammarItem.example_audio || '').split('/').map(s => s.trim());
-
-            examples.forEach((exText, idx) => {
-                const row = document.createElement('div');
-                row.style.cssText = "display: flex; justify-content: space-between; align-items: center; background: #f3f4f6; padding: 10px 14px; border-radius: 12px; margin-bottom: 8px; font-size: 1rem; font-weight: bold; text-align: left;";
-                const textSpan = document.createElement('span');
-                textSpan.innerText = `${idx + 1}. ${exText}`;
-
-                const playBtn = document.createElement('button');
-                playBtn.className = 'btn-circle btn-listen';
-                playBtn.style.cssText = "width: 38px; height: 38px; font-size: 0.85rem; flex-shrink: 0;";
-                playBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
-                playBtn.onclick = () => playAudioOrTTS(audioUrls[idx] || '', exText, 0.85);
-
-                row.appendChild(textSpan);
-                row.appendChild(playBtn);
-                container.appendChild(row);
-            });
-        }
-
-        function goToReadyPage() {
-            document.getElementById('area-grammar-example').style.display = 'none';
-            if (currentGrammarItem.ready && currentGrammarItem.ready.trim()) showReadyArea();
-            else if (currentGrammarItem.question && currentGrammarItem.question.trim()) showGrammarQuizArea();
-            else finishCurrentChallenge();
-        }
-
-        function showReadyArea() {
-            document.getElementById('area-grammar-dialog').style.display = 'none';
-            document.getElementById('area-grammar-example').style.display = 'none';
-            document.getElementById('area-grammar-ready').style.display = 'block';
-            document.getElementById('lbl-ready-text').innerText = (currentGrammarItem.ready || "準備好進行測驗了嗎？").trim();
-        }
-
-        function enterGrammarQuizFromReady() {
-            document.getElementById('area-grammar-ready').style.display = 'none';
-            if (currentGrammarItem.question && currentGrammarItem.question.trim()) showGrammarQuizArea();
-            else finishCurrentChallenge();
-        }
-
-        function renderGrammarHistoryList() {
-            const container = document.getElementById('container-dialog-history');
-            container.innerHTML = "";
-            const list = currentGrammarItem ? (currentGrammarItem.structuredDialogs || currentGrammarItem.dialogs) : [];
-            if (list && list.length > 0) {
-                let listToRender = [...list];
-                if (listToRender.length > 1) listToRender.pop();
-                listToRender.forEach((itemObj, idx) => {
-                    const text = typeof itemObj === 'object' && itemObj !== null ? (itemObj.text || '') : String(itemObj);
-                    const item = document.createElement('div');
-                    item.className = 'dialog-history-item';
-                    item.innerHTML = `<span class="num">${idx + 1}.</span> ${cleanInitialWhitespace(text)}`;
-                    container.appendChild(item);
-                });
-                document.getElementById('area-grammar-all-history').style.display = 'block';
-            }
-        }
-
-        function showGrammarQuizArea() {
-            ['area-grammar-dialog', 'area-grammar-example', 'area-grammar-ready'].forEach(id => {
-                document.getElementById(id).style.display = 'none';
-            });
-            document.getElementById('area-grammar-quiz').style.display = 'block';
-            document.getElementById('box-grammar-result').style.display = 'none';
-
-            renderGrammarHistoryList();
-            const rawQuestions = currentGrammarItem.question.split('/').map(s => s.trim()).filter(Boolean);
-            userGrammarAnswers = new Array(rawQuestions.length).fill('');
-            activeBlankIndex = 0;
-
-            const qContainer = document.getElementById('container-grammar-questions');
-            qContainer.innerHTML = '';
-            rawQuestions.forEach((qStr, idx) => {
-                const div = document.createElement('div');
-                div.className = 'grammar-q-item';
-                div.innerHTML = `${idx + 1}. ${qStr.replace(/__/g, `<span class="blank-slot" id="blank-slot-${idx}" onclick="setActiveBlank(${idx})">___</span>`)}`;
-                qContainer.appendChild(div);
-            });
-
-            const cContainer = document.getElementById('container-grammar-choices');
-            cContainer.innerHTML = '';
-            shuffleArray(currentGrammarItem.choice.split('/').map(s => s.trim()).filter(Boolean)).forEach(opt => {
-                const btn = document.createElement('div');
-                btn.className = 'block-chip';
-                btn.innerText = opt;
-                btn.onclick = () => fillGrammarAnswer(opt);
-                cContainer.appendChild(btn);
-            });
-        }
-
-        function setActiveBlank(index) { activeBlankIndex = index; }
-
-        function fillGrammarAnswer(optionText) {
-            userGrammarAnswers[activeBlankIndex] = optionText;
-            const slot = document.getElementById(`blank-slot-${activeBlankIndex}`);
-            if (slot) slot.innerText = optionText;
-            const nextBlank = userGrammarAnswers.findIndex(a => a === '');
-            if (nextBlank !== -1) activeBlankIndex = nextBlank;
-        }
-
-        function checkGrammarQuiz() {
-            const rawQuestions = currentGrammarItem.question.split('/').map(s => s.trim()).filter(Boolean);
-            const correctAnswers = currentGrammarItem.answer.split('/').map(s => s.trim().replace(/\s+/g, ''));
-            let isAllCorrect = true;
-
-            if (userGrammarAnswers.includes('')) return alert('請填寫完所有空格後再送出！');
-
-            rawQuestions.forEach((qStr, idx) => {
-                if (qStr.replace(/__/g, userGrammarAnswers[idx]).replace(/\s+/g, '') !== correctAnswers[idx]) isAllCorrect = false;
-            });
-
-            const resultBox = document.getElementById('box-grammar-result');
-            const resultText = document.getElementById('lbl-grammar-result-text');
-            const actionBtn = document.getElementById('btn-grammar-action');
-            resultBox.style.display = 'block';
-
-            if (isAllCorrect) {
-                resultText.innerText = currentGrammarItem.correct || "🎉 完全正確！通關成功！";
-                resultText.style.color = "#58cc02";
-                actionBtn.innerHTML = `<i class="fa-solid fa-flag-checkered"></i> 完成挑戰並領取獎勵`;
-                actionBtn.style.background = "#58cc02";
-                actionBtn.onclick = () => finishCurrentChallenge();
-            } else {
-                resultText.innerText = currentGrammarItem.incorrect || "❌ 答案不太對喔，再試一次！";
-                resultText.style.color = "#ff4b4b";
-                actionBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> 再來一次`;
-                actionBtn.style.background = "#ff4b4b";
-                actionBtn.onclick = () => showGrammarQuizArea();
-            }
-        }
 
         // ==================== 跟讀與重組題邏輯 ====================
 
@@ -3390,7 +3336,6 @@
                         document.getElementById('lbl-word-shadow-score').innerText = "🎉 發音合格！";
                         document.getElementById('lbl-word-shadow-score').style.color = "#58cc02";
                         
-                        // 🌟 答對時僅顯示純中文翻譯 (如：💡 洗手間)
                         const trans = getWordTranslation(currentWord);
                         document.getElementById('lbl-word-shadow-translation').innerText = trans ? `💡 ${trans}` : "";
                         
