@@ -188,13 +188,13 @@
             padding-right: 2px;
             display: flex;
             flex-direction: column;
-            text-align: center; /* 恢復預設置中 */
+            text-align: center;
         }
 
         .step-page { 
             display: none; 
             width: 100%;
-            text-align: center; /* 恢復預設置中 */
+            text-align: center;
         }
         .step-page.active { 
             display: block; 
@@ -235,11 +235,11 @@
             cursor: pointer;
             white-space: pre-wrap !important;
             word-break: break-word;
-            text-align: left !important; /* 🌟 僅此處向左靠齊 */
+            text-align: left !important;
         }
         #lbl-grammar-dialog {
             display: block !important;
-            text-align: left !important; /* 🌟 僅此處向左靠齊 */
+            text-align: left !important;
             white-space: pre-wrap !important;
         }
         .btn-gram-audio {
@@ -2804,7 +2804,7 @@
                 actionBtn.onclick = () => showGrammarQuizArea();
             }
         }
-// ==================== 通用單字挑戰邏輯 ====================
+// ==================== 🌟 通用單字挑戰邏輯 (支援動態抽詞選擇題) ====================
 
         function getWordTranslation(item) {
             if (!item) return "";
@@ -2933,16 +2933,47 @@
                 choiceSubElem.innerText = "";
                 choiceSubElem.style.display = 'none';
 
+                // 隨機抽取干擾項輔助函式
+                function pickRandomDistractors(candidateList, correctVal, count = 3) {
+                    const cleanCorrect = (correctVal || '').trim();
+                    const filtered = candidateList.filter(val => val && val.trim() !== '' && val.trim() !== cleanCorrect);
+                    const shuffled = shuffleArray(filtered);
+                    return shuffled.slice(0, count);
+                }
+
+                const currentLevelNormalized = normalizeLevelStr(currentConfig.level);
+                
+                // 優先抓取「相同程度」的單字群，若數量不足 4 個則擴展至全體資料庫
+                const sameLevelWords = rawWordData.filter(w => normalizeLevelStr(getItemField(w, 'level')) === currentLevelNormalized);
+                const poolWords = (sameLevelWords.length >= 4) ? sameLevelWords : rawWordData;
+
                 if (is0ALevel) {
+                    /* ==============================================
+                       【0A 程度】聽音選韓文/日文單字 (抓取 text 欄位)
+                       ============================================== */
                     document.getElementById('lbl-word-choice-score').innerText = "請聽音選擇正確的單字";
                     document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
 
-                    let choices = (item.choice || '').split('/').map(s => s.trim()).filter(Boolean);
                     const correctWord = (item.text || '').trim();
-                    if (correctWord && !choices.includes(correctWord)) choices.push(correctWord);
-                    choices = shuffleArray(choices);
 
-                    choices.forEach(wText => {
+                    // 抓取 0A 程度中所有的 text 單字並隨機抽取 3 個干擾字
+                    const allTargetWords = [...new Set(poolWords.map(w => (w.text || '').trim()).filter(Boolean))];
+                    let distractors = pickRandomDistractors(allTargetWords, correctWord, 3);
+
+                    // 若題庫詞數少於 3 個，自原本 choice 欄位補足
+                    if (distractors.length < 3 && item.choice) {
+                        const originalChoices = (item.choice || '').split('/').map(s => s.trim()).filter(Boolean);
+                        originalChoices.forEach(c => {
+                            if (distractors.length < 3 && c !== correctWord && !distractors.includes(c)) {
+                                distractors.push(c);
+                            }
+                        });
+                    }
+
+                    // 合併正解並打亂成 4 個選項
+                    const finalChoices = shuffleArray([correctWord, ...distractors]);
+
+                    finalChoices.forEach(wText => {
                         const btn = document.createElement('button');
                         btn.className = 'btn-vocab-choice';
                         btn.innerText = wText;
@@ -2951,19 +2982,47 @@
                     });
 
                 } else {
-                    document.getElementById('lbl-word-choice-score').innerText = "請聽音選擇正確的中文意思";
+                    /* ==============================================
+                       【1A 及以上】聽外語選母語 (依使用者語言切換 zh / en / ja)
+                       ============================================== */
+                    const userLang = currentConfig.lang; // 'zh', 'en', 'ja'
+                    const langPrompt = (userLang === 'en') ? "英文意思" : (userLang === 'ja') ? "日文意思" : "中文意思";
+                    
+                    document.getElementById('lbl-word-choice-score').innerText = `請聽音選擇正確的${langPrompt}`;
                     document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
 
-                    const correctZh = (item.zh_tw || '').trim();
-                    let choices = (item.choice || '').split('/').map(s => s.trim()).filter(Boolean);
-                    if (correctZh && !choices.includes(correctZh)) choices.push(correctZh);
-                    choices = shuffleArray(choices);
+                    // 取得對應語言的翻譯文字
+                    const getTranslationText = (targetItem) => {
+                        if (!targetItem) return '';
+                        if (userLang === 'en') return (targetItem.en || targetItem.zh_tw || targetItem.zh || '').trim();
+                        if (userLang === 'ja') return (targetItem.ja || targetItem.jp || targetItem.zh_tw || targetItem.zh || '').trim();
+                        return (targetItem.zh_tw || targetItem.zh || '').trim();
+                    };
 
-                    choices.forEach(cText => {
+                    const correctMeaning = getTranslationText(item);
+
+                    // 抓取對應母語欄位中所有的詞彙清單並隨機抽取 3 個干擾字
+                    const allMeanings = [...new Set(poolWords.map(w => getTranslationText(w)).filter(Boolean))];
+                    let distractors = pickRandomDistractors(allMeanings, correctMeaning, 3);
+
+                    // 若題庫詞數少於 3 個，自原本 choice 欄位補足
+                    if (distractors.length < 3 && item.choice) {
+                        const originalChoices = (item.choice || '').split('/').map(s => s.trim()).filter(Boolean);
+                        originalChoices.forEach(c => {
+                            if (distractors.length < 3 && c !== correctMeaning && !distractors.includes(c)) {
+                                distractors.push(c);
+                            }
+                        });
+                    }
+
+                    // 合併正解並打亂成 4 個選項
+                    const finalChoices = shuffleArray([correctMeaning, ...distractors]);
+
+                    finalChoices.forEach(mText => {
                         const btn = document.createElement('button');
                         btn.className = 'btn-vocab-choice';
-                        btn.innerText = cText;
-                        btn.onclick = () => checkWordChoiceAnswer(cText);
+                        btn.innerText = mText;
+                        btn.onclick = () => checkWordChoiceAnswer(mText);
                         container.appendChild(btn);
                     });
                 }
@@ -3036,15 +3095,20 @@
                     scoreBadge.style.color = "#ff4b4b";
                 }
             } else {
-                const correctZh = (item.zh_tw || '').trim();
-                if (selectedText.trim() === correctZh) {
+                // 動態取得母語正確答案比對
+                const userLang = currentConfig.lang;
+                const correctMeaning = (userLang === 'en') ? (item.en || item.zh_tw || item.zh || '').trim() :
+                                       (userLang === 'ja') ? (item.ja || item.jp || item.zh_tw || item.zh || '').trim() :
+                                       (item.zh_tw || item.zh || '').trim();
+
+                if (selectedText.trim() === correctMeaning) {
                     scoreBadge.innerText = getRandomPraise();
                     scoreBadge.style.color = "#58cc02";
                     
                     targetTextElem.innerText = item.text || "";
 
-                    choiceSubElem.innerText = correctZh ? `💡 ${correctZh}` : "";
-                    choiceSubElem.style.display = correctZh ? 'block' : 'none';
+                    choiceSubElem.innerText = correctMeaning ? `💡 ${correctMeaning}` : "";
+                    choiceSubElem.style.display = correctMeaning ? 'block' : 'none';
 
                     playWordAudio();
                     passedSubQuestions.add(wordIndex);
