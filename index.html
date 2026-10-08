@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>拼圖修復挑戰系統</title>
+    <title>多語挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -31,16 +31,11 @@
             --duo-gold: #f59e0b;
             --duo-fire-red: #ef4444;
             --duo-teal: #0d9488;
-
-            /* 🌟 卡榫拼圖立體色系 */
-            --color-initial: #0284c7;
-            --color-vowel-v: #d97706;
-            --color-vowel-h: #16a34a;
-            --color-final: #4f46e5;
         }
 
         * { box-sizing: border-box; }
 
+        /* 🌟 1. 鎖定外層頁面不彈跳，畫面全螢幕滿版 */
         html, body {
             height: 100%;
             margin: 0;
@@ -56,6 +51,7 @@
             justify-content: center;
         }
 
+        /* 🌟 2. 主卡片容器：鎖定滿版高度，縱向 flex 排版，預設全局居中 */
         .shadowing-card {
             background: white;
             border: 2px solid #e5e7eb;
@@ -74,6 +70,7 @@
             text-align: center;
         }
 
+        /* 🌟 3. 上方藍色固定區塊：頂部狀態列 */
         .user-meta-bar {
             flex-shrink: 0;
             display: flex;
@@ -104,7 +101,9 @@
         }
         .user-meta-item:hover { background: #f3f4f6; }
 
-        .lbl-quiz-info { display: none !important; }
+        .lbl-quiz-info {
+            display: none !important;
+        }
 
         .challenge-top-bar {
             display: flex;
@@ -114,6 +113,7 @@
             position: relative;
         }
 
+        /* 🌟 4. 下方藍色固定區塊：底部固定導航列 */
         .bottom-fixed-bar-wrapper {
             position: absolute;
             bottom: 0;
@@ -179,6 +179,7 @@
             background: #f1f5f9;
         }
 
+        /* 🌟 5. 中間紅色滾動區塊：預設所有題目與內容置中對齊 */
         #learning-content-view {
             flex: 1;
             overflow-y: auto;
@@ -199,6 +200,7 @@
             display: block; 
         }
 
+        /* 語法教室特別設定：充滿剩餘高度，按鈕推到最下方 */
         #step-grammar.active {
             display: flex !important;
             flex-direction: column;
@@ -214,6 +216,7 @@
             width: 100%;
         }
 
+        /* 🌟 只有「觀念說明」的第一句話對話框靠左對齊，保留所有空格與縮排 */
         .grammar-dialog-box {
             background: #eef2ff;
             border: 2px solid #818cf8;
@@ -438,6 +441,7 @@
         }
         .btn-back-step:hover { color: var(--duo-blue); }
 
+        /* 🌟 題目、翻譯、文字一律保持置中對齊 */
         .target-text,
         .translation-text,
         #lbl-target-text,
@@ -519,227 +523,24 @@
         .block-chip:active { transform: translateY(2px); border-bottom-width: 2px; }
         .block-chip.used { opacity: 0.3; pointer-events: none; background: #f3f4f6; }
 
-        /* ================= 🧩 0A 真實幾何立體卡榫拼圖樣式 ================= */
-        .puzzle-stage-container {
-            background: #e2e8f0;
-            border: 3px solid #cbd5e1;
-            border-radius: 24px;
-            padding: 16px 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            min-height: 240px;
-            justify-content: center;
-            margin-bottom: 14px;
-            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.06);
+        .hangul-grid-board-wrapper {
+            width: 100%; overflow-x: auto; padding: 6px 0; display: flex; justify-content: center; -webkit-overflow-scrolling: touch;
         }
-
-        .syllable-tabs-bar {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            overflow-x: auto;
-            padding: 4px 0 10px 0;
-            width: 100%;
-            -webkit-overflow-scrolling: touch;
+        .hangul-grid-board {
+            display: grid; grid-template-rows: repeat(3, 44px); grid-template-columns: repeat(9, 44px);
+            gap: 4px; background: #ffffff; border: 2px solid #bae6fd; border-radius: 16px; padding: 8px;
+            box-shadow: 0 4px 12px rgba(28, 176, 246, 0.08); margin: 0 auto;
         }
-        .tab-syllable-btn {
-            background: #ffffff;
-            border: 2px solid #cbd5e1;
-            border-bottom: 3.5px solid #94a3b8;
-            padding: 6px 12px;
-            border-radius: 12px;
-            font-size: 0.88rem;
-            font-weight: 800;
-            color: #475569;
-            cursor: pointer;
-            transition: all 0.15s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
+        .hangul-grid-cell {
+            background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 8px; display: flex;
+            align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 900;
+            color: #94a3b8; cursor: pointer; user-select: none; transition: all 0.12s ease;
         }
-        .tab-syllable-btn.active {
-            background: #ddf4ff;
-            border-color: #0284c7;
-            border-bottom-color: #0369a1;
-            color: #0284c7;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.18);
+        .hangul-grid-cell:hover:not(.filled) { background: #f1f5f9; border-color: var(--duo-blue); }
+        .hangul-grid-cell.filled {
+            background: #ddf4ff; border: 2px solid var(--duo-blue); color: #0369a1; box-shadow: 0 2px 4px rgba(0,0,0,0.06);
         }
-        .tab-syllable-btn.passed {
-            border-color: #86efac;
-            color: #15803d;
-        }
-
-        .nav-syllable-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 2px solid #cbd5e1;
-            background: #ffffff;
-            color: #475569;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 0.95rem;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-            z-index: 10;
-            transition: transform 0.1s;
-        }
-        .nav-syllable-arrow:active { transform: translateY(-50%) scale(0.9); }
-        .nav-syllable-arrow:disabled { opacity: 0.25; cursor: not-allowed; }
-        .arrow-prev { left: 8px; }
-        .arrow-next { right: 8px; }
-
-        .puzzle-board {
-            display: grid;
-            gap: 10px;
-            justify-content: center;
-            align-items: center;
-            margin: 6px auto 0 auto;
-            position: relative;
-        }
-
-        .layout-lrb {
-            grid-template-columns: 82px 76px;
-            grid-template-rows: 82px 58px;
-            grid-template-areas: 
-                "initial vowel"
-                "final   final";
-        }
-
-        .layout-lr {
-            grid-template-columns: 84px 76px;
-            grid-template-rows: 100px;
-            grid-template-areas: "initial vowel";
-        }
-
-        .layout-udb {
-            grid-template-columns: 130px;
-            grid-template-rows: 66px 52px 54px;
-            grid-template-areas: 
-                "initial"
-                "vowel"
-                "final";
-        }
-
-        .layout-udb_no_final {
-            grid-template-columns: 130px;
-            grid-template-rows: 72px 58px;
-            grid-template-areas: 
-                "initial"
-                "vowel";
-        }
-
-        .puzzle-slot {
-            background: #cbd5e1;
-            border: 2.5px dashed #94a3b8;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.6rem;
-            font-weight: 900;
-            color: #64748b;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            user-select: none;
-            box-shadow: inset 0 3px 6px rgba(0,0,0,0.12);
-            position: relative;
-        }
-
-        .puzzle-slot.slot-initial { grid-area: initial; }
-        .puzzle-slot.slot-vowel   { grid-area: vowel; }
-        .puzzle-slot.slot-final   { grid-area: final; }
-
-        .puzzle-slot.filled {
-            border-style: solid;
-            color: #ffffff;
-            cursor: pointer;
-            border-width: 2.5px;
-        }
-
-        .puzzle-slot.filled.slot-initial,
-        .puzzle-chip.chip-initial {
-            background: #38bdf8;
-            border-color: #bae6fd;
-            box-shadow: 0 4px 0 #0284c7;
-            color: #0369a1;
-        }
-
-        .puzzle-slot.filled.vowel-vertical,
-        .puzzle-chip.chip-vowel-v {
-            background: #fbbf24;
-            border-color: #fef08a;
-            box-shadow: 0 4px 0 #d97706;
-            color: #92400e;
-        }
-
-        .puzzle-slot.filled.vowel-horizontal,
-        .puzzle-chip.chip-vowel-h {
-            background: #4ade80;
-            border-color: #bbf7d0;
-            box-shadow: 0 4px 0 #16a34a;
-            color: #14532d;
-        }
-
-        .puzzle-slot.filled.slot-final,
-        .puzzle-chip.chip-final {
-            background: #60a5fa;
-            border-color: #bfdbfe;
-            box-shadow: 0 4px 0 #2563eb;
-            color: #1e3a8a;
-        }
-
-        .puzzle-pool-container {
-            background: #f1f5f9;
-            border: 2px solid #e2e8f0;
-            border-radius: 18px;
-            padding: 12px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            align-items: center;
-            min-height: 80px;
-            margin-bottom: 12px;
-        }
-
-        .puzzle-chip {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.45rem;
-            font-weight: 900;
-            cursor: pointer;
-            user-select: none;
-            transition: transform 0.1s, opacity 0.15s;
-            border: 2.5px solid #cbd5e1;
-            background: #ffffff;
-            box-shadow: 0 4px 0 #94a3b8;
-            color: #1e293b;
-        }
-        .puzzle-chip:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #94a3b8;
-        }
-        .puzzle-chip.used {
-            opacity: 0.2;
-            pointer-events: none;
-            background: #e2e8f0;
-            box-shadow: none;
-            border-color: #cbd5e1;
-            transform: none;
-        }
+        .hangul-grid-cell.filled:active { transform: scale(0.92); }
 
         .vocab-input {
             width: 88%; max-width: 320px; padding: 10px; font-size: 1.1rem; border: 2px solid #cbd5e1;
@@ -782,19 +583,37 @@
             border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; margin-bottom: 12px;
         }
         .dialog-history-item {
-            padding: 6px 8px; border-bottom: 1px solid #f3f4f6; font-size: 0.92rem;
-            color: #374151; line-height: 1.5; text-align: left !important;
-            white-space: pre-wrap; word-break: break-word;
+            padding: 6px 8px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 0.92rem;
+            color: #374151;
+            line-height: 1.5;
+            text-align: left !important;
+            white-space: pre-wrap;
+            word-break: break-word;
         }
-        .dialog-history-item:last-child { border-bottom: none; }
+        .dialog-history-item:last-child {
+            border-bottom: none;
+        }
         .dialog-history-item .num-title {
-            font-weight: 800; color: var(--duo-blue); display: block; margin-bottom: 1px;
+            font-weight: 800;
+            color: var(--duo-blue);
+            display: block;
+            margin-bottom: 1px;
         }
-        .dialog-history-item .text-body { display: block; color: #334155; }
+        .dialog-history-item .text-body {
+            display: block;
+            color: #334155;
+        }
 
         .profile-avatar-large {
             width: 72px; height: 72px; border-radius: 50%;
             border: 3px solid var(--duo-blue); margin: 0 auto 8px auto; object-fit: cover; display: block;
+        }
+
+        @media (max-width: 440px) {
+            .hangul-grid-board { grid-template-rows: repeat(3, 38px); grid-template-columns: repeat(9, 38px); gap: 3px; padding: 6px; }
+            .hangul-grid-cell { font-size: 1.1rem; }
         }
 
         @media (max-width: 420px) {
@@ -812,7 +631,6 @@
             .grammar-q-item { font-size: 0.94rem; }
             .bottom-fixed-bar { padding: 6px 10px; }
             .bottom-nav-item { font-size: 0.82rem; padding: 7px 8px; }
-            .puzzle-chip { width: 44px; height: 44px; font-size: 1.25rem; }
         }
     </style>
 </head>
@@ -1204,7 +1022,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-B：字塊重組畫面 (整合 0A 卡榫幾何拼圖與標準整句重組雙模式) -->
+            <!-- 步驟 6-B：字塊重組畫面 (保持置中) -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
@@ -1216,42 +1034,14 @@
                         </div>
                     </div>
                 </div>
-
-                <div style="margin: 8px 0 10px 0;">
+                <div style="margin: 12px 0;">
                     <button class="btn-circle btn-listen" onclick="playBlockAudio()" style="margin: 0 auto;"><i class="fa-solid fa-volume-high"></i></button>
                 </div>
                 <div class="translation-text" id="lbl-block-translation">...</div>
-
-                <!-- 🧩 0A 韓文音節幾何拼圖舞台專用區塊 (0A 韓文時自動啟用) -->
-                <div id="area-0a-jamo-puzzle" style="display: none;">
-                    <!-- 多音節切換標籤列 (Tabs) -->
-                    <div class="syllable-tabs-bar" id="container-puzzle-tabs"></div>
-
-                    <!-- 拼圖舞台與左右導航按鈕 -->
-                    <div class="puzzle-stage-container">
-                        <button class="nav-syllable-arrow arrow-prev" id="btn-puzzle-prev-syl" onclick="switchSyllableTab(currentSyllableIdx - 1)">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-                        <button class="nav-syllable-arrow arrow-next" id="btn-puzzle-next-syl" onclick="switchSyllableTab(currentSyllableIdx + 1)">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-
-                        <div style="font-size: 0.85rem; font-weight: 800; color: #64748b; margin-bottom: 8px;" id="lbl-puzzle-stage-title">音節 1: '한' (Layout: LRB)</div>
-                        <div id="board-jamo-puzzle" class="puzzle-board"></div>
-                    </div>
-
-                    <p style="font-size: 0.8rem; color: #94a3af; text-align: center; margin: 0 0 6px 0;">點擊字塊填入拼圖（點擊已填入字塊可收回）：</p>
-                    <div id="zone-0a-pool" class="puzzle-pool-container"></div>
-                </div>
-
-                <!-- 🔤 標準字塊重組區塊 (1A 及以上程度使用) -->
-                <div id="area-standard-blocks">
-                    <p style="font-size: 0.8rem; color: #94a3af; text-align: center; margin: 0;">排列結果：</p>
-                    <div id="zone-answer" class="block-zone"></div>
-                    <p style="font-size: 0.8rem; color: #94a3af; text-align: center; margin: 0;">點擊字塊組句：</p>
-                    <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
-                </div>
-
+                <p style="font-size: 0.8rem; color: #9ca3af; text-align: center; margin: 0;">排列結果：</p>
+                <div id="zone-answer" class="block-zone"></div>
+                <p style="font-size: 0.8rem; color: #9ca3af; text-align: center; margin: 0;">點擊字塊組句：</p>
+                <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
                 <button class="btn-confirm" onclick="checkBlockAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
                 <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-block-score">等待回答...</div></div>
                 <div class="nav-controls">
@@ -1505,10 +1295,8 @@
         let isToggling = false; 
         let selectedBlockIndices = [];
 
-        // 🌟 0A 韓文幾何卡榫拼圖專用狀態管理
-        let decomposedSyllables = [];
-        let currentSyllableIdx = 0;
-        let puzzlePoolChips = [];
+        let gridBoardCells = new Array(27).fill(null);
+        let selectedTargetGridIndex = null;
 
         let chatRounds = [];
         let chatRoundIndex = 0;
@@ -3016,246 +2804,7 @@
                 actionBtn.onclick = () => showGrammarQuizArea();
             }
         }
-// ==================== 🧩 0A 韓文音節卡榫幾何拼圖核心演算法 (修復版) ====================
-
-        const KOR_CHOSUNG = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-        const KOR_JUNGSUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ᅱ','ㅠ','ㅡ','ㅢ','ㅣ'];
-        const KOR_JONGSUNG = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-        const KOR_VERTICAL_VOWELS = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅣ'];
-
-        function decomposeKoreanSyllables(word) {
-            const list = [];
-            const clean = (word || '').replace(/[^\uAC00-\uD7A3]/g, '');
-            for (let i = 0; i < clean.length; i++) {
-                const code = clean.charCodeAt(i) - 0xAC00;
-                if (code >= 0 && code <= 11171) {
-                    const choIdx = Math.floor(code / (21 * 28));
-                    const jungIdx = Math.floor((code % (21 * 28)) / 28);
-                    const jongIdx = code % 28;
-
-                    const initial = KOR_CHOSUNG[choIdx];
-                    const vowel = KOR_JUNGSUNG[jungIdx];
-                    const final = KOR_JONGSUNG[jongIdx];
-                    const isVertical = KOR_VERTICAL_VOWELS.includes(vowel);
-
-                    let layout = "";
-                    if (final && final.trim() !== "") {
-                        layout = isVertical ? "LRB" : "UDB";
-                    } else {
-                        layout = isVertical ? "LR" : "UD";
-                    }
-
-                    list.push({
-                        char: clean[i],
-                        initial: initial,
-                        vowel: vowel,
-                        final: (final && final.trim() !== "") ? final : null,
-                        layout: layout,
-                        vowelType: isVertical ? 'vertical' : 'horizontal',
-                        userInitial: null,
-                        userVowel: null,
-                        userFinal: null
-                    });
-                }
-            }
-            return list;
-        }
-
-        function initJamoPuzzleFor0A(targetWord) {
-            decomposedSyllables = decomposeKoreanSyllables(targetWord);
-            currentSyllableIdx = 0;
-
-            if (decomposedSyllables.length === 0) {
-                console.warn("無法拆解韓文字:", targetWord);
-                return;
-            }
-
-            const q = questions[currentIndex];
-            let allJamos = [];
-            decomposedSyllables.forEach(s => {
-                if (s.initial) allJamos.push({ char: s.initial, type: 'initial' });
-                if (s.vowel) allJamos.push({ char: s.vowel, type: (s.vowelType === 'vertical' ? 'vowel-v' : 'vowel-h') });
-                if (s.final) allJamos.push({ char: s.final, type: 'final' });
-            });
-
-            const rawOpts = (q.options || []);
-            const neededChars = allJamos.map(j => j.char);
-            
-            rawOpts.forEach(optChar => {
-                const charStr = String(optChar).trim();
-                if (charStr && !neededChars.includes(charStr)) {
-                    const isV = KOR_JUNGSUNG.includes(charStr);
-                    const isVert = KOR_VERTICAL_VOWELS.includes(charStr);
-                    allJamos.push({
-                        char: charStr,
-                        type: isV ? (isVert ? 'vowel-v' : 'vowel-h') : 'initial'
-                    });
-                }
-            });
-
-            if (allJamos.length < 8) {
-                const dummyDistractors = ['ㅁ', 'ㅏ', 'ㄱ', 'ㅗ', 'ㅣ', 'ㄴ'];
-                dummyDistractors.forEach(d => {
-                    if (allJamos.length < 9 && !allJamos.some(j => j.char === d)) {
-                        const isV = KOR_JUNGSUNG.includes(d);
-                        allJamos.push({ char: d, type: isV ? 'vowel-v' : 'initial' });
-                    }
-                });
-            }
-
-            puzzlePoolChips = shuffleArray(allJamos).map((item, idx) => ({
-                id: idx,
-                char: item.char,
-                type: item.type,
-                isUsed: false
-            }));
-
-            renderPuzzleTabs();
-            renderCurrentPuzzleStage();
-            renderPuzzlePool();
-        }
-
-        function renderPuzzleTabs() {
-            const container = document.getElementById('container-puzzle-tabs');
-            if (!container) return;
-            container.innerHTML = "";
-
-            decomposedSyllables.forEach((s, idx) => {
-                const btn = document.createElement('button');
-                btn.type = "button";
-                btn.className = `tab-syllable-btn ${idx === currentSyllableIdx ? 'active' : ''}`;
-                
-                const isFull = (s.userInitial !== null) && (s.userVowel !== null) && (!s.final || s.userFinal !== null);
-                if (isFull) btn.classList.add('passed');
-
-                btn.innerHTML = `音節 ${idx + 1}: '${s.char}' ${isFull ? '<i class="fa-solid fa-circle-check" style="color:var(--duo-green);"></i>' : ''}`;
-                btn.onclick = () => switchSyllableTab(idx);
-                container.appendChild(btn);
-            });
-
-            const prevBtn = document.getElementById('btn-puzzle-prev-syl');
-            const nextBtn = document.getElementById('btn-puzzle-next-syl');
-            if (prevBtn) prevBtn.disabled = (currentSyllableIdx === 0);
-            if (nextBtn) nextBtn.disabled = (currentSyllableIdx === decomposedSyllables.length - 1);
-        }
-
-        function switchSyllableTab(idx) {
-            if (idx < 0 || idx >= decomposedSyllables.length) return;
-            currentSyllableIdx = idx;
-            renderPuzzleTabs();
-            renderCurrentPuzzleStage();
-        }
-
-        function renderCurrentPuzzleStage() {
-            if (!decomposedSyllables || decomposedSyllables.length === 0) return;
-            const syl = decomposedSyllables[currentSyllableIdx];
-            const board = document.getElementById('board-jamo-puzzle');
-            if (!board) return;
-            board.innerHTML = "";
-
-            const lblTitle = document.getElementById('lbl-puzzle-stage-title');
-            if (lblTitle) {
-                lblTitle.innerText = `音節 ${currentSyllableIdx + 1}: '${syl.char}' (Layout: ${syl.layout})`;
-            }
-
-            board.className = "puzzle-board";
-            if (syl.layout === 'LRB') board.classList.add('layout-lrb');
-            else if (syl.layout === 'LR') board.classList.add('layout-lr');
-            else if (syl.layout === 'UDB') board.classList.add('layout-udb');
-            else if (syl.layout === 'UD') board.classList.add('layout-udb_no_final');
-
-            board.appendChild(createPuzzleSlot('initial', 'slot-initial', syl.userInitial, '初聲'));
-            const vClass = (syl.vowelType === 'vertical') ? 'vowel-vertical' : 'vowel-horizontal';
-            board.appendChild(createPuzzleSlot('vowel', `slot-vowel ${vClass}`, syl.userVowel, '母音'));
-
-            if (syl.final) {
-                board.appendChild(createPuzzleSlot('final', 'slot-final', syl.userFinal, '收音'));
-            }
-        }
-
-        function createPuzzleSlot(type, extraClass, assignedChipId, placeholder) {
-            const slot = document.createElement('div');
-            slot.className = `puzzle-slot ${extraClass}`;
-
-            if (assignedChipId !== null && puzzlePoolChips[assignedChipId]) {
-                slot.classList.add('filled');
-                slot.innerText = puzzlePoolChips[assignedChipId].char;
-                slot.title = "點擊收回此字塊";
-                slot.onclick = () => unfillPuzzleSlot(type);
-            } else {
-                slot.innerText = placeholder;
-                slot.title = `點選字塊填入此${placeholder}位置`;
-                slot.onclick = null;
-            }
-            return slot;
-        }
-
-        function fillChipToPuzzle(chipId) {
-            const syl = decomposedSyllables[currentSyllableIdx];
-            let targetType = null;
-            if (syl.userInitial === null) targetType = 'initial';
-            else if (syl.userVowel === null) targetType = 'vowel';
-            else if (syl.final && syl.userFinal === null) targetType = 'final';
-
-            if (!targetType) {
-                alert(`第 ${currentSyllableIdx + 1} 個音節已填滿！請切換至下一個音節。`);
-                return;
-            }
-
-            if (targetType === 'initial') syl.userInitial = chipId;
-            else if (targetType === 'vowel') syl.userVowel = chipId;
-            else if (targetType === 'final') syl.userFinal = chipId;
-
-            puzzlePoolChips[chipId].isUsed = true;
-
-            renderCurrentPuzzleStage();
-            renderPuzzlePool();
-            renderPuzzleTabs();
-
-            const isFull = (syl.userInitial !== null) && (syl.userVowel !== null) && (!syl.final || syl.userFinal !== null);
-            if (isFull && currentSyllableIdx < decomposedSyllables.length - 1) {
-                setTimeout(() => switchSyllableTab(currentSyllableIdx + 1), 220);
-            }
-        }
-
-        function unfillPuzzleSlot(type) {
-            const syl = decomposedSyllables[currentSyllableIdx];
-            let chipId = null;
-
-            if (type === 'initial') { chipId = syl.userInitial; syl.userInitial = null; }
-            else if (type === 'vowel') { chipId = syl.userVowel; syl.userVowel = null; }
-            else if (type === 'final') { chipId = syl.userFinal; syl.userFinal = null; }
-
-            if (chipId !== null && puzzlePoolChips[chipId]) {
-                puzzlePoolChips[chipId].isUsed = false;
-            }
-
-            renderCurrentPuzzleStage();
-            renderPuzzlePool();
-            renderPuzzleTabs();
-        }
-
-        function renderPuzzlePool() {
-            const container = document.getElementById('zone-0a-pool');
-            if (!container) return;
-            container.innerHTML = "";
-
-            puzzlePoolChips.forEach(chip => {
-                const btn = document.createElement('div');
-                let chipColorClass = "";
-                if (chip.type === 'initial') chipColorClass = "chip-initial";
-                else if (chip.type === 'vowel-v') chipColorClass = "chip-vowel-v";
-                else if (chip.type === 'vowel-h') chipColorClass = "chip-vowel-h";
-                else if (chip.type === 'final') chipColorClass = "chip-final";
-
-                btn.className = `puzzle-chip ${chipColorClass} ${chip.isUsed ? 'used' : ''}`;
-                btn.innerText = chip.char;
-                btn.onclick = () => fillChipToPuzzle(chip.id);
-                container.appendChild(btn);
-            });
-        }
-
-        // ==================== 通用單字挑戰邏輯 ====================
+// ==================== 🌟 通用單字挑戰邏輯 (支援動態抽詞選擇題) ====================
 
         function getWordTranslation(item) {
             if (!item) return "";
@@ -3281,11 +2830,17 @@
 
             let pronStr = "";
             if (currentWordPronMode === 'kr_pron') {
-                if (item.kr_pron) pronStr = `音標: [${item.kr_pron}]`;
-                else if (item.romanization) pronStr = `拼音: [${item.romanization}]`;
+                if (item.kr_pron) {
+                    pronStr = `音標: [${item.kr_pron}]`;
+                } else if (item.romanization) {
+                    pronStr = `拼音: [${item.romanization}]`;
+                }
             } else {
-                if (item.romanization) pronStr = `拼音: [${item.romanization}]`;
-                else if (item.kr_pron) pronStr = `音標: [${item.kr_pron}]`;
+                if (item.romanization) {
+                    pronStr = `拼音: [${item.romanization}]`;
+                } else if (item.kr_pron) {
+                    pronStr = `音標: [${item.kr_pron}]`;
+                }
             }
 
             subElem.innerText = pronStr;
@@ -3378,6 +2933,7 @@
                 choiceSubElem.innerText = "";
                 choiceSubElem.style.display = 'none';
 
+                // 隨機抽取干擾項輔助函式
                 function pickRandomDistractors(candidateList, correctVal, count = 3) {
                     const cleanCorrect = (correctVal || '').trim();
                     const filtered = candidateList.filter(val => val && val.trim() !== '' && val.trim() !== cleanCorrect);
@@ -3386,17 +2942,25 @@
                 }
 
                 const currentLevelNormalized = normalizeLevelStr(currentConfig.level);
+                
+                // 優先抓取「相同程度」的單字群，若數量不足 4 個則擴展至全體資料庫
                 const sameLevelWords = rawWordData.filter(w => normalizeLevelStr(getItemField(w, 'level')) === currentLevelNormalized);
                 const poolWords = (sameLevelWords.length >= 4) ? sameLevelWords : rawWordData;
 
                 if (is0ALevel) {
+                    /* ==============================================
+                       【0A 程度】聽音選韓文/日文單字 (抓取 text 欄位)
+                       ============================================== */
                     document.getElementById('lbl-word-choice-score').innerText = "請聽音選擇正確的單字";
                     document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
 
                     const correctWord = (item.text || '').trim();
+
+                    // 抓取 0A 程度中所有的 text 單字並隨機抽取 3 個干擾字
                     const allTargetWords = [...new Set(poolWords.map(w => (w.text || '').trim()).filter(Boolean))];
                     let distractors = pickRandomDistractors(allTargetWords, correctWord, 3);
 
+                    // 若題庫詞數少於 3 個，自原本 choice 欄位補足
                     if (distractors.length < 3 && item.choice) {
                         const originalChoices = (item.choice || '').split('/').map(s => s.trim()).filter(Boolean);
                         originalChoices.forEach(c => {
@@ -3406,7 +2970,9 @@
                         });
                     }
 
+                    // 合併正解並打亂成 4 個選項
                     const finalChoices = shuffleArray([correctWord, ...distractors]);
+
                     finalChoices.forEach(wText => {
                         const btn = document.createElement('button');
                         btn.className = 'btn-vocab-choice';
@@ -3416,12 +2982,16 @@
                     });
 
                 } else {
-                    const userLang = currentConfig.lang;
+                    /* ==============================================
+                       【1A 及以上】聽外語選母語 (依使用者語言切換 zh / en / ja)
+                       ============================================== */
+                    const userLang = currentConfig.lang; // 'zh', 'en', 'ja'
                     const langPrompt = (userLang === 'en') ? "英文意思" : (userLang === 'ja') ? "日文意思" : "中文意思";
                     
                     document.getElementById('lbl-word-choice-score').innerText = `請聽音選擇正確的${langPrompt}`;
                     document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
 
+                    // 取得對應語言的翻譯文字
                     const getTranslationText = (targetItem) => {
                         if (!targetItem) return '';
                         if (userLang === 'en') return (targetItem.en || targetItem.zh_tw || targetItem.zh || '').trim();
@@ -3430,9 +3000,12 @@
                     };
 
                     const correctMeaning = getTranslationText(item);
+
+                    // 抓取對應母語欄位中所有的詞彙清單並隨機抽取 3 個干擾字
                     const allMeanings = [...new Set(poolWords.map(w => getTranslationText(w)).filter(Boolean))];
                     let distractors = pickRandomDistractors(allMeanings, correctMeaning, 3);
 
+                    // 若題庫詞數少於 3 個，自原本 choice 欄位補足
                     if (distractors.length < 3 && item.choice) {
                         const originalChoices = (item.choice || '').split('/').map(s => s.trim()).filter(Boolean);
                         originalChoices.forEach(c => {
@@ -3442,7 +3015,9 @@
                         });
                     }
 
+                    // 合併正解並打亂成 4 個選項
                     const finalChoices = shuffleArray([correctMeaning, ...distractors]);
+
                     finalChoices.forEach(mText => {
                         const btn = document.createElement('button');
                         btn.className = 'btn-vocab-choice';
@@ -3520,6 +3095,7 @@
                     scoreBadge.style.color = "#ff4b4b";
                 }
             } else {
+                // 動態取得母語正確答案比對
                 const userLang = currentConfig.lang;
                 const correctMeaning = (userLang === 'en') ? (item.en || item.zh_tw || item.zh || '').trim() :
                                        (userLang === 'ja') ? (item.ja || item.jp || item.zh_tw || item.zh || '').trim() :
@@ -3710,7 +3286,7 @@
         function prevChatRound() { if (chatRoundIndex > 0) { chatRoundIndex--; displayChatRound(); } }
         function nextChatRound() { if (chatRoundIndex < chatRounds.length - 1) { chatRoundIndex++; displayChatRound(); } }
 
-        // ==================== 跟讀與字塊重組題邏輯 ====================
+        // ==================== 跟讀與重組題邏輯 ====================
 
         function startMainQuiz() {
             stopSpeechRecognition();
@@ -3798,99 +3374,108 @@
                 document.getElementById('btn-block-prev').disabled = currentIndex === 0;
                 document.getElementById('btn-block-next').disabled = currentIndex === questions.length - 1;
 
-                const is0AKorean = (normalizeLevelStr(currentConfig.level) === '0A' && currentConfig.category === 'korean');
-                const areaPuzzle = document.getElementById('area-0a-jamo-puzzle');
-                const areaStandard = document.getElementById('area-standard-blocks');
-
-                if (is0AKorean) {
-                    areaPuzzle.style.display = 'block';
-                    areaStandard.style.display = 'none';
-                    initJamoPuzzleFor0A(q.fullText);
-                } else {
-                    areaPuzzle.style.display = 'none';
-                    areaStandard.style.display = 'block';
-                    selectedBlockIndices = [];
-                    renderStandardBlocks();
-                }
+                selectedBlockIndices = [];
+                gridBoardCells = new Array(27).fill(null);
+                selectedTargetGridIndex = null;
+                renderBlocks();
                 playBlockAudio();
             }
         }
 
-        function renderStandardBlocks() {
+        function renderBlocks() {
             const q = questions[currentIndex];
             const zoneOptions = document.getElementById('zone-options');
             const zoneAnswer = document.getElementById('zone-answer');
             zoneOptions.innerHTML = "";
             zoneAnswer.innerHTML = "";
 
+            const is0AKorean = (normalizeLevelStr(currentConfig.level) === '0A' && currentConfig.category === 'korean');
+
             q.options.forEach((optText, optIdx) => {
-                const isUsed = selectedBlockIndices.includes(optIdx);
+                const isUsed = is0AKorean ? gridBoardCells.includes(optIdx) : selectedBlockIndices.includes(optIdx);
                 const btn = document.createElement('div');
                 btn.className = 'block-chip' + (isUsed ? ' used' : '');
                 btn.innerText = optText;
 
                 btn.onclick = () => {
-                    selectedBlockIndices.push(optIdx);
-                    renderStandardBlocks();
+                    if (is0AKorean) {
+                        let targetIdx = selectedTargetGridIndex;
+                        if (targetIdx === null || gridBoardCells[targetIdx] !== null) {
+                            targetIdx = gridBoardCells.findIndex(val => val === null);
+                        }
+                        if (targetIdx !== -1) {
+                            gridBoardCells[targetIdx] = optIdx;
+                            const nextEmpty = gridBoardCells.findIndex((val, i) => val === null && i > targetIdx);
+                            selectedTargetGridIndex = (nextEmpty !== -1) ? nextEmpty : null;
+                            renderBlocks();
+                        }
+                    } else {
+                        selectedBlockIndices.push(optIdx);
+                        renderBlocks();
+                    }
                 };
                 zoneOptions.appendChild(btn);
             });
 
-            selectedBlockIndices.forEach(idx => {
-                const btn = document.createElement('div');
-                btn.className = 'block-chip';
-                btn.innerText = q.options[idx];
-                btn.onclick = () => {
-                    selectedBlockIndices = selectedBlockIndices.filter(i => i !== idx);
-                    renderStandardBlocks();
-                };
-                zoneAnswer.appendChild(btn);
-            });
+            if (is0AKorean) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'hangul-grid-board-wrapper';
+                const board = document.createElement('div');
+                board.className = 'hangul-grid-board';
+
+                for (let i = 0; i < 27; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'hangul-grid-cell';
+                    const assignedOptIdx = gridBoardCells[i];
+
+                    if (assignedOptIdx !== null) {
+                        cell.classList.add('filled');
+                        cell.innerText = q.options[assignedOptIdx];
+                        cell.title = "點擊收回此字塊";
+                        cell.onclick = () => { gridBoardCells[i] = null; selectedTargetGridIndex = i; renderBlocks(); };
+                    } else {
+                        cell.innerText = "";
+                        if (selectedTargetGridIndex === i) {
+                            cell.style.borderColor = "var(--duo-blue)";
+                            cell.style.backgroundColor = "#e0f2fe";
+                        }
+                        cell.title = "點擊選取放置位置";
+                        cell.onclick = () => { selectedTargetGridIndex = i; renderBlocks(); };
+                    }
+                    board.appendChild(cell);
+                }
+                wrapper.appendChild(board);
+                zoneAnswer.appendChild(wrapper);
+            } else {
+                selectedBlockIndices.forEach(idx => {
+                    const btn = document.createElement('div');
+                    btn.className = 'block-chip';
+                    btn.innerText = q.options[idx];
+                    btn.onclick = () => {
+                        selectedBlockIndices = selectedBlockIndices.filter(i => i !== idx);
+                        renderBlocks();
+                    };
+                    zoneAnswer.appendChild(btn);
+                });
+            }
         }
 
         function checkBlockAnswer() {
             const q = questions[currentIndex];
             const is0AKorean = (normalizeLevelStr(currentConfig.level) === '0A' && currentConfig.category === 'korean');
+            
+            const userSentence = is0AKorean ? gridBoardCells.filter(idx => idx !== null).map(idx => q.options[idx]).join('') : selectedBlockIndices.map(i => q.options[i]).join('');
             const scoreBadge = document.getElementById('lbl-block-score');
 
-            if (is0AKorean) {
-                let isAllPassed = true;
-                for (let i = 0; i < decomposedSyllables.length; i++) {
-                    const s = decomposedSyllables[i];
-                    const curInitial = (s.userInitial !== null && puzzlePoolChips[s.userInitial]) ? puzzlePoolChips[s.userInitial].char : '';
-                    const curVowel   = (s.userVowel !== null && puzzlePoolChips[s.userVowel])   ? puzzlePoolChips[s.userVowel].char : '';
-                    const curFinal   = (s.userFinal !== null && puzzlePoolChips[s.userFinal])   ? puzzlePoolChips[s.userFinal].char : '';
-
-                    if (curInitial !== s.initial || curVowel !== s.vowel || (s.final && curFinal !== s.final)) {
-                        isAllPassed = false;
-                        switchSyllableTab(i);
-                        break;
-                    }
-                }
-
-                if (isAllPassed) {
-                    scoreBadge.innerText = `🎉 完全正確！${(q.voice && q.voice.trim()) ? ` [${q.voice.trim()}]` : ''}`;
-                    scoreBadge.style.color = "#58cc02";
-                    playBlockAudio();
-                    passedSubQuestions.add(currentIndex);
-                    checkAndShowFinishButton();
-                } else {
-                    scoreBadge.innerText = "❌ 答案不太對喔！已幫您切換至未完成或錯誤的音節。";
-                    scoreBadge.style.color = "#ff4b4b";
-                }
-
+            if (cleanStringForCompare(userSentence) === cleanStringForCompare(q.fullText)) {
+                scoreBadge.innerText = `🎉 完全正確！${(q.voice && q.voice.trim()) ? ` [${q.voice.trim()}]` : ''}`;
+                scoreBadge.style.color = "#58cc02";
+                playBlockAudio();
+                passedSubQuestions.add(currentIndex);
+                checkAndShowFinishButton();
             } else {
-                const userSentence = selectedBlockIndices.map(i => q.options[i]).join('');
-                if (cleanStringForCompare(userSentence) === cleanStringForCompare(q.fullText)) {
-                    scoreBadge.innerText = `🎉 完全正確！${(q.voice && q.voice.trim()) ? ` [${q.voice.trim()}]` : ''}`;
-                    scoreBadge.style.color = "#58cc02";
-                    playBlockAudio();
-                    passedSubQuestions.add(currentIndex);
-                    checkAndShowFinishButton();
-                } else {
-                    scoreBadge.innerText = "❌ 答案不太對喔，再試試看！";
-                    scoreBadge.style.color = "#ff4b4b";
-                }
+                scoreBadge.innerText = "❌ 答案不太對喔，再試試看！";
+                scoreBadge.style.color = "#ff4b4b";
             }
         }
 
