@@ -1157,7 +1157,7 @@
                     <div style="display: none; font-size: 0.85rem; color: #64748b; font-weight: bold; margin-top: 6px;">點擊重播題目語音</div>
                 </div>
 
-                <div class="target-text" id="lbl-word-choice-text">???</div>
+                <div class="target-text" id="lbl-word-choice-text">  </div>
                 <div id="lbl-word-choice-sub" style="font-size: 0.95rem; color: #475569; font-weight: bold; margin-bottom: 6px; display: none;"></div>
                 <div class="vocab-choice-list" id="container-word-choices"></div>
                 <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-word-choice-score">請選擇正確單字</div></div>
@@ -2974,10 +2974,10 @@
             if (currentConfig.mode === 'word_shadow') {
                 document.getElementById('lbl-word-shadow-progress').innerText = `${wordIndex + 1} / ${total}`;
                 
-                // 🌟 挑戰模式下：韓文題目隱藏 (顯示 ???)，音標隱藏
+                // 🌟 挑戰模式下：韓文題目隱藏 (顯示   )，音標隱藏
                 const targetTextElem = document.getElementById('lbl-word-shadow-target-text');
                 if (isWordShadowChallengeMode) {
-                    targetTextElem.innerText = "???";
+                    targetTextElem.innerText = "  ";
                 } else {
                     targetTextElem.innerText = item.text || "";
                 }
@@ -3053,7 +3053,7 @@
 
                 if (is0ALevel) {
                     if (choiceToggleBox) choiceToggleBox.style.display = 'none';
-                    targetTextElem.innerText = "???";
+                    targetTextElem.innerText = "  ";
 
                     document.getElementById('lbl-word-choice-score').innerText = "請聽音選擇正確的單字";
                     document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
@@ -3085,7 +3085,7 @@
                     if (choiceToggleBox) choiceToggleBox.style.display = 'block';
 
                     if (isWordChoiceChallengeMode) {
-                        targetTextElem.innerText = "???";
+                        targetTextElem.innerText = "  ";
                     } else {
                         targetTextElem.innerText = item.text || "";
                     }
@@ -3506,7 +3506,7 @@
                        【句子跟讀：挑戰模式】
                        韓文題目、母語翻譯、關鍵字全部隱藏，只留語音
                        ============================================== */
-                    targetTextElem.innerText = "???";
+                    targetTextElem.innerText = "  ";
                     transElem.innerText = "";
                     hintElem.style.display = "none";
                 } else if (isSentenceKeywordMode) {
@@ -3514,7 +3514,7 @@
                        【句子跟讀：關鍵字模式】
                        隱藏韓文題目與中文翻譯，只顯示關鍵字提示
                        ============================================== */
-                    targetTextElem.innerText = "???";
+                    targetTextElem.innerText = "  ";
                     transElem.innerText = "";
                     hintElem.innerText = q.hint ? `💡 關鍵字：${q.hint.trim()}` : '💡 無關鍵字提示';
                     hintElem.style.display = "inline-block";
