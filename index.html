@@ -3320,7 +3320,7 @@
             if (chatRole === 'A') {
                 partnerBubble.style.display = 'none';
                 if (isChatChallengeMode) {
-                    targetTextElem.innerText = "??? (挑戰模式中，請念出完整句子)";
+                    targetTextElem.innerText = "挑戰模式中，請念出完整句子";
                     transElem.innerText = `【角色 A】挑戰模式：請參考下方關鍵字提示回答：`;
                     const activeHint = (currentConfig.lang === 'en') ? (curRound.hintEn || curRound.hintZh) :
                                        (currentConfig.lang === 'ja') ? (curRound.hintJp || curRound.hintZh) : curRound.hintZh;
@@ -3342,7 +3342,7 @@
                 document.getElementById('lbl-partner-title').innerText = `對方 (Speaker A)：`;
                 document.getElementById('lbl-partner-text').innerText = curRound.aText;
 
-                targetTextElem.innerText = isChatChallengeMode ? "??? (聽取對方語音後直接回應)" : (curRound.bxText || curRound.bText);
+                targetTextElem.innerText = isChatChallengeMode ? "聽取對方語音後直接回應" : (curRound.bxText || curRound.bText);
                 transElem.innerText = isChatChallengeMode ? `【角色 B】挑戰模式：請聽 Speaker A 語音並念出回答：` : `【角色 B】請聽取 Speaker A 語音並念出回答：`;
 
                 if (autoPlayOpponent) setTimeout(() => playAudioOrTTS(curRound.aAudio, curRound.aText, 0.85), 350);
