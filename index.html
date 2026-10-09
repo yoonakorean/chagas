@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>去除挑戰系統</title>
+    <title>修去除挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -98,11 +98,19 @@
         }
         .user-meta-item:hover { background: #f3f4f6; }
 
-        .lbl-quiz-info { display: none !important; }
+        /* 🌟 讓左上角題目挑戰標題正常顯示 */
+        .lbl-quiz-info {
+            display: inline-block !important;
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: var(--duo-blue);
+            text-align: left;
+        }
 
+        /* 🌟 頂部左右排版：左邊標題，右邊齒輪 */
         .challenge-top-bar {
             display: flex;
-            justify-content: flex-end !important;
+            justify-content: space-between !important;
             align-items: center;
             margin-bottom: 10px;
             position: relative;
@@ -921,10 +929,10 @@
                 </div>
             </div>
 
-            <!-- 🌟 步驟 6-A：Sentence 句子跟讀畫面 (新增「切換關鍵字」與「挑戰模式」按鈕) -->
+            <!-- 🌟 步驟 6-A：Sentence 句子跟讀畫面 -->
             <div id="step-quiz-shadow" class="step-page">
                 <div class="challenge-top-bar">
-                    <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div class="lbl-quiz-info" id="lbl-shadow-mode-title">句子跟讀挑戰</div>
                     <div class="gear-menu-container">
                         <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-shadow')"><i class="fa-solid fa-gear"></i></button>
                         <div class="gear-dropdown" id="gear-dropdown-shadow">
@@ -967,7 +975,7 @@
             <!-- 步驟 6-G：句子聊天挑戰畫面 -->
             <div id="step-quiz-sentence-chat" class="step-page">
                 <div class="challenge-top-bar">
-                    <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div class="lbl-quiz-info">對話挑戰</div>
                     <div class="gear-menu-container">
                         <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-chat')"><i class="fa-solid fa-gear"></i></button>
                         <div class="gear-dropdown" id="gear-dropdown-chat">
@@ -1022,7 +1030,7 @@
             <!-- 步驟 6-B：字塊重組畫面 -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
-                    <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div class="lbl-quiz-info">字塊重組</div>
                     <div class="gear-menu-container">
                         <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-blocks')"><i class="fa-solid fa-gear"></i></button>
                         <div class="gear-dropdown" id="gear-dropdown-blocks">
@@ -1049,10 +1057,10 @@
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-D：通用單字跟讀畫面 (新增「挑戰模式」切換按鈕) -->
+            <!-- 🌟 步驟 6-D：通用單字跟讀畫面 (左上方顯示 單字跟讀挑戰) -->
             <div id="step-quiz-word-shadow" class="step-page">
                 <div class="challenge-top-bar">
-                    <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div class="lbl-quiz-info" id="lbl-word-shadow-title">單字跟讀挑戰</div>
                     <div class="gear-menu-container">
                         <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-word-shadow')"><i class="fa-solid fa-gear"></i></button>
                         <div class="gear-dropdown" id="gear-dropdown-word-shadow">
@@ -1092,10 +1100,10 @@
                 <button class="btn-finish-challenge" id="btn-finish-word-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-E：通用單字聽打畫面 -->
+            <!-- 🌟 步驟 6-E：通用單字聽打畫面 (左上方顯示 單字聽打挑戰) -->
             <div id="step-quiz-word-type" class="step-page">
                 <div class="challenge-top-bar">
-                    <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div class="lbl-quiz-info" id="lbl-word-type-title">單字聽打挑戰</div>
                     <div class="gear-menu-container">
                         <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-word-type')"><i class="fa-solid fa-gear"></i></button>
                         <div class="gear-dropdown" id="gear-dropdown-word-type">
@@ -1131,10 +1139,10 @@
                 <button class="btn-finish-challenge" id="btn-finish-word-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-F：通用單字選擇題畫面 -->
+            <!-- 🌟 步驟 6-F：通用單字選擇題畫面 (左上方顯示 單字選擇挑戰) -->
             <div id="step-quiz-word-choice" class="step-page">
                 <div class="challenge-top-bar">
-                    <div style="font-size: 0.82rem; color: #9ca3af; text-align: left;" class="lbl-quiz-info"></div>
+                    <div class="lbl-quiz-info" id="lbl-word-choice-title">單字選擇挑戰</div>
                     <div class="gear-menu-container">
                         <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-word-choice')"><i class="fa-solid fa-gear"></i></button>
                         <div class="gear-dropdown" id="gear-dropdown-word-choice">
@@ -1160,7 +1168,7 @@
                 <div class="target-text" id="lbl-word-choice-text">  </div>
                 <div id="lbl-word-choice-sub" style="font-size: 0.95rem; color: #475569; font-weight: bold; margin-bottom: 6px; display: none;"></div>
                 <div class="vocab-choice-list" id="container-word-choices"></div>
-                <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-word-choice-score">請選擇正確單字</div></div>
+                <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-word-choice-score">判定結果：--</div></div>
                 <div class="nav-controls">
                     <button class="btn-nav" id="btn-word-choice-prev" onclick="prevWordQuestion()">上一題</button>
                     <span class="lbl-progress" id="lbl-word-choice-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
@@ -2974,7 +2982,7 @@
             if (currentConfig.mode === 'word_shadow') {
                 document.getElementById('lbl-word-shadow-progress').innerText = `${wordIndex + 1} / ${total}`;
                 
-                // 🌟 挑戰模式下：韓文題目隱藏 (顯示   )，音標隱藏
+                // 🌟 挑戰模式下：韓文題目隱藏 (顯示空格)，音標隱藏[cite: 3]
                 const targetTextElem = document.getElementById('lbl-word-shadow-target-text');
                 if (isWordShadowChallengeMode) {
                     targetTextElem.innerText = "  ";
@@ -2986,7 +2994,9 @@
 
                 document.getElementById('lbl-word-shadow-translation').innerText = "";
                 document.getElementById('lbl-word-shadow-recognized-text').innerText = "-";
-                document.getElementById('lbl-word-shadow-score').innerText = isWordShadowChallengeMode ? "【挑戰模式】請播放音檔後錄音跟讀" : "判定結果：--";
+                
+                // 🌟 維持固定顯示「判定結果：--」
+                document.getElementById('lbl-word-shadow-score').innerText = "判定結果：--";
                 document.getElementById('lbl-word-shadow-score').style.color = "#58cc02";
 
                 document.getElementById('btn-word-shadow-prev').disabled = wordIndex === 0;
@@ -3055,7 +3065,8 @@
                     if (choiceToggleBox) choiceToggleBox.style.display = 'none';
                     targetTextElem.innerText = "  ";
 
-                    document.getElementById('lbl-word-choice-score').innerText = "請聽音選擇正確的單字";
+                    // 🌟 固定維持顯示「判定結果：--」
+                    document.getElementById('lbl-word-choice-score').innerText = "判定結果：--";
                     document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
 
                     const correctWord = (item.text || '').trim();
@@ -3090,14 +3101,11 @@
                         targetTextElem.innerText = item.text || "";
                     }
 
-                    const userLang = currentConfig.lang;
-                    const langPrompt = (userLang === 'en') ? "英文意思" : (userLang === 'ja') ? "日文意思" : "中文意思";
-                    
-                    document.getElementById('lbl-word-choice-score').innerText = isWordChoiceChallengeMode 
-                        ? `【挑戰模式】請聽音選擇正確的${langPrompt}` 
-                        : `請看題目並選擇正確的${langPrompt}`;
+                    // 🌟 不論一般或挑戰模式，皆固定顯示「判定結果：--」
+                    document.getElementById('lbl-word-choice-score').innerText = "判定結果：--";
                     document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
 
+                    const userLang = currentConfig.lang;
                     const getTranslationText = (targetItem) => {
                         if (!targetItem) return '';
                         if (userLang === 'en') return (targetItem.en || targetItem.zh_tw || targetItem.zh || '').trim();
@@ -3393,7 +3401,7 @@
         function toggleSentenceKeywordMode() {
             isSentenceKeywordMode = !isSentenceKeywordMode;
             if (isSentenceKeywordMode) {
-                isSentenceChallengeMode = false; // 關鍵字模式與挑戰模式互斥
+                isSentenceChallengeMode = false;
             }
             updateSentenceModeButtonsUI();
             displayQuestion();
@@ -3403,7 +3411,7 @@
         function toggleSentenceChallengeMode() {
             isSentenceChallengeMode = !isSentenceChallengeMode;
             if (isSentenceChallengeMode) {
-                isSentenceKeywordMode = false; // 關鍵字模式與挑戰模式互斥
+                isSentenceKeywordMode = false;
             }
             updateSentenceModeButtonsUI();
             displayQuestion();
@@ -3502,27 +3510,15 @@
                 const hintElem = document.getElementById('lbl-hint');
 
                 if (isSentenceChallengeMode) {
-                    /* ==============================================
-                       【句子跟讀：挑戰模式】
-                       韓文題目、母語翻譯、關鍵字全部隱藏，只留語音
-                       ============================================== */
                     targetTextElem.innerText = "  ";
                     transElem.innerText = "";
                     hintElem.style.display = "none";
                 } else if (isSentenceKeywordMode) {
-                    /* ==============================================
-                       【句子跟讀：關鍵字模式】
-                       隱藏韓文題目與中文翻譯，只顯示關鍵字提示
-                       ============================================== */
                     targetTextElem.innerText = "  ";
                     transElem.innerText = "";
                     hintElem.innerText = q.hint ? `💡 關鍵字：${q.hint.trim()}` : '💡 無關鍵字提示';
                     hintElem.style.display = "inline-block";
                 } else {
-                    /* ==============================================
-                       【句子跟讀：練習模式 (預設)】
-                       韓文題目與母語翻譯正常顯示
-                       ============================================== */
                     targetTextElem.innerText = q.text || "";
                     transElem.innerText = q.translation || "";
                     hintElem.innerText = q.hint ? `💡 提示：${q.hint.trim()}` : '';
@@ -3530,9 +3526,8 @@
                 }
 
                 document.getElementById('lbl-recognized-text').innerText = "-";
-                document.getElementById('lbl-score').innerText = isSentenceChallengeMode 
-                    ? "【挑戰模式】請播放音檔後錄音盲讀" 
-                    : (isSentenceKeywordMode ? "【關鍵字模式】請看關鍵字提示並念出句子" : "判定結果：--");
+                // 🌟 句子跟讀結果欄位也統一維持「判定結果：--」
+                document.getElementById('lbl-score').innerText = "判定結果：--";
                 document.getElementById('lbl-score').style.color = "#58cc02";
 
                 document.getElementById('btn-prev').disabled = currentIndex === 0;
@@ -3739,7 +3734,6 @@
                         document.getElementById('lbl-word-shadow-score').innerText = "🎉 發音合格！";
                         document.getElementById('lbl-word-shadow-score').style.color = "#58cc02";
                         
-                        // 🌟 答對時揭曉題目與母語翻譯
                         document.getElementById('lbl-word-shadow-target-text').innerText = currentWord.text || "";
                         const trans = getWordTranslation(currentWord);
                         document.getElementById('lbl-word-shadow-translation').innerText = trans ? `💡 ${trans}` : "";
@@ -3757,7 +3751,6 @@
                         document.getElementById('lbl-score').innerText = "🎉 發音合格！";
                         document.getElementById('lbl-score').style.color = "#58cc02";
                         
-                        // 🌟 挑戰模式或關鍵字模式下答對時揭曉句子與翻譯
                         if (isSentenceChallengeMode || isSentenceKeywordMode) {
                             document.getElementById('lbl-target-text').innerText = currentQ.text || "";
                             document.getElementById('lbl-translation').innerText = currentQ.translation || "";
