@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>滾動挑戰系統</title>
+    <title>gram戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -241,18 +241,18 @@
             width: 100%;
         }
 
+        /* 🌟 固定紫色框框大小為 180px，防止高度變動下擠例句 */
         .grammar-dialog-box {
             background: #eef2ff;
             border: 2px solid #818cf8;
             border-radius: 16px;
-            padding: 16px 14px 44px 14px;
+            padding: 16px 14px;
             font-size: 1.15rem;
             color: #312e81;
             display: block !important;
             margin-bottom: 8px;
-            flex: 1;
-            min-height: 140px;
-            max-height: 42vh;
+            flex: none; /* 取消彈性擴展 */
+            height: 180px; /* 固定高度 */
             overflow-y: auto;
             line-height: 1.6;
             position: relative;
@@ -261,17 +261,15 @@
             word-break: break-word;
             text-align: left !important;
             scroll-behavior: smooth;
+            box-sizing: border-box;
         }
         #lbl-grammar-dialog {
             display: block !important;
             text-align: left !important;
             white-space: pre-wrap !important;
         }
-        .btn-gram-audio {
-            position: absolute; bottom: 10px; right: 10px; background: #818cf8; color: white;
-            border: none; border-radius: 8px; padding: 5px 11px; font-size: 0.82rem; font-weight: bold; cursor: pointer;
-        }
 
+        /* 語法多例句列表樣式 */
         .grammar-example-box {
             display: none;
             background: #ffffff;
@@ -282,9 +280,10 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             text-align: left;
             position: relative;
-            flex-shrink: 0;
+            flex: 1; /* 讓例句自動佔據剩餘空間 */
             max-height: 38vh;
             overflow-y: auto;
+            box-sizing: border-box;
         }
         .grammar-example-title {
             font-size: 0.88rem;
@@ -602,7 +601,7 @@
         .btn-record.recording { animation: pulse 1s infinite; background: #dc2626; }
         @keyframes pulse { 0%{transform: scale(1);} 50%{transform: scale(1.08);} 100%{transform: scale(1);} }
 
-        /* 🌟 固定最小高度為 82px，預留足夠兩行錯誤提示與正解空間，杜絕按鈕跳動 */
+        /* 固定最小高度為 82px，預留足夠兩行錯誤提示與正解空間，杜絕按鈕跳動 */
         .result-box { 
             background: #f3f4f6; 
             border-radius: 12px; 
@@ -771,7 +770,7 @@
             .lesson-btn-group { grid-template-columns: repeat(2, 1fr); gap: 4px; }
             .btn-lesson-action { font-size: 0.78rem; padding: 7px 2px; }
             .block-chip { padding: 6px 10px; font-size: 0.95rem; }
-            .grammar-dialog-box { font-size: 1.05rem; padding: 14px 12px 40px 12px; }
+            .grammar-dialog-box { font-size: 1.05rem; padding: 14px 12px; height: 160px; }
             .grammar-q-item { font-size: 1rem; }
             .bottom-fixed-bar { padding: 6px 10px; }
             .bottom-nav-item { font-size: 0.82rem; padding: 7px 8px; }
@@ -1063,10 +1062,9 @@
                         <span id="lbl-dialog-counter" style="font-size: 0.85rem; color: #6b7280; font-weight: bold;">1 / 1</span>
                     </div>
 
-                    <!-- 觀念說明對話框 -->
+                    <!-- 🌟 固定大小的觀念說明對話框（已移除播放按鈕） -->
                     <div class="grammar-dialog-box" id="box-grammar-dialog-main" onclick="completeTypewriterImmediately()">
                         <span id="lbl-grammar-dialog">...</span>
-                        <button class="btn-gram-audio" id="btn-gram-audio" style="display: none;"><i class="fa-solid fa-volume-high"></i> 播放聲音</button>
                     </div>
 
                     <!-- 語法多例句列表區塊 -->
@@ -1189,7 +1187,7 @@
                     <div style="font-size: 1.25rem; font-weight: bold; color: #0f172a;" id="lbl-partner-text">...</div>
                 </div>
 
-                <div class="target-text" id="lbl-chat-target-text">載入中...</div>
+                <div target-text" id="lbl-chat-target-text">載入中...</div>
                 <div class="translation-text" id="lbl-chat-translation">...</div>
                 
                 <div class="controls">
@@ -1301,7 +1299,7 @@
                     <div class="gear-menu-container">
                         <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-word-type')"><i class="fa-solid fa-gear"></i></button>
                         <div class="gear-dropdown" id="gear-dropdown-word-type">
-                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-word-type')"><i class="fa-solid fa-play"></i> 	繼續挑戰</button>
+                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-word-type')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
                             <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
                         </div>
                     </div>
@@ -2902,7 +2900,7 @@
             goToStep('step-grammar');
         }
 
-        // 語法對話呈現：支援 gram 為空、多例句切割為編號列表、不自動播放
+        // 🌟 語法對話呈現：徹底移除 gram 播放按鈕，例句切割為列表手動發音
         function showCurrentGrammarDialog() {
             if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
             const total = currentGrammarItem.dialogs.length;
@@ -2926,23 +2924,12 @@
             currentFullDialogText = cleanInitialWhitespace(currentDialogObj.text || "");
 
             const mainDialogBox = document.getElementById('box-grammar-dialog-main');
-            const audioBtn = document.getElementById('btn-gram-audio');
 
             // 1. 若 gram 有文字，呈現主對話框與打字機；若 gram 為空，隱藏對話框
             if (currentFullDialogText) {
                 mainDialogBox.style.display = 'block';
                 mainDialogBox.scrollTop = 0;
                 startTypewriter(currentFullDialogText);
-
-                if (currentDialogObj.hasAudio) {
-                    audioBtn.style.display = 'block';
-                    audioBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        speakTTS(currentFullDialogText, 0.85);
-                    };
-                } else {
-                    audioBtn.style.display = 'none';
-                }
             } else {
                 mainDialogBox.style.display = 'none';
                 if (typewriterTimer) clearInterval(typewriterTimer);
