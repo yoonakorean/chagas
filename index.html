@@ -114,7 +114,7 @@
             position: relative;
         }
 
-        /* 🌟 300秒 倒數計時進度條容器 */
+        /* 300秒 倒數計時進度條容器 */
         .timer-progress-wrapper {
             width: 100%;
             background: #e5e7eb;
@@ -250,10 +250,10 @@
             font-size: 1.05rem;
             color: #312e81;
             display: block !important;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             flex: 1;
-            min-height: 160px;
-            max-height: 48vh;
+            min-height: 140px;
+            max-height: 42vh;
             overflow-y: auto;
             line-height: 1.6;
             position: relative;
@@ -270,6 +270,58 @@
         .btn-gram-audio {
             position: absolute; bottom: 10px; right: 10px; background: #818cf8; color: white;
             border: none; border-radius: 8px; padding: 5px 11px; font-size: 0.82rem; font-weight: bold; cursor: pointer;
+        }
+
+        /* 🌟 語法介紹：Example 白色卡片樣式 */
+        .grammar-example-box {
+            display: none;
+            background: #ffffff;
+            border: 2px solid #e0e7ff;
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            text-align: left;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .grammar-example-title {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #4338ca;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .grammar-example-content {
+            font-size: 1rem;
+            color: #1e293b;
+            font-weight: bold;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-word;
+            padding-right: 40px;
+        }
+        .btn-example-audio {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: transform 0.1s ease;
+        }
+        .btn-example-audio:active {
+            transform: scale(0.9);
         }
 
         .grammar-bottom-actions-container {
@@ -830,7 +882,7 @@
         </div>
     </div>
 
-    <!-- 🌟 新增：模式選擇彈窗 (練習模式 vs 計時模式) -->
+    <!-- 🌟 模式選擇彈窗 (練習模式 vs 計時模式) -->
     <div id="modal-select-mode-type" class="custom-modal">
         <div class="custom-modal-card" style="padding: 24px 18px;">
             <div class="close-icon-circle" onclick="closeModal('modal-select-mode-type')"><i class="fa-solid fa-xmark"></i></div>
@@ -849,7 +901,7 @@
         </div>
     </div>
 
-    <!-- 😭 離開挑戰二次確認彈窗 -->
+    <!-- 離開挑戰二次確認彈窗 -->
     <div id="modal-quit-challenge" class="custom-modal">
         <div class="custom-modal-card" style="padding: 26px 20px;">
             <div style="margin-bottom: 14px;">
@@ -973,9 +1025,19 @@
                         <span id="lbl-dialog-counter" style="font-size: 0.85rem; color: #6b7280; font-weight: bold;">1 / 1</span>
                     </div>
 
+                    <!-- 觀念說明對話框 -->
                     <div class="grammar-dialog-box" onclick="completeTypewriterImmediately()">
                         <span id="lbl-grammar-dialog">...</span>
                         <button class="btn-gram-audio" id="btn-gram-audio" style="display: none;"><i class="fa-solid fa-volume-high"></i> 播放聲音</button>
+                    </div>
+
+                    <!-- 🌟 語法下方白色 Example 區塊 -->
+                    <div class="grammar-example-box" id="box-grammar-example">
+                        <div class="grammar-example-title"><i class="fa-solid fa-bookmark"></i> 例句參考：</div>
+                        <div class="grammar-example-content" id="lbl-grammar-example-text"></div>
+                        <button class="btn-example-audio" id="btn-example-audio" title="播放例句語音">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
                     </div>
 
                     <div class="grammar-bottom-actions-container">
@@ -1019,13 +1081,13 @@
                     </div>
                 </div>
 
-                <!-- 🌟 300秒 倒數計時進度條與時間標籤 (句子跟讀) -->
+                <!-- 300秒 倒數計時進度條與時間標籤 (句子跟讀) -->
                 <div class="timer-text-badge" id="lbl-timer-shadow">⏱ 05:00</div>
                 <div class="timer-progress-wrapper" id="bar-wrapper-shadow">
                     <div class="timer-progress-bar" id="bar-progress-shadow"></div>
                 </div>
 
-                <!-- 🌟 句子跟讀模式切換按鈕群 (計時模式下會自動隱藏) -->
+                <!-- 句子跟讀模式切換按鈕群 (計時模式下會自動隱藏) -->
                 <div id="box-sentence-mode-btns" style="display: flex; justify-content: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;">
                     <button class="btn-keyword-toggle" id="btn-toggle-sentence-keyword" onclick="toggleSentenceKeywordMode()">
                         <i class="fa-solid fa-key"></i> 切換關鍵字
@@ -1068,7 +1130,7 @@
                     </div>
                 </div>
 
-                <!-- 🌟 300秒 倒數計時進度條與時間標籤 (句子聊天) -->
+                <!-- 300秒 倒數計時進度條與時間標籤 (句子聊天) -->
                 <div class="timer-text-badge" id="lbl-timer-chat">⏱ 05:00</div>
                 <div class="timer-progress-wrapper" id="bar-wrapper-chat">
                     <div class="timer-progress-bar" id="bar-progress-chat"></div>
@@ -1162,7 +1224,7 @@
                     </div>
                 </div>
 
-                <!-- 🌟 300秒 倒數計時進度條與時間標籤 (單字跟讀) -->
+                <!-- 300秒 倒數計時進度條與時間標籤 (單字跟讀) -->
                 <div class="timer-text-badge" id="lbl-timer-word-shadow">⏱ 05:00</div>
                 <div class="timer-progress-wrapper" id="bar-wrapper-word-shadow">
                     <div class="timer-progress-bar" id="bar-progress-word-shadow"></div>
@@ -1207,7 +1269,7 @@
                     </div>
                 </div>
 
-                <!-- 🌟 300秒 倒數計時進度條與時間標籤 (單字聽打) -->
+                <!-- 300秒 倒數計時進度條與時間標籤 (單字聽打) -->
                 <div class="timer-text-badge" id="lbl-timer-word-type">⏱ 05:00</div>
                 <div class="timer-progress-wrapper" id="bar-wrapper-word-type">
                     <div class="timer-progress-bar" id="bar-progress-word-type"></div>
@@ -1252,7 +1314,7 @@
                     </div>
                 </div>
 
-                <!-- 🌟 300秒 倒數計時進度條與時間標籤 (單字選擇) -->
+                <!-- 300秒 倒數計時進度條與時間標籤 (單字選擇) -->
                 <div class="timer-text-badge" id="lbl-timer-word-choice">⏱ 05:00</div>
                 <div class="timer-progress-wrapper" id="bar-wrapper-word-choice">
                     <div class="timer-progress-bar" id="bar-progress-word-choice"></div>
@@ -1444,17 +1506,17 @@
         let wordIndex = 0;
         let currentWordPronMode = 'kr_pron';
 
-        // 🌟 模式開關狀態管理
+        // 模式開關狀態管理
         let isSentenceKeywordMode = false;
         let isSentenceChallengeMode = false;
         let isWordShadowChallengeMode = false;
         let isWordTypeChallengeMode = false;
         let isWordChoiceChallengeMode = false;
 
-        // 🌟 練習模式 vs 計時模式 狀態管理
-        let activeChallengeType = 'practice'; // 'practice' 或 'timed'
+        // 練習模式 vs 計時模式 狀態管理
+        let activeChallengeType = 'practice';
         let challengeTimerInterval = null;
-        let challengeTimeRemaining = 300; // 300 秒
+        let challengeTimeRemaining = 300;
         let pendingLesson = null;
         let pendingMode = null;
 
@@ -1483,6 +1545,7 @@
             return PRAISE_MESSAGES[Math.floor(Math.random() * PRAISE_MESSAGES.length)];
         }
 
+        // 隨機打亂陣列順序
         function shuffleArray(arr) {
             const array = [...arr];
             for (let i = array.length - 1; i > 0; i--) {
@@ -2558,7 +2621,6 @@
                         } else {
                             btn.innerHTML = label;
                         }
-                        // 🌟 點擊挑戰前觸發彈窗選擇「練習模式」或「計時模式」
                         btn.onclick = () => promptSelectModeType(les, mode, label);
                         return btn;
                     };
@@ -2591,9 +2653,8 @@
             goToStep('step-lesson');
         }
 
-        // 🌟 選擇模式彈窗邏輯
+        // 選擇模式彈窗邏輯
         function promptSelectModeType(lesson, mode, label) {
-            // 語法教室與字塊重組不需彈窗，直接進入
             if (mode === 'grammar' || mode === 'blocks') {
                 activeChallengeType = 'practice';
                 selectLessonAndMode(lesson, mode);
@@ -2608,13 +2669,13 @@
 
         function confirmLaunchMode(type) {
             closeModal('modal-select-mode-type');
-            activeChallengeType = type; // 'practice' 或 'timed'
+            activeChallengeType = type;
             if (pendingLesson && pendingMode) {
                 selectLessonAndMode(pendingLesson, pendingMode);
             }
         }
 
-        // 🌟 300秒 倒數計時器管理
+        // 300秒 倒數計時器管理
         function startChallengeTimer(targetModeKey) {
             stopChallengeTimer();
             challengeTimeRemaining = 300;
@@ -2665,7 +2726,6 @@
                 clearInterval(challengeTimerInterval);
                 challengeTimerInterval = null;
             }
-            // 隱藏所有計時進度條與文字
             ['shadow', 'chat', 'word-shadow', 'word-type', 'word-choice'].forEach(k => {
                 const badge = document.getElementById(`lbl-timer-${k}`);
                 const wrapper = document.getElementById(`bar-wrapper-${k}`);
@@ -2790,6 +2850,7 @@
             goToStep('step-grammar');
         }
 
+        // 🌟 語法對話呈現：新增 example 與 audio 判定
         function showCurrentGrammarDialog() {
             if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
             const total = currentGrammarItem.dialogs.length;
@@ -2812,19 +2873,40 @@
             const currentDialogObj = currentGrammarItem.dialogs[currentDialogIndex];
             currentFullDialogText = cleanInitialWhitespace(currentDialogObj.text || "");
 
-            const audioBtn = document.getElementById('btn-gram-audio');
-            if (currentDialogObj.hasAudio) {
-                audioBtn.style.display = 'block';
-                audioBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    speakTTS(currentFullDialogText, 0.85);
-                };
-                speakTTS(currentFullDialogText, 0.85);
-            } else {
-                audioBtn.style.display = 'none';
-            }
-
+            // 1. 主要對話文字打字機
             startTypewriter(currentFullDialogText);
+
+            // 2. 判定是否有 example 且 hasAudio 為 true
+            const exampleText = (currentDialogObj.example || "").trim();
+            const boxExample = document.getElementById('box-grammar-example');
+            const lblExample = document.getElementById('lbl-grammar-example-text');
+            const btnExAudio = document.getElementById('btn-example-audio');
+            const audioBtn = document.getElementById('btn-gram-audio');
+
+            if (exampleText && currentDialogObj.hasAudio) {
+                // 呈現白色 example 區塊與音檔按鈕，並播放 example
+                boxExample.style.display = 'block';
+                lblExample.innerText = exampleText;
+                btnExAudio.onclick = (e) => {
+                    e.stopPropagation();
+                    speakTTS(exampleText, 0.85);
+                };
+                audioBtn.style.display = 'none'; // 隱藏原本的對話語音按鈕
+                speakTTS(exampleText, 0.85); // 自動播放 example 音檔
+            } else {
+                // 沒有 example 或沒有 audio
+                boxExample.style.display = 'none';
+                if (currentDialogObj.hasAudio) {
+                    audioBtn.style.display = 'block';
+                    audioBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        speakTTS(currentFullDialogText, 0.85);
+                    };
+                    speakTTS(currentFullDialogText, 0.85);
+                } else {
+                    audioBtn.style.display = 'none';
+                }
+            }
         }
 
         function startTypewriter(text) {
@@ -2898,9 +2980,10 @@
                 list.forEach((itemObj, idx) => {
                     const item = document.createElement('div');
                     item.className = 'dialog-history-item';
+                    const exInfo = itemObj.example ? `<div style="margin-top:4px; font-size:0.85rem; color:#4338ca;">例句：${itemObj.example}</div>` : '';
                     item.innerHTML = `
                         <span class="num-title">${idx + 1}.</span>
-                        <div class="text-body">${cleanInitialWhitespace(itemObj.text)}</div>
+                        <div class="text-body">${cleanInitialWhitespace(itemObj.text)}${exInfo}</div>
                     `;
                     container.appendChild(item);
                 });
@@ -3043,7 +3126,7 @@
             }
         }
 
-        // ==================== 🌟 通用單字挑戰邏輯 ====================
+        // ==================== 通用單字挑戰邏輯 ====================
 
         function getWordTranslation(item) {
             if (!item) return "";
@@ -3067,7 +3150,6 @@
             const subElem = document.getElementById('lbl-word-shadow-subtext');
             if (!subElem) return;
 
-            // 挑戰模式下：利用 visibility: hidden 保留高度佔位，杜絕彈跳
             if (isWordShadowChallengeMode) {
                 subElem.innerText = "音標佔位";
                 subElem.style.visibility = "hidden";
@@ -3132,24 +3214,27 @@
             btn.classList.toggle('active', isWordChoiceChallengeMode);
         }
 
+        // 🌟 單字關卡啟動：在此將題目隨機打亂 (Shuffle)
         function startWordChallenge(wordMode) {
             stopSpeechRecognition();
             stopChallengeTimer();
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
-            wordQuestions = rawWordData.filter(v => 
+            const filteredWords = rawWordData.filter(v => 
                 normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
                 String(getItemField(v, 'unit_id')) === String(currentConfig.unit_id) &&
                 String(getItemField(v, 'lesson')) === String(currentConfig.lesson)
             );
 
-            if (wordQuestions.length === 0) return alert("此課堂尚無單字題目資料！");
+            if (filteredWords.length === 0) return alert("此課堂尚無單字題目資料！");
+
+            // 🌟 隨機打亂單字題目順序
+            wordQuestions = shuffleArray(filteredWords);
 
             wordIndex = 0;
             totalChallengeQuestions = wordQuestions.length;
             currentWordPronMode = 'kr_pron';
 
-            // 🌟 依據選擇的模式型態 (練習模式 vs 計時模式) 初始化
             const isTimed = (activeChallengeType === 'timed');
 
             isWordShadowChallengeMode = isTimed;
@@ -3160,7 +3245,6 @@
             updateWordTypeChallengeUI();
             updateWordChoiceChallengeUI();
 
-            // 計時模式下隱藏手動切換按鈕
             const toggleBoxShadow = document.getElementById('box-word-shadow-toggle');
             const toggleBoxType = document.getElementById('box-word-type-toggle');
             const toggleBoxChoice = document.getElementById('box-word-choice-toggle');
@@ -3196,7 +3280,6 @@
             if (currentConfig.mode === 'word_shadow') {
                 document.getElementById('lbl-word-shadow-progress').innerText = `${wordIndex + 1} / ${total}`;
                 
-                // 挑戰模式下：韓文題目保留高度佔位
                 const targetTextElem = document.getElementById('lbl-word-shadow-target-text');
                 if (isWordShadowChallengeMode) {
                     targetTextElem.innerText = item.text || "題目";
@@ -3274,6 +3357,7 @@
                 const sameLevelWords = rawWordData.filter(w => normalizeLevelStr(getItemField(w, 'level')) === currentLevelNormalized);
                 const poolWords = (sameLevelWords.length >= 4) ? sameLevelWords : rawWordData;
 
+                // 🌟 0A 程度：直接從 choice 欄位解析選項
                 if (is0ALevel) {
                     if (choiceToggleBox) choiceToggleBox.style.display = 'none';
                     targetTextElem.innerText = item.text || "題目";
@@ -3283,21 +3367,24 @@
                     document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
 
                     const correctWord = (item.text || '').trim();
-                    const allTargetWords = [...new Set(poolWords.map(w => (w.text || '').trim()).filter(Boolean))];
-                    let distractors = pickRandomDistractors(allTargetWords, correctWord, 3);
+                    let finalChoices = [];
 
-                    if (distractors.length < 3 && item.choice) {
-                        const originalChoices = (item.choice || '').split('/').map(s => s.trim()).filter(Boolean);
-                        originalChoices.forEach(c => {
-                            if (distractors.length < 3 && c !== correctWord && !distractors.includes(c)) {
-                                distractors.push(c);
-                            }
-                        });
+                    // 抓取 Choice 欄位資料 (支援 / 或 , 分隔)
+                    if (item.choice && item.choice.trim()) {
+                        const parsedChoices = item.choice.split(/[\/,]/).map(s => s.trim()).filter(Boolean);
+                        finalChoices = [...new Set(parsedChoices)];
+                        // 若 choice 欄位內剛好漏了正確答案，則自動補進去
+                        if (!finalChoices.includes(correctWord)) {
+                            finalChoices.push(correctWord);
+                        }
+                    } else {
+                        // 若 choice 欄位空白，備用機制由 pool 補滿
+                        const allTargetWords = [...new Set(poolWords.map(w => (w.text || '').trim()).filter(Boolean))];
+                        finalChoices = [correctWord, ...pickRandomDistractors(allTargetWords, correctWord, 3)];
                     }
 
-                    const finalChoices = shuffleArray([correctWord, ...distractors]);
-
-                    finalChoices.forEach(wText => {
+                    // 選項隨機打亂
+                    shuffleArray(finalChoices).forEach(wText => {
                         const btn = document.createElement('button');
                         btn.className = 'btn-vocab-choice';
                         btn.innerText = wText;
@@ -3306,6 +3393,7 @@
                     });
 
                 } else {
+                    // 非 0A 程度：題目題意四選一
                     if (choiceToggleBox && activeChallengeType !== 'timed') choiceToggleBox.style.display = 'block';
 
                     targetTextElem.innerText = item.text || "";
@@ -3331,7 +3419,7 @@
                     let distractors = pickRandomDistractors(allMeanings, correctMeaning, 3);
 
                     if (distractors.length < 3 && item.choice) {
-                        const originalChoices = (item.choice || '').split('/').map(s => s.trim()).filter(Boolean);
+                        const originalChoices = (item.choice || '').split(/[\/,]/).map(s => s.trim()).filter(Boolean);
                         originalChoices.forEach(c => {
                             if (distractors.length < 3 && c !== correctMeaning && !distractors.includes(c)) {
                                 distractors.push(c);
@@ -3620,7 +3708,7 @@
         function prevChatRound() { if (chatRoundIndex > 0) { chatRoundIndex--; displayChatRound(); } }
         function nextChatRound() { if (chatRoundIndex < chatRounds.length - 1) { chatRoundIndex++; displayChatRound(); } }
 
-        // ==================== 🌟 跟讀與重組題邏輯 ====================
+        // ==================== 跟讀與重組題邏輯 ====================
 
         function toggleSentenceKeywordMode() {
             isSentenceKeywordMode = !isSentenceKeywordMode;
@@ -3655,6 +3743,7 @@
             }
         }
 
+        // 🌟 句子跟讀與字塊重組：在此將題目隨機打亂 (Shuffle)
         function startMainQuiz() {
             stopSpeechRecognition();
             stopChallengeTimer();
@@ -3665,14 +3754,13 @@
 
                 const isTimed = (activeChallengeType === 'timed');
                 isSentenceKeywordMode = false;
-                isSentenceChallengeMode = isTimed; // 計時模式直接進入挑戰模式
+                isSentenceChallengeMode = isTimed;
                 updateSentenceModeButtonsUI();
 
-                // 計時模式下隱藏手動切換按鈕
                 const sentenceBtnsBox = document.getElementById('box-sentence-mode-btns');
                 if (sentenceBtnsBox) sentenceBtnsBox.style.display = isTimed ? 'none' : 'flex';
 
-                questions = rawShadowData.filter(i => 
+                const rawList = rawShadowData.filter(i => 
                     normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized &&
                     String(getItemField(i, 'unit_id')) === String(currentConfig.unit_id) &&
                     String(getItemField(i, 'lesson')) === String(currentConfig.lesson)
@@ -3694,10 +3782,13 @@
                     };
                 });
 
+                // 🌟 隨機打亂題目順序
+                questions = shuffleArray(rawList);
+
                 if (isTimed) startChallengeTimer('shadow');
             } else {
                 goToStep('step-quiz-blocks');
-                questions = rawBlocksData.filter(i => 
+                const rawList = rawBlocksData.filter(i => 
                     normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized &&
                     String(getItemField(i, 'unit_id')) === String(currentConfig.unit_id) &&
                     String(getItemField(i, 'lesson')) === String(currentConfig.lesson)
@@ -3722,6 +3813,9 @@
                         audioUrl: Array.isArray(i) ? i[9] : (i.audiourl || i.audio_url || '')
                     };
                 });
+
+                // 🌟 隨機打亂重組題目順序
+                questions = shuffleArray(rawList);
             }
 
             currentIndex = 0;
