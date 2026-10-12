@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>生存挑戰系統</title>
+    <title>滾動挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -260,6 +260,7 @@
             white-space: pre-wrap !important;
             word-break: break-word;
             text-align: left !important;
+            scroll-behavior: smooth;
         }
         #lbl-grammar-dialog {
             display: block !important;
@@ -271,7 +272,6 @@
             border: none; border-radius: 8px; padding: 5px 11px; font-size: 0.82rem; font-weight: bold; cursor: pointer;
         }
 
-        /* 🌟 語法多例句列表樣式 */
         .grammar-example-box {
             display: none;
             background: #ffffff;
@@ -602,14 +602,15 @@
         .btn-record.recording { animation: pulse 1s infinite; background: #dc2626; }
         @keyframes pulse { 0%{transform: scale(1);} 50%{transform: scale(1.08);} 100%{transform: scale(1);} }
 
+        /* 🌟 固定最小高度為 82px，預留足夠兩行錯誤提示與正解空間，杜絕按鈕跳動 */
         .result-box { 
             background: #f3f4f6; 
             border-radius: 12px; 
-            padding: 10px 12px; 
+            padding: 8px 12px; 
             margin-top: 10px; 
             font-size: 0.95rem; 
             text-align: center;
-            min-height: 64px;
+            min-height: 82px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -622,7 +623,7 @@
             font-weight: bold; 
             color: var(--duo-green); 
             margin-top: 2px;
-            line-height: 1.4;
+            line-height: 1.45;
             word-break: break-word;
         }
 
@@ -1068,7 +1069,7 @@
                         <button class="btn-gram-audio" id="btn-gram-audio" style="display: none;"><i class="fa-solid fa-volume-high"></i> 播放聲音</button>
                     </div>
 
-                    <!-- 🌟 語法多例句列表區塊 -->
+                    <!-- 語法多例句列表區塊 -->
                     <div class="grammar-example-box" id="box-grammar-example">
                         <div class="grammar-example-title"><i class="fa-solid fa-bookmark"></i> 例句參考：</div>
                         <div class="grammar-example-list" id="container-grammar-example-list"></div>
@@ -1300,7 +1301,7 @@
                     <div class="gear-menu-container">
                         <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-word-type')"><i class="fa-solid fa-gear"></i></button>
                         <div class="gear-dropdown" id="gear-dropdown-word-type">
-                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-word-type')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
+                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-word-type')"><i class="fa-solid fa-play"></i> 	繼續挑戰</button>
                             <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
                         </div>
                     </div>
@@ -2901,7 +2902,7 @@
             goToStep('step-grammar');
         }
 
-        // 🌟 語法對話呈現：支援 gram 為空、多例句切割為編號列表、不自動播放
+        // 語法對話呈現：支援 gram 為空、多例句切割為編號列表、不自動播放
         function showCurrentGrammarDialog() {
             if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
             const total = currentGrammarItem.dialogs.length;
@@ -2930,6 +2931,7 @@
             // 1. 若 gram 有文字，呈現主對話框與打字機；若 gram 為空，隱藏對話框
             if (currentFullDialogText) {
                 mainDialogBox.style.display = 'block';
+                mainDialogBox.scrollTop = 0;
                 startTypewriter(currentFullDialogText);
 
                 if (currentDialogObj.hasAudio) {
@@ -2957,6 +2959,7 @@
                 const exArr = rawExample.split('/').map(s => s.trim()).filter(Boolean);
                 if (exArr.length > 0) {
                     boxExample.style.display = 'block';
+                    boxExample.scrollTop = 0;
                     exArr.forEach((singleEx, exIdx) => {
                         const itemDiv = document.createElement('div');
                         itemDiv.className = 'grammar-example-item';
@@ -2986,28 +2989,44 @@
             }
         }
 
+        // 🌟 語法打字機：逐字輸出並自動向下滾動至最底端
         function startTypewriter(text) {
             if (typewriterTimer) clearInterval(typewriterTimer);
             const box = document.getElementById('lbl-grammar-dialog');
+            const container = document.getElementById('box-grammar-dialog-main');
             box.textContent = "";
+            if (container) container.scrollTop = 0;
             isTypewriterTyping = true;
             let charIndex = 0;
             typewriterTimer = setInterval(() => {
                 if (charIndex < text.length) {
                     box.textContent = text.substring(0, charIndex + 1);
                     charIndex++;
+                    // 自動跟隨文字高度向下滾動
+                    if (container) {
+                        container.scrollTop = container.scrollHeight;
+                    }
                 } else {
                     clearInterval(typewriterTimer);
                     isTypewriterTyping = false;
+                    if (container) {
+                        container.scrollTop = container.scrollHeight;
+                    }
                 }
             }, 35);
         }
 
+        // 🌟 立即完成打字機：內容全展開並瞬間捲動到底部
         function completeTypewriterImmediately() {
             if (isTypewriterTyping) {
                 clearInterval(typewriterTimer);
-                document.getElementById('lbl-grammar-dialog').textContent = currentFullDialogText;
+                const box = document.getElementById('lbl-grammar-dialog');
+                const container = document.getElementById('box-grammar-dialog-main');
+                box.textContent = currentFullDialogText;
                 isTypewriterTyping = false;
+                if (container) {
+                    setTimeout(() => { container.scrollTop = container.scrollHeight; }, 10);
+                }
             }
         }
 
@@ -3447,7 +3466,7 @@
                 const sameLevelWords = rawWordData.filter(w => normalizeLevelStr(getItemField(w, 'level')) === currentLevelNormalized);
                 const poolWords = (sameLevelWords.length >= 4) ? sameLevelWords : rawWordData;
 
-                // 0A 程度：直接從 choice 欄位解析選項
+                // 0A 程度：直接從 choice 欄位解析選項[cite: 1]
                 if (is0ALevel) {
                     if (choiceToggleBox) choiceToggleBox.style.display = 'none';
                     targetTextElem.innerText = item.text || "題目";
