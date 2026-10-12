@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>入門挑戰系統</title>
+    <title>驗證挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -589,7 +589,7 @@
             display: block;
         }
 
-        /* 🌟 模式下方的指引說明標籤 */
+        /* 模式下方的指引說明標籤 */
         .instruction-badge-bar {
             font-size: 0.98rem;
             font-weight: 800;
@@ -727,7 +727,6 @@
         .btn-keyword-toggle:hover { background: #e2e8f0; }
         .btn-keyword-toggle.active { background: #fee2e2; border-color: #f87171; color: #dc2626; }
         .btn-keyword-toggle.active-blue { background: #e0f2fe; border-color: #38bdf8; color: #0284c7; }
-        .btn-keyword-toggle.active-green { background: #dcfce7; border-color: #86efac; color: #15803d; }
 
         .grammar-q-item {
             font-size: 1.1rem; color: var(--duo-dark); line-height: 1.8; font-weight: 600; word-break: break-word;
@@ -941,7 +940,7 @@
         </div>
     </div>
 
-    <!-- 模式選擇彈窗 (練習模式 vs 計時模式) -->
+    <!-- 🌟 模式選擇彈窗 (擴充為三種模式：練習模式、入門模式、計時挑戰模式) -->
     <div id="modal-select-mode-type" class="custom-modal">
         <div class="custom-modal-card" style="padding: 24px 18px;">
             <div class="close-icon-circle" onclick="closeModal('modal-select-mode-type')"><i class="fa-solid fa-xmark"></i></div>
@@ -950,21 +949,26 @@
             <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 18px;">請選擇您想進行的學習挑戰型態：</p>
             
             <div style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- 1. 練習模式 -->
                 <button class="btn-3d btn-3d-blue" onclick="confirmLaunchMode('practice')" style="padding: 13px; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <i class="fa-solid fa-graduation-cap"></i> 練習模式 (自由學習)
                 </button>
+                <!-- 2. 入門模式 (目前套用挑戰模式設定) -->
+                <button class="btn-3d btn-3d-primary" onclick="confirmLaunchMode('entry')" style="padding: 13px; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i class="fa-solid fa-seedling"></i> 入門模式 (專注盲讀)
+                </button>
+                <!-- 3. 計時挑戰模式 -->
                 <button class="btn-3d btn-3d-primary" onclick="confirmLaunchMode('timed')" style="padding: 13px; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--duo-fire-red); box-shadow: 0 4px 0 #ea2b2b;">
-                    <i class="fa-solid fa-fire"></i> 計時模式 (限時 300 秒盲讀)
+                    <i class="fa-solid fa-fire"></i> 挑戰模式 (限時 300 秒)
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- 🌟 離開挑戰二次確認彈窗 (已改用 GitHub 中的 quit.png 圖片) -->
+    <!-- 離開挑戰二次確認彈窗 (已改用 GitHub 中的 quit.png 圖片) -->
     <div id="modal-quit-challenge" class="custom-modal">
         <div class="custom-modal-card" style="padding: 26px 20px;">
             <div style="margin-bottom: 14px;">
-                <!-- 🌟 圖片載入退回機制：支援 images/quit.png 或根目錄 quit.png -->
                 <img src="images/quit.png" onerror="this.onerror=null; this.src='quit.png';" class="quit-modal-img" alt="Quit Challenge">
             </div>
             <h3 style="margin: 0 0 16px 0; color: #1e293b; font-size: 1.1rem; font-weight: 800; line-height: 1.5;">
@@ -1109,7 +1113,7 @@
                 </div>
             </div>
 
-            <!-- 🌟 步驟 6-A：Sentence 句子跟讀畫面 (支援 練習 / 入門 / 挑戰 三種模式) -->
+            <!-- 步驟 6-A：Sentence 句子跟讀畫面 -->
             <div id="step-quiz-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-shadow-mode-title">句子跟讀挑戰</div>
@@ -1127,16 +1131,13 @@
                     <div class="timer-progress-bar" id="bar-progress-shadow"></div>
                 </div>
 
-                <!-- 🌟 句子跟讀三模式切換按鈕群 (練習模式 / 入門模式 / 挑戰模式) -->
+                <!-- 關卡內部模式切換按鈕 (計時或入門模式會隱藏或對應) -->
                 <div id="box-sentence-mode-btns" style="display: flex; justify-content: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;">
-                    <button class="btn-keyword-toggle active-green" id="btn-sentence-mode-practice" onclick="setSentenceSubMode('practice')">
-                        <i class="fa-solid fa-book-open"></i> 練習模式
+                    <button class="btn-keyword-toggle" id="btn-toggle-sentence-keyword" onclick="toggleSentenceKeywordMode()">
+                        <i class="fa-solid fa-key"></i> 切換關鍵字
                     </button>
-                    <button class="btn-keyword-toggle" id="btn-sentence-mode-entry" onclick="setSentenceSubMode('entry')">
-                        <i class="fa-solid fa-seedling"></i> 入門模式
-                    </button>
-                    <button class="btn-keyword-toggle" id="btn-sentence-mode-challenge" onclick="setSentenceSubMode('challenge')">
-                        <i class="fa-solid fa-bolt"></i> 挑戰模式
+                    <button class="btn-keyword-toggle" id="btn-toggle-sentence-challenge" onclick="toggleSentenceChallengeMode()">
+                        <i class="fa-solid fa-bolt"></i> 開啟挑戰模式
                     </button>
                 </div>
 
@@ -1160,7 +1161,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-G：句子問答畫面 (提示上移至按鈕下方，支援 練習 / 入門 / 挑戰 三種模式) -->
+            <!-- 步驟 6-G：句子問答畫面 -->
             <div id="step-quiz-sentence-chat" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info">對話挑戰</div>
@@ -1183,16 +1184,9 @@
                     <button class="btn-role" id="btn-chat-role-b" onclick="switchChatRole('B')">角色 B (聽 A 我念 B)</button>
                 </div>
 
-                <!-- 🌟 句子問答三模式切換按鈕群 -->
-                <div id="box-chat-mode-toggle" style="display: flex; justify-content: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;">
-                    <button class="btn-keyword-toggle active-green" id="btn-chat-mode-practice" onclick="setChatSubMode('practice')">
-                        <i class="fa-solid fa-book-open"></i> 練習模式
-                    </button>
-                    <button class="btn-keyword-toggle" id="btn-chat-mode-entry" onclick="setChatSubMode('entry')">
-                        <i class="fa-solid fa-seedling"></i> 入門模式
-                    </button>
-                    <button class="btn-keyword-toggle" id="btn-chat-mode-challenge" onclick="setChatSubMode('challenge')">
-                        <i class="fa-solid fa-bolt"></i> 挑戰模式
+                <div id="box-chat-mode-toggle" style="margin-bottom: 6px;">
+                    <button class="btn-keyword-toggle" id="btn-toggle-keywords" onclick="toggleChatKeywords()">
+                        <i class="fa-solid fa-bolt"></i> 開啟挑戰模式
                     </button>
                 </div>
 
@@ -1566,22 +1560,21 @@
         let chatRounds = [];
         let chatRoundIndex = 0;
         let chatRole = 'A';
+        let isChatChallengeMode = false;
         let chatRoundPassed = false;
 
         let wordQuestions = [];
         let wordIndex = 0;
         let currentWordPronMode = 'kr_pron';
 
-        // 🌟 句子跟讀與句子問答：三模式管理 ('practice' | 'entry' | 'challenge')
-        let sentenceSubMode = 'practice';
-        let chatSubMode = 'practice';
-
-        // 單字關卡挑戰模式狀態
+        // 模式開關狀態管理
+        let isSentenceKeywordMode = false;
+        let isSentenceChallengeMode = false;
         let isWordShadowChallengeMode = false;
         let isWordTypeChallengeMode = false;
         let isWordChoiceChallengeMode = false;
 
-        // 練習模式 vs 計時模式 狀態管理
+        // 🌟 彈窗模式管理 ('practice' 練習 | 'entry' 入門 | 'timed' 計時挑戰)
         let activeChallengeType = 'practice';
         let challengeTimerInterval = null;
         let challengeTimeRemaining = 300;
@@ -2621,7 +2614,7 @@
             }
         }
 
-        // 修正關卡排列順序：語法介紹 > 單字跟讀 > 單字選擇 > 單字聽打 > 句子跟讀 > 字塊重組 > 句子問答
+        // 關卡排列順序：語法介紹 > 單字跟讀 > 單字選擇 > 單字聽打 > 句子跟讀 > 字塊重組 > 句子問答
         function selectUnit(unitId) {
             stopSpeechRecognition();
             currentConfig.unit_id = unitId;
@@ -2730,7 +2723,7 @@
             goToStep('step-lesson');
         }
 
-        // 選擇模式彈窗邏輯
+        // 🌟 點擊關卡按鈕時觸發彈窗選擇模式 (支援練習、入門、計時挑戰)
         function promptSelectModeType(lesson, mode, label) {
             if (mode === 'grammar' || mode === 'blocks') {
                 activeChallengeType = 'practice';
@@ -2744,6 +2737,7 @@
             openModal('modal-select-mode-type');
         }
 
+        // 🌟 確認選擇彈窗的模式 ('practice' | 'entry' | 'timed')
         function confirmLaunchMode(type) {
             closeModal('modal-select-mode-type');
             activeChallengeType = type;
@@ -2927,7 +2921,6 @@
             goToStep('step-grammar');
         }
 
-        // 語法對話呈現：徹底移除 gram 播放按鈕，例句切割為列表手動發音
         function showCurrentGrammarDialog() {
             if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
             const total = currentGrammarItem.dialogs.length;
@@ -2952,7 +2945,6 @@
 
             const mainDialogBox = document.getElementById('box-grammar-dialog-main');
 
-            // 1. 若 gram 有文字，呈現主對話框與打字機；若 gram 為空，隱藏對話框
             if (currentFullDialogText) {
                 mainDialogBox.style.display = 'block';
                 mainDialogBox.scrollTop = 0;
@@ -2963,7 +2955,6 @@
                 isTypewriterTyping = false;
             }
 
-            // 2. 例句解析：支援以 / 切割為多句並加上 1. 2. 3. 編號與專屬發音按鈕（不自動播放）
             const rawExample = (currentDialogObj.example || "").trim();
             const boxExample = document.getElementById('box-grammar-example');
             const listExample = document.getElementById('container-grammar-example-list');
@@ -3353,11 +3344,12 @@
             totalChallengeQuestions = wordQuestions.length;
             currentWordPronMode = 'kr_pron';
 
-            const isTimed = (activeChallengeType === 'timed');
+            // 🌟 彈窗如果是計時挑戰模式，或是入門模式，皆套用挑戰模式設定
+            const isHard = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
 
-            isWordShadowChallengeMode = isTimed;
-            isWordTypeChallengeMode = isTimed;
-            isWordChoiceChallengeMode = isTimed;
+            isWordShadowChallengeMode = isHard;
+            isWordTypeChallengeMode = isHard;
+            isWordChoiceChallengeMode = isHard;
 
             updateWordShadowChallengeUI();
             updateWordTypeChallengeUI();
@@ -3367,22 +3359,22 @@
             const toggleBoxType = document.getElementById('box-word-type-toggle');
             const toggleBoxChoice = document.getElementById('box-word-choice-toggle');
 
-            if (toggleBoxShadow) toggleBoxShadow.style.display = isTimed ? 'none' : 'block';
-            if (toggleBoxType) toggleBoxType.style.display = isTimed ? 'none' : 'block';
-            if (toggleBoxChoice) toggleBoxChoice.style.display = isTimed ? 'none' : 'block';
+            if (toggleBoxShadow) toggleBoxShadow.style.display = isHard ? 'none' : 'block';
+            if (toggleBoxType) toggleBoxType.style.display = isHard ? 'none' : 'block';
+            if (toggleBoxChoice) toggleBoxChoice.style.display = isHard ? 'none' : 'block';
 
             const lbl = document.getElementById('lbl-toggle-word-pron-text');
             if (lbl) lbl.innerText = '切換 羅馬拼音';
 
             if (wordMode === 'word_shadow') {
                 goToStep('step-quiz-word-shadow');
-                if (isTimed) startChallengeTimer('word-shadow');
+                if (activeChallengeType === 'timed') startChallengeTimer('word-shadow');
             } else if (wordMode === 'word_type') {
                 goToStep('step-quiz-word-type');
-                if (isTimed) startChallengeTimer('word-type');
+                if (activeChallengeType === 'timed') startChallengeTimer('word-type');
             } else {
                 goToStep('step-quiz-word-choice');
-                if (isTimed) startChallengeTimer('word-choice');
+                if (activeChallengeType === 'timed') startChallengeTimer('word-choice');
             }
             displayWordQuestion();
         }
@@ -3507,7 +3499,7 @@
                     });
 
                 } else {
-                    if (choiceToggleBox && activeChallengeType !== 'timed') choiceToggleBox.style.display = 'block';
+                    if (choiceToggleBox && activeChallengeType === 'practice') choiceToggleBox.style.display = 'block';
 
                     targetTextElem.innerText = item.text || "";
                     if (isWordChoiceChallengeMode) {
@@ -3654,31 +3646,38 @@
             if (wordIndex < wordQuestions.length - 1) { wordIndex++; displayWordQuestion(); } 
         }
 
-        // ==================== 🌟 句子跟讀三模式切換邏輯 ====================
+        // ==================== 🌟 句子跟讀邏輯 ====================
 
-        function setSentenceSubMode(mode) {
-            sentenceSubMode = mode;
-            updateSentenceSubModeUI();
+        function toggleSentenceKeywordMode() {
+            isSentenceKeywordMode = !isSentenceKeywordMode;
+            if (isSentenceKeywordMode) {
+                isSentenceChallengeMode = false;
+            }
+            updateSentenceModeButtonsUI();
             displayQuestion();
         }
 
-        function updateSentenceSubModeUI() {
-            const btnPractice = document.getElementById('btn-sentence-mode-practice');
-            const btnEntry = document.getElementById('btn-sentence-mode-entry');
-            const btnChallenge = document.getElementById('btn-sentence-mode-challenge');
+        function toggleSentenceChallengeMode() {
+            isSentenceChallengeMode = !isSentenceChallengeMode;
+            if (isSentenceChallengeMode) {
+                isSentenceKeywordMode = false;
+            }
+            updateSentenceModeButtonsUI();
+            displayQuestion();
+        }
 
-            [btnPractice, btnEntry, btnChallenge].forEach(b => {
-                if (b) {
-                    b.classList.remove('active', 'active-blue', 'active-green');
-                }
-            });
+        function updateSentenceModeButtonsUI() {
+            const btnKey = document.getElementById('btn-toggle-sentence-keyword');
+            const btnChal = document.getElementById('btn-toggle-sentence-challenge');
 
-            if (sentenceSubMode === 'practice') {
-                if (btnPractice) btnPractice.classList.add('active-green');
-            } else if (sentenceSubMode === 'entry') {
-                if (btnEntry) btnEntry.classList.add('active-blue');
-            } else if (sentenceSubMode === 'challenge') {
-                if (btnChallenge) btnChallenge.classList.add('active');
+            if (btnKey) {
+                btnKey.classList.toggle('active-blue', isSentenceKeywordMode);
+                btnKey.innerHTML = isSentenceKeywordMode ? `<i class="fa-solid fa-key"></i> 關鍵字模式中` : `<i class="fa-solid fa-key"></i> 切換關鍵字`;
+            }
+
+            if (btnChal) {
+                btnChal.classList.toggle('active', isSentenceChallengeMode);
+                btnChal.innerHTML = isSentenceChallengeMode ? `<i class="fa-solid fa-fire"></i> 挑戰模式中 (點擊關閉)` : `<i class="fa-solid fa-bolt"></i> 開啟挑戰模式`;
             }
         }
 
@@ -3690,13 +3689,14 @@
             if (currentConfig.mode === 'shadow') {
                 goToStep('step-quiz-shadow');
 
-                const isTimed = (activeChallengeType === 'timed');
-                // 若為計時模式直接進入挑戰，否則預設為練習模式
-                sentenceSubMode = isTimed ? 'challenge' : 'practice';
-                updateSentenceSubModeUI();
+                // 🌟 入門模式與計時挑戰模式皆預設開啟挑戰盲讀
+                const isHard = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
+                isSentenceKeywordMode = false;
+                isSentenceChallengeMode = isHard;
+                updateSentenceModeButtonsUI();
 
                 const sentenceBtnsBox = document.getElementById('box-sentence-mode-btns');
-                if (sentenceBtnsBox) sentenceBtnsBox.style.display = isTimed ? 'none' : 'flex';
+                if (sentenceBtnsBox) sentenceBtnsBox.style.display = isHard ? 'none' : 'flex';
 
                 const rawList = rawShadowData.filter(i => 
                     normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized &&
@@ -3722,7 +3722,7 @@
 
                 questions = shuffleArray(rawList);
 
-                if (isTimed) startChallengeTimer('shadow');
+                if (activeChallengeType === 'timed') startChallengeTimer('shadow');
             } else {
                 goToStep('step-quiz-blocks');
                 const rawList = rawBlocksData.filter(i => 
@@ -3771,14 +3771,18 @@
                 const transElem = document.getElementById('lbl-translation');
                 const hintElem = document.getElementById('lbl-hint');
 
-                // 🌟 入門模式目前先套用挑戰模式設定 (隱藏題目進行盲讀)
-                if (sentenceSubMode === 'challenge' || sentenceSubMode === 'entry') {
+                if (isSentenceChallengeMode) {
                     targetTextElem.innerText = q.text || "題目";
                     targetTextElem.style.visibility = "hidden";
                     transElem.innerText = "";
                     hintElem.style.display = "none";
+                } else if (isSentenceKeywordMode) {
+                    targetTextElem.innerText = q.text || "題目";
+                    targetTextElem.style.visibility = "hidden";
+                    transElem.innerText = "";
+                    hintElem.innerText = q.hint ? `關鍵字：${q.hint.trim()}` : '無關鍵字提示';
+                    hintElem.style.display = "inline-block";
                 } else {
-                    // 練習模式：顯示完整韓文、中文翻譯與提示
                     targetTextElem.innerText = q.text || "";
                     targetTextElem.style.visibility = "visible";
                     transElem.innerText = q.translation || "";
@@ -3943,33 +3947,7 @@
             return (s1 && s2) ? (s1 === s2 || s1.includes(s2) || s2.includes(s1)) : false;
         }
 
-        // ==================== 🌟 句子問答挑戰邏輯 (支援三模式與指引上移) ====================
-
-        function setChatSubMode(mode) {
-            chatSubMode = mode;
-            updateChatSubModeUI();
-            displayChatRound(false);
-        }
-
-        function updateChatSubModeUI() {
-            const btnPractice = document.getElementById('btn-chat-mode-practice');
-            const btnEntry = document.getElementById('btn-chat-mode-entry');
-            const btnChallenge = document.getElementById('btn-chat-mode-challenge');
-
-            [btnPractice, btnEntry, btnChallenge].forEach(b => {
-                if (b) {
-                    b.classList.remove('active', 'active-blue', 'active-green');
-                }
-            });
-
-            if (chatSubMode === 'practice') {
-                if (btnPractice) btnPractice.classList.add('active-green');
-            } else if (chatSubMode === 'entry') {
-                if (btnEntry) btnEntry.classList.add('active-blue');
-            } else if (chatSubMode === 'challenge') {
-                if (btnChallenge) btnChallenge.classList.add('active');
-            }
-        }
+        // ==================== 🌟 句子問答邏輯 ====================
 
         function startSentenceChatChallenge() {
             stopSpeechRecognition();
@@ -4008,17 +3986,19 @@
             totalChallengeQuestions = chatRounds.length;
             chatRole = 'A';
 
-            const isTimed = (activeChallengeType === 'timed');
-            chatSubMode = isTimed ? 'challenge' : 'practice';
-            updateChatSubModeUI();
+            // 🌟 彈窗若選擇入門或計時挑戰，預設進入挑戰模式
+            const isHard = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
+            isChatChallengeMode = isHard;
+
+            updateChallengeModeButtonUI();
 
             const toggleBoxChat = document.getElementById('box-chat-mode-toggle');
-            if (toggleBoxChat) toggleBoxChat.style.display = isTimed ? 'none' : 'flex';
+            if (toggleBoxChat) toggleBoxChat.style.display = isHard ? 'none' : 'block';
 
             switchChatRole('A');
             goToStep('step-quiz-sentence-chat');
 
-            if (isTimed) startChallengeTimer('chat');
+            if (activeChallengeType === 'timed') startChallengeTimer('chat');
         }
 
         function switchChatRole(role) {
@@ -4028,6 +4008,19 @@
             document.getElementById(`btn-chat-role-${role.toLowerCase()}`).classList.add('active');
             chatRoundIndex = 0;
             displayChatRound();
+        }
+
+        function toggleChatKeywords() {
+            isChatChallengeMode = !isChatChallengeMode;
+            updateChallengeModeButtonUI();
+            displayChatRound(false);
+        }
+
+        function updateChallengeModeButtonUI() {
+            const btn = document.getElementById('btn-toggle-keywords');
+            if (!btn) return;
+            btn.innerHTML = isChatChallengeMode ? `<i class="fa-solid fa-fire"></i> 挑戰模式中 (點擊關閉)` : `<i class="fa-solid fa-bolt"></i> 開啟挑戰模式`;
+            btn.classList.toggle('active', isChatChallengeMode);
         }
 
         function displayChatRound(autoPlayOpponent = true) {
@@ -4052,16 +4045,12 @@
             const instructionTopElem = document.getElementById('lbl-chat-instruction-top');
             const playAudioBtn = document.getElementById('btn-chat-play-audio');
 
-            // 入門模式先套用挑戰模式設定
-            const isHardMode = (chatSubMode === 'challenge' || chatSubMode === 'entry');
-
-            if (playAudioBtn) playAudioBtn.style.display = isHardMode ? 'none' : 'flex';
+            if (playAudioBtn) playAudioBtn.style.display = isChatChallengeMode ? 'none' : 'flex';
 
             if (chatRole === 'A') {
                 partnerBubble.style.display = 'none';
 
-                if (isHardMode) {
-                    // 指引上移至按鈕下方
+                if (isChatChallengeMode) {
                     instructionTopElem.innerText = `【角色 A】挑戰模式：請參考下方關鍵字提示回答：`;
                     targetTextElem.innerText = "挑戰模式中，請念出完整句子";
                     transElem.innerText = "";
@@ -4083,13 +4072,13 @@
                 }
             } else {
                 hintBubble.style.display = 'none';
-                partnerBubble.style.display = isHardMode ? 'none' : 'block';
+                partnerBubble.style.display = isChatChallengeMode ? 'none' : 'block';
                 document.getElementById('lbl-partner-title').innerText = `對方 (Speaker A)：`;
                 document.getElementById('lbl-partner-text').innerText = curRound.aText;
 
-                instructionTopElem.innerText = isHardMode ? `【角色 B】挑戰模式：請聽 Speaker A 語音並念出回答：` : `【角色 B】請聽取 Speaker A 語音並念出回答：`;
+                instructionTopElem.innerText = isChatChallengeMode ? `【角色 B】挑戰模式：請聽 Speaker A 語音並念出回答：` : `【角色 B】請聽取 Speaker A 語音並念出回答：`;
 
-                targetTextElem.innerText = isHardMode ? "聽取對方語音後直接回應" : (curRound.bxText || curRound.bText);
+                targetTextElem.innerText = isChatChallengeMode ? "聽取對方語音後直接回應" : (curRound.bxText || curRound.bText);
                 transElem.innerText = "";
 
                 if (autoPlayOpponent) setTimeout(() => playAudioOrTTS(curRound.aAudio, curRound.aText, 0.85), 350);
@@ -4206,8 +4195,7 @@
                         document.getElementById('lbl-score').innerText = "🎉 發音合格！";
                         document.getElementById('lbl-score').style.color = "#58cc02";
                         
-                        // 盲讀模式下判定通過自動揭曉原文
-                        if (sentenceSubMode === 'challenge' || sentenceSubMode === 'entry') {
+                        if (isSentenceChallengeMode || isSentenceKeywordMode) {
                             const targetTextElem = document.getElementById('lbl-target-text');
                             targetTextElem.innerText = currentQ.text || "";
                             targetTextElem.style.visibility = "visible";
