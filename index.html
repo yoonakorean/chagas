@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>紀錄畫面挑戰系統</title>
+    <title>登入畫面挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -226,7 +226,7 @@
         }
         .step-page.active { display: block; }
 
-        /* 🌟 開啟頁面的酷炫進入遊戲畫面 (Landing View) */
+        /* 開啟頁面的酷炫進入遊戲畫面 (Landing View) */
         #step-welcome.active {
             display: flex !important;
             flex-direction: column;
@@ -1077,7 +1077,7 @@
         </div>
     </div>
 
-    <!-- 修改暱稱 Modal -->
+    <!-- 🌟 修改暱稱 Modal（已修復取消按鈕事件） -->
     <div id="modal-edit-nickname" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;">修改公開暱稱</h3>
@@ -1086,7 +1086,7 @@
             <div id="edit-nickname-error-msg" style="color: var(--duo-red); font-size: 0.8rem; text-align: center; margin-top: 4px;" class="hidden"></div>
             <div style="display:flex; gap:10px; margin-top:12px;">
                 <button id="btn-save-nickname" class="btn-3d btn-3d-primary" style="flex:1; padding:10px;">儲存修改</button>
-                <button id="btn-cancel-nickname" class="btn-3d btn-3d-secondary" style="flex:1; padding:10px;">取消</button>
+                <button id="btn-cancel-nickname" class="btn-3d btn-3d-secondary" onclick="closeModal('modal-edit-nickname')" style="flex:1; padding:10px;">取消</button>
             </div>
         </div>
     </div>
@@ -1756,7 +1756,11 @@
                 }
             },
             saveProgress: async (uid, data) => {
-                try { await db.collection("users").doc(uid).update(data); } catch (e) { console.error("儲存失敗:", e); }
+                try { 
+                    await db.collection("users").doc(uid).set(data, { merge: true }); 
+                } catch (e) { 
+                    console.error("儲存失敗:", e); 
+                }
             },
             updateUnitProgress: async (uid, unit, lesson) => {
                 try {
@@ -1766,7 +1770,7 @@
                         maxStage: lesson,
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     };
-                    await db.collection("users").doc(uid).update({ "unitProgress": window.currentUserData.unitProgress });
+                    await db.collection("users").doc(uid).set({ "unitProgress": window.currentUserData.unitProgress }, { merge: true });
                 } catch (e) {
                     console.error("更新進度失敗:", e);
                 }
@@ -1988,8 +1992,14 @@
                     window.currentUserData.status = "開通中";
                     window.currentUserData.memberships = memberships;
                     window.currentUserData.unlockedLevels = unlockedLevels;
-                    if (!window.currentUserData.friends) window.currentUserData.friends = [];
-                    if (!window.currentUserData.completedLessons) window.currentUserData.completedLessons = [];
+                    
+                    // 🌟 嚴格保護通關紀錄：若資料庫內已有，絕不洗成空陣列
+                    if (!Array.isArray(window.currentUserData.completedLessons)) {
+                        window.currentUserData.completedLessons = [];
+                    }
+                    if (!Array.isArray(window.currentUserData.friends)) {
+                        window.currentUserData.friends = [];
+                    }
 
                     if (window.currentUserData.learnCategory) setLearnCategory(window.currentUserData.learnCategory);
                     if (window.currentUserData.nativeLanguage) setUserLang(window.currentUserData.nativeLanguage);
@@ -1999,7 +2009,7 @@
                     renderUserInfo();
                     await autoLoadCurrentCategory();
 
-                    // 🌟 若是在首頁成功登入，自動恢復上次遊玩的進度
+                    // 🌟 若是在首頁點擊登入成功，自動還原上次遊玩進度
                     const welcomePage = document.getElementById('step-welcome');
                     if (welcomePage && welcomePage.classList.contains('active')) {
                         resumeLastPlayedProgress();
@@ -2054,7 +2064,7 @@
                     completedLessons: []
                 };
 
-                await db.collection('users').doc(currentUser.uid).set(initialData);
+                await db.collection('users').doc(currentUser.uid).set(initialData, { merge: true });
                 window.currentUserData = initialData;
                 closeModal('modal-setup-nickname');
                 setLearnCategory(learnCategory);
@@ -2080,7 +2090,7 @@
             setLearnCategory(cat);
             if (currentUser) {
                 try {
-                    await db.collection('users').doc(currentUser.uid).update({ learnCategory: cat });
+                    await db.collection('users').doc(currentUser.uid).set({ learnCategory: cat }, { merge: true });
                     if (window.currentUserData) window.currentUserData.learnCategory = cat;
                 } catch (e) { console.error("更新學習語言偏好失敗:", e); }
             }
@@ -2094,7 +2104,7 @@
             localStorage.setItem('preferred_user_lang', lang);
             if (currentUser) {
                 try {
-                    await db.collection('users').doc(currentUser.uid).update({ nativeLanguage: lang });
+                    await db.collection('users').doc(currentUser.uid).set({ nativeLanguage: lang }, { merge: true });
                     if (window.currentUserData) window.currentUserData.nativeLanguage = lang;
                 } catch (e) { console.error("更新母語偏好失敗:", e); }
             }
@@ -2194,6 +2204,12 @@
             }
         };
 
+        // 🌟 點擊修改暱稱取消按鈕的監聽
+        const btnCancelNickname = document.getElementById('btn-cancel-nickname');
+        if (btnCancelNickname) {
+            btnCancelNickname.onclick = () => closeModal('modal-edit-nickname');
+        }
+
         document.getElementById('btn-google-login').onclick = async () => {
             try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); } catch (err) { showLoginError(err.message); }
         };
@@ -2219,7 +2235,7 @@
         document.getElementById('btn-cancel-forgot-password').onclick = () => closeModal('modal-forgot-password');
         document.getElementById('btn-send-reset-email').onclick = async () => {
             const email = document.getElementById('input-forgot-email').value.trim();
-            if (!email) return alert("請輸入電子信箱！");
+            if (!email) return alert("請輸入電子郵件！");
             try {
                 await auth.sendPasswordResetEmail(email);
                 alert("重設信件已寄出，請至信箱查收！");
@@ -2335,7 +2351,7 @@
                     rank++;
                 });
             } catch (e) {
-                container.innerHTML = "<div style='text-align:center; color:#ef4444; padding:20px 0;'>載入失敗，請確認網路！</div>";
+                container.innerHTML = "<div style='text-align:color:#ef4444; padding:20px 0;'>載入失敗，請確認網路！</div>";
             }
         }
 
@@ -2442,7 +2458,7 @@
                     return;
                 }
                 currentFriends.push(targetEmail);
-                await db.collection("users").doc(currentUser.uid).update({ friends: currentFriends });
+                await db.collection("users").doc(currentUser.uid).set({ friends: currentFriends }, { merge: true });
                 window.currentUserData.friends = currentFriends;
                 input.value = "";
                 errDiv.classList.add('hidden');
@@ -2462,7 +2478,7 @@
             if (!confirm(`確定要將 ${email} 從好友名單中移除嗎？`)) return;
             try {
                 let currentFriends = (window.currentUserData.friends || []).filter(e => e.toLowerCase() !== email.toLowerCase());
-                await db.collection("users").doc(currentUser.uid).update({ friends: currentFriends });
+                await db.collection("users").doc(currentUser.uid).set({ friends: currentFriends }, { merge: true });
                 window.currentUserData.friends = currentFriends;
                 loadFriendsLeaderboardData();
             } catch (e) {
@@ -2572,7 +2588,7 @@
             window.currentUserData.xp = (window.currentUserData.xp || 0) + amount;
             renderUserInfo();
             try {
-                await db.collection('users').doc(currentUser.uid).update({ xp: firebase.firestore.FieldValue.increment(amount) });
+                await db.collection('users').doc(currentUser.uid).set({ xp: firebase.firestore.FieldValue.increment(amount) }, { merge: true });
             } catch (e) { console.error("更新 XP 失敗:", e); }
         }
 
@@ -2977,11 +2993,12 @@
             }
         }
 
+        // 🌟 修正通關存檔：使用 set(..., { merge: true }) 確保資料庫絕不遺失紀錄
         async function finishCurrentChallenge() {
             stopSpeechRecognition();
             stopChallengeTimer();
             const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_${currentConfig.mode}`;
-            const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
+            let completedList = (window.currentUserData && Array.isArray(window.currentUserData.completedLessons)) ? window.currentUserData.completedLessons : [];
 
             if (completedList.includes(lessonKey)) {
                 alert("🎉 恭喜完成複習！由於先前已通關此關卡，本次不重複發放 XP。");
@@ -2991,7 +3008,11 @@
                     completedList.push(lessonKey);
                     window.currentUserData.completedLessons = completedList;
                     await addXP(100);
-                    await db.collection("users").doc(currentUser.uid).update({ completedLessons: completedList });
+                    try {
+                        await db.collection("users").doc(currentUser.uid).set({ completedLessons: completedList }, { merge: true });
+                    } catch (err) {
+                        console.error("儲存通關紀錄失敗:", err);
+                    }
                 }
             }
             selectUnit(currentConfig.unit_id);
@@ -3082,6 +3103,7 @@
             goToStep('step-grammar');
         }
 
+        // 語法對話呈現：徹底移除 gram 播放按鈕，例句切割為列表手動發音
         function showCurrentGrammarDialog() {
             if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
             const total = currentGrammarItem.dialogs.length;
@@ -3106,6 +3128,7 @@
 
             const mainDialogBox = document.getElementById('box-grammar-dialog-main');
 
+            // 1. 若 gram 有文字，呈現主對話框與打字機；若 gram 為空，隱藏對話框
             if (currentFullDialogText) {
                 mainDialogBox.style.display = 'block';
                 mainDialogBox.scrollTop = 0;
@@ -3116,6 +3139,7 @@
                 isTypewriterTyping = false;
             }
 
+            // 2. 例句解析：支援以 / 切割為多句並加上 1. 2. 3. 編號與專屬發音按鈕（不自動播放）
             const rawExample = (currentDialogObj.example || "").trim();
             const boxExample = document.getElementById('box-grammar-example');
             const listExample = document.getElementById('container-grammar-example-list');
@@ -3155,6 +3179,7 @@
             }
         }
 
+        // 語法打字機：逐字輸出並自動向下滾動至最底端
         function startTypewriter(text) {
             if (typewriterTimer) clearInterval(typewriterTimer);
             const box = document.getElementById('lbl-grammar-dialog');
@@ -3180,6 +3205,7 @@
             }, 35);
         }
 
+        // 立即完成打字機：內容全展開並瞬間捲動到底部
         function completeTypewriterImmediately() {
             if (isTypewriterTyping) {
                 clearInterval(typewriterTimer);
@@ -3335,6 +3361,7 @@
             if (nextBlank !== -1) activeBlankIndex = nextBlank;
         }
 
+        // 語法測驗回答錯誤：顯示每題正確答案
         function checkGrammarQuiz() {
             const quizList = currentGrammarItem.expandedQuizzes || [];
             if (!quizList.length) return;
@@ -3505,6 +3532,7 @@
             totalChallengeQuestions = wordQuestions.length;
             currentWordPronMode = 'kr_pron';
 
+            // 彈窗若是計時挑戰模式或入門模式，皆預設套用挑戰模式設定
             const isHard = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
 
             isWordShadowChallengeMode = isHard;
@@ -3627,7 +3655,7 @@
                 const sameLevelWords = rawWordData.filter(w => normalizeLevelStr(getItemField(w, 'level')) === currentLevelNormalized);
                 const poolWords = (sameLevelWords.length >= 4) ? sameLevelWords : rawWordData;
 
-                // 0A 程度：直接從 choice 欄位解析選項
+                // 0A 程度：直接從 choice 欄位解析選項[cite: 2]
                 if (is0ALevel) {
                     if (choiceToggleBox) choiceToggleBox.style.display = 'none';
                     targetTextElem.innerText = item.text || "題目";
@@ -4355,6 +4383,7 @@
                         document.getElementById('lbl-score').innerText = "🎉 發音合格！";
                         document.getElementById('lbl-score').style.color = "#58cc02";
                         
+                        // 盲讀模式下判定通過自動揭曉原文
                         if (isSentenceChallengeMode || isSentenceKeywordMode) {
                             const targetTextElem = document.getElementById('lbl-target-text');
                             targetTextElem.innerText = currentQ.text || "";
