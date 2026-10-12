@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>生存挑戰系統</title>
+    <title>錯誤固定挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -246,7 +246,7 @@
             border: 2px solid #818cf8;
             border-radius: 16px;
             padding: 16px 14px 44px 14px;
-            font-size: 1.15rem; /* 字體調大 */
+            font-size: 1.15rem;
             color: #312e81;
             display: block !important;
             margin-bottom: 8px;
@@ -293,7 +293,7 @@
             gap: 5px;
         }
         .grammar-example-content {
-            font-size: 1.1rem; /* 字體調大 */
+            font-size: 1.1rem;
             color: #1e293b;
             font-weight: bold;
             line-height: 1.5;
@@ -533,12 +533,12 @@
             text-align: center !important;
         }
 
-        /* 🌟 題目字體調大至 2.2rem */
+        /* 題目字體調大至 2.2rem */
         .target-text {
             font-size: 2.2rem; font-weight: bold; color: #1f2937; margin: 12px 0 6px 0;
             min-height: 2.6rem; word-break: break-word; line-height: 1.35;
         }
-        /* 🌟 翻譯字體調大至 1.2rem */
+        /* 翻譯字體調大至 1.2rem */
         .translation-text { 
             font-size: 1.2rem; color: #4b5563; margin-bottom: 10px; min-height: 1.6rem; word-break: break-word; font-weight: 500;
         }
@@ -588,8 +588,30 @@
         .btn-record.recording { animation: pulse 1s infinite; background: #dc2626; }
         @keyframes pulse { 0%{transform: scale(1);} 50%{transform: scale(1.08);} 100%{transform: scale(1);} }
 
-        .result-box { background: #f3f4f6; border-radius: 12px; padding: 10px; margin-top: 10px; font-size: 0.95rem; text-align: center; }
-        .score-badge { font-size: 1.1rem; font-weight: bold; color: var(--duo-green); margin-top: 4px; }
+        /* 🌟 固定最小高度與佈局，防止答錯顯示兩行正解時畫面跳動 */
+        .result-box { 
+            background: #f3f4f6; 
+            border-radius: 12px; 
+            padding: 10px 12px; 
+            margin-top: 10px; 
+            font-size: 0.95rem; 
+            text-align: center;
+            min-height: 64px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .score-badge { 
+            font-size: 1.05rem; 
+            font-weight: bold; 
+            color: var(--duo-green); 
+            margin-top: 2px;
+            line-height: 1.4;
+            word-break: break-word;
+        }
 
         .nav-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
         .btn-nav {
@@ -1023,7 +1045,6 @@
 
                 <div id="area-grammar-dialog">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <!-- 🌟 移除燈泡符號，改為書本圖示 -->
                         <h3 style="margin: 0; color: #4338ca; font-size: 1.15rem;"><i class="fa-solid fa-book-open"></i> 觀念說明</h3>
                         <span id="lbl-dialog-counter" style="font-size: 0.85rem; color: #6b7280; font-weight: bold;">1 / 1</span>
                     </div>
@@ -1147,7 +1168,6 @@
                     </button>
                 </div>
 
-                <!-- 🌟 移除燈泡符號，改為簡潔標籤 -->
                 <div id="chat-a-hint-bubble" style="display: none; background: #fef3c7; border: 1.5px solid #fde68a; border-radius: 14px; padding: 10px; margin-bottom: 10px; text-align: left;">
                     <div style="font-size: 0.85rem; color: #b45309; font-weight: 800; margin-bottom: 2px;" id="lbl-chat-a-hint-title">關鍵字提示：</div>
                     <div style="font-size: 1.15rem; font-weight: bold; color: #92400e;" id="lbl-chat-a-hint-text">...</div>
@@ -1179,7 +1199,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 步驟 6-B：字塊重組畫面 -->
+            <!-- 🌟 步驟 6-B：字塊重組畫面 (按鈕順序已對調，且結果框預留高度防止跳動) -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info">字塊重組</div>
@@ -1199,8 +1219,17 @@
                 <div id="zone-answer" class="block-zone"></div>
                 <p style="font-size: 0.85rem; color: #9ca3af; text-align: center; margin: 0;">點擊字塊組句：</p>
                 <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
-                <button class="btn-confirm" onclick="checkBlockAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
-                <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-block-score">等待回答...</div></div>
+                
+                <!-- 結果提示框 (固定高度，移至上方) -->
+                <div class="result-box" style="margin-top: 10px;">
+                    <div class="score-badge" id="lbl-block-score">請選取字塊組合句子</div>
+                </div>
+
+                <!-- 檢查答案按鈕 (移至結果框下方) -->
+                <button class="btn-confirm" onclick="checkBlockAnswer()" style="margin-top: 10px;">
+                    <i class="fa-solid fa-check"></i> 檢查答案
+                </button>
+
                 <div class="nav-controls">
                     <button class="btn-nav" id="btn-block-prev" onclick="prevQuestion()">上一題</button>
                     <span class="lbl-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
@@ -1256,7 +1285,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-word-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 步驟 6-E：通用單字聽打畫面 (按鈕位置已對調) -->
+            <!-- 🌟 步驟 6-E：通用單字聽打畫面 (按鈕順序已對調，且結果框預留高度防止跳動) -->
             <div id="step-quiz-word-type" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-word-type-title">單字聽打挑戰</div>
@@ -1291,12 +1320,12 @@
                 <!-- 輸入框 -->
                 <input type="text" id="input-word-type" class="vocab-input" placeholder="請輸入聽到的單字" autocomplete="off" autocorrect="off" autocapitalize="none">
                 
-                <!-- 🌟 按鈕位置交換：判定/等待結果區塊移至上方 -->
+                <!-- 結果提示框 (固定高度，移至上方) -->
                 <div class="result-box" style="margin-top: 8px;">
                     <div class="score-badge" id="lbl-word-type-score">等待輸入...</div>
                 </div>
 
-                <!-- 🌟 檢查答案按鈕移至結果區塊下方 -->
+                <!-- 檢查答案按鈕 (移至結果框下方) -->
                 <button class="btn-confirm" id="btn-submit-word-type" onclick="checkWordTypeAnswer()" style="margin-top: 10px;">
                     <i class="fa-solid fa-check"></i> 檢查答案
                 </button>
@@ -1401,7 +1430,7 @@
 
                 <div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 14px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 10px;">
                     <div>
-                        <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex mechanical; align-items: center; gap: 6px;">
+                        <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
                             <i class="fa-solid fa-language" style="color: var(--duo-blue);"></i> 當前學習語言
                         </div>
                         <select id="select-account-learn-language" onchange="updateAccountLearnCategory(this.value)" style="margin: 0;">
