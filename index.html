@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>gram戰系統</title>
+    <title>驗證挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -241,7 +241,7 @@
             width: 100%;
         }
 
-        /* 🌟 固定紫色框框大小為 180px，防止高度變動下擠例句 */
+        /* 🌟 紫色觀念框高度由 180px 加大至 260px，容納更多行文字且不擠壓下方例句 */
         .grammar-dialog-box {
             background: #eef2ff;
             border: 2px solid #818cf8;
@@ -251,8 +251,9 @@
             color: #312e81;
             display: block !important;
             margin-bottom: 8px;
-            flex: none; /* 取消彈性擴展 */
-            height: 180px; /* 固定高度 */
+            flex: none;
+            height: 260px; /* 加大高度 */
+            max-height: 38vh;
             overflow-y: auto;
             line-height: 1.6;
             position: relative;
@@ -280,7 +281,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             text-align: left;
             position: relative;
-            flex: 1; /* 讓例句自動佔據剩餘空間 */
+            flex: 1;
             max-height: 38vh;
             overflow-y: auto;
             box-sizing: border-box;
@@ -770,7 +771,7 @@
             .lesson-btn-group { grid-template-columns: repeat(2, 1fr); gap: 4px; }
             .btn-lesson-action { font-size: 0.78rem; padding: 7px 2px; }
             .block-chip { padding: 6px 10px; font-size: 0.95rem; }
-            .grammar-dialog-box { font-size: 1.05rem; padding: 14px 12px; height: 160px; }
+            .grammar-dialog-box { font-size: 1.05rem; padding: 14px 12px; height: 230px; }
             .grammar-q-item { font-size: 1rem; }
             .bottom-fixed-bar { padding: 6px 10px; }
             .bottom-nav-item { font-size: 0.82rem; padding: 7px 8px; }
@@ -938,25 +939,52 @@
         </div>
     </div>
 
-    <!-- 離開挑戰二次確認彈窗 -->
+    <!-- 🌟 離開挑戰二次確認彈窗 (已替換為右側藍色流淚小鳥吉祥物) -->
     <div id="modal-quit-challenge" class="custom-modal">
         <div class="custom-modal-card" style="padding: 26px 20px;">
             <div style="margin-bottom: 14px;">
-                <svg width="100" height="100" viewBox="0 0 120 120" style="margin: 0 auto; display: block;">
-                    <rect x="25" y="20" width="70" height="78" rx="35" fill="#58cc02"/>
-                    <path d="M50 68 Q60 74 70 68" stroke="#46a302" stroke-width="3" fill="none" stroke-linecap="round"/>
-                    <path d="M52 76 Q60 82 68 76" stroke="#46a302" stroke-width="3" fill="none" stroke-linecap="round"/>
-                    <ellipse cx="45" cy="98" rx="8" ry="4" fill="#f97316"/>
-                    <ellipse cx="75" cy="98" rx="8" ry="4" fill="#f97316"/>
-                    <ellipse cx="43" cy="46" rx="14" ry="15" fill="#ffffff"/>
-                    <ellipse cx="77" cy="46" rx="14" ry="15" fill="#ffffff"/>
-                    <circle cx="43" cy="48" r="9" fill="#1e293b"/>
-                    <circle cx="77" cy="48" r="9" fill="#1e293b"/>
-                    <circle cx="40" cy="44" r="3" fill="#ffffff"/>
-                    <circle cx="74" cy="44" r="3" fill="#ffffff"/>
-                    <polygon points="54,54 66,54 60,63" fill="#f97316"/>
-                    <path d="M35 55 C32 68, 48 70, 48 60 C48 55, 36 52, 35 55 Z" fill="#38bdf8" opacity="0.9"/>
-                    <path d="M85 55 C88 68, 72 70, 72 60 C72 55, 84 52, 85 55 Z" fill="#38bdf8" opacity="0.9"/>
+                <svg width="110" height="110" viewBox="0 0 120 120" style="margin: 0 auto; display: block;">
+                    <!-- 身體與頭部 (飽滿圓潤的水滴弧線) -->
+                    <path d="M 28 65 C 25 32, 50 16, 74 20 C 96 24, 104 48, 98 72 C 92 94, 70 102, 48 98 C 34 95, 29 80, 28 65 Z" fill="#1cb0f6"/>
+                    
+                    <!-- 腹部淡藍淺色羽毛 -->
+                    <path d="M 38 72 C 38 90, 52 96, 68 95 C 60 84, 46 80, 38 72 Z" fill="#7dd3fc" opacity="0.6"/>
+
+                    <!-- 白色大面頰 (右側/雙頰) -->
+                    <ellipse cx="78" cy="55" rx="14" ry="12" fill="#ffffff"/>
+                    <ellipse cx="44" cy="54" rx="13" ry="11" fill="#ffffff"/>
+
+                    <!-- 紅色圓圓腮紅 -->
+                    <ellipse cx="84" cy="62" rx="5" ry="4" fill="#fb7185"/>
+                    <ellipse cx="36" cy="61" rx="5" ry="4" fill="#fb7185"/>
+
+                    <!-- 楚楚可憐的閉眼/瞇瞇哭泣弧線眼 -->
+                    <path d="M 69 48 Q 74 42 79 48" stroke="#0f172a" stroke-width="3" stroke-linecap="round" fill="none"/>
+                    <path d="M 43 47 Q 48 41 53 47" stroke="#0f172a" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+                    <!-- 橘黃色小嘴巴 (張開悲傷模樣) -->
+                    <path d="M 57 52 Q 62 49 67 52 Q 62 61 57 52 Z" fill="#f59e0b"/>
+                    <path d="M 59 53 Q 62 57 65 53" stroke="#d97706" stroke-width="1.5" fill="none"/>
+
+                    <!-- 晶瑩剔透的大水滴眼淚 (左眼與右眼下方) -->
+                    <path d="M 82 56 C 85 53, 90 58, 88 64 C 86 67, 80 67, 79 63 C 78 59, 81 57, 82 56 Z" fill="#38bdf8"/>
+                    <ellipse cx="85" cy="61" rx="1.5" ry="2" fill="#ffffff" opacity="0.8"/>
+                    
+                    <path d="M 39 55 C 42 52, 47 57, 45 63 C 43 66, 37 66, 36 62 C 35 58, 38 56, 39 55 Z" fill="#38bdf8"/>
+                    <ellipse cx="42" cy="60" rx="1.5" ry="2" fill="#ffffff" opacity="0.8"/>
+
+                    <!-- 右側揮手挽留的小翅膀 -->
+                    <path d="M 94 58 C 108 50, 114 62, 102 70 C 96 74, 91 66, 94 58 Z" fill="#0284c7"/>
+
+                    <!-- 左側貼在身旁的小翅膀 -->
+                    <path d="M 28 65 C 20 68, 22 80, 30 82 C 34 83, 33 72, 28 65 Z" fill="#0284c7"/>
+
+                    <!-- 頭頂一撮可愛的藍色呆毛羽毛 -->
+                    <path d="M 64 20 Q 66 10 74 12 Q 70 18 64 20 Z" fill="#0284c7"/>
+
+                    <!-- 橘色小鳥腳 -->
+                    <ellipse cx="48" cy="100" rx="6" ry="3" fill="#f59e0b"/>
+                    <ellipse cx="68" cy="99" rx="6" ry="3" fill="#f59e0b"/>
                 </svg>
             </div>
             <h3 style="margin: 0 0 16px 0; color: #1e293b; font-size: 1.1rem; font-weight: 800; line-height: 1.5;">
@@ -1062,7 +1090,7 @@
                         <span id="lbl-dialog-counter" style="font-size: 0.85rem; color: #6b7280; font-weight: bold;">1 / 1</span>
                     </div>
 
-                    <!-- 🌟 固定大小的觀念說明對話框（已移除播放按鈕） -->
+                    <!-- 固定 260px 大小的觀念說明對話框（已移除播放按鈕） -->
                     <div class="grammar-dialog-box" id="box-grammar-dialog-main" onclick="completeTypewriterImmediately()">
                         <span id="lbl-grammar-dialog">...</span>
                     </div>
@@ -1187,7 +1215,7 @@
                     <div style="font-size: 1.25rem; font-weight: bold; color: #0f172a;" id="lbl-partner-text">...</div>
                 </div>
 
-                <div target-text" id="lbl-chat-target-text">載入中...</div>
+                <div class="target-text" id="lbl-chat-target-text">載入中...</div>
                 <div class="translation-text" id="lbl-chat-translation">...</div>
                 
                 <div class="controls">
@@ -1773,7 +1801,7 @@
         });
 
         async function verifyAndSyncUser(user) {
-            document.getElementById('lbl-username').innerText = "驗證白名單中...";
+            document.getElementById('lbl-username').innerText = "驗證中...";
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
                 if (!gasResult || gasResult.status !== "success") {
@@ -2159,7 +2187,7 @@
                     rank++;
                 });
             } catch (e) {
-                container.innerHTML = "<div style='text-align:center; color:#ef4444; padding:20px 0;'>載入失敗，請確認網路！</div>";
+                container.innerHTML = "<div style='text-align:color:#ef4444; padding:20px 0;'>載入失敗，請確認網路！</div>";
             }
         }
 
@@ -3453,7 +3481,7 @@
                 const sameLevelWords = rawWordData.filter(w => normalizeLevelStr(getItemField(w, 'level')) === currentLevelNormalized);
                 const poolWords = (sameLevelWords.length >= 4) ? sameLevelWords : rawWordData;
 
-                // 0A 程度：直接從 choice 欄位解析選項[cite: 1]
+                // 0A 程度：直接從 choice 欄位解析選項
                 if (is0ALevel) {
                     if (choiceToggleBox) choiceToggleBox.style.display = 'none';
                     targetTextElem.innerText = item.text || "題目";
