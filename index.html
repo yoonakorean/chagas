@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>畫面挑戰系統</title>
+    <title>紀錄畫面挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -706,6 +706,7 @@
         .btn-record.recording { animation: pulse 1s infinite; background: #dc2626; }
         @keyframes pulse { 0%{transform: scale(1);} 50%{transform: scale(1.08);} 100%{transform: scale(1);} }
 
+        /* 固定最小高度為 82px，預留足夠兩行錯誤提示與正解空間，杜絕按鈕跳動 */
         .result-box { 
             background: #f3f4f6; 
             border-radius: 12px; 
@@ -1031,7 +1032,7 @@
         </div>
     </div>
 
-    <!-- 🌟 模式選擇彈窗 (擴充為三種模式：練習模式、入門模式、計時挑戰模式) -->
+    <!-- 模式選擇彈窗 (擴充為三種模式：練習模式、入門模式、計時挑戰模式) -->
     <div id="modal-select-mode-type" class="custom-modal">
         <div class="custom-modal-card" style="padding: 24px 18px;">
             <div class="close-icon-circle" onclick="closeModal('modal-select-mode-type')"><i class="fa-solid fa-xmark"></i></div>
@@ -1056,7 +1057,7 @@
         </div>
     </div>
 
-    <!-- 離開挑戰二次確認彈窗 (已改用 GitHub 中的 quit.png 圖片) -->
+    <!-- 離開挑戰二次確認彈窗 (quit.png) -->
     <div id="modal-quit-challenge" class="custom-modal">
         <div class="custom-modal-card" style="padding: 26px 20px;">
             <div style="margin-bottom: 14px;">
@@ -1120,7 +1121,7 @@
         <!-- 中間滾動主區塊 -->
         <div id="learning-content-view">
 
-            <!-- 🌟 0. 全新開場畫面 (進入遊戲 & 註冊帳號) -->
+            <!-- 0. 全新開場畫面 (進入遊戲 & 註冊帳號) -->
             <div id="step-welcome" class="step-page active">
                 <div class="welcome-logo-icon">
                     <i class="fa-solid fa-gamepad"></i>
@@ -1298,7 +1299,7 @@
                     </button>
                 </div>
 
-                <!-- 🌟 移至挑戰按鈕下方第一行的指引標籤 -->
+                <!-- 移至挑戰按鈕下方第一行的指引標籤 -->
                 <div>
                     <div class="instruction-badge-bar" id="lbl-chat-instruction-top">
                         請依指引念出句子：
@@ -1682,7 +1683,7 @@
         let isWordTypeChallengeMode = false;
         let isWordChoiceChallengeMode = false;
 
-        // 🌟 彈窗模式管理 ('practice' 練習 | 'entry' 入門 | 'timed' 計時挑戰)
+        // 彈窗模式管理 ('practice' 練習 | 'entry' 入門 | 'timed' 計時挑戰)
         let activeChallengeType = 'practice';
         let challengeTimerInterval = null;
         let challengeTimeRemaining = 300;
@@ -1887,10 +1888,10 @@
             btnAuthSubmit.innerText = '註冊帳號';
         };
 
-        // 🌟 開啟網頁首頁「進入遊戲」按鈕事件
+        // 🌟 開啟網頁首頁「進入遊戲」按鈕事件（自動還原上次遊玩單元）
         function handleStartGameClick() {
             if (currentUser) {
-                goToStep('step-level');
+                resumeLastPlayedProgress();
             } else {
                 authMode = 'login';
                 tabLogin.classList.replace('btn-3d-secondary', 'btn-3d-primary');
@@ -1900,7 +1901,24 @@
             }
         }
 
-        // 🌟 開啟網頁首頁「註冊帳號」按鈕事件
+        // 🌟 自動還原上次遊玩單元邏輯
+        function resumeLastPlayedProgress() {
+            const lastLevel = localStorage.getItem('last_played_level');
+            const lastUnit = localStorage.getItem('last_played_unit');
+            const unlocked = (window.currentUserData?.unlockedLevels || ['0A']).map(l => l.toUpperCase());
+
+            if (lastLevel && lastUnit && unlocked.includes(lastLevel.toUpperCase())) {
+                currentConfig.level = lastLevel;
+                document.getElementById('lbl-unit-level').innerText = lastLevel;
+                document.getElementById('lbl-user-level').innerText = lastLevel;
+                renderUnits(lastLevel);
+                selectUnit(lastUnit);
+            } else {
+                goToStep('step-level');
+            }
+        }
+
+        // 開啟網頁首頁「註冊帳號」按鈕事件
         function handleOpenRegisterModal() {
             authMode = 'register';
             tabRegister.classList.replace('btn-3d-secondary', 'btn-3d-primary');
@@ -1916,7 +1934,7 @@
             } else {
                 currentUser = null;
                 window.currentUserData = null;
-                goToStep('step-welcome'); // 未登入顯示歡迎首頁
+                goToStep('step-welcome');
                 document.getElementById('lbl-username').innerText = "訪客";
                 document.getElementById('lbl-xp').innerText = "0";
             }
@@ -1980,6 +1998,12 @@
                     closeModal('login-modal');
                     renderUserInfo();
                     await autoLoadCurrentCategory();
+
+                    // 🌟 若是在首頁成功登入，自動恢復上次遊玩的進度
+                    const welcomePage = document.getElementById('step-welcome');
+                    if (welcomePage && welcomePage.classList.contains('active')) {
+                        resumeLastPlayedProgress();
+                    }
                 }
             } catch (err) {
                 console.error("驗證失敗:", err);
@@ -2037,6 +2061,7 @@
                 setUserLang(nativeLang);
                 renderUserInfo();
                 await autoLoadCurrentCategory();
+                resumeLastPlayedProgress();
             } catch (e) {
                 errDiv.innerText = "儲存失敗：" + e.message;
                 errDiv.classList.remove('hidden');
@@ -2194,7 +2219,7 @@
         document.getElementById('btn-cancel-forgot-password').onclick = () => closeModal('modal-forgot-password');
         document.getElementById('btn-send-reset-email').onclick = async () => {
             const email = document.getElementById('input-forgot-email').value.trim();
-            if (!email) return alert("請輸入電子郵件！");
+            if (!email) return alert("請輸入電子信箱！");
             try {
                 await auth.sendPasswordResetEmail(email);
                 alert("重設信件已寄出，請至信箱查收！");
@@ -2578,7 +2603,7 @@
             document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
         }
 
-        // 🌟 頁面切換控制：進入 step-welcome 時隱藏上下選單列
+        // 頁面切換控制：進入 step-welcome 時隱藏上下選單列
         function goToStep(stepId) {
             stopSpeechRecognition();
             document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
@@ -2745,10 +2770,15 @@
             }
         }
 
-        // 關卡排列順序：語法介紹 > 單字跟讀 > 單字選擇 > 單字聽打 > 句子跟讀 > 字塊重組 > 句子問答
+        // 🌟 選擇單元（同時記錄最後遊玩的程度與單元編號）
         function selectUnit(unitId) {
             stopSpeechRecognition();
             currentConfig.unit_id = unitId;
+
+            // 記錄進度
+            localStorage.setItem('last_played_level', currentConfig.level);
+            localStorage.setItem('last_played_unit', unitId);
+
             document.getElementById('lbl-lesson-unit').innerText = `Level ${currentConfig.level} | 第 ${unitId} 單元`;
 
             const container = document.getElementById('container-lessons');
@@ -3052,7 +3082,6 @@
             goToStep('step-grammar');
         }
 
-        // 語法對話呈現：徹底移除 gram 播放按鈕，例句切割為列表手動發音
         function showCurrentGrammarDialog() {
             if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
             const total = currentGrammarItem.dialogs.length;
@@ -3077,7 +3106,6 @@
 
             const mainDialogBox = document.getElementById('box-grammar-dialog-main');
 
-            // 1. 若 gram 有文字，呈現主對話框與打字機；若 gram 為空，隱藏對話框
             if (currentFullDialogText) {
                 mainDialogBox.style.display = 'block';
                 mainDialogBox.scrollTop = 0;
@@ -3088,7 +3116,6 @@
                 isTypewriterTyping = false;
             }
 
-            // 2. 例句解析：支援以 / 切割為多句並加上 1. 2. 3. 編號與專屬發音按鈕（不自動播放）
             const rawExample = (currentDialogObj.example || "").trim();
             const boxExample = document.getElementById('box-grammar-example');
             const listExample = document.getElementById('container-grammar-example-list');
@@ -3128,7 +3155,6 @@
             }
         }
 
-        // 語法打字機：逐字輸出並自動向下滾動至最底端
         function startTypewriter(text) {
             if (typewriterTimer) clearInterval(typewriterTimer);
             const box = document.getElementById('lbl-grammar-dialog');
@@ -3154,7 +3180,6 @@
             }, 35);
         }
 
-        // 立即完成打字機：內容全展開並瞬間捲動到底部
         function completeTypewriterImmediately() {
             if (isTypewriterTyping) {
                 clearInterval(typewriterTimer);
@@ -3310,7 +3335,6 @@
             if (nextBlank !== -1) activeBlankIndex = nextBlank;
         }
 
-        // 語法測驗回答錯誤：顯示每題正確答案
         function checkGrammarQuiz() {
             const quizList = currentGrammarItem.expandedQuizzes || [];
             if (!quizList.length) return;
@@ -3481,7 +3505,6 @@
             totalChallengeQuestions = wordQuestions.length;
             currentWordPronMode = 'kr_pron';
 
-            // 彈窗若是計時挑戰模式或入門模式，皆預設套用挑戰模式設定
             const isHard = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
 
             isWordShadowChallengeMode = isHard;
@@ -3604,7 +3627,7 @@
                 const sameLevelWords = rawWordData.filter(w => normalizeLevelStr(getItemField(w, 'level')) === currentLevelNormalized);
                 const poolWords = (sameLevelWords.length >= 4) ? sameLevelWords : rawWordData;
 
-                // 0A 程度：直接從 choice 欄位解析選項[cite: 1, 3]
+                // 0A 程度：直接從 choice 欄位解析選項
                 if (is0ALevel) {
                     if (choiceToggleBox) choiceToggleBox.style.display = 'none';
                     targetTextElem.innerText = item.text || "題目";
@@ -3826,7 +3849,7 @@
             if (currentConfig.mode === 'shadow') {
                 goToStep('step-quiz-shadow');
 
-                // 🌟 彈窗若為計時模式或入門模式，直接進入盲讀挑戰設定
+                // 彈窗若為計時模式或入門模式，直接進入盲讀挑戰設定
                 const isHard = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
                 isSentenceKeywordMode = false;
                 isSentenceChallengeMode = isHard;
@@ -4123,7 +4146,7 @@
             totalChallengeQuestions = chatRounds.length;
             chatRole = 'A';
 
-            // 🌟 彈窗若選擇入門或計時挑戰，預設進入挑戰模式
+            // 彈窗若選擇入門或計時挑戰，預設進入挑戰模式
             const isHard = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
             isChatChallengeMode = isHard;
 
@@ -4332,7 +4355,6 @@
                         document.getElementById('lbl-score').innerText = "🎉 發音合格！";
                         document.getElementById('lbl-score').style.color = "#58cc02";
                         
-                        // 盲讀模式下判定通過自動揭曉原文
                         if (isSentenceChallengeMode || isSentenceKeywordMode) {
                             const targetTextElem = document.getElementById('lbl-target-text');
                             targetTextElem.innerText = currentQ.text || "";
@@ -4379,7 +4401,6 @@
         window.onload = () => {
             setUserLang(localStorage.getItem('preferred_user_lang') || 'zh');
             setLearnCategory(localStorage.getItem('preferred_learn_category') || 'korean');
-            // 🌟 預設進入開場進入遊戲畫面
             goToStep('step-welcome');
         };
     </script>
