@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>錯誤固定挑戰系統</title>
+    <title>生存挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -271,6 +271,7 @@
             border: none; border-radius: 8px; padding: 5px 11px; font-size: 0.82rem; font-weight: bold; cursor: pointer;
         }
 
+        /* 🌟 語法多例句列表樣式 */
         .grammar-example-box {
             display: none;
             background: #ffffff;
@@ -282,29 +283,43 @@
             text-align: left;
             position: relative;
             flex-shrink: 0;
+            max-height: 38vh;
+            overflow-y: auto;
         }
         .grammar-example-title {
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             font-weight: 800;
             color: #4338ca;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 5px;
         }
-        .grammar-example-content {
+        .grammar-example-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .grammar-example-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 8px 12px;
             font-size: 1.1rem;
             color: #1e293b;
             font-weight: bold;
-            line-height: 1.5;
-            white-space: pre-wrap;
+            line-height: 1.4;
             word-break: break-word;
-            padding-right: 40px;
         }
-        .btn-example-audio {
-            position: absolute;
-            top: 12px;
-            right: 12px;
+        .grammar-example-item-text {
+            flex: 1;
+            padding-right: 10px;
+            white-space: pre-wrap;
+        }
+        .btn-example-item-audio {
             background: #6366f1;
             color: white;
             border: none;
@@ -316,9 +331,10 @@
             justify-content: center;
             cursor: pointer;
             font-size: 0.85rem;
+            flex-shrink: 0;
             transition: transform 0.1s ease;
         }
-        .btn-example-audio:active {
+        .btn-example-item-audio:active {
             transform: scale(0.9);
         }
 
@@ -533,12 +549,10 @@
             text-align: center !important;
         }
 
-        /* 題目字體調大至 2.2rem */
         .target-text {
             font-size: 2.2rem; font-weight: bold; color: #1f2937; margin: 12px 0 6px 0;
             min-height: 2.6rem; word-break: break-word; line-height: 1.35;
         }
-        /* 翻譯字體調大至 1.2rem */
         .translation-text { 
             font-size: 1.2rem; color: #4b5563; margin-bottom: 10px; min-height: 1.6rem; word-break: break-word; font-weight: 500;
         }
@@ -588,7 +602,6 @@
         .btn-record.recording { animation: pulse 1s infinite; background: #dc2626; }
         @keyframes pulse { 0%{transform: scale(1);} 50%{transform: scale(1.08);} 100%{transform: scale(1);} }
 
-        /* 🌟 固定最小高度與佈局，防止答錯顯示兩行正解時畫面跳動 */
         .result-box { 
             background: #f3f4f6; 
             border-radius: 12px; 
@@ -1050,18 +1063,15 @@
                     </div>
 
                     <!-- 觀念說明對話框 -->
-                    <div class="grammar-dialog-box" onclick="completeTypewriterImmediately()">
+                    <div class="grammar-dialog-box" id="box-grammar-dialog-main" onclick="completeTypewriterImmediately()">
                         <span id="lbl-grammar-dialog">...</span>
                         <button class="btn-gram-audio" id="btn-gram-audio" style="display: none;"><i class="fa-solid fa-volume-high"></i> 播放聲音</button>
                     </div>
 
-                    <!-- 語法下方白色 Example 區塊 -->
+                    <!-- 🌟 語法多例句列表區塊 -->
                     <div class="grammar-example-box" id="box-grammar-example">
                         <div class="grammar-example-title"><i class="fa-solid fa-bookmark"></i> 例句參考：</div>
-                        <div class="grammar-example-content" id="lbl-grammar-example-text"></div>
-                        <button class="btn-example-audio" id="btn-example-audio" title="播放例句語音">
-                            <i class="fa-solid fa-volume-high"></i>
-                        </button>
+                        <div class="grammar-example-list" id="container-grammar-example-list"></div>
                     </div>
 
                     <div class="grammar-bottom-actions-container">
@@ -1199,7 +1209,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-B：字塊重組畫面 (按鈕順序已對調，且結果框預留高度防止跳動) -->
+            <!-- 步驟 6-B：字塊重組畫面 -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info">字塊重組</div>
@@ -1220,12 +1230,10 @@
                 <p style="font-size: 0.85rem; color: #9ca3af; text-align: center; margin: 0;">點擊字塊組句：</p>
                 <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
                 
-                <!-- 結果提示框 (固定高度，移至上方) -->
                 <div class="result-box" style="margin-top: 10px;">
                     <div class="score-badge" id="lbl-block-score">請選取字塊組合句子</div>
                 </div>
 
-                <!-- 檢查答案按鈕 (移至結果框下方) -->
                 <button class="btn-confirm" onclick="checkBlockAnswer()" style="margin-top: 10px;">
                     <i class="fa-solid fa-check"></i> 檢查答案
                 </button>
@@ -1285,7 +1293,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-word-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-E：通用單字聽打畫面 (按鈕順序已對調，且結果框預留高度防止跳動) -->
+            <!-- 步驟 6-E：通用單字聽打畫面 -->
             <div id="step-quiz-word-type" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-word-type-title">單字聽打挑戰</div>
@@ -1317,15 +1325,12 @@
                 <div class="translation-text" id="lbl-word-type-hint"></div>
                 <div id="lbl-word-type-subtext" style="font-size: 1.05rem; color: #475569; font-weight: bold; margin-bottom: 6px; display: none;"></div>
                 
-                <!-- 輸入框 -->
                 <input type="text" id="input-word-type" class="vocab-input" placeholder="請輸入聽到的單字" autocomplete="off" autocorrect="off" autocapitalize="none">
                 
-                <!-- 結果提示框 (固定高度，移至上方) -->
                 <div class="result-box" style="margin-top: 8px;">
                     <div class="score-badge" id="lbl-word-type-score">等待輸入...</div>
                 </div>
 
-                <!-- 檢查答案按鈕 (移至結果框下方) -->
                 <button class="btn-confirm" id="btn-submit-word-type" onclick="checkWordTypeAnswer()" style="margin-top: 10px;">
                     <i class="fa-solid fa-check"></i> 檢查答案
                 </button>
@@ -2590,7 +2595,7 @@
             }
         }
 
-        // 🌟 修正關卡排列順序：語法介紹 > 單字跟讀 > 單字選擇 > 單字聽打 > 句子跟讀 > 字塊重組 > 句子聊天挑戰
+        // 修正關卡排列順序：語法介紹 > 單字跟讀 > 單字選擇 > 單字聽打 > 句子跟讀 > 字塊重組 > 句子聊天挑戰
         function selectUnit(unitId) {
             stopSpeechRecognition();
             currentConfig.unit_id = unitId;
@@ -2896,6 +2901,7 @@
             goToStep('step-grammar');
         }
 
+        // 🌟 語法對話呈現：支援 gram 為空、多例句切割為編號列表、不自動播放
         function showCurrentGrammarDialog() {
             if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
             const total = currentGrammarItem.dialogs.length;
@@ -2918,35 +2924,65 @@
             const currentDialogObj = currentGrammarItem.dialogs[currentDialogIndex];
             currentFullDialogText = cleanInitialWhitespace(currentDialogObj.text || "");
 
-            startTypewriter(currentFullDialogText);
-
-            const exampleText = (currentDialogObj.example || "").trim();
-            const boxExample = document.getElementById('box-grammar-example');
-            const lblExample = document.getElementById('lbl-grammar-example-text');
-            const btnExAudio = document.getElementById('btn-example-audio');
+            const mainDialogBox = document.getElementById('box-grammar-dialog-main');
             const audioBtn = document.getElementById('btn-gram-audio');
 
-            if (exampleText && currentDialogObj.hasAudio) {
-                boxExample.style.display = 'block';
-                lblExample.innerText = exampleText;
-                btnExAudio.onclick = (e) => {
-                    e.stopPropagation();
-                    speakTTS(exampleText, 0.85);
-                };
-                audioBtn.style.display = 'none';
-                speakTTS(exampleText, 0.85);
-            } else {
-                boxExample.style.display = 'none';
+            // 1. 若 gram 有文字，呈現主對話框與打字機；若 gram 為空，隱藏對話框
+            if (currentFullDialogText) {
+                mainDialogBox.style.display = 'block';
+                startTypewriter(currentFullDialogText);
+
                 if (currentDialogObj.hasAudio) {
                     audioBtn.style.display = 'block';
                     audioBtn.onclick = (e) => {
                         e.stopPropagation();
                         speakTTS(currentFullDialogText, 0.85);
                     };
-                    speakTTS(currentFullDialogText, 0.85);
                 } else {
                     audioBtn.style.display = 'none';
                 }
+            } else {
+                mainDialogBox.style.display = 'none';
+                if (typewriterTimer) clearInterval(typewriterTimer);
+                isTypewriterTyping = false;
+            }
+
+            // 2. 例句解析：支援以 / 切割為多句並加上 1. 2. 3. 編號與專屬發音按鈕（不自動播放）
+            const rawExample = (currentDialogObj.example || "").trim();
+            const boxExample = document.getElementById('box-grammar-example');
+            const listExample = document.getElementById('container-grammar-example-list');
+            listExample.innerHTML = "";
+
+            if (rawExample) {
+                const exArr = rawExample.split('/').map(s => s.trim()).filter(Boolean);
+                if (exArr.length > 0) {
+                    boxExample.style.display = 'block';
+                    exArr.forEach((singleEx, exIdx) => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'grammar-example-item';
+
+                        const textSpan = document.createElement('div');
+                        textSpan.className = 'grammar-example-item-text';
+                        textSpan.innerText = `${exIdx + 1}. ${singleEx}`;
+
+                        const playBtn = document.createElement('button');
+                        playBtn.className = 'btn-example-item-audio';
+                        playBtn.title = '播放此例句語音';
+                        playBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+                        playBtn.onclick = (e) => {
+                            e.stopPropagation();
+                            speakTTS(singleEx, 0.85);
+                        };
+
+                        itemDiv.appendChild(textSpan);
+                        itemDiv.appendChild(playBtn);
+                        listExample.appendChild(itemDiv);
+                    });
+                } else {
+                    boxExample.style.display = 'none';
+                }
+            } else {
+                boxExample.style.display = 'none';
             }
         }
 
@@ -3021,10 +3057,20 @@
                 list.forEach((itemObj, idx) => {
                     const item = document.createElement('div');
                     item.className = 'dialog-history-item';
-                    const exInfo = itemObj.example ? `<div style="margin-top:4px; font-size:0.9rem; color:#4338ca; font-weight:bold;">例句：${itemObj.example}</div>` : '';
+                    
+                    let exHtml = '';
+                    if (itemObj.example) {
+                        const splitted = itemObj.example.split('/').map(s => s.trim()).filter(Boolean);
+                        if (splitted.length > 0) {
+                            exHtml = `<div style="margin-top:6px; font-size:0.92rem; color:#4338ca; font-weight:bold;">
+                                例句：<br>${splitted.map((s, i) => `${i + 1}. ${s}`).join('<br>')}
+                            </div>`;
+                        }
+                    }
+
                     item.innerHTML = `
                         <span class="num-title">${idx + 1}.</span>
-                        <div class="text-body">${cleanInitialWhitespace(itemObj.text)}${exInfo}</div>
+                        <div class="text-body">${cleanInitialWhitespace(itemObj.text)}${exHtml}</div>
                     `;
                     container.appendChild(item);
                 });
@@ -3107,7 +3153,7 @@
             if (nextBlank !== -1) activeBlankIndex = nextBlank;
         }
 
-        // 🌟 語法測驗回答錯誤：顯示每題正確答案
+        // 語法測驗回答錯誤：顯示每題正確答案
         function checkGrammarQuiz() {
             const quizList = currentGrammarItem.expandedQuizzes || [];
             if (!quizList.length) return;
@@ -3490,7 +3536,7 @@
             playAudioOrTTS(item.audio_url, item.text, 0.85);
         }
 
-        // 🌟 單字聽打：錯誤時提示正確答案
+        // 單字聽打：錯誤時提示正確答案
         function checkWordTypeAnswer() {
             const item = wordQuestions[wordIndex];
             const isMatch = cleanStringForCompare(document.getElementById('input-word-type').value) === cleanStringForCompare(item.text);
@@ -3519,7 +3565,7 @@
             }
         }
 
-        // 🌟 單字選擇題：錯誤時提示正確答案
+        // 單字選擇題：錯誤時提示正確答案
         function checkWordChoiceAnswer(selectedText) {
             const item = wordQuestions[wordIndex];
             const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
@@ -3993,7 +4039,7 @@
             }
         }
 
-        // 🌟 字塊重組：錯誤時提示正確答案
+        // 字塊重組：錯誤時提示正確答案
         function checkBlockAnswer() {
             const q = questions[currentIndex];
             const is0AKorean = (normalizeLevelStr(currentConfig.level) === '0A' && currentConfig.category === 'korean');
