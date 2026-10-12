@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>生存2挑戰系統</title>
+    <title>生存挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -114,7 +114,6 @@
             position: relative;
         }
 
-        /* 300秒 倒數計時進度條容器 */
         .timer-progress-wrapper {
             width: 100%;
             background: #e5e7eb;
@@ -247,7 +246,7 @@
             border: 2px solid #818cf8;
             border-radius: 16px;
             padding: 16px 14px 44px 14px;
-            font-size: 1.05rem;
+            font-size: 1.15rem; /* 字體調大 */
             color: #312e81;
             display: block !important;
             margin-bottom: 8px;
@@ -272,7 +271,6 @@
             border: none; border-radius: 8px; padding: 5px 11px; font-size: 0.82rem; font-weight: bold; cursor: pointer;
         }
 
-        /* 🌟 語法介紹：Example 白色卡片樣式 */
         .grammar-example-box {
             display: none;
             background: #ffffff;
@@ -286,7 +284,7 @@
             flex-shrink: 0;
         }
         .grammar-example-title {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 800;
             color: #4338ca;
             margin-bottom: 4px;
@@ -295,7 +293,7 @@
             gap: 5px;
         }
         .grammar-example-content {
-            font-size: 1rem;
+            font-size: 1.1rem; /* 字體調大 */
             color: #1e293b;
             font-weight: bold;
             line-height: 1.5;
@@ -535,43 +533,47 @@
             text-align: center !important;
         }
 
+        /* 🌟 題目字體調大至 2.2rem */
         .target-text {
-            font-size: 1.85rem; font-weight: bold; color: #1f2937; margin: 12px 0 5px 0;
-            min-height: 2.2rem; word-break: break-word; line-height: 1.3;
+            font-size: 2.2rem; font-weight: bold; color: #1f2937; margin: 12px 0 6px 0;
+            min-height: 2.6rem; word-break: break-word; line-height: 1.35;
         }
-        .translation-text { font-size: 1rem; color: #6b7280; margin-bottom: 8px; min-height: 1.4rem; word-break: break-word; }
+        /* 🌟 翻譯字體調大至 1.2rem */
+        .translation-text { 
+            font-size: 1.2rem; color: #4b5563; margin-bottom: 10px; min-height: 1.6rem; word-break: break-word; font-weight: 500;
+        }
         .hint-text {
-            font-size: 0.92rem; color: #f59e0b; background-color: #fef3c7;
+            font-size: 1.05rem; color: #b45309; background-color: #fef3c7;
             padding: 8px 14px; border-radius: 12px; display: inline-block; margin-bottom: 14px; font-weight: bold;
         }
 
         #lbl-word-shadow-subtext {
-            font-size: 0.95rem;
+            font-size: 1.1rem;
             color: #475569;
             font-weight: bold;
             margin-bottom: 6px;
-            min-height: 1.4rem;
-            line-height: 1.4rem;
+            min-height: 1.6rem;
+            line-height: 1.6rem;
             display: block;
         }
 
         #lbl-word-choice-sub {
-            font-size: 0.95rem;
+            font-size: 1.15rem;
             color: #475569;
             font-weight: bold;
-            margin-bottom: 6px;
-            min-height: 1.5rem;
-            line-height: 1.5rem;
+            margin-bottom: 8px;
+            min-height: 1.6rem;
+            line-height: 1.6rem;
             display: block;
         }
 
         #lbl-word-type-hint {
-            font-size: 1.05rem;
+            font-size: 1.2rem;
             font-weight: bold;
             color: #4b5563;
-            min-height: 1.5rem;
-            line-height: 1.5rem;
-            margin-bottom: 6px;
+            min-height: 1.6rem;
+            line-height: 1.6rem;
+            margin-bottom: 8px;
             display: block;
         }
 
@@ -586,8 +588,8 @@
         .btn-record.recording { animation: pulse 1s infinite; background: #dc2626; }
         @keyframes pulse { 0%{transform: scale(1);} 50%{transform: scale(1.08);} 100%{transform: scale(1);} }
 
-        .result-box { background: #f3f4f6; border-radius: 12px; padding: 10px; margin-top: 10px; font-size: 0.9rem; text-align: center; }
-        .score-badge { font-size: 1.05rem; font-weight: bold; color: var(--duo-green); margin-top: 4px; }
+        .result-box { background: #f3f4f6; border-radius: 12px; padding: 10px; margin-top: 10px; font-size: 0.95rem; text-align: center; }
+        .score-badge { font-size: 1.1rem; font-weight: bold; color: var(--duo-green); margin-top: 4px; }
 
         .nav-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
         .btn-nav {
@@ -624,7 +626,7 @@
         }
         .block-chip {
             background: white; border: 2px solid #cbd5e1; border-bottom: 3.5px solid #cbd5e1;
-            border-radius: 12px; padding: 7px 12px; font-size: 0.95rem; font-weight: bold;
+            border-radius: 12px; padding: 8px 14px; font-size: 1.05rem; font-weight: bold;
             color: var(--duo-dark); cursor: pointer; user-select: none; transition: transform 0.1s;
         }
         .block-chip:active { transform: translateY(2px); border-bottom-width: 2px; }
@@ -650,14 +652,14 @@
         .hangul-grid-cell.filled:active { transform: scale(0.92); }
 
         .vocab-input {
-            width: 88%; max-width: 320px; padding: 10px; font-size: 1.1rem; border: 2px solid #cbd5e1;
-            border-radius: 12px; text-align: center; outline: none; margin: 12px auto; font-weight: bold; display: block;
+            width: 88%; max-width: 320px; padding: 10px; font-size: 1.15rem; border: 2px solid #cbd5e1;
+            border-radius: 12px; text-align: center; outline: none; margin: 10px auto; font-weight: bold; display: block;
         }
         .vocab-input:focus { border-color: var(--duo-blue); }
         .vocab-choice-list { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
         .btn-vocab-choice {
             background: white; border: 2px solid #e5e7eb; border-bottom: 3px solid #e5e7eb;
-            border-radius: 12px; padding: 11px; font-size: 0.95rem; font-weight: bold;
+            border-radius: 12px; padding: 12px; font-size: 1.05rem; font-weight: bold;
             color: var(--duo-dark); cursor: pointer; transition: all 0.15s ease; text-align: center;
         }
         .btn-vocab-choice:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
@@ -679,7 +681,7 @@
         .btn-keyword-toggle.active-blue { background: #e0f2fe; border-color: #38bdf8; color: #0284c7; }
 
         .grammar-q-item {
-            font-size: 1.05rem; color: var(--duo-dark); line-height: 1.8; font-weight: 600; word-break: break-word;
+            font-size: 1.1rem; color: var(--duo-dark); line-height: 1.8; font-weight: 600; word-break: break-word;
         }
         .blank-slot {
             display: inline-block; min-width: 44px; border-bottom: 2.5px solid var(--duo-blue);
@@ -693,7 +695,7 @@
         .dialog-history-item {
             padding: 6px 8px;
             border-bottom: 1px solid #f3f4f6;
-            font-size: 0.92rem;
+            font-size: 0.95rem;
             color: #374151;
             line-height: 1.5;
             text-align: left !important;
@@ -727,14 +729,14 @@
             .user-meta-bar { font-size: 0.82rem; padding-bottom: 6px; margin-bottom: 6px; }
             .user-meta-item { padding: 4px 6px; font-size: 0.8rem; }
             h2.step-title { font-size: 1.15rem; margin-bottom: 14px; }
-            .target-text { font-size: 1.5rem; }
-            .translation-text { font-size: 0.92rem; }
+            .target-text { font-size: 1.8rem; }
+            .translation-text { font-size: 1.05rem; }
             .btn-option { padding: 10px 6px; font-size: 0.88rem; border-radius: 12px; }
             .lesson-btn-group { grid-template-columns: repeat(2, 1fr); gap: 4px; }
             .btn-lesson-action { font-size: 0.78rem; padding: 7px 2px; }
-            .block-chip { padding: 6px 10px; font-size: 0.88rem; }
-            .grammar-dialog-box { font-size: 0.98rem; padding: 14px 12px 40px 12px; }
-            .grammar-q-item { font-size: 0.94rem; }
+            .block-chip { padding: 6px 10px; font-size: 0.95rem; }
+            .grammar-dialog-box { font-size: 1.05rem; padding: 14px 12px 40px 12px; }
+            .grammar-q-item { font-size: 1rem; }
             .bottom-fixed-bar { padding: 6px 10px; }
             .bottom-nav-item { font-size: 0.82rem; padding: 7px 8px; }
         }
@@ -742,7 +744,7 @@
 </head>
 <body>
 
-    <!-- 🔑 1. 登入 / 註冊彈窗 -->
+    <!-- 1. 登入 / 註冊彈窗 -->
     <div class="custom-modal" id="login-modal">
         <div class="custom-modal-card">
             <div style="font-size: 2.2rem; color: var(--duo-blue); margin-bottom: 8px;"><i class="fa-solid fa-graduation-cap"></i></div>
@@ -776,7 +778,7 @@
         </div>
     </div>
 
-    <!-- 🔑 忘記密碼 Modal -->
+    <!-- 忘記密碼 Modal -->
     <div id="modal-forgot-password" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
@@ -789,7 +791,7 @@
         </div>
     </div>
 
-    <!-- 👤 首次登入設定暱稱、學習語言與母語 -->
+    <!-- 首次登入設定暱稱、學習語言與母語 -->
     <div id="modal-setup-nickname" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-user-gear" style="color:var(--duo-blue);"></i> 設定學習資訊</h3>
@@ -814,7 +816,7 @@
         </div>
     </div>
 
-    <!-- 👥 ➕ 新增好友 Modal -->
+    <!-- 新增好友 Modal -->
     <div id="modal-add-friend" class="custom-modal">
         <div class="custom-modal-card">
             <div class="close-icon-circle" onclick="closeModal('modal-add-friend')"><i class="fa-solid fa-xmark"></i></div>
@@ -829,7 +831,7 @@
         </div>
     </div>
 
-    <!-- 🔥 學習成就統計 Dashboard Modal -->
+    <!-- 學習成就統計 Dashboard Modal -->
     <div id="modal-streak-dashboard" class="custom-modal">
         <div class="custom-modal-card">
             <div class="close-icon-circle" id="btn-close-streak-modal" onclick="closeModal('modal-streak-dashboard')"><i class="fa-solid fa-xmark"></i></div>
@@ -871,7 +873,7 @@
         </div>
     </div>
 
-    <!-- 🎯 選擇課程程度 Modal -->
+    <!-- 選擇課程程度 Modal -->
     <div id="modal-select-initial-level" class="custom-modal">
         <div class="custom-modal-card">
             <div class="close-icon-circle" id="btn-close-level-modal" onclick="closeModal('modal-select-initial-level')"><i class="fa-solid fa-xmark"></i></div>
@@ -882,7 +884,7 @@
         </div>
     </div>
 
-    <!-- 🌟 模式選擇彈窗 (練習模式 vs 計時模式) -->
+    <!-- 模式選擇彈窗 (練習模式 vs 計時模式) -->
     <div id="modal-select-mode-type" class="custom-modal">
         <div class="custom-modal-card" style="padding: 24px 18px;">
             <div class="close-icon-circle" onclick="closeModal('modal-select-mode-type')"><i class="fa-solid fa-xmark"></i></div>
@@ -936,7 +938,7 @@
         </div>
     </div>
 
-    <!-- ✏ 修改暱稱 Modal -->
+    <!-- 修改暱稱 Modal -->
     <div id="modal-edit-nickname" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;">修改公開暱稱</h3>
@@ -950,10 +952,10 @@
         </div>
     </div>
 
-    <!-- 📱 主介面容器 -->
+    <!-- 主介面容器 -->
     <div class="shadowing-card">
         
-        <!-- 🌟 1. 上方狀態列 -->
+        <!-- 上方狀態列 -->
         <div class="user-meta-bar" id="app-user-meta-bar">
             <div class="user-meta-item" id="btn-profile-trigger" onclick="openProfileView()">
                 <i class="fa-solid fa-user" style="color: var(--duo-blue);"></i>
@@ -977,7 +979,7 @@
             </div>
         </div>
 
-        <!-- 🌟 2. 中間滾動主區塊 -->
+        <!-- 中間滾動主區塊 -->
         <div id="learning-content-view">
             <div id="step-learn-lang" class="step-page hidden">
                 <div id="cache-status" style="font-size: 0.75rem; color: #6b7280; margin-top: 8px;"></div>
@@ -1021,7 +1023,8 @@
 
                 <div id="area-grammar-dialog">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <h3 style="margin: 0; color: #4338ca; font-size: 1.1rem;"><i class="fa-solid fa-lightbulb"></i> 觀念說明</h3>
+                        <!-- 🌟 移除燈泡符號，改為書本圖示 -->
+                        <h3 style="margin: 0; color: #4338ca; font-size: 1.15rem;"><i class="fa-solid fa-book-open"></i> 觀念說明</h3>
                         <span id="lbl-dialog-counter" style="font-size: 0.85rem; color: #6b7280; font-weight: bold;">1 / 1</span>
                     </div>
 
@@ -1031,7 +1034,7 @@
                         <button class="btn-gram-audio" id="btn-gram-audio" style="display: none;"><i class="fa-solid fa-volume-high"></i> 播放聲音</button>
                     </div>
 
-                    <!-- 🌟 語法下方白色 Example 區塊 -->
+                    <!-- 語法下方白色 Example 區塊 -->
                     <div class="grammar-example-box" id="box-grammar-example">
                         <div class="grammar-example-title"><i class="fa-solid fa-bookmark"></i> 例句參考：</div>
                         <div class="grammar-example-content" id="lbl-grammar-example-text"></div>
@@ -1051,9 +1054,9 @@
 
                 <div id="area-grammar-quiz" style="display: none; margin-top: 15px;">
                     <h3 style="margin-top: 0; color: var(--duo-dark); text-align: center; font-size: 1.15rem;"><i class="fa-solid fa-pen-to-square"></i> 語法測驗</h3>
-                    <p style="font-size: 0.85rem; color: #6b7280; text-align: center; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
+                    <p style="font-size: 0.9rem; color: #6b7280; text-align: center; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
                     <div id="container-grammar-questions"></div>
-                    <p style="font-size: 0.85rem; color: #6b7280; text-align: center; margin: 15px 0 5px 0;">選項：</p>
+                    <p style="font-size: 0.9rem; color: #6b7280; text-align: center; margin: 15px 0 5px 0;">選項：</p>
                     <div id="container-grammar-choices" style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;"></div>
                     <button class="btn-confirm btn-grammar-action-narrow" id="btn-check-grammar" onclick="checkGrammarQuiz()"><i class="fa-solid fa-check"></i> 送出答案</button>
                     <div class="result-box" id="box-grammar-result" style="display: none; margin-top: 15px;">
@@ -1068,7 +1071,7 @@
                 </div>
             </div>
 
-            <!-- 🌟 步驟 6-A：Sentence 句子跟讀畫面 -->
+            <!-- 步驟 6-A：Sentence 句子跟讀畫面 -->
             <div id="step-quiz-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-shadow-mode-title">句子跟讀挑戰</div>
@@ -1081,13 +1084,11 @@
                     </div>
                 </div>
 
-                <!-- 300秒 倒數計時進度條與時間標籤 (句子跟讀) -->
                 <div class="timer-text-badge" id="lbl-timer-shadow">⏱ 05:00</div>
                 <div class="timer-progress-wrapper" id="bar-wrapper-shadow">
                     <div class="timer-progress-bar" id="bar-progress-shadow"></div>
                 </div>
 
-                <!-- 句子跟讀模式切換按鈕群 (計時模式下會自動隱藏) -->
                 <div id="box-sentence-mode-btns" style="display: flex; justify-content: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;">
                     <button class="btn-keyword-toggle" id="btn-toggle-sentence-keyword" onclick="toggleSentenceKeywordMode()">
                         <i class="fa-solid fa-key"></i> 切換關鍵字
@@ -1117,7 +1118,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-G：句子聊天挑戰畫面 -->
+            <!-- 步驟 6-G：句子聊天挑戰畫面 -->
             <div id="step-quiz-sentence-chat" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info">對話挑戰</div>
@@ -1130,7 +1131,6 @@
                     </div>
                 </div>
 
-                <!-- 300秒 倒數計時進度條與時間標籤 (句子聊天) -->
                 <div class="timer-text-badge" id="lbl-timer-chat">⏱ 05:00</div>
                 <div class="timer-progress-wrapper" id="bar-wrapper-chat">
                     <div class="timer-progress-bar" id="bar-progress-chat"></div>
@@ -1147,14 +1147,15 @@
                     </button>
                 </div>
 
+                <!-- 🌟 移除燈泡符號，改為簡潔標籤 -->
                 <div id="chat-a-hint-bubble" style="display: none; background: #fef3c7; border: 1.5px solid #fde68a; border-radius: 14px; padding: 10px; margin-bottom: 10px; text-align: left;">
-                    <div style="font-size: 0.78rem; color: #b45309; font-weight: 800; margin-bottom: 2px;" id="lbl-chat-a-hint-title">💡 關鍵字提示：</div>
-                    <div style="font-size: 1.05rem; font-weight: bold; color: #92400e;" id="lbl-chat-a-hint-text">...</div>
+                    <div style="font-size: 0.85rem; color: #b45309; font-weight: 800; margin-bottom: 2px;" id="lbl-chat-a-hint-title">關鍵字提示：</div>
+                    <div style="font-size: 1.15rem; font-weight: bold; color: #92400e;" id="lbl-chat-a-hint-text">...</div>
                 </div>
 
                 <div id="chat-partner-bubble" style="display: none; background: #e0f2fe; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 10px; margin-bottom: 10px; text-align: left;">
-                    <div style="font-size: 0.75rem; color: #0284c7; font-weight: 800; margin-bottom: 2px;" id="lbl-partner-title">對方回覆：</div>
-                    <div style="font-size: 1.15rem; font-weight: bold; color: #0f172a;" id="lbl-partner-text">...</div>
+                    <div style="font-size: 0.85rem; color: #0284c7; font-weight: 800; margin-bottom: 2px;" id="lbl-partner-title">對方回覆：</div>
+                    <div style="font-size: 1.25rem; font-weight: bold; color: #0f172a;" id="lbl-partner-text">...</div>
                 </div>
 
                 <div class="target-text" id="lbl-chat-target-text">載入中...</div>
@@ -1194,9 +1195,9 @@
                     <button class="btn-circle btn-listen" onclick="playBlockAudio()" style="margin: 0 auto;"><i class="fa-solid fa-volume-high"></i></button>
                 </div>
                 <div class="translation-text" id="lbl-block-translation">...</div>
-                <p style="font-size: 0.8rem; color: #9ca3af; text-align: center; margin: 0;">排列結果：</p>
+                <p style="font-size: 0.85rem; color: #9ca3af; text-align: center; margin: 0;">排列結果：</p>
                 <div id="zone-answer" class="block-zone"></div>
-                <p style="font-size: 0.8rem; color: #9ca3af; text-align: center; margin: 0;">點擊字塊組句：</p>
+                <p style="font-size: 0.85rem; color: #9ca3af; text-align: center; margin: 0;">點擊字塊組句：</p>
                 <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
                 <button class="btn-confirm" onclick="checkBlockAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
                 <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-block-score">等待回答...</div></div>
@@ -1208,7 +1209,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-D：通用單字跟讀畫面 -->
+            <!-- 步驟 6-D：通用單字跟讀畫面 -->
             <div id="step-quiz-word-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-word-shadow-title">單字跟讀挑戰</div>
@@ -1224,7 +1225,6 @@
                     </div>
                 </div>
 
-                <!-- 300秒 倒數計時進度條與時間標籤 (單字跟讀) -->
                 <div class="timer-text-badge" id="lbl-timer-word-shadow">⏱ 05:00</div>
                 <div class="timer-progress-wrapper" id="bar-wrapper-word-shadow">
                     <div class="timer-progress-bar" id="bar-progress-word-shadow"></div>
@@ -1238,7 +1238,7 @@
 
                 <div class="target-text" id="lbl-word-shadow-target-text">載入中...</div>
                 <div id="lbl-word-shadow-subtext"></div>
-                <div class="translation-text" id="lbl-word-shadow-translation" style="min-height: 1.5rem;"></div>
+                <div class="translation-text" id="lbl-word-shadow-translation" style="min-height: 1.6rem;"></div>
                 
                 <div class="controls">
                     <button class="btn-circle btn-listen" id="btn-word-shadow-play-audio" onclick="playWordAudio()"><i class="fa-solid fa-volume-high"></i></button>
@@ -1256,7 +1256,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-word-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-E：通用單字聽打畫面 -->
+            <!-- 步驟 6-E：通用單字聽打畫面 (按鈕位置已對調) -->
             <div id="step-quiz-word-type" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-word-type-title">單字聽打挑戰</div>
@@ -1269,7 +1269,6 @@
                     </div>
                 </div>
 
-                <!-- 300秒 倒數計時進度條與時間標籤 (單字聽打) -->
                 <div class="timer-text-badge" id="lbl-timer-word-type">⏱ 05:00</div>
                 <div class="timer-progress-wrapper" id="bar-wrapper-word-type">
                     <div class="timer-progress-bar" id="bar-progress-word-type"></div>
@@ -1287,12 +1286,23 @@
                 </div>
 
                 <div class="translation-text" id="lbl-word-type-hint"></div>
-
-                <div id="lbl-word-type-subtext" style="font-size: 0.95rem; color: #475569; font-weight: bold; margin-bottom: 6px; display: none;"></div>
+                <div id="lbl-word-type-subtext" style="font-size: 1.05rem; color: #475569; font-weight: bold; margin-bottom: 6px; display: none;"></div>
+                
+                <!-- 輸入框 -->
                 <input type="text" id="input-word-type" class="vocab-input" placeholder="請輸入聽到的單字" autocomplete="off" autocorrect="off" autocapitalize="none">
-                <button class="btn-confirm" id="btn-submit-word-type" onclick="checkWordTypeAnswer()"><i class="fa-solid fa-check"></i> 檢查答案</button>
-                <div class="translation-text" id="lbl-word-type-translation" style="margin-top: 12px; font-size: 1.05rem; font-weight: bold;"></div>
-                <div class="result-box" style="margin-top: 8px;"><div class="score-badge" id="lbl-word-type-score">等待輸入...</div></div>
+                
+                <!-- 🌟 按鈕位置交換：判定/等待結果區塊移至上方 -->
+                <div class="result-box" style="margin-top: 8px;">
+                    <div class="score-badge" id="lbl-word-type-score">等待輸入...</div>
+                </div>
+
+                <!-- 🌟 檢查答案按鈕移至結果區塊下方 -->
+                <button class="btn-confirm" id="btn-submit-word-type" onclick="checkWordTypeAnswer()" style="margin-top: 10px;">
+                    <i class="fa-solid fa-check"></i> 檢查答案
+                </button>
+
+                <div class="translation-text" id="lbl-word-type-translation" style="margin-top: 12px; font-size: 1.2rem; font-weight: bold;"></div>
+
                 <div class="nav-controls">
                     <button class="btn-nav" id="btn-word-type-prev" onclick="prevWordQuestion()">上一題</button>
                     <span class="lbl-progress" id="lbl-word-type-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
@@ -1301,7 +1311,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-word-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 🌟 步驟 6-F：通用單字選擇題畫面 -->
+            <!-- 步驟 6-F：通用單字選擇題畫面 -->
             <div id="step-quiz-word-choice" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-word-choice-title">單字選擇挑戰</div>
@@ -1314,7 +1324,6 @@
                     </div>
                 </div>
 
-                <!-- 300秒 倒數計時進度條與時間標籤 (單字選擇) -->
                 <div class="timer-text-badge" id="lbl-timer-word-choice">⏱ 05:00</div>
                 <div class="timer-progress-wrapper" id="bar-wrapper-word-choice">
                     <div class="timer-progress-bar" id="bar-progress-word-choice"></div>
@@ -1330,7 +1339,6 @@
                     <button class="btn-circle btn-listen" id="btn-word-choice-play" onclick="playWordAudio()" style="margin: 0 auto; width: 44px; height: 44px; font-size: 1rem;">
                         <i class="fa-solid fa-volume-high"></i>
                     </button>
-                    <div style="display: none; font-size: 0.85rem; color: #64748b; font-weight: bold; margin-top: 6px;">點擊重播題目語音</div>
                 </div>
 
                 <div class="target-text" id="lbl-word-choice-text">  </div>
@@ -1346,7 +1354,7 @@
             </div>
         </div>
 
-        <!-- 🌟 視圖 B：會員中心與排行榜大視圖 -->
+        <!-- 視圖 B：會員中心與排行榜大視圖 -->
         <div id="profile-view" class="hidden" style="text-align: left; flex: 1; overflow-y: auto; padding-bottom: 80px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px;">
                 <button class="btn-3d btn-3d-secondary" onclick="closeProfileView()" style="padding: 7px 12px; font-size: 0.85rem;">
@@ -1393,7 +1401,7 @@
 
                 <div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 14px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 10px;">
                     <div>
-                        <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                        <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex mechanical; align-items: center; gap: 6px;">
                             <i class="fa-solid fa-language" style="color: var(--duo-blue);"></i> 當前學習語言
                         </div>
                         <select id="select-account-learn-language" onchange="updateAccountLearnCategory(this.value)" style="margin: 0;">
@@ -1443,7 +1451,7 @@
             </div>
         </div>
 
-        <!-- 🌟 3. 下方固定區塊：Bottom Bar -->
+        <!-- 下方固定區塊：Bottom Bar -->
         <div class="bottom-fixed-bar-wrapper" id="app-bottom-bar">
             <div class="bottom-fixed-bar">
                 <div class="bottom-nav-item grammar-btn" id="btn-bottom-grammar" onclick="triggerBottomGrammarAction()">
@@ -1545,7 +1553,7 @@
             return PRAISE_MESSAGES[Math.floor(Math.random() * PRAISE_MESSAGES.length)];
         }
 
-        // 隨機打亂陣列順序
+        // 隨機打亂陣列順序 (Shuffle)
         function shuffleArray(arr) {
             const array = [...arr];
             for (let i = array.length - 1; i > 0; i--) {
@@ -2553,6 +2561,7 @@
             }
         }
 
+        // 🌟 修正關卡排列順序：語法介紹 > 單字跟讀 > 單字選擇 > 單字聽打 > 句子跟讀 > 字塊重組 > 句子聊天挑戰
         function selectUnit(unitId) {
             stopSpeechRecognition();
             currentConfig.unit_id = unitId;
@@ -2589,6 +2598,7 @@
                         ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0))
                     );
 
+                    const hasWord = matchFilter(rawWordData);
                     const hasShadow = matchFilter(rawShadowData);
                     const hasBlocks = matchFilter(rawBlocksData);
                     const hasDialogue = rawDialogueData.some(d => 
@@ -2597,7 +2607,6 @@
                         String(getItemField(d, 'lesson')) === lesStr &&
                         ((d.a1 && d.a1.trim()) || (d.b1 && d.b1.trim()))
                     );
-                    const hasWord = matchFilter(rawWordData);
 
                     const card = document.createElement('div');
                     card.className = "lesson-card-item";
@@ -2625,16 +2634,24 @@
                         return btn;
                     };
 
+                    // 1. 語法介紹
                     if (hasGrammar) btnGroup.appendChild(createActionButton('grammar', '📖 語法', 'btn-grammar-lesson'));
-                    if (hasShadow) btnGroup.appendChild(createActionButton('shadow', '🎙 跟讀'));
-                    if (hasBlocks) btnGroup.appendChild(createActionButton('blocks', '🧩 重組'));
-                    if (hasDialogue) btnGroup.appendChild(createActionButton('sentence_chat', '🗣 句子聊天挑戰', 'btn-chat-lesson'));
                     
+                    // 2. 單字跟讀、3. 單字選擇、4. 單字聽打
                     if (hasWord) {
                         btnGroup.appendChild(createActionButton('word_shadow', '🗣 單字跟讀', 'btn-word-action'));
-                        btnGroup.appendChild(createActionButton('word_type', '⌨ 單字聽打', 'btn-word-action'));
                         btnGroup.appendChild(createActionButton('word_choice', '🎯 單字選擇', 'btn-word-action'));
+                        btnGroup.appendChild(createActionButton('word_type', '⌨ 單字聽打', 'btn-word-action'));
                     }
+
+                    // 5. 句子跟讀
+                    if (hasShadow) btnGroup.appendChild(createActionButton('shadow', '🎙 跟讀'));
+
+                    // 6. 字塊重組
+                    if (hasBlocks) btnGroup.appendChild(createActionButton('blocks', '🧩 重組'));
+
+                    // 7. 句子聊天挑戰
+                    if (hasDialogue) btnGroup.appendChild(createActionButton('sentence_chat', '🗣 句子聊天挑戰', 'btn-chat-lesson'));
 
                     if (btnGroup.children.length === 0) {
                         const emptyTip = document.createElement('div');
@@ -2850,7 +2867,6 @@
             goToStep('step-grammar');
         }
 
-        // 🌟 語法對話呈現：新增 example 與 audio 判定
         function showCurrentGrammarDialog() {
             if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
             const total = currentGrammarItem.dialogs.length;
@@ -2873,10 +2889,8 @@
             const currentDialogObj = currentGrammarItem.dialogs[currentDialogIndex];
             currentFullDialogText = cleanInitialWhitespace(currentDialogObj.text || "");
 
-            // 1. 主要對話文字打字機
             startTypewriter(currentFullDialogText);
 
-            // 2. 判定是否有 example 且 hasAudio 為 true
             const exampleText = (currentDialogObj.example || "").trim();
             const boxExample = document.getElementById('box-grammar-example');
             const lblExample = document.getElementById('lbl-grammar-example-text');
@@ -2884,17 +2898,15 @@
             const audioBtn = document.getElementById('btn-gram-audio');
 
             if (exampleText && currentDialogObj.hasAudio) {
-                // 呈現白色 example 區塊與音檔按鈕，並播放 example
                 boxExample.style.display = 'block';
                 lblExample.innerText = exampleText;
                 btnExAudio.onclick = (e) => {
                     e.stopPropagation();
                     speakTTS(exampleText, 0.85);
                 };
-                audioBtn.style.display = 'none'; // 隱藏原本的對話語音按鈕
-                speakTTS(exampleText, 0.85); // 自動播放 example 音檔
+                audioBtn.style.display = 'none';
+                speakTTS(exampleText, 0.85);
             } else {
-                // 沒有 example 或沒有 audio
                 boxExample.style.display = 'none';
                 if (currentDialogObj.hasAudio) {
                     audioBtn.style.display = 'block';
@@ -2980,7 +2992,7 @@
                 list.forEach((itemObj, idx) => {
                     const item = document.createElement('div');
                     item.className = 'dialog-history-item';
-                    const exInfo = itemObj.example ? `<div style="margin-top:4px; font-size:0.85rem; color:#4338ca;">例句：${itemObj.example}</div>` : '';
+                    const exInfo = itemObj.example ? `<div style="margin-top:4px; font-size:0.9rem; color:#4338ca; font-weight:bold;">例句：${itemObj.example}</div>` : '';
                     item.innerHTML = `
                         <span class="num-title">${idx + 1}.</span>
                         <div class="text-body">${cleanInitialWhitespace(itemObj.text)}${exInfo}</div>
@@ -3030,7 +3042,7 @@
 
                 const qElem = document.createElement('div');
                 qElem.className = 'grammar-q-item';
-                qElem.style.cssText = "margin-bottom: 12px; font-size: 1.05rem; line-height: 1.8; text-align: center;";
+                qElem.style.cssText = "margin-bottom: 12px; font-size: 1.1rem; line-height: 1.8; text-align: center;";
                 qElem.innerHTML = `<span style="color:var(--duo-blue); font-weight:800; margin-right:4px;">${qIdx + 1}.</span> ${formattedHtml}`;
                 qContainer.appendChild(qElem);
             });
@@ -3040,7 +3052,7 @@
             
             let allChoices = [];
             quizList.forEach(q => {
-                const cArr = (q.choice || '').split('/').map(s => s.trim()).filter(Boolean);
+                const cArr = (q.choice || '').split(/[\/,]/).map(s => s.trim()).filter(Boolean);
                 allChoices.push(...cArr);
             });
 
@@ -3066,6 +3078,7 @@
             if (nextBlank !== -1) activeBlankIndex = nextBlank;
         }
 
+        // 🌟 語法測驗回答錯誤：顯示每題正確答案
         function checkGrammarQuiz() {
             const quizList = currentGrammarItem.expandedQuizzes || [];
             if (!quizList.length) return;
@@ -3076,9 +3089,12 @@
 
             let globalSlotIdx = 0;
             let isAllCorrect = true;
+            let correctAnswersList = [];
 
-            quizList.forEach(qObj => {
+            quizList.forEach((qObj, idx) => {
                 const expectedAnswer = (qObj.answer || '').replace(/\s+/g, '');
+                correctAnswersList.push(`第 ${idx + 1} 題：【${qObj.answer}】`);
+
                 const matches = (qObj.question || '').match(/_+/g) || [];
                 
                 let thisQuestionAnswers = [];
@@ -3118,7 +3134,7 @@
                 actionBtn.style.background = "#58cc02";
                 actionBtn.onclick = () => finishCurrentChallenge();
             } else {
-                resultText.innerText = (quizList[0].incorrect) || "❌ 答案不太對喔，再試一次！";
+                resultText.innerHTML = `❌ 答案不太對喔！<br><span style="font-size:0.95rem; color:#b91c1c;">正確答案是：<br>${correctAnswersList.join('<br>')}</span>`;
                 resultText.style.color = "#ff4b4b";
                 actionBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> 再試一次`;
                 actionBtn.style.background = "#ff4b4b";
@@ -3214,7 +3230,6 @@
             btn.classList.toggle('active', isWordChoiceChallengeMode);
         }
 
-        // 🌟 單字關卡啟動：在此將題目隨機打亂 (Shuffle)
         function startWordChallenge(wordMode) {
             stopSpeechRecognition();
             stopChallengeTimer();
@@ -3228,7 +3243,7 @@
 
             if (filteredWords.length === 0) return alert("此課堂尚無單字題目資料！");
 
-            // 🌟 隨機打亂單字題目順序
+            // 隨機打亂單字題目順序
             wordQuestions = shuffleArray(filteredWords);
 
             wordIndex = 0;
@@ -3315,7 +3330,7 @@
                 const hintElem = document.getElementById('lbl-word-type-hint');
                 const trans = getWordTranslation(item);
                 if (hintElem) {
-                    hintElem.innerText = trans ? `💡 ${trans}` : "提示佔位";
+                    hintElem.innerText = trans ? `提示：${trans}` : "提示佔位";
                     if (isWordTypeChallengeMode) {
                         hintElem.style.visibility = "hidden";
                     } else {
@@ -3357,7 +3372,7 @@
                 const sameLevelWords = rawWordData.filter(w => normalizeLevelStr(getItemField(w, 'level')) === currentLevelNormalized);
                 const poolWords = (sameLevelWords.length >= 4) ? sameLevelWords : rawWordData;
 
-                // 🌟 0A 程度：直接從 choice 欄位解析選項
+                // 0A 程度：直接從 choice 欄位解析選項
                 if (is0ALevel) {
                     if (choiceToggleBox) choiceToggleBox.style.display = 'none';
                     targetTextElem.innerText = item.text || "題目";
@@ -3369,21 +3384,17 @@
                     const correctWord = (item.text || '').trim();
                     let finalChoices = [];
 
-                    // 抓取 Choice 欄位資料 (支援 / 或 , 分隔)
                     if (item.choice && item.choice.trim()) {
                         const parsedChoices = item.choice.split(/[\/,]/).map(s => s.trim()).filter(Boolean);
                         finalChoices = [...new Set(parsedChoices)];
-                        // 若 choice 欄位內剛好漏了正確答案，則自動補進去
                         if (!finalChoices.includes(correctWord)) {
                             finalChoices.push(correctWord);
                         }
                     } else {
-                        // 若 choice 欄位空白，備用機制由 pool 補滿
                         const allTargetWords = [...new Set(poolWords.map(w => (w.text || '').trim()).filter(Boolean))];
                         finalChoices = [correctWord, ...pickRandomDistractors(allTargetWords, correctWord, 3)];
                     }
 
-                    // 選項隨機打亂
                     shuffleArray(finalChoices).forEach(wText => {
                         const btn = document.createElement('button');
                         btn.className = 'btn-vocab-choice';
@@ -3393,7 +3404,6 @@
                     });
 
                 } else {
-                    // 非 0A 程度：題目題意四選一
                     if (choiceToggleBox && activeChallengeType !== 'timed') choiceToggleBox.style.display = 'block';
 
                     targetTextElem.innerText = item.text || "";
@@ -3451,6 +3461,7 @@
             playAudioOrTTS(item.audio_url, item.text, 0.85);
         }
 
+        // 🌟 單字聽打：錯誤時提示正確答案
         function checkWordTypeAnswer() {
             const item = wordQuestions[wordIndex];
             const isMatch = cleanStringForCompare(document.getElementById('input-word-type').value) === cleanStringForCompare(item.text);
@@ -3468,24 +3479,24 @@
 
                 const nativeTrans = getWordTranslation(item);
                 const correctKorean = item.text || "";
-                transElem.innerText = `💡 ${correctKorean} ${nativeTrans}`.trim();
+                transElem.innerText = `${correctKorean} ${nativeTrans}`.trim();
 
                 playWordAudio();
                 passedSubQuestions.add(wordIndex);
                 checkAndShowFinishButton();
             } else {
-                scoreBadge.innerText = "❌ 答案不太對喔，再試試看！";
+                scoreBadge.innerHTML = `❌ 答案不正確！<br><span style="color:#b91c1c; font-size:1rem;">正確答案是：【${item.text || ''}】</span>`;
                 scoreBadge.style.color = "#ff4b4b";
             }
         }
 
+        // 🌟 單字選擇題：錯誤時提示正確答案
         function checkWordChoiceAnswer(selectedText) {
             const item = wordQuestions[wordIndex];
             const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
             const scoreBadge = document.getElementById('lbl-word-choice-score');
             const targetTextElem = document.getElementById('lbl-word-choice-text');
             const choiceSubElem = document.getElementById('lbl-word-choice-sub');
-            const wrongTipHtml = "差一點點就答對囉！<br>再聽一次，仔細聽聽看裡面的聲音。";
 
             if (is0ALevel) {
                 const correctKorean = (item.text || '').trim();
@@ -3497,14 +3508,14 @@
                     targetTextElem.style.visibility = "visible";
 
                     const nativeTrans = getWordTranslation(item);
-                    choiceSubElem.innerText = nativeTrans ? `💡 ${nativeTrans}` : "";
+                    choiceSubElem.innerText = nativeTrans ? `${nativeTrans}` : "";
                     choiceSubElem.style.visibility = nativeTrans ? "visible" : "hidden";
 
                     playWordAudio();
                     passedSubQuestions.add(wordIndex);
                     checkAndShowFinishButton();
                 } else {
-                    scoreBadge.innerHTML = wrongTipHtml;
+                    scoreBadge.innerHTML = `❌ 答錯囉！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${correctKorean}】</span>`;
                     scoreBadge.style.color = "#ff4b4b";
                 }
             } else {
@@ -3520,14 +3531,14 @@
                     targetTextElem.innerText = item.text || "";
                     targetTextElem.style.visibility = "visible";
 
-                    choiceSubElem.innerText = correctMeaning ? `💡 ${correctMeaning}` : "";
+                    choiceSubElem.innerText = correctMeaning ? `${correctMeaning}` : "";
                     choiceSubElem.style.visibility = correctMeaning ? "visible" : "hidden";
 
                     playWordAudio();
                     passedSubQuestions.add(wordIndex);
                     checkAndShowFinishButton();
                 } else {
-                    scoreBadge.innerHTML = wrongTipHtml;
+                    scoreBadge.innerHTML = `❌ 答錯囉！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${correctMeaning}】</span>`;
                     scoreBadge.style.color = "#ff4b4b";
                 }
             }
@@ -3743,7 +3754,6 @@
             }
         }
 
-        // 🌟 句子跟讀與字塊重組：在此將題目隨機打亂 (Shuffle)
         function startMainQuiz() {
             stopSpeechRecognition();
             stopChallengeTimer();
@@ -3782,7 +3792,7 @@
                     };
                 });
 
-                // 🌟 隨機打亂題目順序
+                // 隨機打亂題目順序
                 questions = shuffleArray(rawList);
 
                 if (isTimed) startChallengeTimer('shadow');
@@ -3814,7 +3824,7 @@
                     };
                 });
 
-                // 🌟 隨機打亂重組題目順序
+                // 隨機打亂重組題目順序
                 questions = shuffleArray(rawList);
             }
 
@@ -3844,13 +3854,13 @@
                     targetTextElem.innerText = q.text || "題目";
                     targetTextElem.style.visibility = "hidden";
                     transElem.innerText = "";
-                    hintElem.innerText = q.hint ? `💡 關鍵字：${q.hint.trim()}` : '💡 無關鍵字提示';
+                    hintElem.innerText = q.hint ? `關鍵字：${q.hint.trim()}` : '無關鍵字提示';
                     hintElem.style.display = "inline-block";
                 } else {
                     targetTextElem.innerText = q.text || "";
                     targetTextElem.style.visibility = "visible";
                     transElem.innerText = q.translation || "";
-                    hintElem.innerText = q.hint ? `💡 提示：${q.hint.trim()}` : '';
+                    hintElem.innerText = q.hint ? `提示：${q.hint.trim()}` : '';
                     hintElem.style.display = q.hint ? "inline-block" : "none";
                 }
 
@@ -3954,6 +3964,7 @@
             }
         }
 
+        // 🌟 字塊重組：錯誤時提示正確答案
         function checkBlockAnswer() {
             const q = questions[currentIndex];
             const is0AKorean = (normalizeLevelStr(currentConfig.level) === '0A' && currentConfig.category === 'korean');
@@ -3968,7 +3979,7 @@
                 passedSubQuestions.add(currentIndex);
                 checkAndShowFinishButton();
             } else {
-                scoreBadge.innerText = "❌ 答案不太對喔，再試試看！";
+                scoreBadge.innerHTML = `❌ 答案不太對喔！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${q.fullText}】</span>`;
                 scoreBadge.style.color = "#ff4b4b";
             }
         }
@@ -4067,7 +4078,7 @@
                         targetTextElem.style.visibility = "visible";
 
                         const trans = getWordTranslation(currentWord);
-                        document.getElementById('lbl-word-shadow-translation').innerText = trans ? `💡 ${trans}` : "";
+                        document.getElementById('lbl-word-shadow-translation').innerText = trans ? `${trans}` : "";
                         
                         passedSubQuestions.add(wordIndex);
                         checkAndShowFinishButton();
