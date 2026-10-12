@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>驗證挑戰系統</title>
+    <title>登入畫面挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -225,6 +225,99 @@
             text-align: center;
         }
         .step-page.active { display: block; }
+
+        /* 🌟 開啟頁面的酷炫進入遊戲畫面 (Landing View) */
+        #step-welcome.active {
+            display: flex !important;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 85vh;
+            padding: 20px 10px;
+            animation: modalPopIn 0.3s ease-out;
+        }
+
+        .welcome-logo-icon {
+            font-size: 4.8rem;
+            color: var(--duo-blue);
+            margin-bottom: 16px;
+            filter: drop-shadow(0 6px 12px rgba(28, 176, 246, 0.25));
+            animation: floatLogo 2.5s ease-in-out infinite;
+        }
+
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #1e293b;
+            margin: 0 0 8px 0;
+            letter-spacing: 1px;
+        }
+
+        .welcome-subtitle {
+            font-size: 0.95rem;
+            color: #64748b;
+            font-weight: bold;
+            margin: 0 0 36px 0;
+            line-height: 1.5;
+        }
+
+        .welcome-actions-box {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .btn-welcome-play {
+            width: 100%;
+            background: var(--duo-green);
+            color: white;
+            border: none;
+            border-bottom: 5px solid var(--duo-green-shadow);
+            padding: 15px;
+            font-size: 1.15rem;
+            font-weight: 900;
+            border-radius: 18px;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(88, 204, 2, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.1s ease;
+        }
+        .btn-welcome-play:active {
+            transform: translateY(3px);
+            border-bottom-width: 2px;
+        }
+
+        .btn-welcome-register {
+            width: 100%;
+            background: #ffffff;
+            color: var(--duo-blue);
+            border: 2px solid #bae6fd;
+            border-bottom: 4px solid #bae6fd;
+            padding: 13px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            border-radius: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.1s ease;
+        }
+        .btn-welcome-register:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
 
         #step-grammar.active {
             display: flex !important;
@@ -589,7 +682,6 @@
             display: block;
         }
 
-        /* 模式下方的指引說明標籤 */
         .instruction-badge-bar {
             font-size: 0.98rem;
             font-weight: 800;
@@ -614,7 +706,6 @@
         .btn-record.recording { animation: pulse 1s infinite; background: #dc2626; }
         @keyframes pulse { 0%{transform: scale(1);} 50%{transform: scale(1.08);} 100%{transform: scale(1);} }
 
-        /* 固定最小高度為 82px，預留足夠兩行錯誤提示與正解空間，杜絕按鈕跳動 */
         .result-box { 
             background: #f3f4f6; 
             border-radius: 12px; 
@@ -1002,8 +1093,8 @@
     <!-- 主介面容器 -->
     <div class="shadowing-card">
         
-        <!-- 上方狀態列 -->
-        <div class="user-meta-bar" id="app-user-meta-bar">
+        <!-- 上方狀態列 (開場首頁時隱藏) -->
+        <div class="user-meta-bar" id="app-user-meta-bar" style="display: none;">
             <div class="user-meta-item" id="btn-profile-trigger" onclick="openProfileView()">
                 <i class="fa-solid fa-user" style="color: var(--duo-blue);"></i>
                 <span id="lbl-username">訪客</span>
@@ -1028,12 +1119,30 @@
 
         <!-- 中間滾動主區塊 -->
         <div id="learning-content-view">
+
+            <!-- 🌟 0. 全新開場畫面 (進入遊戲 & 註冊帳號) -->
+            <div id="step-welcome" class="step-page active">
+                <div class="welcome-logo-icon">
+                    <i class="fa-solid fa-gamepad"></i>
+                </div>
+                <h1 class="welcome-title">生存挑戰系統</h1>
+                <p class="welcome-subtitle">每日通關練習，打造超強外語即戰力！</p>
+                <div class="welcome-actions-box">
+                    <button class="btn-welcome-play" onclick="handleStartGameClick()">
+                        <i class="fa-solid fa-play"></i> 進入遊戲
+                    </button>
+                    <button class="btn-welcome-register" onclick="handleOpenRegisterModal()">
+                        <i class="fa-solid fa-user-plus"></i> 註冊帳號
+                    </button>
+                </div>
+            </div>
+
             <div id="step-learn-lang" class="step-page hidden">
                 <div id="cache-status" style="font-size: 0.75rem; color: #6b7280; margin-top: 8px;"></div>
             </div>
 
             <!-- 步驟 2：程度選擇 -->
-            <div id="step-level" class="step-page active">
+            <div id="step-level" class="step-page">
                 <div class="top-nav" style="justify-content: flex-end;">
                     <button class="btn-sync-refresh" onclick="forceClearAndSync()" style="margin: 0; font-size: 0.8rem;"><i class="fa-solid fa-arrows-rotate"></i> 更新本課程資料</button>
                 </div>
@@ -1131,7 +1240,6 @@
                     <div class="timer-progress-bar" id="bar-progress-shadow"></div>
                 </div>
 
-                <!-- 關卡內部模式切換按鈕 (計時或入門模式會隱藏或對應) -->
                 <div id="box-sentence-mode-btns" style="display: flex; justify-content: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;">
                     <button class="btn-keyword-toggle" id="btn-toggle-sentence-keyword" onclick="toggleSentenceKeywordMode()">
                         <i class="fa-solid fa-key"></i> 切換關鍵字
@@ -1504,8 +1612,8 @@
             </div>
         </div>
 
-        <!-- 下方固定區塊：Bottom Bar -->
-        <div class="bottom-fixed-bar-wrapper" id="app-bottom-bar">
+        <!-- 下方固定區塊：Bottom Bar (開場首頁時隱藏) -->
+        <div class="bottom-fixed-bar-wrapper" id="app-bottom-bar" style="display: none;">
             <div class="bottom-fixed-bar">
                 <div class="bottom-nav-item grammar-btn" id="btn-bottom-grammar" onclick="triggerBottomGrammarAction()">
                     <i class="fa-solid fa-book-open-reader"></i>
@@ -1779,6 +1887,28 @@
             btnAuthSubmit.innerText = '註冊帳號';
         };
 
+        // 🌟 開啟網頁首頁「進入遊戲」按鈕事件
+        function handleStartGameClick() {
+            if (currentUser) {
+                goToStep('step-level');
+            } else {
+                authMode = 'login';
+                tabLogin.classList.replace('btn-3d-secondary', 'btn-3d-primary');
+                tabRegister.classList.replace('btn-3d-primary', 'btn-3d-secondary');
+                btnAuthSubmit.innerText = '登入';
+                openModal('login-modal');
+            }
+        }
+
+        // 🌟 開啟網頁首頁「註冊帳號」按鈕事件
+        function handleOpenRegisterModal() {
+            authMode = 'register';
+            tabRegister.classList.replace('btn-3d-secondary', 'btn-3d-primary');
+            tabLogin.classList.replace('btn-3d-primary', 'btn-3d-secondary');
+            btnAuthSubmit.innerText = '註冊帳號';
+            openModal('login-modal');
+        }
+
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 currentUser = user;
@@ -1786,7 +1916,7 @@
             } else {
                 currentUser = null;
                 window.currentUserData = null;
-                openModal('login-modal');
+                goToStep('step-welcome'); // 未登入顯示歡迎首頁
                 document.getElementById('lbl-username').innerText = "訪客";
                 document.getElementById('lbl-xp').innerText = "0";
             }
@@ -2078,6 +2208,7 @@
             if (confirm("確定要登出系統嗎？")) {
                 auth.signOut();
                 closeProfileView();
+                goToStep('step-welcome');
             }
         }
 
@@ -2447,6 +2578,7 @@
             document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
         }
 
+        // 🌟 頁面切換控制：進入 step-welcome 時隱藏上下選單列
         function goToStep(stepId) {
             stopSpeechRecognition();
             document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
@@ -2454,16 +2586,17 @@
             const targetPage = document.getElementById(stepId);
             if (targetPage) targetPage.classList.add('active');
 
+            const isWelcome = (stepId === 'step-welcome');
             const isDoingQuiz = stepId.startsWith('step-quiz-') || stepId === 'step-grammar';
 
             const metaBar = document.getElementById('app-user-meta-bar');
             if (metaBar) {
-                metaBar.style.display = isDoingQuiz ? 'none' : 'flex';
+                metaBar.style.display = (isWelcome || isDoingQuiz) ? 'none' : 'flex';
             }
 
             const bottomBar = document.getElementById('app-bottom-bar');
             if (bottomBar) {
-                bottomBar.style.display = isDoingQuiz ? 'none' : 'flex';
+                bottomBar.style.display = (isWelcome || isDoingQuiz) ? 'none' : 'flex';
             }
         }
 
@@ -2505,7 +2638,6 @@
                     rawDialogueData = readCache(cacheMap.dialogue) || [];
                     rawWordData = readCache(cacheMap.word) || [];
                     renderLevelMenu();
-                    goToStep('step-level');
                     return;
                 }
             }
@@ -2536,7 +2668,6 @@
 
                 localStorage.setItem(cacheMap.all, JSON.stringify({ shadow: rawShadowData, blocks: rawBlocksData }));
                 renderLevelMenu();
-                goToStep('step-level');
             } catch(e) {
                 alert("無法連線至 API！請確認狀態。");
             }
@@ -2723,7 +2854,7 @@
             goToStep('step-lesson');
         }
 
-        // 🌟 點擊關卡按鈕時觸發彈窗選擇模式 (支援練習、入門、計時挑戰)
+        // 點擊關卡按鈕時觸發彈窗選擇模式
         function promptSelectModeType(lesson, mode, label) {
             if (mode === 'grammar' || mode === 'blocks') {
                 activeChallengeType = 'practice';
@@ -2737,7 +2868,7 @@
             openModal('modal-select-mode-type');
         }
 
-        // 🌟 確認選擇彈窗的模式 ('practice' | 'entry' | 'timed')
+        // 確認選擇彈窗的模式 ('practice' | 'entry' | 'timed')
         function confirmLaunchMode(type) {
             closeModal('modal-select-mode-type');
             activeChallengeType = type;
@@ -2921,6 +3052,7 @@
             goToStep('step-grammar');
         }
 
+        // 語法對話呈現：徹底移除 gram 播放按鈕，例句切割為列表手動發音
         function showCurrentGrammarDialog() {
             if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
             const total = currentGrammarItem.dialogs.length;
@@ -2945,6 +3077,7 @@
 
             const mainDialogBox = document.getElementById('box-grammar-dialog-main');
 
+            // 1. 若 gram 有文字，呈現主對話框與打字機；若 gram 為空，隱藏對話框
             if (currentFullDialogText) {
                 mainDialogBox.style.display = 'block';
                 mainDialogBox.scrollTop = 0;
@@ -2955,6 +3088,7 @@
                 isTypewriterTyping = false;
             }
 
+            // 2. 例句解析：支援以 / 切割為多句並加上 1. 2. 3. 編號與專屬發音按鈕（不自動播放）
             const rawExample = (currentDialogObj.example || "").trim();
             const boxExample = document.getElementById('box-grammar-example');
             const listExample = document.getElementById('container-grammar-example-list');
@@ -2994,6 +3128,7 @@
             }
         }
 
+        // 語法打字機：逐字輸出並自動向下滾動至最底端
         function startTypewriter(text) {
             if (typewriterTimer) clearInterval(typewriterTimer);
             const box = document.getElementById('lbl-grammar-dialog');
@@ -3019,6 +3154,7 @@
             }, 35);
         }
 
+        // 立即完成打字機：內容全展開並瞬間捲動到底部
         function completeTypewriterImmediately() {
             if (isTypewriterTyping) {
                 clearInterval(typewriterTimer);
@@ -3174,6 +3310,7 @@
             if (nextBlank !== -1) activeBlankIndex = nextBlank;
         }
 
+        // 語法測驗回答錯誤：顯示每題正確答案
         function checkGrammarQuiz() {
             const quizList = currentGrammarItem.expandedQuizzes || [];
             if (!quizList.length) return;
@@ -3344,7 +3481,7 @@
             totalChallengeQuestions = wordQuestions.length;
             currentWordPronMode = 'kr_pron';
 
-            // 🌟 彈窗如果是計時挑戰模式，或是入門模式，皆套用挑戰模式設定
+            // 彈窗若是計時挑戰模式或入門模式，皆預設套用挑戰模式設定
             const isHard = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
 
             isWordShadowChallengeMode = isHard;
@@ -3646,7 +3783,7 @@
             if (wordIndex < wordQuestions.length - 1) { wordIndex++; displayWordQuestion(); } 
         }
 
-        // ==================== 🌟 句子跟讀邏輯 ====================
+        // ==================== 句子跟讀邏輯 ====================
 
         function toggleSentenceKeywordMode() {
             isSentenceKeywordMode = !isSentenceKeywordMode;
@@ -3689,7 +3826,7 @@
             if (currentConfig.mode === 'shadow') {
                 goToStep('step-quiz-shadow');
 
-                // 🌟 入門模式與計時挑戰模式皆預設開啟挑戰盲讀
+                // 🌟 彈窗若為計時模式或入門模式，直接進入盲讀挑戰設定
                 const isHard = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
                 isSentenceKeywordMode = false;
                 isSentenceChallengeMode = isHard;
@@ -3947,7 +4084,7 @@
             return (s1 && s2) ? (s1 === s2 || s1.includes(s2) || s2.includes(s1)) : false;
         }
 
-        // ==================== 🌟 句子問答邏輯 ====================
+        // ==================== 句子問答邏輯 ====================
 
         function startSentenceChatChallenge() {
             stopSpeechRecognition();
@@ -4195,6 +4332,7 @@
                         document.getElementById('lbl-score').innerText = "🎉 發音合格！";
                         document.getElementById('lbl-score').style.color = "#58cc02";
                         
+                        // 盲讀模式下判定通過自動揭曉原文
                         if (isSentenceChallengeMode || isSentenceKeywordMode) {
                             const targetTextElem = document.getElementById('lbl-target-text');
                             targetTextElem.innerText = currentQ.text || "";
@@ -4241,7 +4379,8 @@
         window.onload = () => {
             setUserLang(localStorage.getItem('preferred_user_lang') || 'zh');
             setLearnCategory(localStorage.getItem('preferred_learn_category') || 'korean');
-            goToStep('step-level');
+            // 🌟 預設進入開場進入遊戲畫面
+            goToStep('step-welcome');
         };
     </script>
 </body>
