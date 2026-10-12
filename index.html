@@ -1176,7 +1176,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 步驟 6-G：句子聊天挑戰畫面 -->
+            <!-- 步驟 6-G：句子問答畫面 -->
             <div id="step-quiz-sentence-chat" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info">對話挑戰</div>
@@ -2622,7 +2622,7 @@
             }
         }
 
-        // 修正關卡排列順序：語法介紹 > 單字跟讀 > 單字選擇 > 單字聽打 > 句子跟讀 > 字塊重組 > 句子聊天挑戰
+        // 修正關卡排列順序：語法介紹 > 單字跟讀 > 單字選擇 > 單字聽打 > 句子跟讀 > 字塊重組 > 句子問答
         function selectUnit(unitId) {
             stopSpeechRecognition();
             currentConfig.unit_id = unitId;
@@ -2711,8 +2711,8 @@
                     // 6. 字塊重組
                     if (hasBlocks) btnGroup.appendChild(createActionButton('blocks', '🧩 重組'));
 
-                    // 7. 句子聊天挑戰
-                    if (hasDialogue) btnGroup.appendChild(createActionButton('sentence_chat', '🗣 句子聊天挑戰', 'btn-chat-lesson'));
+                    // 7. 句子問答
+                    if (hasDialogue) btnGroup.appendChild(createActionButton('sentence_chat', '🗣 句子問答', 'btn-chat-lesson'));
 
                     if (btnGroup.children.length === 0) {
                         const emptyTip = document.createElement('div');
@@ -3660,7 +3660,7 @@
             if (wordIndex < wordQuestions.length - 1) { wordIndex++; displayWordQuestion(); } 
         }
 
-        // ==================== 句子聊天挑戰邏輯 ====================
+        // ==================== 句子問答邏輯 ====================
 
         function startSentenceChatChallenge() {
             stopSpeechRecognition();
