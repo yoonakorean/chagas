@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>可錄音面挑戰系統</title>
+    <title>發音三挑面挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -819,7 +819,7 @@
         .btn-keyword-toggle.active-blue { background: #e0f2fe; border-color: #38bdf8; color: #0284c7; }
 
         .grammar-q-item {
-            font-size: 1.1rem; color: var(--duo-dark); line-height: 1.8; font-weight: 600; word-break: break-word;
+            font-size: 1.1rem; color: var(--duo-dark); line-8; font-weight: 600; word-break: break-word;
         }
         .blank-slot {
             display: inline-block; min-width: 44px; border-bottom: 2.5px solid var(--duo-blue);
@@ -1636,10 +1636,9 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-
-    <!-- 核心邏輯腳本開始 -->
+<!-- 核心邏輯腳本開始 -->
     <script>
-const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
+        const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
         const API_URLS = {
             korean: "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
@@ -1698,7 +1697,7 @@ const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeX
         let isWordTypeChallengeMode = false;
         let isWordChoiceChallengeMode = false;
 
-        // 彈窗模式管理 ('practice' 練習 | 'entry' 入門 | 'timed' 計時挑戰)
+        // 彈窗模式管理 ('practice' 練習 | 'entry' 入門 | 'timed' 挑戰)
         let activeChallengeType = 'practice';
         let challengeTimerInterval = null;
         let challengeTimeRemaining = 300;
@@ -3259,7 +3258,7 @@ const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeX
                         const splitted = itemObj.example.split('/').map(s => s.trim()).filter(Boolean);
                         if (splitted.length > 0) {
                             exHtml = `<div style="margin-top:6px; font-size:0.92rem; color:#4338ca; font-weight:bold;">
-                                例句：<br>${splitted.map((s, i) => `${i + 1}. ${s}`).join('<br>')}
+                                例句：<br>${splitted.map((s, i) => `${i + 1}.${s}`).join('<br>')}
                             </div>`;
                         }
                     }
@@ -3520,6 +3519,7 @@ const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeX
             totalChallengeQuestions = wordQuestions.length;
             currentWordPronMode = 'kr_pron';
 
+            // 入門 (entry) 或 挑戰 (timed) 均視為進階模式條件
             const isHard = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
 
             isWordShadowChallengeMode = isHard;
@@ -3567,19 +3567,47 @@ const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeX
                 document.getElementById('lbl-word-shadow-progress').innerText = `${wordIndex + 1} / ${total}`;
                 
                 const targetTextElem = document.getElementById('lbl-word-shadow-target-text');
-                if (isWordShadowChallengeMode) {
-                    targetTextElem.innerText = item.text || "題目";
-                    targetTextElem.style.visibility = "hidden";
+                const transElem = document.getElementById('lbl-word-shadow-translation');
+                const playAudioBtn = document.getElementById('btn-word-shadow-play-audio');
+
+                // 🌟 核心調整：0A 程度單字跟讀在 練習 / 入門 / 挑戰 三種模式的呈現邏輯
+                if (is0ALevel) {
+                    const nativeTrans = getWordTranslation(item);
+                    // 練習、入門、挑戰三者：一開始就先直接顯示翻譯
+                    transElem.innerText = nativeTrans || "";
+
+                    if (activeChallengeType === 'practice') {
+                        // 1. 練習模式：題目字可見、播放按鈕正常顯示
+                        targetTextElem.innerText = item.text || "";
+                        targetTextElem.style.visibility = "visible";
+                        if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
+                    } else if (activeChallengeType === 'entry') {
+                        // 2. 入門模式：盲讀前提（隱藏韓文題目）、翻譯一開始就顯示、播放按鈕正常顯示
+                        targetTextElem.innerText = item.text || "題目";
+                        targetTextElem.style.visibility = "hidden";
+                        if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
+                    } else if (activeChallengeType === 'timed') {
+                        // 3. 挑戰模式：隱藏韓文題目、翻譯一開始就顯示、一開始隱藏播放按鈕（回答正確後才恢復）
+                        targetTextElem.innerText = item.text || "題目";
+                        targetTextElem.style.visibility = "hidden";
+                        if (playAudioBtn) playAudioBtn.style.display = 'none';
+                    }
                 } else {
-                    targetTextElem.innerText = item.text || "";
-                    targetTextElem.style.visibility = "visible";
+                    // 非 0A 程度的預設行為
+                    if (isWordShadowChallengeMode) {
+                        targetTextElem.innerText = item.text || "題目";
+                        targetTextElem.style.visibility = "hidden";
+                    } else {
+                        targetTextElem.innerText = item.text || "";
+                        targetTextElem.style.visibility = "visible";
+                    }
+                    transElem.innerText = "";
+                    if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
                 }
 
                 renderWordShadowSubtext();
 
-                document.getElementById('lbl-word-shadow-translation').innerText = "";
                 document.getElementById('lbl-word-shadow-recognized-text').innerText = "-";
-                
                 document.getElementById('lbl-word-shadow-score').innerText = "判定結果：--";
                 document.getElementById('lbl-word-shadow-score').style.color = "#58cc02";
 
@@ -3819,8 +3847,7 @@ const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeX
         function nextWordQuestion() { 
             if (wordIndex < wordQuestions.length - 1) { wordIndex++; displayWordQuestion(); } 
         }
-
-        // ==================== 句子跟讀邏輯 ====================
+// ==================== 句子跟讀邏輯 ====================
 
         function toggleSentenceKeywordMode() {
             isSentenceKeywordMode = !isSentenceKeywordMode;
@@ -4111,12 +4138,11 @@ const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeX
             synth.speak(utterance);
         }
 
-        // ==================== 🌟 韓文數字正規化比對核心演算法 ====================
+        // ==================== 韓文數字正規化比對核心演算法 ====================
 
         function cleanStringForCompare(str) {
             let clean = (str || '').replace(/[.,?!~\s\r\n\t]/g, '').toLowerCase();
 
-            // 若學習類別為韓文，將阿拉伯數字轉換為常見韓文字（優先支援 1~10 及其量詞/固有詞形式）
             if (currentConfig.category === 'korean') {
                 clean = clean.replace(/10/g, '열');
                 const singleMap = {
@@ -4143,17 +4169,14 @@ const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeX
             const tClean = cleanStringForCompare(target);
             const sClean = cleanStringForCompare(spoken);
 
-            // 第一層：標準固有詞數字正規化比對
             if (tClean === sClean || tClean.includes(sClean) || sClean.includes(tClean)) {
                 return true;
             }
 
-            // 第二層：韓文數字多態性雙向容錯（固有詞原型、漢字詞與阿拉伯數字）
             if (currentConfig.category === 'korean') {
                 let tAlt = tClean;
                 let sAlt = sClean;
 
-                // 漢字詞補充比對 (例如 8: 팔 / 여덟)
                 const sinoMap = {
                     '1': '일', '2': '이', '3': '삼', '4': '사', '5': '오',
                     '6': '육', '7': '칠', '8': '팔', '9': '구', '10': '십'
@@ -4166,7 +4189,6 @@ const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeX
                     return true;
                 }
 
-                // 固有詞原型與量詞對照容錯 (하나<=>한, 둘<=>두, 셋<=>세, 넷<=>네)
                 const nativeVariations = [
                     [/하나/g, '한'],
                     [/둘/g, '두'],
@@ -4460,6 +4482,7 @@ const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeX
             }
 
             const isWord = (currentConfig.mode === 'word_shadow');
+            const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
             const currentQ = isWord ? wordQuestions[wordIndex] : questions[currentIndex];
             const targetText = currentQ ? (currentQ.text || "") : "";
             const scoreBadge = isWord ? document.getElementById('lbl-word-shadow-score') : document.getElementById('lbl-score');
@@ -4472,8 +4495,17 @@ const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeX
                     const targetTextElem = document.getElementById('lbl-word-shadow-target-text');
                     targetTextElem.innerText = currentQ.text || "";
                     targetTextElem.style.visibility = "visible";
+                    
                     const trans = getWordTranslation(currentQ);
                     document.getElementById('lbl-word-shadow-translation').innerText = trans ? `${trans}` : "";
+
+                    // 🌟 針對 0A 挑戰模式：回答正確後，恢復播放按鈕並播放標準音檔
+                    if (is0ALevel && activeChallengeType === 'timed') {
+                        const playAudioBtn = document.getElementById('btn-word-shadow-play-audio');
+                        if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
+                        playWordAudio();
+                    }
+
                     passedSubQuestions.add(wordIndex);
                 } else {
                     if (isSentenceChallengeMode || isSentenceKeywordMode) {
