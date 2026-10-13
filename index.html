@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>登入畫面挑戰系統</title>
+    <title>聽錄音畫面挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -1077,7 +1077,7 @@
         </div>
     </div>
 
-    <!-- 🌟 修改暱稱 Modal（已修復取消按鈕事件） -->
+    <!-- 修改暱稱 Modal -->
     <div id="modal-edit-nickname" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;">修改公開暱稱</h3>
@@ -1223,7 +1223,7 @@
                 </div>
             </div>
 
-            <!-- 步驟 6-A：Sentence 句子跟讀畫面 -->
+            <!-- 🌟 步驟 6-A：Sentence 句子跟讀畫面（加入回聽自己的錄音 ＋ 比對評分） -->
             <div id="step-quiz-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-shadow-mode-title">句子跟讀挑戰</div>
@@ -1257,11 +1257,21 @@
                 <div class="controls">
                     <button class="btn-circle btn-listen" id="btn-play-audio" onclick="playAudio()"><i class="fa-solid fa-volume-high"></i></button>
                     <button class="btn-circle btn-record" id="btn-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
+                    <!-- 🌟 播放自己錄音的耳機按鈕 -->
+                    <button class="btn-circle" id="btn-play-user-record" onclick="playUserRecording()" style="display:none; background:#10b981; box-shadow:0 4px 0 #059669;" title="播放我的發音">
+                        <i class="fa-solid fa-headphones"></i>
+                    </button>
                 </div>
                 <div class="result-box">
                     <div>辨識結果：<span id="lbl-recognized-text" style="font-weight: bold; color: #374151;">-</span></div>
                     <div class="score-badge" id="lbl-score">判定結果：--</div>
                 </div>
+
+                <!-- 🌟 比對發音並評分按鈕 -->
+                <button class="btn-confirm" id="btn-submit-speech-eval" onclick="evaluateUserSpeech()" style="display:none; margin-top:10px; background:var(--duo-blue); border-bottom-color:var(--duo-blue-shadow);">
+                    <i class="fa-solid fa-magnifying-glass"></i> 比對發音並評分
+                </button>
+
                 <div class="nav-controls">
                     <button class="btn-nav" id="btn-prev" onclick="prevQuestion()">上一題</button>
                     <span class="lbl-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
@@ -1374,7 +1384,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 步驟 6-D：通用單字跟讀畫面 -->
+            <!-- 🌟 步驟 6-D：通用單字跟讀畫面（加入回聽自己的錄音 ＋ 比對評分） -->
             <div id="step-quiz-word-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-word-shadow-title">單字跟讀挑戰</div>
@@ -1408,11 +1418,21 @@
                 <div class="controls">
                     <button class="btn-circle btn-listen" id="btn-word-shadow-play-audio" onclick="playWordAudio()"><i class="fa-solid fa-volume-high"></i></button>
                     <button class="btn-circle btn-record" id="btn-word-shadow-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
+                    <!-- 🌟 播放自己錄音的耳機按鈕 -->
+                    <button class="btn-circle" id="btn-word-shadow-play-user-record" onclick="playUserRecording()" style="display:none; background:#10b981; box-shadow:0 4px 0 #059669;" title="播放我的發音">
+                        <i class="fa-solid fa-headphones"></i>
+                    </button>
                 </div>
                 <div class="result-box">
                     <div>辨識結果：<span id="lbl-word-shadow-recognized-text" style="font-weight: bold; color: #374151;">-</span></div>
                     <div class="score-badge" id="lbl-word-shadow-score">判定結果：--</div>
                 </div>
+
+                <!-- 🌟 比對發音並評分按鈕 -->
+                <button class="btn-confirm" id="btn-word-shadow-submit-speech-eval" onclick="evaluateUserSpeech()" style="display:none; margin-top:10px; background:var(--duo-blue); border-bottom-color:var(--duo-blue-shadow);">
+                    <i class="fa-solid fa-magnifying-glass"></i> 比對發音並評分
+                </button>
+
                 <div class="nav-controls">
                     <button class="btn-nav" id="btn-word-shadow-prev" onclick="prevWordQuestion()">上一題</button>
                     <span class="lbl-progress" id="lbl-word-shadow-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
@@ -1468,7 +1488,7 @@
                 <div class="nav-controls">
                     <button class="btn-nav" id="btn-word-type-prev" onclick="prevWordQuestion()">上一題</button>
                     <span class="lbl-progress" id="lbl-word-type-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
-                    <button class="btn-nav" id="btn-word-type-next" onclick="nextWordQuestion()">下一題</button>
+                    <button class="btn-word-type-next" id="btn-word-type-next" onclick="nextWordQuestion()">下一題</button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-word-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
@@ -1634,7 +1654,7 @@
 
         const API_URLS = {
             korean: "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
-            japanese: "https://script.google.com/macros/s/AKfycbxQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
+            japanese: "https://script.google.com/macros/s/AKfycbQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
             english: ""
         };
 
@@ -1662,6 +1682,12 @@
         let isRecording = false;
         let isToggling = false; 
         let selectedBlockIndices = [];
+
+        // 🌟 本機錄音與比對管理變數
+        let mediaRecorder = null;
+        let recordedAudioChunks = [];
+        let userRecordedAudioUrl = null;
+        let lastRecognizedSpeechText = "";
 
         let gridBoardCells = new Array(27).fill(null);
         let selectedTargetGridIndex = null;
@@ -3103,7 +3129,6 @@
             goToStep('step-grammar');
         }
 
-        // 語法對話呈現：徹底移除 gram 播放按鈕，例句切割為列表手動發音
         function showCurrentGrammarDialog() {
             if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
             const total = currentGrammarItem.dialogs.length;
@@ -3128,7 +3153,6 @@
 
             const mainDialogBox = document.getElementById('box-grammar-dialog-main');
 
-            // 1. 若 gram 有文字，呈現主對話框與打字機；若 gram 為空，隱藏對話框
             if (currentFullDialogText) {
                 mainDialogBox.style.display = 'block';
                 mainDialogBox.scrollTop = 0;
@@ -3139,7 +3163,6 @@
                 isTypewriterTyping = false;
             }
 
-            // 2. 例句解析：支援以 / 切割為多句並加上 1. 2. 3. 編號與專屬發音按鈕（不自動播放）
             const rawExample = (currentDialogObj.example || "").trim();
             const boxExample = document.getElementById('box-grammar-example');
             const listExample = document.getElementById('container-grammar-example-list');
@@ -3179,7 +3202,6 @@
             }
         }
 
-        // 語法打字機：逐字輸出並自動向下滾動至最底端
         function startTypewriter(text) {
             if (typewriterTimer) clearInterval(typewriterTimer);
             const box = document.getElementById('lbl-grammar-dialog');
@@ -3205,7 +3227,6 @@
             }, 35);
         }
 
-        // 立即完成打字機：內容全展開並瞬間捲動到底部
         function completeTypewriterImmediately() {
             if (isTypewriterTyping) {
                 clearInterval(typewriterTimer);
@@ -3361,7 +3382,6 @@
             if (nextBlank !== -1) activeBlankIndex = nextBlank;
         }
 
-        // 語法測驗回答錯誤：顯示每題正確答案
         function checkGrammarQuiz() {
             const quizList = currentGrammarItem.expandedQuizzes || [];
             if (!quizList.length) return;
@@ -3516,6 +3536,7 @@
         function startWordChallenge(wordMode) {
             stopSpeechRecognition();
             stopChallengeTimer();
+            resetSpeechEvalButtons();
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
             const filteredWords = rawWordData.filter(v => 
@@ -3532,7 +3553,6 @@
             totalChallengeQuestions = wordQuestions.length;
             currentWordPronMode = 'kr_pron';
 
-            // 彈窗若是計時挑戰模式或入門模式，皆預設套用挑戰模式設定
             const isHard = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
 
             isWordShadowChallengeMode = isHard;
@@ -3569,6 +3589,7 @@
 
         function displayWordQuestion() {
             stopSpeechRecognition();
+            resetSpeechEvalButtons();
             if (!wordQuestions.length) return;
 
             const item = wordQuestions[wordIndex];
@@ -3872,12 +3893,12 @@
         function startMainQuiz() {
             stopSpeechRecognition();
             stopChallengeTimer();
+            resetSpeechEvalButtons();
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
 
             if (currentConfig.mode === 'shadow') {
                 goToStep('step-quiz-shadow');
 
-                // 彈窗若為計時模式或入門模式，直接進入盲讀挑戰設定
                 const isHard = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
                 isSentenceKeywordMode = false;
                 isSentenceChallengeMode = isHard;
@@ -3949,6 +3970,7 @@
 
         function displayQuestion() {
             stopSpeechRecognition();
+            resetSpeechEvalButtons();
             if (!questions.length) return;
             const q = questions[currentIndex];
 
@@ -4174,7 +4196,6 @@
             totalChallengeQuestions = chatRounds.length;
             chatRole = 'A';
 
-            // 彈窗若選擇入門或計時挑戰，預設進入挑戰模式
             const isHard = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
             isChatChallengeMode = isHard;
 
@@ -4311,6 +4332,114 @@
         function prevChatRound() { if (chatRoundIndex > 0) { chatRoundIndex--; displayChatRound(); } }
         function nextChatRound() { if (chatRoundIndex < chatRounds.length - 1) { chatRoundIndex++; displayChatRound(); } }
 
+        // ==================== 🌟 錄音回聽與手動比對評分模組 ====================
+
+        async function startMediaRecording() {
+            recordedAudioChunks = [];
+            userRecordedAudioUrl = null;
+            resetSpeechEvalButtons();
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) recordedAudioChunks.push(e.data);
+                };
+                mediaRecorder.onstop = () => {
+                    if (recordedAudioChunks.length > 0) {
+                        const audioBlob = new Blob(recordedAudioChunks, { type: 'audio/webm' });
+                        userRecordedAudioUrl = URL.createObjectURL(audioBlob);
+                        
+                        // 錄音完成，解鎖「播放錄音」與「比對打分」按鈕
+                        const isWord = (currentConfig.mode === 'word_shadow');
+                        const playBtn = isWord ? document.getElementById('btn-word-shadow-play-user-record') : document.getElementById('btn-play-user-record');
+                        const evalBtn = isWord ? document.getElementById('btn-word-shadow-submit-speech-eval') : document.getElementById('btn-submit-speech-eval');
+                        if (playBtn) playBtn.style.display = 'inline-flex';
+                        if (evalBtn) evalBtn.style.display = 'block';
+                    }
+                };
+                mediaRecorder.start();
+            } catch (err) {
+                console.warn("無法取得麥克風音訊進行錄音備份：", err);
+            }
+        }
+
+        function stopMediaRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                try {
+                    mediaRecorder.stop();
+                    mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                } catch (e) {}
+            }
+        }
+
+        // 播放學員自己錄製的發音
+        function playUserRecording() {
+            if (userRecordedAudioUrl) {
+                const audio = new Audio(userRecordedAudioUrl);
+                audio.play();
+            } else {
+                alert("尚未錄製任何發音喔！");
+            }
+        }
+
+        // 重置回聽耳機與評分按鈕狀態
+        function resetSpeechEvalButtons() {
+            lastRecognizedSpeechText = "";
+            userRecordedAudioUrl = null;
+            ['btn-play-user-record', 'btn-word-shadow-play-user-record'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+            ['btn-submit-speech-eval', 'btn-word-shadow-submit-speech-eval'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+        }
+
+        // 🌟 點擊「比對發音並評分」執行實質判定
+        function evaluateUserSpeech() {
+            if (!lastRecognizedSpeechText) {
+                return alert("尚未取得辨識結果，請重新錄音！");
+            }
+
+            const isWord = (currentConfig.mode === 'word_shadow');
+            const currentQ = isWord ? wordQuestions[wordIndex] : questions[currentIndex];
+            const targetText = currentQ ? (currentQ.text || "") : "";
+            const scoreBadge = isWord ? document.getElementById('lbl-word-shadow-score') : document.getElementById('lbl-score');
+
+            if (isSpeechPass(targetText, lastRecognizedSpeechText)) {
+                scoreBadge.innerText = "🎉 發音合格！";
+                scoreBadge.style.color = "#58cc02";
+                
+                if (isWord) {
+                    const targetTextElem = document.getElementById('lbl-word-shadow-target-text');
+                    targetTextElem.innerText = currentQ.text || "";
+                    targetTextElem.style.visibility = "visible";
+                    const trans = getWordTranslation(currentQ);
+                    document.getElementById('lbl-word-shadow-translation').innerText = trans ? `${trans}` : "";
+                    passedSubQuestions.add(wordIndex);
+                } else {
+                    if (isSentenceChallengeMode || isSentenceKeywordMode) {
+                        const targetTextElem = document.getElementById('lbl-target-text');
+                        targetTextElem.innerText = currentQ.text || "";
+                        targetTextElem.style.visibility = "visible";
+                        document.getElementById('lbl-translation').innerText = currentQ.translation || "";
+                    }
+                    passedSubQuestions.add(currentIndex);
+                }
+                checkAndShowFinishButton();
+            } else {
+                scoreBadge.innerText = "⚠ 發音未達標，請再念一次！";
+                scoreBadge.style.color = "#ff4b4b";
+            }
+
+            // 判定完畢後隱藏比對按鈕
+            const evalBtnId = isWord ? 'btn-word-shadow-submit-speech-eval' : 'btn-submit-speech-eval';
+            const evalBtn = document.getElementById(evalBtnId);
+            if (evalBtn) evalBtn.style.display = 'none';
+        }
+
         // ==================== 語音辨識錄音 ====================
 
         function initSpeechRecognition() {
@@ -4334,17 +4463,23 @@
                 if (lbl) lbl.innerText = "聆聽中...";
             };
 
-            recognition.onend = () => stopSpeechRecognition();
+            recognition.onend = () => {
+                stopSpeechRecognition();
+                stopMediaRecording();
+            };
 
             recognition.onresult = (event) => {
                 if (!event.results || !event.results[0] || !event.results[0][0]) {
                     stopSpeechRecognition();
+                    stopMediaRecording();
                     return;
                 }
 
                 const userSpeech = event.results[0][0].transcript;
+                lastRecognizedSpeechText = userSpeech;
 
                 if (currentConfig.mode === 'sentence_chat') {
+                    // 對話挑戰：即時回饋並觸發 Speaker 回覆
                     document.getElementById('lbl-chat-recognized-text').innerText = userSpeech;
                     const curRound = chatRounds[chatRoundIndex];
                     if (curRound) {
@@ -4357,51 +4492,24 @@
                         }
                     }
                 } else if (currentConfig.mode === 'word_shadow') {
+                    // 🌟 單字跟讀：顯示收錄辨識文字，提示學員試聽或按下評分
                     document.getElementById('lbl-word-shadow-recognized-text').innerText = userSpeech;
-                    const currentWord = wordQuestions[wordIndex];
-                    if (isSpeechPass(currentWord ? currentWord.text : "", userSpeech)) {
-                        document.getElementById('lbl-word-shadow-score').innerText = "🎉 發音合格！";
-                        document.getElementById('lbl-word-shadow-score').style.color = "#58cc02";
-                        
-                        const targetTextElem = document.getElementById('lbl-word-shadow-target-text');
-                        targetTextElem.innerText = currentWord.text || "";
-                        targetTextElem.style.visibility = "visible";
-
-                        const trans = getWordTranslation(currentWord);
-                        document.getElementById('lbl-word-shadow-translation').innerText = trans ? `${trans}` : "";
-                        
-                        passedSubQuestions.add(wordIndex);
-                        checkAndShowFinishButton();
-                    } else {
-                        document.getElementById('lbl-word-shadow-score').innerText = "⚠ 發音未達標，再試一次！";
-                        document.getElementById('lbl-word-shadow-score').style.color = "#ff4b4b";
-                    }
+                    document.getElementById('lbl-word-shadow-score').innerText = "發音已收錄！可回聽或點擊下方比對評分";
+                    document.getElementById('lbl-word-shadow-score').style.color = "var(--duo-blue)";
                 } else {
+                    // 🌟 句子跟讀：顯示收錄辨識文字，提示學員試聽或按下評分
                     document.getElementById('lbl-recognized-text').innerText = userSpeech;
-                    const currentQ = questions[currentIndex];
-                    if (isSpeechPass(currentQ ? currentQ.text : "", userSpeech)) {
-                        document.getElementById('lbl-score').innerText = "🎉 發音合格！";
-                        document.getElementById('lbl-score').style.color = "#58cc02";
-                        
-                        // 盲讀模式下判定通過自動揭曉原文
-                        if (isSentenceChallengeMode || isSentenceKeywordMode) {
-                            const targetTextElem = document.getElementById('lbl-target-text');
-                            targetTextElem.innerText = currentQ.text || "";
-                            targetTextElem.style.visibility = "visible";
-                            document.getElementById('lbl-translation').innerText = currentQ.translation || "";
-                        }
-
-                        passedSubQuestions.add(currentIndex);
-                        checkAndShowFinishButton();
-                    } else {
-                        document.getElementById('lbl-score').innerText = "⚠ 發音未達標，請再念一次！";
-                        document.getElementById('lbl-score').style.color = "#ff4b4b";
-                    }
+                    document.getElementById('lbl-score').innerText = "發音已收錄！可回聽或點擊下方比對評分";
+                    document.getElementById('lbl-score').style.color = "var(--duo-blue)";
                 }
                 stopSpeechRecognition();
+                stopMediaRecording();
             };
 
-            recognition.onerror = () => stopSpeechRecognition();
+            recognition.onerror = () => {
+                stopSpeechRecognition();
+                stopMediaRecording();
+            };
         }
 
         function toggleRecording() {
@@ -4411,15 +4519,22 @@
 
             if (isRecording) {
                 stopSpeechRecognition();
+                stopMediaRecording();
                 setTimeout(() => { isToggling = false; }, 300);
             } else {
                 stopSpeechRecognition();
+                stopMediaRecording();
                 setTimeout(() => {
                     try {
                         initSpeechRecognition();
                         recognition.start();
+                        // 🌟 若為跟讀挑戰，同步啟動真實音訊錄音機
+                        if (currentConfig.mode === 'shadow' || currentConfig.mode === 'word_shadow') {
+                            startMediaRecording();
+                        }
                     } catch(err) {
                         stopSpeechRecognition();
+                        stopMediaRecording();
                     } finally {
                         setTimeout(() => { isToggling = false; }, 400);
                     }
