@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>發音三挑面挑戰系統</title>
+    <title>多語挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -819,7 +819,7 @@
         .btn-keyword-toggle.active-blue { background: #e0f2fe; border-color: #38bdf8; color: #0284c7; }
 
         .grammar-q-item {
-            font-size: 1.1rem; color: var(--duo-dark); line-8; font-weight: 600; word-break: break-word;
+            font-size: 1.1rem; color: var(--duo-dark); line-height: 1.8; font-weight: 600; word-break: break-word;
         }
         .blank-slot {
             display: inline-block; min-width: 44px; border-bottom: 2.5px solid var(--duo-blue);
@@ -3435,6 +3435,7 @@
             const subElem = document.getElementById('lbl-word-shadow-subtext');
             if (!subElem) return;
 
+            // 入門與挑戰模式下不顯示音標
             if (isWordShadowChallengeMode) {
                 subElem.innerText = "音標佔位";
                 subElem.style.visibility = "hidden";
@@ -3538,6 +3539,12 @@
             if (toggleBoxType) toggleBoxType.style.display = isHard ? 'none' : 'block';
             if (toggleBoxChoice) toggleBoxChoice.style.display = isHard ? 'none' : 'block';
 
+            // 🌟 入門與挑戰模式下，隱藏齒輪選單內的「切換羅馬拼音」按鈕；練習模式才顯示
+            const btnTogglePron = document.getElementById('btn-toggle-word-pron');
+            if (btnTogglePron) {
+                btnTogglePron.style.display = isHard ? 'none' : 'flex';
+            }
+
             const lbl = document.getElementById('lbl-toggle-word-pron-text');
             if (lbl) lbl.innerText = '切換 羅馬拼音';
 
@@ -3570,39 +3577,25 @@
                 const transElem = document.getElementById('lbl-word-shadow-translation');
                 const playAudioBtn = document.getElementById('btn-word-shadow-play-audio');
 
-                // 🌟 核心調整：0A 程度單字跟讀在 練習 / 入門 / 挑戰 三種模式的呈現邏輯
-                if (is0ALevel) {
-                    const nativeTrans = getWordTranslation(item);
-                    // 練習、入門、挑戰三者：一開始就先直接顯示翻譯
-                    transElem.innerText = nativeTrans || "";
+                // 🌟 所有程度單字跟讀通用新規：一開始就先直接呈現翻譯
+                const nativeTrans = getWordTranslation(item);
+                transElem.innerText = nativeTrans || "";
 
-                    if (activeChallengeType === 'practice') {
-                        // 1. 練習模式：題目字可見、播放按鈕正常顯示
-                        targetTextElem.innerText = item.text || "";
-                        targetTextElem.style.visibility = "visible";
-                        if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
-                    } else if (activeChallengeType === 'entry') {
-                        // 2. 入門模式：盲讀前提（隱藏韓文題目）、翻譯一開始就顯示、播放按鈕正常顯示
-                        targetTextElem.innerText = item.text || "題目";
-                        targetTextElem.style.visibility = "hidden";
-                        if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
-                    } else if (activeChallengeType === 'timed') {
-                        // 3. 挑戰模式：隱藏韓文題目、翻譯一開始就顯示、一開始隱藏播放按鈕（回答正確後才恢復）
-                        targetTextElem.innerText = item.text || "題目";
-                        targetTextElem.style.visibility = "hidden";
-                        if (playAudioBtn) playAudioBtn.style.display = 'none';
-                    }
-                } else {
-                    // 非 0A 程度的預設行為
-                    if (isWordShadowChallengeMode) {
-                        targetTextElem.innerText = item.text || "題目";
-                        targetTextElem.style.visibility = "hidden";
-                    } else {
-                        targetTextElem.innerText = item.text || "";
-                        targetTextElem.style.visibility = "visible";
-                    }
-                    transElem.innerText = "";
+                if (activeChallengeType === 'practice') {
+                    // 1. 練習模式：目標單字正常顯示、播放按鈕正常顯示
+                    targetTextElem.innerText = item.text || "";
+                    targetTextElem.style.visibility = "visible";
                     if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
+                } else if (activeChallengeType === 'entry') {
+                    // 2. 入門模式：盲讀前提（隱藏目標單字）、翻譯一開始就顯示、播放按鈕正常顯示
+                    targetTextElem.innerText = item.text || "題目";
+                    targetTextElem.style.visibility = "hidden";
+                    if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
+                } else if (activeChallengeType === 'timed') {
+                    // 3. 挑戰模式：隱藏目標單字、翻譯一開始就顯示、一開始隱藏播放按鈕（答對後才恢復）
+                    targetTextElem.innerText = item.text || "題目";
+                    targetTextElem.style.visibility = "hidden";
+                    if (playAudioBtn) playAudioBtn.style.display = 'none';
                 }
 
                 renderWordShadowSubtext();
@@ -4482,7 +4475,6 @@
             }
 
             const isWord = (currentConfig.mode === 'word_shadow');
-            const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
             const currentQ = isWord ? wordQuestions[wordIndex] : questions[currentIndex];
             const targetText = currentQ ? (currentQ.text || "") : "";
             const scoreBadge = isWord ? document.getElementById('lbl-word-shadow-score') : document.getElementById('lbl-score');
@@ -4499,8 +4491,8 @@
                     const trans = getWordTranslation(currentQ);
                     document.getElementById('lbl-word-shadow-translation').innerText = trans ? `${trans}` : "";
 
-                    // 🌟 針對 0A 挑戰模式：回答正確後，恢復播放按鈕並播放標準音檔
-                    if (is0ALevel && activeChallengeType === 'timed') {
+                    // 🌟 所有程度挑戰模式通用：回答正確後，恢復播放按鈕並播放標準發音音檔
+                    if (activeChallengeType === 'timed') {
                         const playAudioBtn = document.getElementById('btn-word-shadow-play-audio');
                         if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
                         playWordAudio();
