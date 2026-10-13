@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>可錄音面挑戰系統</title>
+    <title>88音面挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -226,7 +226,6 @@
         }
         .step-page.active { display: block; }
 
-        /* 開啟頁面的酷炫進入遊戲畫面 (Landing View) */
         #step-welcome.active {
             display: flex !important;
             flex-direction: column;
@@ -706,7 +705,6 @@
         .btn-record.recording { animation: pulse 1s infinite; background: #dc2626; }
         @keyframes pulse { 0%{transform: scale(1);} 50%{transform: scale(1.08);} 100%{transform: scale(1);} }
 
-        /* 固定最小高度為 82px，預留足夠兩行錯誤提示與正解空間，杜絕按鈕跳動 */
         .result-box { 
             background: #f3f4f6; 
             border-radius: 12px; 
@@ -1032,7 +1030,7 @@
         </div>
     </div>
 
-    <!-- 模式選擇彈窗 (擴充為三種模式：練習模式、入門模式、計時挑戰模式) -->
+    <!-- 模式選擇彈窗 -->
     <div id="modal-select-mode-type" class="custom-modal">
         <div class="custom-modal-card" style="padding: 24px 18px;">
             <div class="close-icon-circle" onclick="closeModal('modal-select-mode-type')"><i class="fa-solid fa-xmark"></i></div>
@@ -1041,15 +1039,12 @@
             <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 18px;">請選擇您想進行的學習挑戰型態：</p>
             
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <!-- 1. 練習模式 -->
                 <button class="btn-3d btn-3d-blue" onclick="confirmLaunchMode('practice')" style="padding: 13px; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <i class="fa-solid fa-graduation-cap"></i> 練習模式 (自由學習)
                 </button>
-                <!-- 2. 入門模式 (目前套用挑戰模式設定) -->
                 <button class="btn-3d btn-3d-primary" onclick="confirmLaunchMode('entry')" style="padding: 13px; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <i class="fa-solid fa-seedling"></i> 入門模式 (專注盲讀)
                 </button>
-                <!-- 3. 計時挑戰模式 -->
                 <button class="btn-3d btn-3d-primary" onclick="confirmLaunchMode('timed')" style="padding: 13px; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--duo-fire-red); box-shadow: 0 4px 0 #ea2b2b;">
                     <i class="fa-solid fa-fire"></i> 挑戰模式 (限時 300 秒)
                 </button>
@@ -1057,7 +1052,7 @@
         </div>
     </div>
 
-    <!-- 離開挑戰二次確認彈窗 (quit.png) -->
+    <!-- 離開挑戰二次確認彈窗 -->
     <div id="modal-quit-challenge" class="custom-modal">
         <div class="custom-modal-card" style="padding: 26px 20px;">
             <div style="margin-bottom: 14px;">
@@ -1094,7 +1089,7 @@
     <!-- 主介面容器 -->
     <div class="shadowing-card">
         
-        <!-- 上方狀態列 (開場首頁時隱藏) -->
+        <!-- 上方狀態列 -->
         <div class="user-meta-bar" id="app-user-meta-bar" style="display: none;">
             <div class="user-meta-item" id="btn-profile-trigger" onclick="openProfileView()">
                 <i class="fa-solid fa-user" style="color: var(--duo-blue);"></i>
@@ -1121,7 +1116,7 @@
         <!-- 中間滾動主區塊 -->
         <div id="learning-content-view">
 
-            <!-- 0. 全新開場畫面 (進入遊戲 & 註冊帳號) -->
+            <!-- 0. 全新開場畫面 -->
             <div id="step-welcome" class="step-page active">
                 <div class="welcome-logo-icon">
                     <i class="fa-solid fa-gamepad"></i>
@@ -1184,12 +1179,10 @@
                         <span id="lbl-dialog-counter" style="font-size: 0.85rem; color: #6b7280; font-weight: bold;">1 / 1</span>
                     </div>
 
-                    <!-- 固定 260px 大小的觀念說明對話框（已移除播放按鈕） -->
                     <div class="grammar-dialog-box" id="box-grammar-dialog-main" onclick="completeTypewriterImmediately()">
                         <span id="lbl-grammar-dialog">...</span>
                     </div>
 
-                    <!-- 語法多例句列表區塊 -->
                     <div class="grammar-example-box" id="box-grammar-example">
                         <div class="grammar-example-title"><i class="fa-solid fa-bookmark"></i> 例句參考：</div>
                         <div class="grammar-example-list" id="container-grammar-example-list"></div>
@@ -1223,7 +1216,7 @@
                 </div>
             </div>
 
-            <!-- 步驟 6-A：Sentence 句子跟讀畫面（加入回聽自己的錄音 ＋ 比對評分） -->
+            <!-- 步驟 6-A：Sentence 句子跟讀畫面 -->
             <div id="step-quiz-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-shadow-mode-title">句子跟讀挑戰</div>
@@ -1257,7 +1250,6 @@
                 <div class="controls">
                     <button class="btn-circle btn-listen" id="btn-play-audio" onclick="playAudio()"><i class="fa-solid fa-volume-high"></i></button>
                     <button class="btn-circle btn-record" id="btn-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
-                    <!-- 播放自己錄音的耳機按鈕 -->
                     <button class="btn-circle" id="btn-play-user-record" onclick="playUserRecording()" style="display:none; background:#10b981; box-shadow:0 4px 0 #059669;" title="播放我的發音">
                         <i class="fa-solid fa-headphones"></i>
                     </button>
@@ -1267,7 +1259,6 @@
                     <div class="score-badge" id="lbl-score">判定結果：--</div>
                 </div>
 
-                <!-- 比對發音並評分按鈕 -->
                 <button class="btn-confirm" id="btn-submit-speech-eval" onclick="evaluateUserSpeech()" style="display:none; margin-top:10px; background:var(--duo-blue); border-bottom-color:var(--duo-blue-shadow);">
                     <i class="fa-solid fa-magnifying-glass"></i> 比對發音並評分
                 </button>
@@ -1309,7 +1300,6 @@
                     </button>
                 </div>
 
-                <!-- 移至挑戰按鈕下方第一行的指引標籤 -->
                 <div>
                     <div class="instruction-badge-bar" id="lbl-chat-instruction-top">
                         請依指引念出句子：
@@ -1384,7 +1374,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並領取獎勵</button>
             </div>
 
-            <!-- 步驟 6-D：通用單字跟讀畫面（加入回聽自己的錄音 ＋ 比對評分） -->
+            <!-- 步驟 6-D：通用單字跟讀畫面 -->
             <div id="step-quiz-word-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-word-shadow-title">單字跟讀挑戰</div>
@@ -1418,7 +1408,6 @@
                 <div class="controls">
                     <button class="btn-circle btn-listen" id="btn-word-shadow-play-audio" onclick="playWordAudio()"><i class="fa-solid fa-volume-high"></i></button>
                     <button class="btn-circle btn-record" id="btn-word-shadow-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
-                    <!-- 播放自己錄音的耳機按鈕 -->
                     <button class="btn-circle" id="btn-word-shadow-play-user-record" onclick="playUserRecording()" style="display:none; background:#10b981; box-shadow:0 4px 0 #059669;" title="播放我的發音">
                         <i class="fa-solid fa-headphones"></i>
                     </button>
@@ -1428,7 +1417,6 @@
                     <div class="score-badge" id="lbl-word-shadow-score">判定結果：--</div>
                 </div>
 
-                <!-- 比對發音並評分按鈕 -->
                 <button class="btn-confirm" id="btn-word-shadow-submit-speech-eval" onclick="evaluateUserSpeech()" style="display:none; margin-top:10px; background:var(--duo-blue); border-bottom-color:var(--duo-blue-shadow);">
                     <i class="fa-solid fa-magnifying-glass"></i> 比對發音並評分
                 </button>
@@ -1581,7 +1569,7 @@
                     <p style="font-size: 0.85rem; color: #64748b; margin: 4px 0 0 0;" id="myaccount-email">email@example.com</p>
                 </div>
 
-                <div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 14px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 10px;">
+                <div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 14px; border: 1px solid #e2e8f0; display: flex-direction: column; gap: 10px;">
                     <div>
                         <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
                             <i class="fa-solid fa-language" style="color: var(--duo-blue);"></i> 當前學習語言
@@ -1633,7 +1621,7 @@
             </div>
         </div>
 
-        <!-- 下方固定區塊：Bottom Bar (開場首頁時隱藏) -->
+        <!-- 下方固定區塊：Bottom Bar -->
         <div class="bottom-fixed-bar-wrapper" id="app-bottom-bar" style="display: none;">
             <div class="bottom-fixed-bar">
                 <div class="bottom-nav-item grammar-btn" id="btn-bottom-grammar" onclick="triggerBottomGrammarAction()">
@@ -1648,9 +1636,10 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-<!-- 核心邏輯腳本 -->
+
+    <!-- 核心邏輯腳本開始 -->
     <script>
-        const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
+const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
         const API_URLS = {
             korean: "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
@@ -1683,7 +1672,7 @@
         let isToggling = false; 
         let selectedBlockIndices = [];
 
-        // 🌟 跨平台音訊錄製與比對管理變數
+        // 跨平台音訊錄製與比對管理變數
         let mediaRecorder = null;
         let recordedAudioChunks = [];
         let userRecordedAudioUrl = null;
@@ -1741,7 +1730,6 @@
             return PRAISE_MESSAGES[Math.floor(Math.random() * PRAISE_MESSAGES.length)];
         }
 
-        // 隨機打亂陣列順序 (Shuffle)
         function shuffleArray(arr) {
             const array = [...arr];
             for (let i = array.length - 1; i > 0; i--) {
@@ -1918,7 +1906,6 @@
             btnAuthSubmit.innerText = '註冊帳號';
         };
 
-        // 🌟 開啟網頁首頁「進入遊戲」按鈕事件（自動還原上次遊玩單元）
         function handleStartGameClick() {
             if (currentUser) {
                 resumeLastPlayedProgress();
@@ -1931,7 +1918,6 @@
             }
         }
 
-        // 🌟 自動還原上次遊玩單元邏輯
         function resumeLastPlayedProgress() {
             const lastLevel = localStorage.getItem('last_played_level');
             const lastUnit = localStorage.getItem('last_played_unit');
@@ -1948,7 +1934,6 @@
             }
         }
 
-        // 開啟網頁首頁「註冊帳號」按鈕事件
         function handleOpenRegisterModal() {
             authMode = 'register';
             tabRegister.classList.replace('btn-3d-secondary', 'btn-3d-primary');
@@ -2019,7 +2004,6 @@
                     window.currentUserData.memberships = memberships;
                     window.currentUserData.unlockedLevels = unlockedLevels;
                     
-                    // 🌟 嚴格保護通關紀錄：若資料庫內已有，絕不洗成空陣列
                     if (!Array.isArray(window.currentUserData.completedLessons)) {
                         window.currentUserData.completedLessons = [];
                     }
@@ -2035,7 +2019,6 @@
                     renderUserInfo();
                     await autoLoadCurrentCategory();
 
-                    // 🌟 若是在首頁點擊登入成功，自動還原上次遊玩進度
                     const welcomePage = document.getElementById('step-welcome');
                     if (welcomePage && welcomePage.classList.contains('active')) {
                         resumeLastPlayedProgress();
@@ -2230,7 +2213,6 @@
             }
         };
 
-        // 點擊修改暱稱取消按鈕的監聽
         const btnCancelNickname = document.getElementById('btn-cancel-nickname');
         if (btnCancelNickname) {
             btnCancelNickname.onclick = () => closeModal('modal-edit-nickname');
@@ -2645,7 +2627,6 @@
             document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
         }
 
-        // 頁面切換控制：進入 step-welcome 時隱藏上下選單列
         function goToStep(stepId) {
             stopSpeechRecognition();
             document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
@@ -2812,12 +2793,10 @@
             }
         }
 
-        // 🌟 選擇單元（同時記錄最後遊玩的程度與單元編號）
         function selectUnit(unitId) {
             stopSpeechRecognition();
             currentConfig.unit_id = unitId;
 
-            // 記錄進度
             localStorage.setItem('last_played_level', currentConfig.level);
             localStorage.setItem('last_played_unit', unitId);
 
@@ -2890,23 +2869,16 @@
                         return btn;
                     };
 
-                    // 1. 語法介紹
                     if (hasGrammar) btnGroup.appendChild(createActionButton('grammar', '📖 語法', 'btn-grammar-lesson'));
                     
-                    // 2. 單字跟讀、3. 單字選擇、4. 單字聽打
                     if (hasWord) {
                         btnGroup.appendChild(createActionButton('word_shadow', '🗣 單字跟讀', 'btn-word-action'));
                         btnGroup.appendChild(createActionButton('word_choice', '🎯 單字選擇', 'btn-word-action'));
                         btnGroup.appendChild(createActionButton('word_type', '⌨ 單字聽打', 'btn-word-action'));
                     }
 
-                    // 5. 句子跟讀
                     if (hasShadow) btnGroup.appendChild(createActionButton('shadow', '🎙 跟讀'));
-
-                    // 6. 字塊重組
                     if (hasBlocks) btnGroup.appendChild(createActionButton('blocks', '🧩 重組'));
-
-                    // 7. 句子問答
                     if (hasDialogue) btnGroup.appendChild(createActionButton('sentence_chat', '🗣 句子問答', 'btn-chat-lesson'));
 
                     if (btnGroup.children.length === 0) {
@@ -2926,7 +2898,6 @@
             goToStep('step-lesson');
         }
 
-        // 點擊關卡按鈕時觸發彈窗選擇模式
         function promptSelectModeType(lesson, mode, label) {
             if (mode === 'grammar' || mode === 'blocks') {
                 activeChallengeType = 'practice';
@@ -2940,7 +2911,6 @@
             openModal('modal-select-mode-type');
         }
 
-        // 確認選擇彈窗的模式 ('practice' | 'entry' | 'timed')
         function confirmLaunchMode(type) {
             closeModal('modal-select-mode-type');
             activeChallengeType = type;
@@ -2949,7 +2919,6 @@
             }
         }
 
-        // 300秒 倒數計時器管理
         function startChallengeTimer(targetModeKey) {
             stopChallengeTimer();
             challengeTimeRemaining = 300;
@@ -3019,7 +2988,6 @@
             }
         }
 
-        // 🌟 通關存檔保護：使用 set(..., { merge: true }) 確保資料庫絕不遺失紀錄
         async function finishCurrentChallenge() {
             stopSpeechRecognition();
             stopChallengeTimer();
@@ -3074,8 +3042,7 @@
                 startMainQuiz();
             }
         }
-
-        // ==================== 語法介紹邏輯 ====================
+// ==================== 語法介紹邏輯 ====================
 
         function cleanInitialWhitespace(str) {
             return (str || '').replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
@@ -3676,7 +3643,7 @@
                 const sameLevelWords = rawWordData.filter(w => normalizeLevelStr(getItemField(w, 'level')) === currentLevelNormalized);
                 const poolWords = (sameLevelWords.length >= 4) ? sameLevelWords : rawWordData;
 
-                // 0A 程度：直接從 choice 欄位解析選項[cite: 2]
+                // 0A 程度：直接從 choice 欄位解析選項
                 if (is0ALevel) {
                     if (choiceToggleBox) choiceToggleBox.style.display = 'none';
                     targetTextElem.innerText = item.text || "題目";
@@ -3765,7 +3732,6 @@
             playAudioOrTTS(item.audio_url, item.text, 0.85);
         }
 
-        // 單字聽打：錯誤時提示正確答案
         function checkWordTypeAnswer() {
             const item = wordQuestions[wordIndex];
             const isMatch = cleanStringForCompare(document.getElementById('input-word-type').value) === cleanStringForCompare(item.text);
@@ -3794,7 +3760,6 @@
             }
         }
 
-        // 單字選擇題：錯誤時提示正確答案
         function checkWordChoiceAnswer(selectedText) {
             const item = wordQuestions[wordIndex];
             const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
@@ -4100,7 +4065,6 @@
             }
         }
 
-        // 字塊重組：錯誤時提示正確答案
         function checkBlockAnswer() {
             const q = questions[currentIndex];
             const is0AKorean = (normalizeLevelStr(currentConfig.level) === '0A' && currentConfig.category === 'korean');
@@ -4147,14 +4111,80 @@
             synth.speak(utterance);
         }
 
+        // ==================== 🌟 韓文數字正規化比對核心演算法 ====================
+
         function cleanStringForCompare(str) {
-            return (str || '').replace(/[.,?!~\s\r\n\t]/g, '').toLowerCase();
+            let clean = (str || '').replace(/[.,?!~\s\r\n\t]/g, '').toLowerCase();
+
+            // 若學習類別為韓文，將阿拉伯數字轉換為常見韓文字（優先支援 1~10 及其量詞/固有詞形式）
+            if (currentConfig.category === 'korean') {
+                clean = clean.replace(/10/g, '열');
+                const singleMap = {
+                    '1': '한',
+                    '2': '두',
+                    '3': '세',
+                    '4': '네',
+                    '5': '다섯',
+                    '6': '여섯',
+                    '7': '일곱',
+                    '8': '여덟',
+                    '9': '아홉'
+                };
+                for (const [num, word] of Object.entries(singleMap)) {
+                    clean = clean.replaceAll(num, word);
+                }
+            }
+            return clean;
         }
 
-        function isSpeechPass(str1, str2) {
-            const s1 = cleanStringForCompare(str1);
-            const s2 = cleanStringForCompare(str2);
-            return (s1 && s2) ? (s1 === s2 || s1.includes(s2) || s2.includes(s1)) : false;
+        function isSpeechPass(target, spoken) {
+            if (!target || !spoken) return false;
+
+            const tClean = cleanStringForCompare(target);
+            const sClean = cleanStringForCompare(spoken);
+
+            // 第一層：標準固有詞數字正規化比對
+            if (tClean === sClean || tClean.includes(sClean) || sClean.includes(tClean)) {
+                return true;
+            }
+
+            // 第二層：韓文數字多態性雙向容錯（固有詞原型、漢字詞與阿拉伯數字）
+            if (currentConfig.category === 'korean') {
+                let tAlt = tClean;
+                let sAlt = sClean;
+
+                // 漢字詞補充比對 (例如 8: 팔 / 여덟)
+                const sinoMap = {
+                    '1': '일', '2': '이', '3': '삼', '4': '사', '5': '오',
+                    '6': '육', '7': '칠', '8': '팔', '9': '구', '10': '십'
+                };
+                for (const [k, v] of Object.entries(sinoMap)) {
+                    tAlt = tAlt.replaceAll(k, v);
+                    sAlt = sAlt.replaceAll(k, v);
+                }
+                if (tAlt === sAlt || tAlt.includes(sAlt) || sAlt.includes(tAlt)) {
+                    return true;
+                }
+
+                // 固有詞原型與量詞對照容錯 (하나<=>한, 둘<=>두, 셋<=>세, 넷<=>네)
+                const nativeVariations = [
+                    [/하나/g, '한'],
+                    [/둘/g, '두'],
+                    [/셋/g, '세'],
+                    [/넷/g, '네']
+                ];
+                let tVar = tClean;
+                let sVar = sClean;
+                for (const [reg, rep] of nativeVariations) {
+                    tVar = tVar.replace(reg, rep);
+                    sVar = sVar.replace(reg, rep);
+                }
+                if (tVar === sVar || tVar.includes(sVar) || sVar.includes(tVar)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         // ==================== 句子問答邏輯 ====================
@@ -4332,9 +4362,8 @@
         function prevChatRound() { if (chatRoundIndex > 0) { chatRoundIndex--; displayChatRound(); } }
         function nextChatRound() { if (chatRoundIndex < chatRounds.length - 1) { chatRoundIndex++; displayChatRound(); } }
 
-        // ==================== 🌟 跨瀏覽器錄音與手動比對評分模組 ====================
+        // ==================== 跨瀏覽器錄音與手動比對評分模組 ====================
 
-        // 自動取得瀏覽器最佳錄音格式 (全面適配 iPhone Safari / Android / Chrome)
         function getSupportedMimeType() {
             const types = [
                 'audio/webm;codecs=opus',
@@ -4374,7 +4403,6 @@
                         const audioBlob = new Blob(recordedAudioChunks, { type: finalMime });
                         userRecordedAudioUrl = URL.createObjectURL(audioBlob);
 
-                        // 錄音完成，解鎖「播放錄音」與「比對打分」按鈕
                         const isWord = (currentConfig.mode === 'word_shadow');
                         const playBtn = isWord ? document.getElementById('btn-word-shadow-play-user-record') : document.getElementById('btn-play-user-record');
                         const evalBtn = isWord ? document.getElementById('btn-word-shadow-submit-speech-eval') : document.getElementById('btn-submit-speech-eval');
@@ -4386,7 +4414,6 @@
                     }
                 };
 
-                // 每 200 毫秒收集一次資料，確保錄音檔完整不丟包
                 mediaRecorder.start(200);
             } catch (err) {
                 console.warn("無法取得麥克風音訊進行錄音備份：", err);
@@ -4401,7 +4428,6 @@
             }
         }
 
-        // 🌟 增強型播放學員自己錄製的發音 (防靜音與錯誤防護)
         function playUserRecording() {
             if (userRecordedAudioUrl) {
                 const audio = new Audio(userRecordedAudioUrl);
@@ -4415,7 +4441,6 @@
             }
         }
 
-        // 重置回聽耳機與評分按鈕狀態
         function resetSpeechEvalButtons() {
             lastRecognizedSpeechText = "";
             userRecordedAudioUrl = null;
@@ -4429,7 +4454,6 @@
             });
         }
 
-        // 🌟 點擊「比對發音並評分」執行實質判定
         function evaluateUserSpeech() {
             if (!lastRecognizedSpeechText) {
                 return alert("尚未取得辨識結果，請重新錄音！");
@@ -4466,7 +4490,6 @@
                 scoreBadge.style.color = "#ff4b4b";
             }
 
-            // 判定完畢後隱藏比對按鈕
             const evalBtnId = isWord ? 'btn-word-shadow-submit-speech-eval' : 'btn-submit-speech-eval';
             const evalBtn = document.getElementById(evalBtnId);
             if (evalBtn) evalBtn.style.display = 'none';
@@ -4511,7 +4534,6 @@
                 lastRecognizedSpeechText = userSpeech;
 
                 if (currentConfig.mode === 'sentence_chat') {
-                    // 對話挑戰：即時回饋並觸發 Speaker 回覆
                     document.getElementById('lbl-chat-recognized-text').innerText = userSpeech;
                     const curRound = chatRounds[chatRoundIndex];
                     if (curRound) {
@@ -4524,12 +4546,10 @@
                         }
                     }
                 } else if (currentConfig.mode === 'word_shadow') {
-                    // 單字跟讀：顯示收錄辨識文字，提示學員試聽或按下評分
                     document.getElementById('lbl-word-shadow-recognized-text').innerText = userSpeech;
                     document.getElementById('lbl-word-shadow-score').innerText = "發音已收錄！可回聽或點擊下方比對評分";
                     document.getElementById('lbl-word-shadow-score').style.color = "var(--duo-blue)";
                 } else {
-                    // 句子跟讀：顯示收錄辨識文字，提示學員試聽或按下評分
                     document.getElementById('lbl-recognized-text').innerText = userSpeech;
                     document.getElementById('lbl-score').innerText = "發音已收錄！可回聽或點擊下方比對評分";
                     document.getElementById('lbl-score').style.color = "var(--duo-blue)";
@@ -4560,7 +4580,6 @@
                     try {
                         initSpeechRecognition();
                         recognition.start();
-                        // 🌟 若為跟讀挑戰，同步啟動真實音訊錄音機
                         if (currentConfig.mode === 'shadow' || currentConfig.mode === 'word_shadow') {
                             startMediaRecording();
                         }
