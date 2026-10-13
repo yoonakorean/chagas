@@ -3445,15 +3445,15 @@ const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeX
             let pronStr = "";
             if (currentWordPronMode === 'kr_pron') {
                 if (item.kr_pron) {
-                    pronStr = `音標: [${item.kr_pron}]`;
+                    pronStr = `[${item.kr_pron}]`;
                 } else if (item.romanization) {
-                    pronStr = `拼音: [${item.romanization}]`;
+                    pronStr = `[${item.romanization}]`;
                 }
             } else {
                 if (item.romanization) {
-                    pronStr = `拼音: [${item.romanization}]`;
+                    pronStr = `[${item.romanization}]`;
                 } else if (item.kr_pron) {
-                    pronStr = `音標: [${item.kr_pron}]`;
+                    pronStr = `[${item.kr_pron}]`;
                 }
             }
 
