@@ -1340,7 +1340,7 @@
             <!-- 步驟 6-B：字塊重組畫面 -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
-                    <div class="lbl-quiz-info">字塊重組</div>
+                    <div class="lbl-quiz-info" id="lbl-blocks-mode-title">字塊重組</div>
                     <div class="gear-menu-container">
                         <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-blocks')"><i class="fa-solid fa-gear"></i></button>
                         <div class="gear-dropdown" id="gear-dropdown-blocks">
@@ -1349,8 +1349,15 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- 🌟 字塊重組專用計時進度條 -->
+                <div class="timer-text-badge" id="lbl-timer-blocks">⏱ 05:00</div>
+                <div class="timer-progress-wrapper" id="bar-wrapper-blocks">
+                    <div class="timer-progress-bar" id="bar-progress-blocks"></div>
+                </div>
+
                 <div style="margin: 12px 0;">
-                    <button class="btn-circle btn-listen" onclick="playBlockAudio()" style="margin: 0 auto;"><i class="fa-solid fa-volume-high"></i></button>
+                    <button class="btn-circle btn-listen" id="btn-play-block-audio" onclick="playBlockAudio()" style="margin: 0 auto;"><i class="fa-solid fa-volume-high"></i></button>
                 </div>
                 <div class="translation-text" id="lbl-block-translation">...</div>
                 <p style="font-size: 0.85rem; color: #9ca3af; text-align: center; margin: 0;">排列結果：</p>
@@ -1516,7 +1523,7 @@
                 <div class="vocab-choice-list" id="container-word-choices"></div>
                 <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-word-choice-score">判定結果：--</div></div>
                 <div class="nav-controls">
-                    <button class="btn-nav" id="btn-word-choice-prev" onclick="prevWordQuestion()">上一題</button>
+                    <button class="btn-word-choice-prev" id="btn-word-choice-prev" onclick="prevWordQuestion()">上一題</button>
                     <span class="lbl-progress" id="lbl-word-choice-progress" style="color: #6b7280; font-size: 0.88rem;">0 / 0</span>
                     <button class="btn-nav" id="btn-word-choice-next" onclick="nextWordQuestion()">下一題</button>
                 </div>
@@ -2897,8 +2904,11 @@
             goToStep('step-lesson');
         }
 
+        // 🌟 判斷是否彈出模式選擇（grammar 與 0A 字塊重組維持直接進入，1A 以上字塊重組彈出選擇）
         function promptSelectModeType(lesson, mode, label) {
-            if (mode === 'grammar' || mode === 'blocks') {
+            const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
+
+            if (mode === 'grammar' || (mode === 'blocks' && is0ALevel)) {
                 activeChallengeType = 'practice';
                 selectLessonAndMode(lesson, mode);
                 return;
@@ -2968,7 +2978,7 @@
                 clearInterval(challengeTimerInterval);
                 challengeTimerInterval = null;
             }
-            ['shadow', 'chat', 'word-shadow', 'word-type', 'word-choice'].forEach(k => {
+            ['shadow', 'chat', 'blocks', 'word-shadow', 'word-type', 'word-choice'].forEach(k => {
                 const badge = document.getElementById(`lbl-timer-${k}`);
                 const wrapper = document.getElementById(`bar-wrapper-${k}`);
                 if (badge) badge.style.display = 'none';
@@ -3539,7 +3549,7 @@
             if (toggleBoxType) toggleBoxType.style.display = isHard ? 'none' : 'block';
             if (toggleBoxChoice) toggleBoxChoice.style.display = isHard ? 'none' : 'block';
 
-            // 🌟 入門與挑戰模式下，隱藏齒輪選單內的「切換羅馬拼音」按鈕；練習模式才顯示
+            // 入門與挑戰模式下，隱藏齒輪選單內的「切換羅馬拼音」按鈕；練習模式才顯示
             const btnTogglePron = document.getElementById('btn-toggle-word-pron');
             if (btnTogglePron) {
                 btnTogglePron.style.display = isHard ? 'none' : 'flex';
@@ -3577,7 +3587,7 @@
                 const transElem = document.getElementById('lbl-word-shadow-translation');
                 const playAudioBtn = document.getElementById('btn-word-shadow-play-audio');
 
-                // 🌟 所有程度單字跟讀通用新規：一開始就先直接呈現翻譯
+                // 所有程度單字跟讀通用新規：一開始就先直接呈現翻譯
                 const nativeTrans = getWordTranslation(item);
                 transElem.innerText = nativeTrans || "";
 
@@ -3884,13 +3894,25 @@
             if (currentConfig.mode === 'shadow') {
                 goToStep('step-quiz-shadow');
 
-                const isHard = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
-                isSentenceKeywordMode = false;
-                isSentenceChallengeMode = isHard;
+                // 🌟 針對句子跟讀的三模式分流初始化
+                if (activeChallengeType === 'practice') {
+                    isSentenceKeywordMode = false;
+                    isSentenceChallengeMode = false;
+                } else if (activeChallengeType === 'entry') {
+                    // 入門模式：直接呈現關鍵字盲讀
+                    isSentenceKeywordMode = true;
+                    isSentenceChallengeMode = false;
+                } else if (activeChallengeType === 'timed') {
+                    // 挑戰模式：純盲讀無提示
+                    isSentenceKeywordMode = false;
+                    isSentenceChallengeMode = true;
+                }
                 updateSentenceModeButtonsUI();
 
                 const sentenceBtnsBox = document.getElementById('box-sentence-mode-btns');
-                if (sentenceBtnsBox) sentenceBtnsBox.style.display = isHard ? 'none' : 'flex';
+                if (sentenceBtnsBox) {
+                    sentenceBtnsBox.style.display = (activeChallengeType === 'practice') ? 'flex' : 'none';
+                }
 
                 const rawList = rawShadowData.filter(i => 
                     normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized &&
@@ -3919,6 +3941,15 @@
                 if (activeChallengeType === 'timed') startChallengeTimer('shadow');
             } else {
                 goToStep('step-quiz-blocks');
+
+                const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
+                const blocksTitleElem = document.getElementById('lbl-blocks-mode-title');
+                if (blocksTitleElem) {
+                    blocksTitleElem.innerText = (is0ALevel) ? '字塊重組' : 
+                        (activeChallengeType === 'practice' ? '字塊重組 (練習)' : 
+                         activeChallengeType === 'entry' ? '字塊重組 (入門)' : '字塊重組 (挑戰)');
+                }
+
                 const rawList = rawBlocksData.filter(i => 
                     normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized &&
                     String(getItemField(i, 'unit_id')) === String(currentConfig.unit_id) &&
@@ -3946,6 +3977,11 @@
                 });
 
                 questions = shuffleArray(rawList);
+
+                // 🌟 1A 以上字塊重組挑戰模式啟動倒數計時器
+                if (!is0ALevel && activeChallengeType === 'timed') {
+                    startChallengeTimer('blocks');
+                }
             }
 
             currentIndex = 0;
@@ -3966,23 +4002,26 @@
                 const transElem = document.getElementById('lbl-translation');
                 const hintElem = document.getElementById('lbl-hint');
 
+                // 🌟 句子跟讀三模式畫面邏輯
                 if (isSentenceChallengeMode) {
+                    // 挑戰模式：隱藏題目字、翻譯與提示
                     targetTextElem.innerText = q.text || "題目";
                     targetTextElem.style.visibility = "hidden";
                     transElem.innerText = "";
                     hintElem.style.display = "none";
                 } else if (isSentenceKeywordMode) {
+                    // 入門模式 / 關鍵字模式：隱藏題目字與翻譯，直接呈現關鍵字提示
                     targetTextElem.innerText = q.text || "題目";
                     targetTextElem.style.visibility = "hidden";
                     transElem.innerText = "";
                     hintElem.innerText = q.hint ? `關鍵字：${q.hint.trim()}` : '無關鍵字提示';
                     hintElem.style.display = "inline-block";
                 } else {
+                    // 練習模式：正常顯示文字與翻譯，依要求【隱藏關鍵字提示】
                     targetTextElem.innerText = q.text || "";
                     targetTextElem.style.visibility = "visible";
                     transElem.innerText = q.translation || "";
-                    hintElem.innerText = q.hint ? `提示：${q.hint.trim()}` : '';
-                    hintElem.style.display = q.hint ? "inline-block" : "none";
+                    hintElem.style.display = "none";
                 }
 
                 document.getElementById('lbl-recognized-text').innerText = "-";
@@ -3993,7 +4032,31 @@
                 document.getElementById('btn-next').disabled = currentIndex === questions.length - 1;
 
             } else {
-                document.getElementById('lbl-block-translation').innerText = q.translation || "";
+                // 🌟 字塊重組三模式畫面呈現
+                const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
+                const transElem = document.getElementById('lbl-block-translation');
+                const playAudioBtn = document.getElementById('btn-play-block-audio');
+
+                if (is0ALevel) {
+                    // 0A 程度維持原樣
+                    transElem.innerText = q.translation || "";
+                    if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
+                } else {
+                    if (activeChallengeType === 'practice') {
+                        // 練習模式：維持現在（顯示翻譯、播放按鈕正常）
+                        transElem.innerText = q.translation || "";
+                        if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
+                    } else if (activeChallengeType === 'entry') {
+                        // 入門模式：隱藏翻譯，其餘正常
+                        transElem.innerText = "";
+                        if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
+                    } else if (activeChallengeType === 'timed') {
+                        // 挑戰模式：只顯示翻譯，一開始隱藏自動播放按鈕
+                        transElem.innerText = q.translation || "";
+                        if (playAudioBtn) playAudioBtn.style.display = 'none';
+                    }
+                }
+
                 document.getElementById('lbl-block-score').innerText = "請選取字塊組合句子";
                 document.getElementById('lbl-block-score').style.color = "#58cc02";
                 document.getElementById('btn-block-prev').disabled = currentIndex === 0;
@@ -4003,7 +4066,11 @@
                 gridBoardCells = new Array(27).fill(null);
                 selectedTargetGridIndex = null;
                 renderBlocks();
-                playBlockAudio();
+
+                // 挑戰模式下一開始不自動播放音檔
+                if (is0ALevel || activeChallengeType !== 'timed') {
+                    playBlockAudio();
+                }
             }
         }
 
@@ -4088,17 +4155,29 @@
         function checkBlockAnswer() {
             const q = questions[currentIndex];
             const is0AKorean = (normalizeLevelStr(currentConfig.level) === '0A' && currentConfig.category === 'korean');
+            const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
             
             const userSentence = is0AKorean ? gridBoardCells.filter(idx => idx !== null).map(idx => q.options[idx]).join('') : selectedBlockIndices.map(i => q.options[i]).join('');
             const scoreBadge = document.getElementById('lbl-block-score');
 
+            // 🌟 1A 挑戰模式：回答後不管正確與否，恢復播放按鈕並播放語音
+            if (!is0ALevel && activeChallengeType === 'timed') {
+                const playAudioBtn = document.getElementById('btn-play-block-audio');
+                if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
+                playBlockAudio();
+            }
+
             if (cleanStringForCompare(userSentence) === cleanStringForCompare(q.fullText)) {
                 scoreBadge.innerText = `🎉 完全正確！${(q.voice && q.voice.trim()) ? ` [${q.voice.trim()}]` : ''}`;
                 scoreBadge.style.color = "#58cc02";
-                playBlockAudio();
+                
+                if (is0ALevel || activeChallengeType !== 'timed') {
+                    playBlockAudio();
+                }
                 passedSubQuestions.add(currentIndex);
                 checkAndShowFinishButton();
             } else {
+                // 🌟 答錯時顯示正確答案
                 scoreBadge.innerHTML = `❌ 答案不太對喔！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${q.fullText}】</span>`;
                 scoreBadge.style.color = "#ff4b4b";
             }
@@ -4491,7 +4570,7 @@
                     const trans = getWordTranslation(currentQ);
                     document.getElementById('lbl-word-shadow-translation').innerText = trans ? `${trans}` : "";
 
-                    // 🌟 所有程度挑戰模式通用：回答正確後，恢復播放按鈕並播放標準發音音檔
+                    // 所有程度挑戰模式通用：回答正確後，恢復播放按鈕並播放標準發音音檔
                     if (activeChallengeType === 'timed') {
                         const playAudioBtn = document.getElementById('btn-word-shadow-play-audio');
                         if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
