@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>測評挑戰系統</title>
+    <title>多語挑戰系統</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -730,7 +730,7 @@
             word-break: break-word;
         }
 
-        /* 🌟 改良後的導覽控制列：進度永遠置中，下一題靠右顯示 */
+        /* 🌟 改良後的導覽控制列：進度永遠置中，下一題靠右絕對定位 */
         .nav-controls { 
             display: flex; 
             justify-content: center; 
@@ -746,6 +746,8 @@
             font-weight: 800;
             text-align: center;
         }
+
+        /* 🌟 修正動畫衝突：鎖定 translateY(-50%)，杜絕向上跳動 */
         .nav-controls .btn-nav-next {
             position: absolute;
             right: 0;
@@ -760,12 +762,23 @@
             cursor: pointer; 
             font-weight: 800; 
             font-size: 0.92rem;
-            display: none; /* 預設隱藏，回答完成後才顯示 */
-            animation: modalPopIn 0.2s ease-out;
+            display: none;
+            animation: nextBtnPopIn 0.18s ease-out forwards;
         }
         .nav-controls .btn-nav-next:active {
             transform: translateY(calc(-50% + 2px));
             border-bottom-width: 1.5px;
+        }
+
+        @keyframes nextBtnPopIn {
+            from { 
+                transform: translateY(-50%) scale(0.88); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateY(-50%) scale(1); 
+                opacity: 1; 
+            }
         }
 
         /* 🌟 模式按鈕星級卡片樣式 */
@@ -1808,7 +1821,7 @@
             }
         };
 
-        // 🌟 星級與成績計算邏輯
+        // 🌟 星級與成績計算邏輯 (100滿分制: 60+ 1星 / 80+ 2星 / 100 3星)
         function calculateStars(score) {
             if (score >= 100) return { stars: 3, label: '⭐⭐⭐' };
             if (score >= 80) return { stars: 2, label: '⭐⭐' };
@@ -1831,7 +1844,7 @@
             }
         }
 
-        // 🌟 彈出模式選擇視窗時，即時渲染三模式的歷史最高星級
+        // 🌟 彈出模式選擇視窗時，即時渲染三種模式的獨立最高星級
         function promptSelectModeType(lesson, mode, label) {
             if (mode === 'grammar') {
                 activeChallengeType = 'practice';
