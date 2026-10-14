@@ -780,7 +780,7 @@
         }
 
         .mode-select-btn {
-            padding: 13px 14px; 
+            padding: 11px 14px; 
             font-size: 1rem; 
             display: flex; 
             align-items: center; 
@@ -788,14 +788,30 @@
             width: 100%;
             box-sizing: border-box;
         }
+        .mode-right-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+        }
+        .mode-time-tag {
+            font-size: 0.76rem;
+            font-weight: 800;
+            color: #ffffff;
+            opacity: 0.92;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
         .mode-star-tag {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 900;
             color: #fef08a;
             letter-spacing: 2px;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 3px 8px;
-            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.22);
+            padding: 2px 7px;
+            border-radius: 7px;
             display: inline-flex;
             align-items: center;
         }
@@ -1087,7 +1103,7 @@
         </div>
     </div>
 
-    <!-- 模式選擇彈窗 -->
+    <!-- 模式選擇彈窗（包含即時歷史最佳時間與最高星級） -->
     <div id="modal-select-mode-type" class="custom-modal">
         <div class="custom-modal-card" style="padding: 24px 18px;">
             <div class="close-icon-circle" onclick="closeModal('modal-select-mode-type')"><i class="fa-solid fa-xmark"></i></div>
@@ -1098,15 +1114,24 @@
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="btn-3d btn-3d-blue mode-select-btn" onclick="confirmLaunchMode('practice')">
                     <span style="display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-graduation-cap"></i> 練習模式</span>
-                    <span class="mode-star-tag" id="tag-star-practice">未達成</span>
+                    <div class="mode-right-meta">
+                        <span class="mode-time-tag" id="tag-time-practice"><i class="fa-solid fa-stopwatch"></i> --:--</span>
+                        <span class="mode-star-tag" id="tag-star-practice">未達成</span>
+                    </div>
                 </button>
                 <button class="btn-3d btn-3d-primary mode-select-btn" onclick="confirmLaunchMode('entry')">
                     <span style="display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-seedling"></i> 入門模式</span>
-                    <span class="mode-star-tag" id="tag-star-entry">未達成</span>
+                    <div class="mode-right-meta">
+                        <span class="mode-time-tag" id="tag-time-entry"><i class="fa-solid fa-stopwatch"></i> --:--</span>
+                        <span class="mode-star-tag" id="tag-star-entry">未達成</span>
+                    </div>
                 </button>
                 <button class="btn-3d btn-3d-primary mode-select-btn" onclick="confirmLaunchMode('timed')" style="background: var(--duo-fire-red); box-shadow: 0 4px 0 #ea2b2b;">
                     <span style="display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-fire"></i> 挑戰模式</span>
-                    <span class="mode-star-tag" id="tag-star-timed">未達成</span>
+                    <div class="mode-right-meta">
+                        <span class="mode-time-tag" id="tag-time-timed"><i class="fa-solid fa-stopwatch"></i> --:--</span>
+                        <span class="mode-star-tag" id="tag-star-timed">未達成</span>
+                    </div>
                 </button>
             </div>
         </div>
@@ -1176,7 +1201,7 @@
         <!-- 中間滾動主區塊 -->
         <div id="learning-content-view">
 
-            <!-- 0. 全新開場畫面 (名稱更新為 優娜多語大冒險) -->
+            <!-- 0. 全新開場畫面 -->
             <div id="step-welcome" class="step-page active">
                 <div class="welcome-logo-icon">
                     <i class="fa-solid fa-gamepad"></i>
@@ -1705,6 +1730,9 @@
         let isSentenceKeywordMode = false;
         let isSentenceChallengeMode = false;
 
+        // 單關通關計時器（Speedrun）與全局專注時數計時起點
+        let challengeSessionStartTime = null;
+
         // 跨平台音訊錄製與比對管理變數
         let mediaRecorder = null;
         let recordedAudioChunks = [];
@@ -1772,6 +1800,45 @@
             return array;
         }
 
+        function formatDurationMMSS(totalSeconds) {
+            if (!totalSeconds || totalSeconds < 0) return "--:--";
+            const m = Math.floor(totalSeconds / 60);
+            const s = Math.floor(totalSeconds % 60);
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        // 專注遊玩時數累加函式（關卡結算或中途退出時皆呼叫）
+        async function recordSessionFocusTime() {
+            if (!challengeSessionStartTime) return 0;
+            const now = Date.now();
+            const elapsedSeconds = Math.max(0, Math.round((now - challengeSessionStartTime) / 1000));
+            challengeSessionStartTime = null; // 結算後重置
+
+            if (elapsedSeconds <= 0) return 0;
+
+            const addedHours = elapsedSeconds / 3600;
+            if (!window.currentUserData) window.currentUserData = {};
+            const currentHours = Number(window.currentUserData.focusHours || 0.0);
+            const updatedHours = Number((currentHours + addedHours).toFixed(3));
+            window.currentUserData.focusHours = updatedHours;
+
+            // 即時同步頁面顯示
+            const dashHours = document.getElementById('dash-focus-hours');
+            if (dashHours) dashHours.innerText = Number(updatedHours).toFixed(1);
+
+            if (currentUser) {
+                try {
+                    await db.collection("users").doc(currentUser.uid).set({
+                        focusHours: firebase.firestore.FieldValue.increment(addedHours)
+                    }, { merge: true });
+                } catch (e) {
+                    console.error("更新專注時數至雲端失敗:", e);
+                }
+            }
+
+            return elapsedSeconds;
+        }
+
         // 取得當前模式標籤文字
         function getModeTagText() {
             if (activeChallengeType === 'entry') return '(入門)';
@@ -1794,7 +1861,6 @@
             let lastDateStr = userData.lastCheckInDate || null;
             let streak = userData.streakDays || 0;
 
-            // 今天已經簽過到，直接返回最新資料
             if (lastDateStr === todayStr) {
                 return { streakDays: streak, checkInHistory: history };
             }
@@ -1923,14 +1989,26 @@
 
             ['practice', 'entry', 'timed'].forEach(t => {
                 const tagElem = document.getElementById(`tag-star-${t}`);
+                const timeElem = document.getElementById(`tag-time-${t}`);
+                const record = getStoredBestRecord(lesson, mode, t);
+
                 if (tagElem) {
-                    const record = getStoredBestRecord(lesson, mode, t);
                     if (record && record.stars > 0) {
                         tagElem.innerText = record.starLabel;
                         tagElem.style.color = '#fef08a';
                     } else {
                         tagElem.innerText = '未達成';
                         tagElem.style.color = '#94a3b8';
+                    }
+                }
+
+                if (timeElem) {
+                    if (record && record.bestTime && record.bestTime > 0) {
+                        timeElem.innerHTML = `<i class="fa-solid fa-stopwatch"></i> ${formatDurationMMSS(record.bestTime)}`;
+                        timeElem.style.opacity = '1';
+                    } else {
+                        timeElem.innerHTML = `<i class="fa-solid fa-stopwatch"></i> --:--`;
+                        timeElem.style.opacity = '0.7';
                     }
                 }
             });
@@ -1946,7 +2024,8 @@
             }
         }
 
-        async function saveChallengeScoreRecord(finalScore) {
+        // 保存挑戰成績與通關最佳時間
+        async function saveChallengeScoreRecord(finalScore, elapsedSeconds = null) {
             const starInfo = calculateStars(finalScore);
             const key = getRecordKey(currentConfig.lesson, currentConfig.mode, activeChallengeType);
             
@@ -1955,11 +2034,21 @@
             const bestStars = existingRecord ? Math.max(existingRecord.stars, starInfo.stars) : starInfo.stars;
             const bestStarLabel = calculateStars(bestScore).label;
 
+            // 最佳耗時計算（僅在及格/通關時更新，越短越好）
+            let bestTime = existingRecord ? (existingRecord.bestTime || null) : null;
+            if (elapsedSeconds !== null && elapsedSeconds > 0) {
+                if (bestTime === null || elapsedSeconds < bestTime) {
+                    bestTime = elapsedSeconds;
+                }
+            }
+
             const recordData = {
                 score: bestScore,
                 stars: bestStars,
                 starLabel: bestStarLabel,
                 lastScore: finalScore,
+                bestTime: bestTime,
+                lastTime: elapsedSeconds,
                 updatedAt: Date.now()
             };
 
@@ -1978,7 +2067,7 @@
                 }
             }
 
-            return { finalScore, starInfo, bestScore, bestStarLabel };
+            return { finalScore, starInfo, bestScore, bestStarLabel, bestTime, elapsedSeconds };
         }
 
         async function isNicknameTaken(nickname, excludeUid = null) {
@@ -2455,6 +2544,7 @@
 
         function handleLogout() {
             if (confirm("確定要登出系統嗎？")) {
+                recordSessionFocusTime();
                 auth.signOut();
                 closeProfileView();
                 goToStep('step-welcome');
@@ -2791,10 +2881,12 @@
             openModal('modal-quit-challenge');
         }
 
-        function confirmExitChallenge() {
+        async function confirmExitChallenge() {
             closeModal('modal-quit-challenge');
             stopSpeechRecognition();
             stopChallengeTimer();
+            // 離開挑戰時紀錄玩家當前遊玩時數
+            await recordSessionFocusTime();
             goToStep('step-lesson');
         }
 
@@ -3142,6 +3234,7 @@
                 if (challengeTimeRemaining <= 0) {
                     stopChallengeTimer();
                     updateDisplay();
+                    recordSessionFocusTime();
                     alert("⏰ 時間到！300 秒挑戰已結束。再試一次吧！");
                     goToStep('step-lesson');
                 } else {
@@ -3191,12 +3284,16 @@
             }
         }
 
+        // 結算關卡成績、刷新通關最快時間並累計專注時數
         async function finishCurrentChallenge() {
             stopSpeechRecognition();
             stopChallengeTimer();
 
+            // 計算並累計本次遊玩專注秒數
+            const elapsedSeconds = await recordSessionFocusTime();
+
             const finalScore = Math.min(100, Math.round(passedSubQuestions.size * pointsPerQuestion));
-            const result = await saveChallengeScoreRecord(finalScore);
+            const result = await saveChallengeScoreRecord(finalScore, elapsedSeconds);
 
             let starMsg = "";
             if (result.starInfo.stars === 3) starMsg = "🏆 完美滿分！獲得三星榮譽 ⭐⭐⭐！";
@@ -3220,7 +3317,10 @@
                 }
             }
 
-            alert(`【挑戰結算】\n得分：${finalScore} / 100 分\n${starMsg}\n歷史最佳：${result.bestStarLabel} (${result.bestScore} 分)`);
+            const thisTimeStr = formatDurationMMSS(elapsedSeconds);
+            const bestTimeStr = formatDurationMMSS(result.bestTime);
+
+            alert(`【挑戰結算】\n得分：${finalScore} / 100 分\n${starMsg}\n⏱ 本次耗時：${thisTimeStr}（歷史最快：${bestTimeStr}）\n歷史最佳星級：${result.bestStarLabel}`);
             selectUnit(currentConfig.unit_id);
         }
 
@@ -3230,6 +3330,9 @@
             currentConfig.lesson = lesson;
             currentConfig.mode = mode;
             resetChallengeProgress();
+
+            // 啟動通關計時器起點
+            challengeSessionStartTime = Date.now();
 
             if (currentUser) ProgressModel.updateUnitProgress(currentUser.uid, currentConfig.unit_id, lesson);
 
@@ -3763,7 +3866,7 @@
                     targetTextElem.style.visibility = "hidden";
                     if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
                 } else if (activeChallengeType === 'timed') {
-                    // 挑戰模式：所有等級（含 0A）一律隱藏題目韓文，進行盲讀挑戰
+                    // 挑戰模式：所有等級一律隱藏題目韓文進行盲讀
                     targetTextElem.innerText = item.text || "題目";
                     targetTextElem.style.visibility = "hidden";
                     if (playAudioBtn) playAudioBtn.style.display = 'none';
@@ -3792,7 +3895,7 @@
                 const trans = getWordTranslation(item);
 
                 // 單字聽打最新規則：
-                // 入門：顯示播放音檔按鈕，隱藏翻譯（支援聽音打字）
+                // 入門：顯示播放音檔按鈕，隱藏翻譯（聽音打字）
                 // 挑戰：隱藏播放音檔按鈕，顯示翻譯（看翻譯打韓文，限時挑戰）
                 // 練習：兩者皆顯示
                 if (activeChallengeType === 'entry') {
@@ -3835,7 +3938,7 @@
                 document.getElementById('lbl-word-type-score').innerText = "等待輸入...";
                 document.getElementById('lbl-word-type-score').style.color = "#58cc02";
 
-                // 入門模式與練習模式有播放鈕，預設進題自動播放；挑戰模式隱藏播放鈕，不自動播放
+                // 入門與練習模式預設進題播放；挑戰模式隱藏播放鈕且不自動播放
                 if (activeChallengeType !== 'timed') {
                     playWordAudio();
                 }
@@ -4507,7 +4610,7 @@
                     '6': '여섯',
                     '7': '일곱',
                     '8': '여덟',
-                    '9': '아홉'
+                    '9': ' trap'
                 };
                 for (const [num, word] of Object.entries(singleMap)) {
                     clean = clean.replaceAll(num, word);
