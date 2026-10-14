@@ -730,7 +730,7 @@
             word-break: break-word;
         }
 
-        /* 🌟 改良後的導覽控制列：進度永遠置中，下一題靠右絕對定位 */
+        /* 導覽控制列：進度居中，下一題靠右絕對定位 */
         .nav-controls { 
             display: flex; 
             justify-content: center; 
@@ -747,7 +747,7 @@
             text-align: center;
         }
 
-        /* 🌟 修正動畫衝突：鎖定 translateY(-50%)，杜絕向上跳動 */
+        /* 鎖定 translateY(-50%)，修復抖動跳格問題 */
         .nav-controls .btn-nav-next {
             position: absolute;
             right: 0;
@@ -781,7 +781,7 @@
             }
         }
 
-        /* 🌟 模式按鈕星級卡片樣式 */
+        /* 模式按鈕星級卡片樣式 */
         .mode-select-btn {
             padding: 13px 14px; 
             font-size: 1rem; 
@@ -1657,7 +1657,7 @@
             <div class="bottom-fixed-bar">
                 <div class="bottom-nav-item grammar-btn" id="btn-bottom-grammar" onclick="triggerBottomGrammarAction()">
                     <i class="fa-solid fa-book-open-reader"></i>
-                    <span id="lbl-bottom-grammar">📖 語法介紹</span>
+                    <span id="lbl-bottom-grammar">關卡任務</span>
                 </div>
                 <div class="bottom-nav-item map-btn" onclick="goToStep('step-level')">
                     <i class="fa-solid fa-map-location-dot" style="color: var(--duo-blue);"></i>
@@ -1724,7 +1724,7 @@
         // 狀態鎖定標記：回答完鎖定當前題目
         let isCurrentQuestionAnswered = false;
 
-        // 🌟 100 分制評分與星級追蹤變數
+        // 100 分制評分與星級追蹤變數
         let currentChallengeScore = 0;
         let pointsPerQuestion = 10;
         let passedSubQuestions = new Set();
@@ -1821,7 +1821,7 @@
             }
         };
 
-        // 🌟 星級與成績計算邏輯 (100滿分制: 60+ 1星 / 80+ 2星 / 100 3星)
+        // 星級與成績計算邏輯 (100滿分制: 60+ 1星 / 80+ 2星 / 100 3星)
         function calculateStars(score) {
             if (score >= 100) return { stars: 3, label: '⭐⭐⭐' };
             if (score >= 80) return { stars: 2, label: '⭐⭐' };
@@ -1844,7 +1844,7 @@
             }
         }
 
-        // 🌟 彈出模式選擇視窗時，即時渲染三種模式的獨立最高星級
+        // 彈出模式選擇視窗時，即時渲染三種模式的獨立最高星級
         function promptSelectModeType(lesson, mode, label) {
             if (mode === 'grammar') {
                 activeChallengeType = 'practice';
@@ -3092,7 +3092,7 @@
             document.querySelectorAll('.btn-nav-next').forEach(btn => btn.style.display = 'none');
         }
 
-        // 🌟 本題回答成功，增加得分權重並解鎖下一題按鈕
+        // 本題回答成功，增加得分權重並解鎖下一題按鈕
         function markQuestionAnswered(qIndex) {
             isCurrentQuestionAnswered = true;
             if (!passedSubQuestions.has(qIndex)) {
@@ -3116,7 +3116,7 @@
             }
         }
 
-        // 🌟 挑戰結束結算：滿分100分制，計算一星(60+)、二星(80+)、三星(100)
+        // 挑戰結束結算：滿分100分制，計算一星(60+)、二星(80+)、三星(100)
         async function finishCurrentChallenge() {
             stopSpeechRecognition();
             stopChallengeTimer();
@@ -3618,7 +3618,7 @@
 
             wordIndex = 0;
             totalChallengeQuestions = wordQuestions.length;
-            pointsPerQuestion = 100 / totalChallengeQuestions; // 🌟 每題權重計算
+            pointsPerQuestion = 100 / totalChallengeQuestions;
             currentWordPronMode = 'kr_pron';
 
             const isHard = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
@@ -3654,7 +3654,7 @@
             const total = wordQuestions.length;
             const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
 
-            // 🌟 預設隱藏下一題按鈕，回答正確或判定完成後才顯示
+            // 預設隱藏下一題按鈕，回答判定後才顯示
             ['btn-word-shadow-next', 'btn-word-type-next', 'btn-word-choice-next'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
@@ -3682,8 +3682,14 @@
                     targetTextElem.style.visibility = "hidden";
                     if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
                 } else if (activeChallengeType === 'timed') {
-                    targetTextElem.innerText = item.text || "題目";
-                    targetTextElem.style.visibility = "hidden";
+                    // 🌟 0A 程度挑戰模式：顯示韓文題目；其他程度保持隱藏盲讀
+                    if (is0ALevel) {
+                        targetTextElem.innerText = item.text || "";
+                        targetTextElem.style.visibility = "visible";
+                    } else {
+                        targetTextElem.innerText = item.text || "題目";
+                        targetTextElem.style.visibility = "hidden";
+                    }
                     if (playAudioBtn) playAudioBtn.style.display = 'none';
                 }
 
@@ -3862,7 +3868,6 @@
                 const correctKorean = item.text || "";
                 transElem.innerText = `${correctKorean} ${nativeTrans}`.trim();
 
-                // 答錯同樣標記為已答，解鎖下一題
                 isCurrentQuestionAnswered = true;
                 if (wordIndex < totalChallengeQuestions - 1) {
                     const nextBtn = document.getElementById('btn-word-type-next');
