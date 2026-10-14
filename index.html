@@ -1233,7 +1233,7 @@
             <div id="step-grammar" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-lesson')"><i class="fa-solid fa-arrow-left"></i> 回課堂選擇</button>
-                    <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-purple);">語法介紹</span>
+                    <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-purple);">關卡任務</span>
                 </div>
 
                 <div id="area-grammar-dialog">
@@ -2998,7 +2998,7 @@
                         return btn;
                     };
 
-                    if (hasGrammar) btnGroup.appendChild(createActionButton('grammar', '📖 語法', 'btn-grammar-lesson'));
+                    if (hasGrammar) btnGroup.appendChild(createActionButton('grammar', '關卡任務', 'btn-grammar-lesson'));
                     
                     if (hasWord) {
                         btnGroup.appendChild(createActionButton('word_shadow', '🗣 單字跟讀', 'btn-word-action'));
@@ -3193,7 +3193,7 @@
             currentDialogIndex = 0;
             grammarQuizIndex = 0;
             
-            document.getElementById('lbl-grammar-info').innerText = `語法介紹 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Lesson ${currentConfig.lesson}`;
+            document.getElementById('lbl-grammar-info').innerText = `關卡任務 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Lesson ${currentConfig.lesson}`;
             
             document.getElementById('area-grammar-all-history').style.display = 'none';
             document.getElementById('area-grammar-quiz').style.display = 'none';
