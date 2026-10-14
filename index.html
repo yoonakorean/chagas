@@ -1112,7 +1112,7 @@
         </div>
     </div>
 
-    <!-- 離開挑戰二次確認彈窗（已徹底清除誤植標籤） -->
+    <!-- 離開挑戰二次確認彈窗 -->
     <div id="modal-quit-challenge" class="custom-modal">
         <div class="custom-modal-card" style="padding: 26px 20px;">
             <div style="margin-bottom: 14px;">
@@ -1176,7 +1176,7 @@
         <!-- 中間滾動主區塊 -->
         <div id="learning-content-view">
 
-            <!-- 0. 全新開場畫面 (名稱已改為 優娜多語大冒險) -->
+            <!-- 0. 全新開場畫面 (名稱更新為 優娜多語大冒險) -->
             <div id="step-welcome" class="step-page active">
                 <div class="welcome-logo-icon">
                     <i class="fa-solid fa-gamepad"></i>
@@ -1672,7 +1672,7 @@
 
         const API_URLS = {
             korean: "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
-            japanese: "https://script.google.com/macros/s/AKfycbxQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
+            japanese: "https://script.google.com/macros/s/AKfycbQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
             english: ""
         };
 
@@ -1777,6 +1777,63 @@
             if (activeChallengeType === 'entry') return '(入門)';
             if (activeChallengeType === 'timed') return '(挑戰)';
             return '(練習)';
+        }
+
+        // ==================== 簽到打卡核心演算法 ====================
+
+        function getLocalDateString(d = new Date()) {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        async function processDailyCheckIn(user, userData) {
+            const todayStr = getLocalDateString();
+            let history = Array.isArray(userData.checkInHistory) ? [...userData.checkInHistory] : [];
+            let lastDateStr = userData.lastCheckInDate || null;
+            let streak = userData.streakDays || 0;
+
+            // 今天已經簽過到，直接返回最新資料
+            if (lastDateStr === todayStr) {
+                return { streakDays: streak, checkInHistory: history };
+            }
+
+            if (!lastDateStr) {
+                streak = 1;
+            } else {
+                const lastDate = new Date(lastDateStr + "T00:00:00");
+                const todayDate = new Date(todayStr + "T00:00:00");
+                const diffDays = Math.round((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+
+                if (diffDays === 1) {
+                    streak += 1;
+                } else if (diffDays > 1) {
+                    streak = 1;
+                }
+            }
+
+            if (!history.includes(todayStr)) {
+                history.push(todayStr);
+            }
+
+            userData.streakDays = streak;
+            userData.lastCheckInDate = todayStr;
+            userData.checkInHistory = history;
+            userData.xp = (userData.xp || 0) + 20;
+
+            try {
+                await db.collection("users").doc(user.uid).set({
+                    streakDays: streak,
+                    lastCheckInDate: todayStr,
+                    checkInHistory: history,
+                    xp: firebase.firestore.FieldValue.increment(20)
+                }, { merge: true });
+            } catch (e) {
+                console.error("更新簽到紀錄失敗:", e);
+            }
+
+            return { streakDays: streak, checkInHistory: history };
         }
 
         function getItemField(item, fieldName) {
@@ -2147,6 +2204,9 @@
                         window.currentUserData.modeScores = {};
                     }
 
+                    // 執行每日簽到檢查與天數累加
+                    await processDailyCheckIn(user, window.currentUserData);
+
                     if (window.currentUserData.learnCategory) setLearnCategory(window.currentUserData.learnCategory);
                     if (window.currentUserData.nativeLanguage) setUserLang(window.currentUserData.nativeLanguage);
                     if (!unlockedLevels.includes(currentConfig.level)) currentConfig.level = unlockedLevels[0];
@@ -2190,6 +2250,7 @@
                     return;
                 }
 
+                const todayStr = getLocalDateString();
                 const initialData = {
                     email: currentUser.email,
                     displayName: nickname,
@@ -2198,8 +2259,10 @@
                     status: "開通中",
                     learnCategory: learnCategory,
                     nativeLanguage: nativeLang,
-                    xp: 0,
+                    xp: 20,
                     streakDays: 1,
+                    lastCheckInDate: todayStr,
+                    checkInHistory: [todayStr],
                     focusHours: 0.0,
                     unlockedLevels: window.tempUnlockedLevels || ['0A'],
                     memberships: window.tempMemberships || [],
@@ -2631,7 +2694,7 @@
             }
         }
 
-        let calendarCurrentDate = new Date(2026, 9, 1);
+        let calendarCurrentDate = new Date();
 
         function renderStreakCalendar(dateObj) {
             const year = dateObj.getFullYear();
@@ -2645,20 +2708,27 @@
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
 
+            const historyList = (window.currentUserData && Array.isArray(window.currentUserData.checkInHistory))
+                ? window.currentUserData.checkInHistory
+                : [];
+
             for (let i = 0; i < firstDayIndex; i++) {
                 const emptyCell = document.createElement('div');
                 emptyCell.className = "calendar-day empty";
                 container.appendChild(emptyCell);
             }
 
-            const today = new Date();
             for (let day = 1; day <= totalDays; day++) {
                 const dayCell = document.createElement('div');
                 dayCell.className = "calendar-day";
                 dayCell.innerText = day;
-                if ((day === 1 && month === 9 && year === 2026) || (today.getFullYear() === year && today.getMonth() === month && today.getDate() === day)) {
+
+                const currentCellDateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+                if (historyList.includes(currentCellDateStr)) {
                     dayCell.classList.add('checked');
                 }
+
                 container.appendChild(dayCell);
             }
         }
