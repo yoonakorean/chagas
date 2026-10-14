@@ -1112,11 +1112,11 @@
         </div>
     </div>
 
-    <!-- 離開挑戰二次確認彈窗 -->
+    <!-- 離開挑戰二次確認彈窗（已徹底清除誤植標籤） -->
     <div id="modal-quit-challenge" class="custom-modal">
         <div class="custom-modal-card" style="padding: 26px 20px;">
             <div style="margin-bottom: 14px;">
-                <img src="images/quit.png" onerror="this.onerror=null; this.src='quit.png';" class="quit-modal-img" alt="Quit Challenge">[cite: 1]
+                <img src="images/quit.png" onerror="this.onerror=null; this.src='quit.png';" class="quit-modal-img" alt="Quit Challenge">
             </div>
             <h3 style="margin: 0 0 16px 0; color: #1e293b; font-size: 1.1rem; font-weight: 800; line-height: 1.5;">
                 別走，只差 1 分鐘就能完成這個挑戰了！
@@ -1176,7 +1176,7 @@
         <!-- 中間滾動主區塊 -->
         <div id="learning-content-view">
 
-            <!-- 0. 全新開場畫面 (名稱更新為 優娜多語大冒險) -->
+            <!-- 0. 全新開場畫面 (名稱已改為 優娜多語大冒險) -->
             <div id="step-welcome" class="step-page active">
                 <div class="welcome-logo-icon">
                     <i class="fa-solid fa-gamepad"></i>
@@ -1488,7 +1488,8 @@
                     <div class="timer-progress-bar" id="bar-progress-word-type"></div>
                 </div>
 
-                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 12px 0 10px 0;">
+                <!-- 語音播放容器：固定高度 min-height，避免隱藏時排版抖動 -->
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 12px 0 10px 0; min-height: 44px;">
                     <div class="target-text" id="lbl-word-type-text" style="margin: 0; min-height: auto; display: none;">...</div>
                     <button class="btn-circle btn-listen" id="btn-word-type-play" onclick="playWordAudio()" style="width: 44px; height: 44px; font-size: 1rem; flex-shrink: 0;"><i class="fa-solid fa-volume-high"></i></button>
                 </div>
@@ -1533,7 +1534,8 @@
                     <div class="timer-progress-bar" id="bar-progress-word-choice"></div>
                 </div>
 
-                <div id="box-word-audio-player" style="margin: 10px 0 10px 0;">
+                <!-- 播放器外框容器：固定 min-height 留位防抖動 -->
+                <div id="box-word-audio-player" style="margin: 10px 0 10px 0; min-height: 44px; display: flex; justify-content: center; align-items: center;">
                     <button class="btn-circle btn-listen" id="btn-word-choice-play" onclick="playWordAudio()" style="margin: 0 auto; width: 44px; height: 44px; font-size: 1rem;">
                         <i class="fa-solid fa-volume-high"></i>
                     </button>
@@ -3691,13 +3693,9 @@
                     targetTextElem.style.visibility = "hidden";
                     if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
                 } else if (activeChallengeType === 'timed') {
-                    if (is0ALevel) {
-                        targetTextElem.innerText = item.text || "";
-                        targetTextElem.style.visibility = "visible";
-                    } else {
-                        targetTextElem.innerText = item.text || "題目";
-                        targetTextElem.style.visibility = "hidden";
-                    }
+                    // 挑戰模式：所有等級（含 0A）一律隱藏題目韓文，進行盲讀挑戰
+                    targetTextElem.innerText = item.text || "題目";
+                    targetTextElem.style.visibility = "hidden";
                     if (playAudioBtn) playAudioBtn.style.display = 'none';
                 }
 
@@ -3723,21 +3721,30 @@
                 const hintElem = document.getElementById('lbl-word-type-hint');
                 const trans = getWordTranslation(item);
 
-                // 單字聽打：入門模式隱藏播放按鈕，只顯示翻譯；挑戰模式隱藏提示；練習模式顯示提示與播放
+                // 單字聽打：入門模式透過 visibility: hidden 隱藏並保留位置，防止跳動
                 if (activeChallengeType === 'entry') {
-                    if (playBtn) playBtn.style.display = 'none';
+                    if (playBtn) {
+                        playBtn.style.visibility = 'hidden';
+                        playBtn.style.pointerEvents = 'none';
+                    }
                     if (hintElem) {
                         hintElem.innerText = trans ? `提示：${trans}` : "";
                         hintElem.style.visibility = trans ? "visible" : "hidden";
                     }
                 } else if (activeChallengeType === 'timed') {
-                    if (playBtn) playBtn.style.display = 'inline-flex';
+                    if (playBtn) {
+                        playBtn.style.visibility = 'visible';
+                        playBtn.style.pointerEvents = 'auto';
+                    }
                     if (hintElem) {
                         hintElem.innerText = "提示佔位";
                         hintElem.style.visibility = "hidden";
                     }
                 } else {
-                    if (playBtn) playBtn.style.display = 'inline-flex';
+                    if (playBtn) {
+                        playBtn.style.visibility = 'visible';
+                        playBtn.style.pointerEvents = 'auto';
+                    }
                     if (hintElem) {
                         hintElem.innerText = trans ? `提示：${trans}` : "提示佔位";
                         hintElem.style.visibility = trans ? "visible" : "hidden";
@@ -3762,17 +3769,23 @@
 
             } else if (currentConfig.mode === 'word_choice') {
                 document.getElementById('lbl-word-choice-progress').innerText = `${wordIndex + 1} / ${total}`;
-                const audioPlayerBox = document.getElementById('box-word-audio-player');
+                const audioPlayerBtn = document.getElementById('btn-word-choice-play');
                 const targetTextElem = document.getElementById('lbl-word-choice-text');
                 const choiceSubElem = document.getElementById('lbl-word-choice-sub');
                 const container = document.getElementById('container-word-choices');
                 container.innerHTML = "";
 
-                // 單字選擇：入門模式隱藏播放按鈕；練習與挑戰模式顯示播放按鈕
+                // 單字選擇：入門模式以 visibility 隱藏並留位防跳動，其餘模式維持可見
                 if (activeChallengeType === 'entry') {
-                    if (audioPlayerBox) audioPlayerBox.style.display = 'none';
+                    if (audioPlayerBtn) {
+                        audioPlayerBtn.style.visibility = 'hidden';
+                        audioPlayerBtn.style.pointerEvents = 'none';
+                    }
                 } else {
-                    if (audioPlayerBox) audioPlayerBox.style.display = 'block';
+                    if (audioPlayerBtn) {
+                        audioPlayerBtn.style.visibility = 'visible';
+                        audioPlayerBtn.style.pointerEvents = 'auto';
+                    }
                 }
 
                 function pickRandomDistractors(candidateList, correctVal, count = 3) {
@@ -3799,13 +3812,13 @@
                 if (is0ALevel) {
                     // 0A 等級：聽韓文選韓文
                     if (activeChallengeType === 'practice') {
-                        // 練習模式：顯示題目韓文與中文翻譯
-                        targetTextElem.innerText = item.text || "";
-                        targetTextElem.style.visibility = "visible";
+                        // 練習模式：隱藏題目韓文，顯示中文翻譯
+                        targetTextElem.innerText = item.text || "題目";
+                        targetTextElem.style.visibility = "hidden";
                         choiceSubElem.innerText = nativeTrans ? `(${nativeTrans})` : "";
                         choiceSubElem.style.visibility = nativeTrans ? "visible" : "hidden";
                     } else if (activeChallengeType === 'entry') {
-                        // 入門模式：隱藏題目韓文，顯示翻譯供輔助
+                        // 入門模式：隱藏題目韓文，顯示中文翻譯輔助
                         targetTextElem.innerText = item.text || "題目";
                         targetTextElem.style.visibility = "hidden";
                         choiceSubElem.innerText = nativeTrans ? `提示：${nativeTrans}` : "";
@@ -3919,7 +3932,10 @@
 
             // 回答後恢復顯示播放按鈕
             const playBtn = document.getElementById('btn-word-type-play');
-            if (playBtn) playBtn.style.display = 'inline-flex';
+            if (playBtn) {
+                playBtn.style.visibility = 'visible';
+                playBtn.style.pointerEvents = 'auto';
+            }
 
             if (isMatch) {
                 scoreBadge.innerText = "🎉 完全正確！";
@@ -3967,8 +3983,11 @@
             const choiceSubElem = document.getElementById('lbl-word-choice-sub');
 
             // 回答後恢復顯示播放按鈕
-            const audioPlayerBox = document.getElementById('box-word-audio-player');
-            if (audioPlayerBox) audioPlayerBox.style.display = 'block';
+            const audioPlayerBtn = document.getElementById('btn-word-choice-play');
+            if (audioPlayerBtn) {
+                audioPlayerBtn.style.visibility = 'visible';
+                audioPlayerBtn.style.pointerEvents = 'auto';
+            }
 
             if (is0ALevel) {
                 const correctKorean = (item.text || '').trim();
