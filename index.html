@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>７多語挑戰系統</title>
+    <title>優娜多語大冒險</title>
     <!-- FontAwesome 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -1116,7 +1116,7 @@
     <div id="modal-quit-challenge" class="custom-modal">
         <div class="custom-modal-card" style="padding: 26px 20px;">
             <div style="margin-bottom: 14px;">
-                <img src="images/quit.png" onerror="this.onerror=null; this.src='quit.png';" class="quit-modal-img" alt="Quit Challenge">
+                <img src="images/quit.png" onerror="this.onerror=null; this.src='quit.png';" class="quit-modal-img" alt="Quit Challenge">[cite: 1]
             </div>
             <h3 style="margin: 0 0 16px 0; color: #1e293b; font-size: 1.1rem; font-weight: 800; line-height: 1.5;">
                 別走，只差 1 分鐘就能完成這個挑戰了！
@@ -1176,12 +1176,12 @@
         <!-- 中間滾動主區塊 -->
         <div id="learning-content-view">
 
-            <!-- 0. 全新開場畫面 -->
+            <!-- 0. 全新開場畫面 (名稱更新為 優娜多語大冒險) -->
             <div id="step-welcome" class="step-page active">
                 <div class="welcome-logo-icon">
                     <i class="fa-solid fa-gamepad"></i>
                 </div>
-                <h1 class="welcome-title">生存挑戰系統</h1>
+                <h1 class="welcome-title">優娜多語大冒險</h1>
                 <p class="welcome-subtitle">每日通關練習，打造超強外語即戰力！</p>
                 <div class="welcome-actions-box">
                     <button class="btn-welcome-play" onclick="handleStartGameClick()">
@@ -3768,7 +3768,7 @@
                 const container = document.getElementById('container-word-choices');
                 container.innerHTML = "";
 
-                // 單字選擇：入門模式隱藏播放按鈕，只顯示翻譯；練習與挑戰模式顯示播放按鈕
+                // 單字選擇：入門模式隱藏播放按鈕；練習與挑戰模式顯示播放按鈕
                 if (activeChallengeType === 'entry') {
                     if (audioPlayerBox) audioPlayerBox.style.display = 'none';
                 } else {
@@ -3797,13 +3797,23 @@
                 const nativeTrans = getTranslationText(item);
 
                 if (is0ALevel) {
-                    targetTextElem.innerText = item.text || "題目";
-                    targetTextElem.style.visibility = "hidden";
-
-                    if (activeChallengeType === 'entry') {
-                        choiceSubElem.innerText = nativeTrans || "";
+                    // 0A 等級：聽韓文選韓文
+                    if (activeChallengeType === 'practice') {
+                        // 練習模式：顯示題目韓文與中文翻譯
+                        targetTextElem.innerText = item.text || "";
+                        targetTextElem.style.visibility = "visible";
+                        choiceSubElem.innerText = nativeTrans ? `(${nativeTrans})` : "";
+                        choiceSubElem.style.visibility = nativeTrans ? "visible" : "hidden";
+                    } else if (activeChallengeType === 'entry') {
+                        // 入門模式：隱藏題目韓文，顯示翻譯供輔助
+                        targetTextElem.innerText = item.text || "題目";
+                        targetTextElem.style.visibility = "hidden";
+                        choiceSubElem.innerText = nativeTrans ? `提示：${nativeTrans}` : "";
                         choiceSubElem.style.visibility = nativeTrans ? "visible" : "hidden";
                     } else {
+                        // 挑戰模式：純盲聽
+                        targetTextElem.innerText = item.text || "題目";
+                        targetTextElem.style.visibility = "hidden";
                         choiceSubElem.innerText = "提示佔位";
                         choiceSubElem.style.visibility = "hidden";
                     }
@@ -3834,18 +3844,21 @@
                     });
 
                 } else {
-                    // 入門模式：只顯示翻譯，題目字隱藏；由學生選對應外語或詞意
+                    // 1A 以上等級：聽韓文選中文
                     if (activeChallengeType === 'entry') {
-                        targetTextElem.innerText = "題目";
-                        targetTextElem.style.visibility = "hidden";
-                        choiceSubElem.innerText = nativeTrans ? `提示：${nativeTrans}` : "";
-                        choiceSubElem.style.visibility = nativeTrans ? "visible" : "hidden";
+                        // 入門模式：顯示韓文題目，不顯示中文翻譯
+                        targetTextElem.innerText = item.text || "";
+                        targetTextElem.style.visibility = "visible";
+                        choiceSubElem.innerText = "提示佔位";
+                        choiceSubElem.style.visibility = "hidden";
                     } else if (activeChallengeType === 'timed') {
+                        // 挑戰模式：盲聽，隱藏題目韓文與中文翻譯
                         targetTextElem.innerText = item.text || "題目";
                         targetTextElem.style.visibility = "hidden";
                         choiceSubElem.innerText = "提示佔位";
                         choiceSubElem.style.visibility = "hidden";
                     } else {
+                        // 練習模式：顯示韓文題目
                         targetTextElem.innerText = item.text || "";
                         targetTextElem.style.visibility = "visible";
                         choiceSubElem.innerText = "提示佔位";
