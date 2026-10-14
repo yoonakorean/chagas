@@ -3791,17 +3791,11 @@
                 const hintElem = document.getElementById('lbl-word-type-hint');
                 const trans = getWordTranslation(item);
 
-                // 單字聽打：入門模式透過 visibility: hidden 隱藏並保留位置，防止跳動
+                // 單字聽打最新規則：
+                // 入門：顯示播放音檔按鈕，隱藏翻譯（支援聽音打字）
+                // 挑戰：隱藏播放音檔按鈕，顯示翻譯（看翻譯打韓文，限時挑戰）
+                // 練習：兩者皆顯示
                 if (activeChallengeType === 'entry') {
-                    if (playBtn) {
-                        playBtn.style.visibility = 'hidden';
-                        playBtn.style.pointerEvents = 'none';
-                    }
-                    if (hintElem) {
-                        hintElem.innerText = trans ? `提示：${trans}` : "";
-                        hintElem.style.visibility = trans ? "visible" : "hidden";
-                    }
-                } else if (activeChallengeType === 'timed') {
                     if (playBtn) {
                         playBtn.style.visibility = 'visible';
                         playBtn.style.pointerEvents = 'auto';
@@ -3809,6 +3803,15 @@
                     if (hintElem) {
                         hintElem.innerText = "提示佔位";
                         hintElem.style.visibility = "hidden";
+                    }
+                } else if (activeChallengeType === 'timed') {
+                    if (playBtn) {
+                        playBtn.style.visibility = 'hidden';
+                        playBtn.style.pointerEvents = 'none';
+                    }
+                    if (hintElem) {
+                        hintElem.innerText = trans ? `提示：${trans}` : "";
+                        hintElem.style.visibility = trans ? "visible" : "hidden";
                     }
                 } else {
                     if (playBtn) {
@@ -3832,8 +3835,8 @@
                 document.getElementById('lbl-word-type-score').innerText = "等待輸入...";
                 document.getElementById('lbl-word-type-score').style.color = "#58cc02";
 
-                // 入門模式一開始不自動播放，練習與挑戰模式維持自動播放
-                if (activeChallengeType !== 'entry') {
+                // 入門模式與練習模式有播放鈕，預設進題自動播放；挑戰模式隱藏播放鈕，不自動播放
+                if (activeChallengeType !== 'timed') {
                     playWordAudio();
                 }
 
@@ -3844,19 +3847,6 @@
                 const choiceSubElem = document.getElementById('lbl-word-choice-sub');
                 const container = document.getElementById('container-word-choices');
                 container.innerHTML = "";
-
-                // 單字選擇：入門模式以 visibility 隱藏並留位防跳動，其餘模式維持可見
-                if (activeChallengeType === 'entry') {
-                    if (audioPlayerBtn) {
-                        audioPlayerBtn.style.visibility = 'hidden';
-                        audioPlayerBtn.style.pointerEvents = 'none';
-                    }
-                } else {
-                    if (audioPlayerBtn) {
-                        audioPlayerBtn.style.visibility = 'visible';
-                        audioPlayerBtn.style.pointerEvents = 'auto';
-                    }
-                }
 
                 function pickRandomDistractors(candidateList, correctVal, count = 3) {
                     const cleanCorrect = (correctVal || '').trim();
@@ -3880,25 +3870,37 @@
                 const nativeTrans = getTranslationText(item);
 
                 if (is0ALevel) {
-                    // 0A 等級：聽韓文選韓文
+                    // 0A 單字選擇最新規則：
+                    // 入門：顯示播放音檔按鈕，隱藏翻譯（聽音選韓文字母）
+                    // 挑戰：隱藏播放音檔按鈕，顯示翻譯（看翻譯選韓文字母）
+                    // 練習：顯示播放音檔按鈕，隱藏題目韓文，顯示翻譯輔助
                     if (activeChallengeType === 'practice') {
-                        // 練習模式：隱藏題目韓文，顯示中文翻譯
+                        if (audioPlayerBtn) {
+                            audioPlayerBtn.style.visibility = 'visible';
+                            audioPlayerBtn.style.pointerEvents = 'auto';
+                        }
                         targetTextElem.innerText = item.text || "題目";
                         targetTextElem.style.visibility = "hidden";
                         choiceSubElem.innerText = nativeTrans ? `(${nativeTrans})` : "";
                         choiceSubElem.style.visibility = nativeTrans ? "visible" : "hidden";
                     } else if (activeChallengeType === 'entry') {
-                        // 入門模式：隱藏題目韓文，顯示中文翻譯輔助
-                        targetTextElem.innerText = item.text || "題目";
-                        targetTextElem.style.visibility = "hidden";
-                        choiceSubElem.innerText = nativeTrans ? `提示：${nativeTrans}` : "";
-                        choiceSubElem.style.visibility = nativeTrans ? "visible" : "hidden";
-                    } else {
-                        // 挑戰模式：純盲聽
+                        if (audioPlayerBtn) {
+                            audioPlayerBtn.style.visibility = 'visible';
+                            audioPlayerBtn.style.pointerEvents = 'auto';
+                        }
                         targetTextElem.innerText = item.text || "題目";
                         targetTextElem.style.visibility = "hidden";
                         choiceSubElem.innerText = "提示佔位";
                         choiceSubElem.style.visibility = "hidden";
+                    } else { // timed 挑戰模式
+                        if (audioPlayerBtn) {
+                            audioPlayerBtn.style.visibility = 'hidden';
+                            audioPlayerBtn.style.pointerEvents = 'none';
+                        }
+                        targetTextElem.innerText = item.text || "題目";
+                        targetTextElem.style.visibility = "hidden";
+                        choiceSubElem.innerText = nativeTrans ? `提示：${nativeTrans}` : "";
+                        choiceSubElem.style.visibility = nativeTrans ? "visible" : "hidden";
                     }
 
                     document.getElementById('lbl-word-choice-score').innerText = "判定結果：--";
@@ -3926,22 +3928,36 @@
                         container.appendChild(btn);
                     });
 
+                    // 0A 入門與練習模式播放音檔，挑戰模式看翻譯不播放
+                    if (activeChallengeType !== 'timed') {
+                        setTimeout(() => playWordAudio(), 300);
+                    }
+
                 } else {
                     // 1A 以上等級：聽韓文選中文
                     if (activeChallengeType === 'entry') {
-                        // 入門模式：顯示韓文題目，不顯示中文翻譯
+                        if (audioPlayerBtn) {
+                            audioPlayerBtn.style.visibility = 'visible';
+                            audioPlayerBtn.style.pointerEvents = 'auto';
+                        }
                         targetTextElem.innerText = item.text || "";
                         targetTextElem.style.visibility = "visible";
                         choiceSubElem.innerText = "提示佔位";
                         choiceSubElem.style.visibility = "hidden";
                     } else if (activeChallengeType === 'timed') {
-                        // 挑戰模式：盲聽，隱藏題目韓文與中文翻譯
+                        if (audioPlayerBtn) {
+                            audioPlayerBtn.style.visibility = 'visible';
+                            audioPlayerBtn.style.pointerEvents = 'auto';
+                        }
                         targetTextElem.innerText = item.text || "題目";
                         targetTextElem.style.visibility = "hidden";
                         choiceSubElem.innerText = "提示佔位";
                         choiceSubElem.style.visibility = "hidden";
                     } else {
-                        // 練習模式：顯示韓文題目
+                        if (audioPlayerBtn) {
+                            audioPlayerBtn.style.visibility = 'visible';
+                            audioPlayerBtn.style.pointerEvents = 'auto';
+                        }
                         targetTextElem.innerText = item.text || "";
                         targetTextElem.style.visibility = "visible";
                         choiceSubElem.innerText = "提示佔位";
@@ -3973,9 +3989,7 @@
                         btn.onclick = () => checkWordChoiceAnswer(mText);
                         container.appendChild(btn);
                     });
-                }
 
-                if (activeChallengeType !== 'entry') {
                     setTimeout(() => playWordAudio(), 300);
                 }
             }
@@ -4000,7 +4014,7 @@
             const checkBtn = document.getElementById('btn-submit-word-type');
             if (checkBtn) checkBtn.disabled = true;
 
-            // 回答後恢復顯示播放按鈕
+            // 回答後一律恢復顯示播放按鈕
             const playBtn = document.getElementById('btn-word-type-play');
             if (playBtn) {
                 playBtn.style.visibility = 'visible';
@@ -4052,7 +4066,7 @@
             const targetTextElem = document.getElementById('lbl-word-choice-text');
             const choiceSubElem = document.getElementById('lbl-word-choice-sub');
 
-            // 回答後恢復顯示播放按鈕
+            // 回答後一律恢復顯示播放按鈕
             const audioPlayerBtn = document.getElementById('btn-word-choice-play');
             if (audioPlayerBtn) {
                 audioPlayerBtn.style.visibility = 'visible';
