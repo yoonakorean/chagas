@@ -1143,7 +1143,7 @@
 </head>
 <body>
 
-    <!-- 全新：全螢幕「島嶼生成中...」遮罩 -->
+    <!-- 全螢幕「島嶼生成中...」遮罩 -->
     <div id="game-loading-overlay">
         <div class="loading-island-icon">
             <i class="fa-solid fa-mountain-sun"></i>
@@ -1346,6 +1346,27 @@
                     退出
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- 全新：閒置過久提示彈窗（防掛機機制，不在畫面上倒數，時間到自動暫停並彈出） -->
+    <div id="modal-idle-timeout" class="custom-modal" style="z-index: 9999999;">
+        <div class="custom-modal-card" style="padding: 26px 20px;">
+            <div style="font-size: 2.6rem; color: var(--duo-orange); margin-bottom: 10px;">
+                <i class="fa-solid fa-hourglass-end"></i>
+            </div>
+            <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 1.25rem; font-weight: 900;">
+                閒置過久囉！
+            </h3>
+            <p style="font-size: 0.9rem; color: #64748b; margin: 0 0 18px 0; line-height: 1.5;">
+                檢測到您已超過 90 秒未操作，系統已自動暫停專注計時。休息好了就繼續吧！
+            </p>
+            <button class="btn-3d btn-3d-primary" onclick="resumeFromIdle()" style="width: 100%; padding: 12px; font-size: 1.05rem; margin-bottom: 10px;">
+                <i class="fa-solid fa-play"></i> 繼續挑戰
+            </button>
+            <button class="btn-3d btn-3d-secondary" onclick="exitFromIdle()" style="width: 100%; padding: 10px; font-size: 0.95rem;">
+                <i class="fa-solid fa-map-location-dot"></i> 返回地圖
+            </button>
         </div>
     </div>
 
@@ -1993,6 +2014,11 @@
         let currentRankSubTab = 'global';
         let fireworksAnimationId = null;
 
+        // 靜默 90 秒閒置防掛機變數（不向使用者倒數顯示）
+        let idleTimer = null;
+        const IDLE_LIMIT_MS = 90 * 1000;
+        let isIdlePaused = false;
+
         function showIslandLoading(subText = "冒險地圖與學習資料整備中", progressPct = 30) {
             const overlay = document.getElementById('game-loading-overlay');
             const subElem = document.getElementById('lbl-island-loading-sub');
@@ -2242,7 +2268,95 @@
                 return null;
             }
         }
-// 選擇挑戰模式彈窗（已修改：0A 程度完全隱藏入門模式，只保留練習與挑戰模式）
+// ==================== 靜默 90 秒閒置防掛機邏輯 ====================
+        function resetIdleTimer() {
+            if (isIdlePaused) return;
+            if (idleTimer) clearTimeout(idleTimer);
+
+            // 僅在進入題目挑戰與計時專注狀態時啟用
+            if (challengeSessionStartTime) {
+                idleTimer = setTimeout(() => {
+                    handleIdleTimeout();
+                }, IDLE_LIMIT_MS);
+            }
+        }
+
+        function clearIdleTimer() {
+            if (idleTimer) {
+                clearTimeout(idleTimer);
+                idleTimer = null;
+            }
+        }
+
+        async function handleIdleTimeout() {
+            isIdlePaused = true;
+            clearIdleTimer();
+            stopSpeechRecognition();
+
+            // 結算截至閒置前的專注時間，避免時數無限膨脹
+            await recordSessionFocusTime();
+
+            // 暫停 300 秒挑戰倒數計時器
+            if (challengeTimerInterval) {
+                clearInterval(challengeTimerInterval);
+                challengeTimerInterval = null;
+            }
+
+            openModal('modal-idle-timeout');
+        }
+
+        function resumeFromIdle() {
+            closeModal('modal-idle-timeout');
+            isIdlePaused = false;
+            challengeSessionStartTime = Date.now();
+
+            if (activeChallengeType === 'timed') {
+                const targetKey = (currentConfig.mode === 'word_shadow') ? 'word-shadow' :
+                                  (currentConfig.mode === 'word_type') ? 'word-type' :
+                                  (currentConfig.mode === 'word_choice') ? 'word-choice' :
+                                  (currentConfig.mode === 'sentence_chat') ? 'chat' :
+                                  (currentConfig.mode === 'blocks') ? 'blocks' : 'shadow';
+                resumeChallengeTimer(targetKey);
+            }
+
+            resetIdleTimer();
+        }
+
+        async function exitFromIdle() {
+            closeModal('modal-idle-timeout');
+            isIdlePaused = false;
+            clearIdleTimer();
+            stopChallengeTimer();
+            goToStep('step-lesson');
+        }
+
+        function resumeChallengeTimer(targetModeKey) {
+            const badgeElem = document.getElementById(`lbl-timer-${targetModeKey}`);
+            const barElem = document.getElementById(`bar-progress-${targetModeKey}`);
+
+            function updateDisplay() {
+                const mins = Math.floor(challengeTimeRemaining / 60);
+                const secs = challengeTimeRemaining % 60;
+                if (badgeElem) badgeElem.innerText = `⏱ ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                const pct = (challengeTimeRemaining / 300) * 100;
+                if (barElem) barElem.style.width = `${pct}%`;
+            }
+
+            challengeTimerInterval = setInterval(() => {
+                challengeTimeRemaining--;
+                if (challengeTimeRemaining <= 0) {
+                    stopChallengeTimer();
+                    updateDisplay();
+                    recordSessionFocusTime();
+                    alert("⏰ 時間到！300 秒挑戰已結束。再試一次吧！");
+                    goToStep('step-lesson');
+                } else {
+                    updateDisplay();
+                }
+            }, 1000);
+        }
+
+        // 選擇挑戰模式彈窗（0A 程度完全隱藏入門模式）
         function promptSelectModeType(unitId, lesson, mode, label) {
             currentConfig.unit_id = String(unitId);
             if (mode === 'grammar') {
@@ -3020,6 +3134,7 @@
 
         function handleLogout() {
             if (confirm("確定要登出系統嗎？")) {
+                clearIdleTimer();
                 recordSessionFocusTime();
                 auth.signOut();
                 closeProfileView();
@@ -3037,6 +3152,7 @@
         }
 
         function openProfileView() {
+            clearIdleTimer();
             document.getElementById('learning-content-view').classList.add('hidden');
             document.getElementById('profile-view').classList.remove('hidden');
             renderUserInfo();
@@ -3363,6 +3479,7 @@
 
         async function confirmExitChallenge() {
             closeModal('modal-quit-challenge');
+            clearIdleTimer();
             stopSpeechRecognition();
             stopChallengeTimer();
             await recordSessionFocusTime();
@@ -3407,6 +3524,9 @@
 
         function goToStep(stepId) {
             stopSpeechRecognition();
+            if (!stepId.startsWith('step-quiz-') && stepId !== 'step-grammar') {
+                clearIdleTimer();
+            }
             document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
             document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
             const targetPage = document.getElementById(stepId);
@@ -3767,6 +3887,7 @@
         }
 
         async function finishCurrentChallenge() {
+            clearIdleTimer();
             stopSpeechRecognition();
             stopChallengeTimer();
 
@@ -3806,6 +3927,8 @@
             resetChallengeProgress();
 
             challengeSessionStartTime = Date.now();
+            isIdlePaused = false;
+            resetIdleTimer();
 
             if (currentUser) ProgressModel.updateUnitProgress(currentUser.uid, currentConfig.unit_id, lesson);
 
@@ -4302,7 +4425,7 @@
             displayWordQuestion();
         }
 
-        // 題目呈現函式（已修改：0A 單字跟讀挑戰模式下依然顯示韓文）
+        // 題目呈現函式（0A 單字跟讀挑戰模式下依然顯示韓文）
         function displayWordQuestion() {
             stopSpeechRecognition();
             resetSpeechEvalButtons();
@@ -5394,7 +5517,7 @@
             });
         }
 
-        // 發音評分判斷函式（已修改：錯誤時無論任何程度都顯示下一題或結算按鈕）
+        // 發音評分判斷函式（錯誤時無論任何程度都顯示下一題或結算按鈕）
         function evaluateUserSpeech() {
             if (!lastRecognizedSpeechText) {
                 return alert("尚未取得辨識結果，請重新錄音！");
@@ -5578,6 +5701,15 @@
             setLearnCategory(localStorage.getItem('preferred_learn_category') || 'korean');
             updateUserFlagIcon();
             goToStep('step-welcome');
+
+            // 監聽所有操作事件，只要有動作就重置 90 秒靜默計時
+            ['mousedown', 'mousemove', 'touchstart', 'scroll', 'keydown', 'click'].forEach(evt => {
+                window.addEventListener(evt, () => {
+                    if (!isIdlePaused && challengeSessionStartTime) {
+                        resetIdleTimer();
+                    }
+                }, { passive: true });
+            });
         };
     </script>
 </body>
