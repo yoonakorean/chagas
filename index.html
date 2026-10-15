@@ -1143,7 +1143,7 @@
 </head>
 <body>
 
-    <!-- 全新：全螢幕「島嶼生成中...」遮罩，點擊進入遊戲後才會觸發 -->
+    <!-- 全新：全螢幕「島嶼生成中...」遮罩，點擊進入遊戲或切換語言時才會觸發 -->
     <div id="game-loading-overlay">
         <div class="loading-island-icon">
             <i class="fa-solid fa-mountain-sun"></i>
@@ -1457,7 +1457,7 @@
                 <div id="container-levels" class="option-grid grid-2"></div>
             </div>
 
-            <!-- 步驟 3：選擇課堂挑戰 (Lesson) - 已移除 step-unit，此頁面直接依單元分組連續呈現所有關卡 -->
+            <!-- 步驟 3：選擇課堂挑戰 (Lesson) - 已完全移除 step-unit，直接依單元分組滾動呈現所有關卡 -->
             <div id="step-lesson" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
@@ -1752,7 +1752,7 @@
 
                 <div class="nav-controls">
                     <span class="lbl-progress" id="lbl-word-type-progress">0 / 0</span>
-                    <button class="btn-word-type-next" id="btn-word-type-next" onclick="nextWordQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
+                    <button class="btn-nav-next" id="btn-word-type-next" onclick="nextWordQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-word-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
@@ -2085,7 +2085,7 @@
             flagElem.innerText = flagMap[currentConfig.category] || '🌐';
         }
 
-        // 專注遊玩時數累加函式
+        // 專注遊玩時數累加函式：跨語言持續累積，不因切換而重設
         async function recordSessionFocusTime() {
             if (!challengeSessionStartTime) return 0;
             const now = Date.now();
@@ -2618,12 +2618,13 @@
             btnAuthSubmit.innerText = '註冊帳號';
         };
 
-        // 點擊「進入遊戲」：展開島嶼生成畫面，同時平行自動強制同步韓文與日文最新題庫
+        // 點擊「進入遊戲」：只強制同步「當前設定之學習語言」，快速生成島嶼
         async function handleStartGameClick() {
             if (currentUser) {
-                showIslandLoading("🏝️ 島嶼生成中，正在同步韓文與日文最新題庫...", 35);
+                const langName = (currentConfig.category === 'japanese') ? '日文' : (currentConfig.category === 'english' ? '英文' : '韓文');
+                showIslandLoading(`🏝️ 島嶼生成中，正在同步${langName}最新題庫...`, 40);
                 try {
-                    await autoLoadAllLanguages(true); // 平行同步所有語言題庫
+                    await autoLoadCategoryData(currentConfig.category, true);
                     updateIslandLoading("島嶼生成完畢，正在前往冒險地圖...", 90);
                     setTimeout(() => {
                         resumeLastPlayedProgress();
@@ -2759,7 +2760,7 @@
 
                     if (isInteractive) {
                         updateIslandLoading("🏝️ 同步最新試算表題庫中...", 75);
-                        await autoLoadAllLanguages(true);
+                        await autoLoadCategoryData(currentConfig.category, true);
                         hideIslandLoading();
                         resumeLastPlayedProgress();
                     }
@@ -2829,7 +2830,7 @@
                 renderUserInfo();
 
                 updateIslandLoading("正在載入最新試算表題庫...", 85);
-                await autoLoadAllLanguages(true);
+                await autoLoadCategoryData(learnCategory, true);
                 hideIslandLoading();
                 resumeLastPlayedProgress();
             } catch (e) {
@@ -2848,6 +2849,7 @@
             updateUserFlagIcon();
         }
 
+        // 切換語言：觸發「島嶼生成中」並強制載入該目標語言的最新試算表
         async function updateAccountLearnCategory(cat) {
             setLearnCategory(cat);
             if (currentUser) {
@@ -2858,9 +2860,19 @@
                     console.error("更新學習語言偏好失敗:", e); 
                 }
             }
-            loadCurrentLanguageFromCache();
+
             closeProfileView();
-            goToStep('step-level');
+            const langName = (cat === 'japanese') ? '日文' : (cat === 'english' ? '英文' : '韓文');
+            showIslandLoading(`🏝️ 島嶼生成中，正在載入${langName}題庫...`, 35);
+            try {
+                await autoLoadCategoryData(cat, true);
+                hideIslandLoading();
+                renderAllLessonsForLevel(currentConfig.level);
+                goToStep('step-lesson');
+            } catch (e) {
+                hideIslandLoading();
+                alert(`載入${langName}題庫失敗，請確認網路！`);
+            }
         }
 
         async function updateAccountNativeLang(lang) {
@@ -2880,6 +2892,7 @@
             const xp = window.currentUserData.xp || 0;
             const displayName = window.currentUserData.displayName || "學生";
 
+            // 確保生涯專注總時數不歸零
             const totalSeconds = Number(window.currentUserData.focusSeconds || (window.currentUserData.focusHours ? window.currentUserData.focusHours * 3600 : 0));
             const focusText = formatFocusDurationText(totalSeconds);
 
@@ -3451,75 +3464,64 @@
                 localStorage.removeItem(k + currentConfig.category);
             });
             showIslandLoading("快取清除完成，正在同步最新島嶼題庫...", 40);
-            await autoLoadAllLanguages(true);
+            await autoLoadCategoryData(currentConfig.category, true);
             hideIslandLoading();
         }
 
-        // 平行同時強制同步韓文、日文（所有可用語言）最新題庫並存入 LocalStorage
-        async function autoLoadAllLanguages(forceRefresh = true) {
-            const availableCategories = Object.keys(API_URLS).filter(cat => API_URLS[cat] && API_URLS[cat].trim() !== '');
-            
-            const fetchPromises = availableCategories.map(async (cat) => {
-                const targetApi = API_URLS[cat];
-                const cacheMap = {
-                    all: `all_data_${cat}`,
-                    grammar: `grammar_data_${cat}`,
-                    dialogue: `dialogue_data_${cat}`,
-                    word: `word_data_${cat}`
-                };
+        // 單一語言題庫載入函式：支援強制刷新
+        async function autoLoadCategoryData(cat, forceRefresh = false) {
+            const targetApi = API_URLS[cat];
+            if (!targetApi) return alert(`該語言 API 尚未設定！`);
 
-                try {
-                    const [shadowRes, blocksRes, grammarRes, dialogueRes, wordRes] = await Promise.all([
-                        requestGAS(targetApi, 'getLanguageData').catch(() => null),
-                        requestGAS(targetApi, 'getBlocksData').catch(() => null),
-                        requestGAS(targetApi, 'getGrammarData').catch(() => null),
-                        requestGAS(targetApi, 'getDialogueData').catch(() => null),
-                        requestGAS(targetApi, 'getWordData').catch(() => null)
-                    ]);
+            const cacheMap = {
+                all: `all_data_${cat}`,
+                grammar: `grammar_data_${cat}`,
+                dialogue: `dialogue_data_${cat}`,
+                word: `word_data_${cat}`
+            };
 
-                    const shadowData = (shadowRes && shadowRes.status === 'success') ? (shadowRes.data || []) : [];
-                    const blocksData = (blocksRes && blocksRes.status === 'success') ? (blocksRes.data || []) : [];
-                    const grammarData = (grammarRes && grammarRes.status === 'success') ? (grammarRes.data || []) : [];
-                    const dialogueData = (dialogueRes && dialogueRes.status === 'success') ? (dialogueRes.data || []) : [];
-                    const wordData = (wordRes && wordRes.status === 'success') ? (wordRes.data || []) : [];
+            const readCache = (key) => {
+                try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch(e) { return null; }
+            };
 
-                    localStorage.setItem(cacheMap.all, JSON.stringify({ shadow: shadowData, blocks: blocksData }));
-                    localStorage.setItem(cacheMap.grammar, JSON.stringify(grammarData));
-                    localStorage.setItem(cacheMap.dialogue, JSON.stringify(dialogueData));
-                    localStorage.setItem(cacheMap.word, JSON.stringify(wordData));
-
-                    if (cat === currentConfig.category) {
-                        rawShadowData = shadowData;
-                        rawBlocksData = blocksData;
-                        globalGrammarData = grammarData;
-                        rawDialogueData = dialogueData;
-                        rawWordData = wordData;
-                    }
-                } catch (e) {
-                    console.error(`自動更新 ${cat} 題庫失敗:`, e);
-                }
-            });
-
-            await Promise.all(fetchPromises);
-            renderLevelMenu();
-        }
-
-        // 自快取讀取當前語言資料（用於切換語言時瞬間載入）
-        function loadCurrentLanguageFromCache() {
-            const cat = currentConfig.category;
-            try {
-                const cachedAll = JSON.parse(localStorage.getItem(`all_data_${cat}`) || 'null');
-                if (cachedAll) {
+            if (!forceRefresh) {
+                const cachedAll = readCache(cacheMap.all);
+                if (cachedAll && (cachedAll.shadow || cachedAll.blocks)) {
                     rawShadowData = cachedAll.shadow || [];
                     rawBlocksData = cachedAll.blocks || [];
+                    globalGrammarData = readCache(cacheMap.grammar) || [];
+                    rawDialogueData = readCache(cacheMap.dialogue) || [];
+                    rawWordData = readCache(cacheMap.word) || [];
+                    renderLevelMenu();
+                    return;
                 }
-                globalGrammarData = JSON.parse(localStorage.getItem(`grammar_data_${cat}`) || '[]');
-                rawDialogueData = JSON.parse(localStorage.getItem(`dialogue_data_${cat}`) || '[]');
-                rawWordData = JSON.parse(localStorage.getItem(`word_data_${cat}`) || '[]');
-            } catch (e) {
-                console.error("讀取快取失敗:", e);
             }
-            renderLevelMenu();
+
+            try {
+                const [shadowRes, blocksRes, grammarRes, dialogueRes, wordRes] = await Promise.all([
+                    requestGAS(targetApi, 'getLanguageData').catch(() => null),
+                    requestGAS(targetApi, 'getBlocksData').catch(() => null),
+                    requestGAS(targetApi, 'getGrammarData').catch(() => null),
+                    requestGAS(targetApi, 'getDialogueData').catch(() => null),
+                    requestGAS(targetApi, 'getWordData').catch(() => null)
+                ]);
+
+                rawShadowData = (shadowRes && shadowRes.status === 'success') ? (shadowRes.data || []) : [];
+                rawBlocksData = (blocksRes && blocksRes.status === 'success') ? (blocksRes.data || []) : [];
+                globalGrammarData = (grammarRes && grammarRes.status === 'success') ? (grammarRes.data || []) : [];
+                rawDialogueData = (dialogueRes && dialogueRes.status === 'success') ? (dialogueRes.data || []) : [];
+                rawWordData = (wordRes && wordRes.status === 'success') ? (wordRes.data || []) : [];
+
+                localStorage.setItem(cacheMap.all, JSON.stringify({ shadow: rawShadowData, blocks: rawBlocksData }));
+                localStorage.setItem(cacheMap.grammar, JSON.stringify(globalGrammarData));
+                localStorage.setItem(cacheMap.dialogue, JSON.stringify(rawDialogueData));
+                localStorage.setItem(cacheMap.word, JSON.stringify(rawWordData));
+
+                renderLevelMenu();
+            } catch (e) {
+                console.error(`自動更新 ${cat} 題庫失敗:`, e);
+                alert("無法連線至 API！請確認網路。");
+            }
         }
 
         // 渲染程度選單
@@ -3593,7 +3595,6 @@
             const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawWordData];
             const filteredByLevel = combinedData.filter(i => normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized);
 
-            // 取得所有出現過的單元並排序
             const units = [...new Set(filteredByLevel.map(i => getItemField(i, 'unit_id')))]
                 .filter(Boolean)
                 .sort((a, b) => Number(a) - Number(b));
@@ -3605,7 +3606,6 @@
                 return;
             }
 
-            // 依單元分組，依序渲染單元 1、單元 2... 的卡片
             units.forEach(unitId => {
                 const unitStr = String(unitId);
                 const itemsInUnit = filteredByLevel.filter(i => String(getItemField(i, 'unit_id')) === unitStr);
@@ -5462,7 +5462,7 @@
                 isCurrentQuestionAnswered = true;
                 if (isWord) {
                     if (wordIndex < totalChallengeQuestions - 1) {
-                        const nextBtn = document.getElementById('btn-word-shadow-next');
+                        const nextBtn = document.getElementById('btn-word-type-next');
                         if (nextBtn) nextBtn.style.display = 'inline-block';
                     } else {
                         document.getElementById('btn-finish-word-shadow').style.display = 'block';
