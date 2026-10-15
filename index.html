@@ -1013,6 +1013,81 @@
             color: #1e293b;
         }
 
+        /* ================= 全新：島嶼生成中 Loading 畫面樣式 ================= */
+        #game-loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #ffffff 0%, #f0fdf4 100%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999999;
+            padding: 24px;
+            box-sizing: border-box;
+            transition: opacity 0.35s ease;
+        }
+        #game-loading-overlay.show {
+            display: flex !important;
+        }
+        .loading-island-icon {
+            font-size: 4.8rem;
+            color: var(--duo-green);
+            margin-bottom: 20px;
+            animation: islandFloat 2.6s ease-in-out infinite;
+            filter: drop-shadow(0 10px 18px rgba(88, 204, 2, 0.28));
+        }
+        @keyframes islandFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+        }
+        .loading-island-title {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #1e293b;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        .loading-island-subtitle {
+            font-size: 0.88rem;
+            color: #64748b;
+            font-weight: 800;
+            margin-bottom: 24px;
+        }
+        .island-progress-track {
+            width: 100%;
+            max-width: 280px;
+            height: 14px;
+            background: #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid #cbd5e1;
+            position: relative;
+        }
+        .island-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #58cc02, #22c55e);
+            border-radius: 20px;
+            transition: width 0.35s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .island-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: trackShine 1.4s infinite;
+        }
+        @keyframes trackShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
         @media (max-width: 440px) {
             .hangul-grid-board { grid-template-rows: repeat(3, 38px); grid-template-columns: repeat(9, 38px); gap: 3px; padding: 6px; }
             .hangul-grid-cell { font-size: 1.1rem; }
@@ -1037,6 +1112,18 @@
     </style>
 </head>
 <body>
+
+    <!-- 全新：全螢幕「島嶼生成中...」遮罩，徹底解決自動登入顯示驗證中的陽春感 -->
+    <div id="game-loading-overlay">
+        <div class="loading-island-icon">
+            <i class="fa-solid fa-mountain-sun"></i>
+        </div>
+        <div class="loading-island-title" id="lbl-island-loading-title">🏝️ 島嶼生成中...</div>
+        <div class="loading-island-subtitle" id="lbl-island-loading-sub">冒險地圖與學習資料整備中</div>
+        <div class="island-progress-track">
+            <div class="island-progress-fill" id="island-loading-bar"></div>
+        </div>
+    </div>
 
     <!-- 1. 登入 / 註冊彈窗 -->
     <div class="custom-modal" id="login-modal">
@@ -1140,8 +1227,8 @@
                 </div>
                 <div style="width: 1px; background: #e5e7eb; margin: 0 4px;"></div>
                 <div style="flex: 1;">
-                    <div style="font-size: 0.75rem; color: #6b7280; font-weight: bold;">專注時數</div>
-                    <div style="font-size: 1.25rem; font-weight: bold; color: var(--duo-blue);"><span id="dash-focus-hours">0.0</span> 小時</div>
+                    <div style="font-size: 0.75rem; color: #6b7280; font-weight: bold;">專注時長</div>
+                    <div style="font-size: 1.15rem; font-weight: bold; color: var(--duo-blue);"><span id="dash-focus-hours">0秒</span></div>
                 </div>
             </div>
 
@@ -1239,14 +1326,12 @@
             <h2 id="lbl-settlement-title" style="margin: 0 0 4px 0; color: #1e293b; font-size: 1.45rem; font-weight: 900;">🎉 挑戰完成！</h2>
             <p id="lbl-settlement-subtitle" style="font-size: 0.92rem; color: #64748b; font-weight: bold; margin: 0 0 10px 0;">獲得星級榮譽</p>
             
-            <!-- 動態星星特效區 -->
             <div class="settlement-stars-container">
                 <i class="fa-solid fa-star settlement-star" id="settlement-star-1"></i>
                 <i class="fa-solid fa-star settlement-star" id="settlement-star-2" style="font-size: 3.8rem;"></i>
                 <i class="fa-solid fa-star settlement-star" id="settlement-star-3"></i>
             </div>
 
-            <!-- 成績與數據統計卡片 -->
             <div class="settlement-stat-card">
                 <div class="settlement-stat-row">
                     <span><i class="fa-solid fa-bullseye" style="color: var(--duo-green);"></i> 本次得分</span>
@@ -1284,7 +1369,7 @@
 <!-- 主介面容器 -->
     <div class="shadowing-card">
         
-        <!-- 上方狀態列（已在暱稱旁新增對應學習語言國旗圖示） -->
+        <!-- 上方狀態列（暱稱旁已新增對應學習語言國旗圖示） -->
         <div class="user-meta-bar" id="app-user-meta-bar" style="display: none;">
             <div class="user-meta-item" id="btn-profile-trigger" onclick="openProfileView()">
                 <span id="lbl-user-flag" style="font-size: 1.1rem; line-height: 1;">🇰🇷</span>
@@ -1774,6 +1859,10 @@
                         <span style="color: var(--duo-gold); font-weight: 900;"><i class="fa-solid fa-star"></i> <span id="myaccount-xp">0</span></span>
                     </div>
                     <div style="display: flex; justify-content: space-between;">
+                        <span>累計專注時長：</span>
+                        <span style="color: var(--duo-blue); font-weight: 900;"><i class="fa-solid fa-stopwatch"></i> <span id="myaccount-focus-text">0秒</span></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
                         <span>連續簽到：</span>
                         <span style="color: var(--duo-fire-red); font-weight: 900;"><i class="fa-solid fa-fire"></i> <span id="myaccount-streak">1</span> 天</span>
                     </div>
@@ -1892,6 +1981,50 @@
         // 煙火動畫全域變數
         let fireworksAnimationId = null;
 
+        // 全新：「島嶼生成中...」全螢幕 Loading 控制器
+        function showIslandLoading(subText = "冒險地圖與學習資料整備中", progressPct = 30) {
+            const overlay = document.getElementById('game-loading-overlay');
+            const subElem = document.getElementById('lbl-island-loading-sub');
+            const bar = document.getElementById('island-loading-bar');
+            if (overlay) {
+                overlay.classList.add('show');
+                if (subElem) subElem.innerText = subText;
+                if (bar) bar.style.width = `${progressPct}%`;
+            }
+        }
+
+        function updateIslandLoading(subText, progressPct) {
+            const subElem = document.getElementById('lbl-island-loading-sub');
+            const bar = document.getElementById('island-loading-bar');
+            if (subElem) subElem.innerText = subText;
+            if (bar) bar.style.width = `${progressPct}%`;
+        }
+
+        function hideIslandLoading() {
+            const bar = document.getElementById('island-loading-bar');
+            if (bar) bar.style.width = '100%';
+            setTimeout(() => {
+                const overlay = document.getElementById('game-loading-overlay');
+                if (overlay) overlay.classList.remove('show');
+            }, 300);
+        }
+
+        // 專注時數顯示演算法：將秒數換算成「時分秒」
+        function formatFocusDurationText(totalSeconds) {
+            const secNum = Math.max(0, Math.floor(totalSeconds || 0));
+            const hours = Math.floor(secNum / 3600);
+            const minutes = Math.floor((secNum % 3600) / 60);
+            const seconds = secNum % 60;
+
+            if (hours > 0) {
+                return `${hours}時 ${minutes}分 ${seconds}秒`;
+            } else if (minutes > 0) {
+                return `${minutes}分 ${seconds}秒`;
+            } else {
+                return `${seconds}秒`;
+            }
+        }
+
         const PRAISE_MESSAGES = [
             "🎉 你真的太厲害了！",
             "🎉 你到底是怎麼做到的？你真的太強了",
@@ -1931,7 +2064,7 @@
             flagElem.innerText = flagMap[currentConfig.category] || '🌐';
         }
 
-        // 專注遊玩時數累加函式
+        // 專注遊玩時數累加函式（依秒數儲存並即時更新為時分秒格式）
         async function recordSessionFocusTime() {
             if (!challengeSessionStartTime) return 0;
             const now = Date.now();
@@ -1940,22 +2073,28 @@
 
             if (elapsedSeconds <= 0) return 0;
 
-            const addedHours = elapsedSeconds / 3600;
             if (!window.currentUserData) window.currentUserData = {};
-            const currentHours = Number(window.currentUserData.focusHours || 0.0);
-            const updatedHours = Number((currentHours + addedHours).toFixed(3));
-            window.currentUserData.focusHours = updatedHours;
+            const currentTotalSeconds = Number(window.currentUserData.focusSeconds || (window.currentUserData.focusHours ? window.currentUserData.focusHours * 3600 : 0));
+            const updatedTotalSeconds = currentTotalSeconds + elapsedSeconds;
 
-            const dashHours = document.getElementById('dash-focus-hours');
-            if (dashHours) dashHours.innerText = Number(updatedHours).toFixed(1);
+            window.currentUserData.focusSeconds = updatedTotalSeconds;
+            window.currentUserData.focusHours = Number((updatedTotalSeconds / 3600).toFixed(4));
+
+            // 即時同步頁面「時分秒」顯示
+            const formattedText = formatFocusDurationText(updatedTotalSeconds);
+            const dashFocus = document.getElementById('dash-focus-hours');
+            const myAccountFocus = document.getElementById('myaccount-focus-text');
+            if (dashFocus) dashFocus.innerText = formattedText;
+            if (myAccountFocus) myAccountFocus.innerText = formattedText;
 
             if (currentUser) {
                 try {
                     await db.collection("users").doc(currentUser.uid).set({
-                        focusHours: firebase.firestore.FieldValue.increment(addedHours)
+                        focusSeconds: firebase.firestore.FieldValue.increment(elapsedSeconds),
+                        focusHours: Number((updatedTotalSeconds / 3600).toFixed(4))
                     }, { merge: true });
                 } catch (e) {
-                    console.error("更新專注時數至雲端失敗:", e);
+                    console.error("更新專注秒數至雲端失敗:", e);
                 }
             }
 
@@ -2113,7 +2252,7 @@
             const btnEntry = document.getElementById('btn-mode-choice-entry');
             const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
 
-            // 0A 程度的「單字選擇」和「單字聽打」隱藏入門程度
+            // 0A 程度的「單字選擇」和「單字聽打」刪除／隱藏入門程度
             if (is0ALevel && (mode === 'word_choice' || mode === 'word_type')) {
                 if (btnEntry) btnEntry.style.display = 'none';
             } else {
@@ -2459,6 +2598,7 @@
 
         function handleStartGameClick() {
             if (currentUser) {
+                showIslandLoading("冒險島嶼載入中...", 40);
                 resumeLastPlayedProgress();
             } else {
                 authMode = 'login';
@@ -2483,6 +2623,7 @@
             } else {
                 goToStep('step-level');
             }
+            hideIslandLoading();
         }
 
         function handleOpenRegisterModal() {
@@ -2496,10 +2637,13 @@
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 currentUser = user;
+                // 自動登入或手動登入觸發：顯示島嶼生成中遮罩
+                showIslandLoading("島嶼生成中，正在同步帳號資料...", 25);
                 await verifyAndSyncUser(user);
             } else {
                 currentUser = null;
                 window.currentUserData = null;
+                hideIslandLoading();
                 goToStep('step-welcome');
                 document.getElementById('lbl-username').innerText = "訪客";
                 document.getElementById('lbl-xp').innerText = "0";
@@ -2507,10 +2651,11 @@
         });
 
         async function verifyAndSyncUser(user) {
-            document.getElementById('lbl-username').innerText = "驗證中...";
             try {
+                updateIslandLoading("正在驗證學員白名單...", 45);
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
                 if (!gasResult || gasResult.status !== "success") {
+                    hideIslandLoading();
                     alert("您不在系統白名單內或帳號已被停權！\n請聯繫管理員開通。");
                     await auth.signOut();
                     return;
@@ -2535,6 +2680,7 @@
                     status: "active"
                 }));
 
+                updateIslandLoading("正在讀取學員冒險紀錄...", 65);
                 const firestoreData = await ProgressModel.loadProgress(user.uid);
                 if (!firestoreData) {
                     window.tempMemberInfo = {
@@ -2545,6 +2691,7 @@
                     };
                     window.tempMemberships = memberships;
                     window.tempUnlockedLevels = unlockedLevels;
+                    hideIslandLoading();
                     closeModal('login-modal');
                     openModal('modal-setup-nickname');
                 } else {
@@ -2565,7 +2712,7 @@
                         window.currentUserData.modeScores = {};
                     }
 
-                    // 執行每日簽到檢查與天數累加
+                    // 每日打卡判定
                     await processDailyCheckIn(user, window.currentUserData);
 
                     if (window.currentUserData.learnCategory) setLearnCategory(window.currentUserData.learnCategory);
@@ -2574,7 +2721,11 @@
 
                     closeModal('login-modal');
                     renderUserInfo();
+
+                    updateIslandLoading("載入試算表題庫中...", 85);
                     await autoLoadCurrentCategory();
+
+                    hideIslandLoading();
 
                     const welcomePage = document.getElementById('step-welcome');
                     if (welcomePage && welcomePage.classList.contains('active')) {
@@ -2582,6 +2733,7 @@
                     }
                 }
             } catch (err) {
+                hideIslandLoading();
                 console.error("驗證失敗:", err);
                 alert("伺服器連線驗證失敗：" + err.message);
                 await auth.signOut();
@@ -2611,6 +2763,8 @@
                     return;
                 }
 
+                showIslandLoading("角色誕生！正在開闢專屬島嶼...", 50);
+
                 const todayStr = getLocalDateString();
                 const initialData = {
                     email: currentUser.email,
@@ -2624,6 +2778,7 @@
                     streakDays: 1,
                     lastCheckInDate: todayStr,
                     checkInHistory: [todayStr],
+                    focusSeconds: 0,
                     focusHours: 0.0,
                     unlockedLevels: window.tempUnlockedLevels || ['0A'],
                     memberships: window.tempMemberships || [],
@@ -2640,9 +2795,13 @@
                 setLearnCategory(learnCategory);
                 setUserLang(nativeLang);
                 renderUserInfo();
+
+                updateIslandLoading("試算表題庫加載中...", 80);
                 await autoLoadCurrentCategory();
+                hideIslandLoading();
                 resumeLastPlayedProgress();
             } catch (e) {
+                hideIslandLoading();
                 errDiv.innerText = "儲存失敗：" + e.message;
                 errDiv.classList.remove('hidden');
             } finally {
@@ -2665,8 +2824,9 @@
                     if (window.currentUserData) window.currentUserData.learnCategory = cat;
                 } catch (e) { console.error("更新學習語言偏好失敗:", e); }
             }
-            alert(`已切換學習語言！即將載入該語言課程。`);
+            showIslandLoading("正在切換語言島嶼...", 50);
             await autoLoadCurrentCategory();
+            hideIslandLoading();
             closeProfileView();
         }
 
@@ -2684,9 +2844,12 @@
         function renderUserInfo() {
             if (!window.currentUserData) return;
             const streakDays = window.currentUserData.streakDays || 1;
-            const focusHours = window.currentUserData.focusHours || 0.0;
             const xp = window.currentUserData.xp || 0;
             const displayName = window.currentUserData.displayName || "學生";
+
+            // 計算專注秒數並產生時分秒格式
+            const totalSeconds = Number(window.currentUserData.focusSeconds || (window.currentUserData.focusHours ? window.currentUserData.focusHours * 3600 : 0));
+            const focusText = formatFocusDurationText(totalSeconds);
 
             const savedLang = window.currentUserData.nativeLanguage || localStorage.getItem('preferred_user_lang') || 'zh';
             setUserLang(savedLang);
@@ -2706,14 +2869,17 @@
             document.getElementById('lbl-user-level').innerText = currentConfig.level || "1A";
             
             const dashDays = document.getElementById('dash-streak-days');
-            const dashHours = document.getElementById('dash-focus-hours');
+            const dashFocus = document.getElementById('dash-focus-hours');
             if (dashDays) dashDays.innerText = streakDays;
-            if (dashHours) dashHours.innerText = Number(focusHours).toFixed(1);
+            if (dashFocus) dashFocus.innerText = focusText;
 
             document.getElementById('myaccount-nickname').innerText = displayName;
             document.getElementById('myaccount-email').innerText = currentUser ? currentUser.email : "";
             document.getElementById('myaccount-xp').innerText = xp;
             document.getElementById('myaccount-streak').innerText = streakDays;
+
+            const myaccountFocus = document.getElementById('myaccount-focus-text');
+            if (myaccountFocus) myaccountFocus.innerText = focusText;
 
             const courseContainer = document.getElementById('myaccount-memberships-list');
             courseContainer.innerHTML = "";
@@ -2783,7 +2949,13 @@
         }
 
         document.getElementById('btn-google-login').onclick = async () => {
-            try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); } catch (err) { showLoginError(err.message); }
+            try { 
+                showIslandLoading("Google 登入驗證中...", 30);
+                await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); 
+            } catch (err) { 
+                hideIslandLoading();
+                showLoginError(err.message); 
+            }
         };
 
         btnAuthSubmit.onclick = async () => {
@@ -2791,9 +2963,11 @@
             const password = document.getElementById('password-input').value;
             if (!email || !password) return showLoginError("請輸入信箱與密碼！");
             try {
+                showIslandLoading("帳號驗證中...", 30);
                 if (authMode === 'login') await auth.signInWithEmailAndPassword(email, password);
                 else await auth.createUserWithEmailAndPassword(email, password);
             } catch (err) {
+                hideIslandLoading();
                 showLoginError(err.message);
             }
         };
@@ -3234,8 +3408,9 @@
             ['all_data_', 'grammar_data_', 'dialogue_data_', 'word_data_'].forEach(k => {
                 localStorage.removeItem(k + currentConfig.category);
             });
-            alert(`已清除當前語言快取！正在重新連線同步最新試算表...`);
+            showIslandLoading("快取清除完成，正在同步最新島嶼題庫...", 40);
             await autoLoadCurrentCategory(true);
+            hideIslandLoading();
         }
 
         async function autoLoadCurrentCategory(forceRefresh = false) {
