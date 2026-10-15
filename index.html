@@ -938,7 +938,7 @@
             display: block;
         }
 
-        /* ================= 結算彈窗與煙火特效樣式 ================= */
+        /* 結算彈窗與煙火特效樣式 */
         #settlement-canvas {
             position: absolute;
             top: 0;
@@ -1284,9 +1284,10 @@
 <!-- 主介面容器 -->
     <div class="shadowing-card">
         
-        <!-- 上方狀態列 -->
+        <!-- 上方狀態列（已在暱稱旁新增對應學習語言國旗圖示） -->
         <div class="user-meta-bar" id="app-user-meta-bar" style="display: none;">
             <div class="user-meta-item" id="btn-profile-trigger" onclick="openProfileView()">
+                <span id="lbl-user-flag" style="font-size: 1.1rem; line-height: 1;">🇰🇷</span>
                 <i class="fa-solid fa-user" style="color: var(--duo-blue);"></i>
                 <span id="lbl-username">訪客</span>
             </div>
@@ -1784,7 +1785,7 @@
             </div>
         </div>
 
-        <!-- 下方固定區塊：Bottom Bar -->
+        <!-- 下方固定區塊：Bottom Bar（僅在選擇課堂挑戰 step-lesson 顯示） -->
         <div class="bottom-fixed-bar-wrapper" id="app-bottom-bar" style="display: none;">
             <div class="bottom-fixed-bar">
                 <div class="bottom-nav-item grammar-btn" id="btn-bottom-grammar" onclick="triggerBottomGrammarAction()">
@@ -1916,6 +1917,18 @@
             const m = Math.floor(totalSeconds / 60);
             const s = Math.floor(totalSeconds % 60);
             return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        // 依據當前學習語言更新狀態列國旗圖示
+        function updateUserFlagIcon() {
+            const flagElem = document.getElementById('lbl-user-flag');
+            if (!flagElem) return;
+            const flagMap = {
+                'korean': '🇰🇷',
+                'japanese': '🇯🇵',
+                'english': '🇺🇸'
+            };
+            flagElem.innerText = flagMap[currentConfig.category] || '🌐';
         }
 
         // 專注遊玩時數累加函式
@@ -2100,7 +2113,7 @@
             const btnEntry = document.getElementById('btn-mode-choice-entry');
             const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
 
-            // 0A 程度的「單字選擇」和「單字聽打」刪除／隱藏入門程度
+            // 0A 程度的「單字選擇」和「單字聽打」隱藏入門程度
             if (is0ALevel && (mode === 'word_choice' || mode === 'word_type')) {
                 if (btnEntry) btnEntry.style.display = 'none';
             } else {
@@ -2244,7 +2257,7 @@
                     const p = particles[i];
                     p.x += p.vx;
                     p.y += p.vy;
-                    p.vy += 0.06; // 重力加速度
+                    p.vy += 0.06;
                     p.alpha -= p.decay;
 
                     if (p.alpha <= 0) {
@@ -2641,6 +2654,7 @@
         function setLearnCategory(cat) {
             currentConfig.category = cat;
             localStorage.setItem('preferred_learn_category', cat);
+            updateUserFlagIcon();
         }
 
         async function updateAccountLearnCategory(cat) {
@@ -2683,6 +2697,8 @@
             setLearnCategory(savedCategory);
             const accountLearnLangSelect = document.getElementById('select-account-learn-language');
             if (accountLearnLangSelect) accountLearnLangSelect.value = savedCategory;
+
+            updateUserFlagIcon();
 
             document.getElementById('lbl-username').innerText = displayName;
             document.getElementById('lbl-streak-days').innerText = streakDays;
@@ -3184,6 +3200,7 @@
             document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
         }
 
+        // 頁面跳轉控管（限制下方固定列僅在 step-lesson 頁面出現）
         function goToStep(stepId) {
             stopSpeechRecognition();
             document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
@@ -3194,14 +3211,17 @@
             const isWelcome = (stepId === 'step-welcome');
             const isDoingQuiz = stepId.startsWith('step-quiz-') || stepId === 'step-grammar';
 
+            // 頂部狀態列
             const metaBar = document.getElementById('app-user-meta-bar');
             if (metaBar) {
                 metaBar.style.display = (isWelcome || isDoingQuiz) ? 'none' : 'flex';
+                updateUserFlagIcon();
             }
 
+            // 下方固定列：只在「請選擇課堂挑戰 (Lesson)」即 step-lesson 頁面才顯示
             const bottomBar = document.getElementById('app-bottom-bar');
             if (bottomBar) {
-                bottomBar.style.display = (isWelcome || isDoingQuiz) ? 'none' : 'flex';
+                bottomBar.style.display = (stepId === 'step-lesson') ? 'flex' : 'none';
             }
         }
 
@@ -3978,8 +3998,7 @@
                 actionBtn.onclick = () => showGrammarQuizArea();
             }
         }
-
-        // ==================== 通用單字挑戰邏輯 ====================
+// ==================== 通用單字挑戰邏輯 ====================
 
         function getWordTranslation(item) {
             if (!item) return "";
@@ -5343,6 +5362,7 @@
         window.onload = () => {
             setUserLang(localStorage.getItem('preferred_user_lang') || 'zh');
             setLearnCategory(localStorage.getItem('preferred_learn_category') || 'korean');
+            updateUserFlagIcon();
             goToStep('step-welcome');
         };
     </script>
