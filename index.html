@@ -576,8 +576,38 @@
             opacity: 0.55; background-color: #f3f4f6; border-color: #d1d5db; color: #9ca3af; cursor: not-allowed;
         }
 
+        /* 單元大區塊分類卡樣式 */
+        .unit-section-container {
+            margin-bottom: 18px;
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            text-align: left;
+        }
+        .unit-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1.05rem;
+            font-weight: 900;
+            color: #1e293b;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            border-bottom: 2px dashed #e2e8f0;
+        }
+        .unit-badge-tag {
+            background: #e0f2fe;
+            color: var(--duo-blue);
+            font-size: 0.78rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+
         .lesson-card-item {
-            background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 14px;
+            background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 14px;
             padding: 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 6px;
         }
         .lesson-card-title { font-weight: bold; color: var(--duo-dark); text-align: left; font-size: 0.95rem; margin-bottom: 2px; }
@@ -1427,23 +1457,14 @@
                 <div id="container-levels" class="option-grid grid-2"></div>
             </div>
 
-            <!-- 步驟 3：選擇單元 -->
-            <div id="step-unit" class="step-page">
-                <div class="top-nav">
-                    <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
-                    <span id="lbl-unit-level" style="font-weight: bold; color: var(--duo-blue);">0A 認識字母</span>
-                </div>
-                <h2 class="step-title"><i class="fa-solid fa-book-open"></i> 請選擇單元 (Unit)</h2>
-                <div id="container-units" class="option-grid grid-3"></div>
-            </div>
-
-            <!-- 步驟 4：選擇課堂關卡與模式 -->
+            <!-- 步驟 3：選擇課堂挑戰 (Lesson) - 已移除 step-unit，此頁面直接依單元分組連續呈現所有關卡 -->
             <div id="step-lesson" class="step-page">
                 <div class="top-nav">
-                    <button class="btn-back-step" onclick="goToStep('step-unit')"><i class="fa-solid fa-arrow-left"></i> 回單元選擇</button>
-                    <span id="lbl-lesson-unit" style="font-weight: bold; color: var(--duo-blue);">單元 1</span>
+                    <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
+                    <span id="lbl-lesson-unit" style="font-weight: bold; color: var(--duo-blue);">課程關卡</span>
                 </div>
-                <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇課堂挑戰 (Lesson)</h2>
+                <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇課堂挑戰</h2>
+                <!-- 容器將依單元自動分組生成單元 1、單元 2 等連續滾動列表 -->
                 <div id="container-lessons"></div>
             </div>
 
@@ -1731,7 +1752,7 @@
 
                 <div class="nav-controls">
                     <span class="lbl-progress" id="lbl-word-type-progress">0 / 0</span>
-                    <button class="btn-nav-next" id="btn-word-type-next" onclick="nextWordQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
+                    <button class="btn-word-type-next" id="btn-word-type-next" onclick="nextWordQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-word-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
@@ -2221,12 +2242,13 @@
             return { stars: 0, label: '未達成' };
         }
 
-        function getRecordKey(lesson, mode, chalType) {
-            return `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${lesson}_${mode}_${chalType}`;
+        function getRecordKey(lesson, mode, chalType, unitId = null) {
+            const actualUnit = unitId || currentConfig.unit_id;
+            return `${currentConfig.category}_${currentConfig.level}_${actualUnit}_${lesson}_${mode}_${chalType}`;
         }
 
-        function getStoredBestRecord(lesson, mode, chalType) {
-            const key = getRecordKey(lesson, mode, chalType);
+        function getStoredBestRecord(lesson, mode, chalType, unitId = null) {
+            const key = getRecordKey(lesson, mode, chalType, unitId);
             const userScores = (window.currentUserData && window.currentUserData.modeScores) || {};
             if (userScores[key]) return userScores[key];
             try {
@@ -2237,7 +2259,8 @@
         }
 
         // 選擇挑戰模式彈窗（0A 程度單字選擇與聽打隱藏入門模式）
-        function promptSelectModeType(lesson, mode, label) {
+        function promptSelectModeType(unitId, lesson, mode, label) {
+            currentConfig.unit_id = String(unitId);
             if (mode === 'grammar') {
                 activeChallengeType = 'practice';
                 selectLessonAndMode(lesson, mode);
@@ -2260,7 +2283,7 @@
             ['practice', 'entry', 'timed'].forEach(t => {
                 const tagElem = document.getElementById(`tag-star-${t}`);
                 const timeElem = document.getElementById(`tag-time-${t}`);
-                const record = getStoredBestRecord(lesson, mode, t);
+                const record = getStoredBestRecord(lesson, mode, t, unitId);
 
                 if (tagElem) {
                     if (record && record.stars > 0) {
@@ -2476,7 +2499,8 @@
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
             closeModal('modal-challenge-settlement');
-            selectUnit(currentConfig.unit_id);
+            renderAllLessonsForLevel(currentConfig.level);
+            goToStep('step-lesson');
         }
 
         async function isNicknameTaken(nickname, excludeUid = null) {
@@ -2560,17 +2584,17 @@
             if (!matchGrammar) {
                 matchGrammar = globalGrammarData.find(g => 
                     normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
-                    String(getItemField(g, 'unit_id')) === String(currentConfig.unit_id) &&
                     ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0))
                 );
             }
 
             if (matchGrammar) {
                 currentConfig.mode = 'grammar';
+                currentConfig.unit_id = getItemField(matchGrammar, 'unit_id') || currentConfig.unit_id;
                 currentConfig.lesson = getItemField(matchGrammar, 'lesson') || currentConfig.lesson;
                 startGrammarChallenge(matchGrammar);
             } else {
-                alert(`Level ${currentConfig.level} 第 ${currentConfig.unit_id} 單元尚未設定語法說明喔！`);
+                alert(`Level ${currentConfig.level} 尚未設定語法說明喔！`);
             }
         }
 
@@ -2621,7 +2645,6 @@
 
         function resumeLastPlayedProgress() {
             const lastLevel = localStorage.getItem('last_played_level');
-            const lastUnit = localStorage.getItem('last_played_unit');
             
             let cachedUnlocked = [];
             try {
@@ -2631,12 +2654,11 @@
                 ? window.currentUserData.unlockedLevels 
                 : (cachedUnlocked.length > 0 ? cachedUnlocked : ['0A'])).map(l => String(l).trim().toUpperCase());
 
-            if (lastLevel && lastUnit && unlocked.includes(lastLevel.toUpperCase())) {
+            if (lastLevel && unlocked.includes(lastLevel.toUpperCase())) {
                 currentConfig.level = lastLevel;
-                document.getElementById('lbl-unit-level').innerText = lastLevel;
                 document.getElementById('lbl-user-level').innerText = lastLevel;
-                renderUnits(lastLevel);
-                selectUnit(lastUnit);
+                renderAllLessonsForLevel(lastLevel);
+                goToStep('step-lesson');
             } else {
                 goToStep('step-level');
             }
@@ -2687,7 +2709,6 @@
                 }
                 if (unlockedLevels.length === 0) unlockedLevels = ['0A'];
 
-                // 關鍵修復：持久化快取開通層級，避免跳轉或刷新掉權限只亮 0A
                 localStorage.setItem('cached_unlocked_levels', JSON.stringify(unlockedLevels));
 
                 const memberships = unlockedLevels.map(lvl => ({
@@ -2736,7 +2757,6 @@
                     closeModal('login-modal');
                     renderUserInfo();
 
-                    // 僅在用戶主動點擊登入或註冊時進入遊戲並同步題庫
                     if (isInteractive) {
                         updateIslandLoading("🏝️ 同步最新試算表題庫中...", 75);
                         await autoLoadAllLanguages(true);
@@ -2828,7 +2848,6 @@
             updateUserFlagIcon();
         }
 
-        // 切換語言時，直接自快取載入，免重新讀取條秒切換
         async function updateAccountLearnCategory(cat) {
             setLearnCategory(cat);
             if (currentUser) {
@@ -3338,6 +3357,7 @@
             openModal('modal-select-initial-level');
         }
 
+        // 右上角選擇程度確認：直接切換至該程度並載入全單元關卡列表
         document.getElementById('btn-confirm-initial-level').onclick = () => {
             const selectedVal = initialLevelSelect.value;
             const selectedText = initialLevelSelect.options[initialLevelSelect.selectedIndex].text;
@@ -3405,20 +3425,17 @@
             const isWelcome = (stepId === 'step-welcome');
             const isDoingQuiz = stepId.startsWith('step-quiz-') || stepId === 'step-grammar';
 
-            // 頂部狀態列
             const metaBar = document.getElementById('app-user-meta-bar');
             if (metaBar) {
                 metaBar.style.display = (isWelcome || isDoingQuiz) ? 'none' : 'flex';
                 updateUserFlagIcon();
             }
 
-            // 下方固定列：只在「請選擇課堂挑戰 (Lesson)」即 step-lesson 頁面才顯示
             const bottomBar = document.getElementById('app-bottom-bar');
             if (bottomBar) {
                 bottomBar.style.display = (stepId === 'step-lesson') ? 'flex' : 'none';
             }
 
-            // 關鍵修復：每次切換回程度選擇頁面時，強制用最新開通權限重新渲染選單
             if (stepId === 'step-level') {
                 renderLevelMenu();
             }
@@ -3505,7 +3522,7 @@
             renderLevelMenu();
         }
 
-        // 渲染程度選單（關鍵修復：優先讀取快取開通層級，修復回上一頁掉權限問題）
+        // 渲染程度選單
         function renderLevelMenu() {
             const container = document.getElementById('container-levels');
             if (!container) return;
@@ -3554,63 +3571,63 @@
             return (s === 'JLPT' || s === 'TOPIK' || s === 'JLPTTOPIK') ? 'JLPTTOPIK' : s;
         }
 
+        // 選擇程度：直接進入課堂挑戰列表，跳過單元選擇頁面
         function selectLevel(levelCode, levelTitle) {
             stopSpeechRecognition();
             currentConfig.level = levelCode;
-            document.getElementById('lbl-unit-level').innerText = levelTitle;
+            localStorage.setItem('last_played_level', levelCode);
             document.getElementById('lbl-user-level').innerText = levelCode;
-            renderUnits(currentConfig.level);
-            goToStep('step-unit');
+            renderAllLessonsForLevel(levelCode);
+            goToStep('step-lesson');
         }
 
-        function renderUnits(level) {
-            const container = document.getElementById('container-units');
-            container.innerHTML = "";
-            const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawWordData];
-            const targetLevelNormalized = normalizeLevelStr(level);
-
-            const filtered = combinedData.filter(i => normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized);
-            const units = [...new Set(filtered.map(i => getItemField(i, 'unit_id')))].filter(Boolean).sort((a,b) => a - b);
-
-            if (units.length > 0) {
-                units.forEach(u => {
-                    const btn = document.createElement('button');
-                    btn.className = "btn-option";
-                    btn.innerText = `第 ${u} 單元`;
-                    btn.onclick = () => selectUnit(u);
-                    container.appendChild(btn);
-                });
-            } else {
-                container.innerHTML = `<div style="color: #6b7280; grid-column: span 3; padding: 20px 0;">目前 ${level} 尚未在試算表設定課程內容。</div>`;
-            }
-        }
-
-        function selectUnit(unitId) {
-            stopSpeechRecognition();
-            currentConfig.unit_id = unitId;
-
-            localStorage.setItem('last_played_level', currentConfig.level);
-            localStorage.setItem('last_played_unit', unitId);
-
-            document.getElementById('lbl-lesson-unit').innerText = `Level ${currentConfig.level} | 第 ${unitId} 單元`;
-
+        // 核心演算法：將當前程度內所有單元的挑戰連續渲染出來
+        function renderAllLessonsForLevel(level) {
             const container = document.getElementById('container-lessons');
+            if (!container) return;
             container.innerHTML = "";
 
-            const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawWordData];
-            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+            const targetLevelNormalized = normalizeLevelStr(level);
+            document.getElementById('lbl-lesson-unit').innerText = `Level ${level}`;
 
-            const filtered = combinedData.filter(i => {
-                return normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized && String(getItemField(i, 'unit_id')) === String(unitId);
-            });
-            const lessons = [...new Set(filtered.map(i => getItemField(i, 'lesson')))].filter(Boolean).sort((a,b) => a - b);
+            const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawWordData];
+            const filteredByLevel = combinedData.filter(i => normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized);
+
+            // 取得所有出現過的單元並排序
+            const units = [...new Set(filteredByLevel.map(i => getItemField(i, 'unit_id')))]
+                .filter(Boolean)
+                .sort((a, b) => Number(a) - Number(b));
 
             const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
 
-            if (lessons.length > 0) {
+            if (units.length === 0) {
+                container.innerHTML = `<div style="color: #6b7280; padding: 25px 0;">目前 ${level} 尚未在試算表設定課程內容。</div>`;
+                return;
+            }
+
+            // 依單元分組，依序渲染單元 1、單元 2... 的卡片
+            units.forEach(unitId => {
+                const unitStr = String(unitId);
+                const itemsInUnit = filteredByLevel.filter(i => String(getItemField(i, 'unit_id')) === unitStr);
+                const lessons = [...new Set(itemsInUnit.map(i => getItemField(i, 'lesson')))]
+                    .filter(Boolean)
+                    .sort((a, b) => Number(a) - Number(b));
+
+                if (lessons.length === 0) return;
+
+                const unitSection = document.createElement('div');
+                unitSection.className = "unit-section-container";
+
+                const unitHeader = document.createElement('div');
+                unitHeader.className = "unit-section-header";
+                unitHeader.innerHTML = `
+                    <span><i class="fa-solid fa-map"></i> 第 ${unitStr} 單元</span>
+                    <span class="unit-badge-tag">${lessons.length} 堂課</span>
+                `;
+                unitSection.appendChild(unitHeader);
+
                 lessons.forEach(les => {
                     const lesStr = String(les);
-                    const unitStr = String(unitId);
 
                     const matchFilter = (list) => list.some(item => 
                         normalizeLevelStr(getItemField(item, 'level')) === targetLevelNormalized &&
@@ -3640,14 +3657,14 @@
 
                     const title = document.createElement('div');
                     title.className = "lesson-card-title";
-                    title.innerText = `第 ${les} 課 (${currentConfig.unit_id}-${les})`;
+                    title.innerText = `第 ${lesStr} 課 (${unitStr}-${lesStr})`;
 
                     const btnGroup = document.createElement('div');
                     btnGroup.className = "lesson-btn-group";
 
                     const createActionButton = (mode, label, defaultClass = '') => {
                         const btn = document.createElement('button');
-                        const isCompleted = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${les}_${mode}`);
+                        const isCompleted = completedList.includes(`${currentConfig.category}_${level}_${unitStr}_${lesStr}_${mode}`);
                         btn.className = `btn-lesson-action ${defaultClass}`;
                         if (isCompleted) {
                             btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${label}`;
@@ -3657,7 +3674,7 @@
                         } else {
                             btn.innerHTML = label;
                         }
-                        btn.onclick = () => promptSelectModeType(les, mode, label);
+                        btn.onclick = () => promptSelectModeType(unitStr, lesStr, mode, label);
                         return btn;
                     };
 
@@ -3682,12 +3699,11 @@
 
                     card.appendChild(title);
                     card.appendChild(btnGroup);
-                    container.appendChild(card);
+                    unitSection.appendChild(card);
                 });
-            } else {
-                container.innerHTML = `<div style="color: #6b7280; padding: 20px 0;">此單元尚無課堂資料</div>`;
-            }
-            goToStep('step-lesson');
+
+                container.appendChild(unitSection);
+            });
         }
 
         function startChallengeTimer(targetModeKey) {
@@ -3802,7 +3818,6 @@
                 }
             }
 
-            // 呼叫結算彈窗特效
             launchSettlementModal({
                 finalScore: finalScore,
                 starInfo: result.starInfo,
