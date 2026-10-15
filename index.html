@@ -2594,12 +2594,12 @@
             btnAuthSubmit.innerText = '註冊帳號';
         };
 
-        // 點擊「進入遊戲」：先展開島嶼生成畫面，並自動強制同步試算表最新題庫
+        // 點擊「進入遊戲」：展開島嶼生成畫面，同時平行自動強制同步韓文與日文最新題庫
         async function handleStartGameClick() {
             if (currentUser) {
-                showIslandLoading("🏝️ 島嶼生成中，正在同步最新試算表題庫...", 35);
+                showIslandLoading("🏝️ 島嶼生成中，正在同步韓文與日文最新題庫...", 35);
                 try {
-                    await autoLoadCurrentCategory(true); // 自動強制更新試算表題庫
+                    await autoLoadAllLanguages(true); // 平行同步所有語言題庫
                     updateIslandLoading("島嶼生成完畢，正在前往冒險地圖...", 90);
                     setTimeout(() => {
                         resumeLastPlayedProgress();
@@ -2622,7 +2622,14 @@
         function resumeLastPlayedProgress() {
             const lastLevel = localStorage.getItem('last_played_level');
             const lastUnit = localStorage.getItem('last_played_unit');
-            const unlocked = (window.currentUserData?.unlockedLevels || ['0A']).map(l => l.toUpperCase());
+            
+            let cachedUnlocked = [];
+            try {
+                cachedUnlocked = JSON.parse(localStorage.getItem('cached_unlocked_levels') || '[]');
+            } catch(e) {}
+            const unlocked = ((window.currentUserData && window.currentUserData.unlockedLevels) 
+                ? window.currentUserData.unlockedLevels 
+                : (cachedUnlocked.length > 0 ? cachedUnlocked : ['0A'])).map(l => String(l).trim().toUpperCase());
 
             if (lastLevel && lastUnit && unlocked.includes(lastLevel.toUpperCase())) {
                 currentConfig.level = lastLevel;
@@ -2643,7 +2650,7 @@
             openModal('login-modal');
         }
 
-        // Firebase 認證狀態監聽：背景靜默同步，絕不在首頁跳轉或顯示「驗證中」
+        // Firebase 認證狀態監聽：背景靜默同步，首頁永遠停在歡迎頁，絕不突兀跳轉
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 currentUser = user;
@@ -2679,6 +2686,9 @@
                     });
                 }
                 if (unlockedLevels.length === 0) unlockedLevels = ['0A'];
+
+                // 關鍵修復：持久化快取開通層級，避免跳轉或刷新掉權限只亮 0A
+                localStorage.setItem('cached_unlocked_levels', JSON.stringify(unlockedLevels));
 
                 const memberships = unlockedLevels.map(lvl => ({
                     courseId: lvl,
@@ -2726,10 +2736,10 @@
                     closeModal('login-modal');
                     renderUserInfo();
 
-                    // 僅在用戶主動登入或註冊時自動進入，一般自動登入留在歡迎頁
+                    // 僅在用戶主動點擊登入或註冊時進入遊戲並同步題庫
                     if (isInteractive) {
                         updateIslandLoading("🏝️ 同步最新試算表題庫中...", 75);
-                        await autoLoadCurrentCategory(true);
+                        await autoLoadAllLanguages(true);
                         hideIslandLoading();
                         resumeLastPlayedProgress();
                     }
@@ -2799,7 +2809,7 @@
                 renderUserInfo();
 
                 updateIslandLoading("正在載入最新試算表題庫...", 85);
-                await autoLoadCurrentCategory(true);
+                await autoLoadAllLanguages(true);
                 hideIslandLoading();
                 resumeLastPlayedProgress();
             } catch (e) {
@@ -2818,18 +2828,20 @@
             updateUserFlagIcon();
         }
 
+        // 切換語言時，直接自快取載入，免重新讀取條秒切換
         async function updateAccountLearnCategory(cat) {
             setLearnCategory(cat);
             if (currentUser) {
                 try {
                     await db.collection('users').doc(currentUser.uid).set({ learnCategory: cat }, { merge: true });
                     if (window.currentUserData) window.currentUserData.learnCategory = cat;
-                } catch (e) { console.error("更新學習語言偏好失敗:", e); }
+                } catch (e) { 
+                    console.error("更新學習語言偏好失敗:", e); 
+                }
             }
-            showIslandLoading("正在切換語言島嶼並更新最新試算表...", 50);
-            await autoLoadCurrentCategory(true);
-            hideIslandLoading();
+            loadCurrentLanguageFromCache();
             closeProfileView();
+            goToStep('step-level');
         }
 
         async function updateAccountNativeLang(lang) {
@@ -2972,7 +2984,7 @@
                 await verifyAndSyncUser(cred.user, true);
             } catch (err) {
                 hideIslandLoading();
-                showLoginError(err.message);
+                showLoginError(err.message); 
             }
         };
 
@@ -3293,9 +3305,13 @@
         const initialLevelSelect = document.getElementById('initial-level-select');
 
         function triggerLevelSelectionModal() {
-            const userUnlocked = (window.currentUserData && window.currentUserData.unlockedLevels)
-                ? window.currentUserData.unlockedLevels.map(l => l.toUpperCase())
-                : ['0A', '1A'];
+            let cachedUnlocked = [];
+            try {
+                cachedUnlocked = JSON.parse(localStorage.getItem('cached_unlocked_levels') || '[]');
+            } catch(e) {}
+            const userUnlocked = ((window.currentUserData && window.currentUserData.unlockedLevels)
+                ? window.currentUserData.unlockedLevels
+                : (cachedUnlocked.length > 0 ? cachedUnlocked : ['0A'])).map(l => String(l).trim().toUpperCase());
 
             const allLevels = [
                 { code: '0A', title: '0A 認識字母' },
@@ -3401,6 +3417,11 @@
             if (bottomBar) {
                 bottomBar.style.display = (stepId === 'step-lesson') ? 'flex' : 'none';
             }
+
+            // 關鍵修復：每次切換回程度選擇頁面時，強制用最新開通權限重新渲染選單
+            if (stepId === 'step-level') {
+                renderLevelMenu();
+            }
         }
 
         function setUserLang(lang) {
@@ -3413,76 +3434,91 @@
                 localStorage.removeItem(k + currentConfig.category);
             });
             showIslandLoading("快取清除完成，正在同步最新島嶼題庫...", 40);
-            await autoLoadCurrentCategory(true);
+            await autoLoadAllLanguages(true);
             hideIslandLoading();
         }
 
-        async function autoLoadCurrentCategory(forceRefresh = false) {
-            const targetApi = API_URLS[currentConfig.category];
-            if (!targetApi) return alert(`該語言 API 尚未設定！`);
+        // 平行同時強制同步韓文、日文（所有可用語言）最新題庫並存入 LocalStorage
+        async function autoLoadAllLanguages(forceRefresh = true) {
+            const availableCategories = Object.keys(API_URLS).filter(cat => API_URLS[cat] && API_URLS[cat].trim() !== '');
+            
+            const fetchPromises = availableCategories.map(async (cat) => {
+                const targetApi = API_URLS[cat];
+                const cacheMap = {
+                    all: `all_data_${cat}`,
+                    grammar: `grammar_data_${cat}`,
+                    dialogue: `dialogue_data_${cat}`,
+                    word: `word_data_${cat}`
+                };
 
-            const cat = currentConfig.category;
-            const cacheMap = {
-                all: `all_data_${cat}`,
-                grammar: `grammar_data_${cat}`,
-                dialogue: `dialogue_data_${cat}`,
-                word: `word_data_${cat}`
-            };
+                try {
+                    const [shadowRes, blocksRes, grammarRes, dialogueRes, wordRes] = await Promise.all([
+                        requestGAS(targetApi, 'getLanguageData').catch(() => null),
+                        requestGAS(targetApi, 'getBlocksData').catch(() => null),
+                        requestGAS(targetApi, 'getGrammarData').catch(() => null),
+                        requestGAS(targetApi, 'getDialogueData').catch(() => null),
+                        requestGAS(targetApi, 'getWordData').catch(() => null)
+                    ]);
 
-            const readCache = (key) => {
-                try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch(e) { return null; }
-            };
+                    const shadowData = (shadowRes && shadowRes.status === 'success') ? (shadowRes.data || []) : [];
+                    const blocksData = (blocksRes && blocksRes.status === 'success') ? (blocksRes.data || []) : [];
+                    const grammarData = (grammarRes && grammarRes.status === 'success') ? (grammarRes.data || []) : [];
+                    const dialogueData = (dialogueRes && dialogueRes.status === 'success') ? (dialogueRes.data || []) : [];
+                    const wordData = (wordRes && wordRes.status === 'success') ? (wordRes.data || []) : [];
 
-            if (!forceRefresh) {
-                const cachedAll = readCache(cacheMap.all);
-                if (cachedAll && (cachedAll.shadow || cachedAll.blocks)) {
-                    rawShadowData = cachedAll.shadow || [];
-                    rawBlocksData = cachedAll.blocks || [];
-                    globalGrammarData = readCache(cacheMap.grammar) || [];
-                    rawDialogueData = readCache(cacheMap.dialogue) || [];
-                    rawWordData = readCache(cacheMap.word) || [];
-                    renderLevelMenu();
-                    return;
+                    localStorage.setItem(cacheMap.all, JSON.stringify({ shadow: shadowData, blocks: blocksData }));
+                    localStorage.setItem(cacheMap.grammar, JSON.stringify(grammarData));
+                    localStorage.setItem(cacheMap.dialogue, JSON.stringify(dialogueData));
+                    localStorage.setItem(cacheMap.word, JSON.stringify(wordData));
+
+                    if (cat === currentConfig.category) {
+                        rawShadowData = shadowData;
+                        rawBlocksData = blocksData;
+                        globalGrammarData = grammarData;
+                        rawDialogueData = dialogueData;
+                        rawWordData = wordData;
+                    }
+                } catch (e) {
+                    console.error(`自動更新 ${cat} 題庫失敗:`, e);
                 }
-            }
+            });
 
-            try {
-                const [shadowRes, blocksRes, grammarRes, dialogueRes, wordRes] = await Promise.all([
-                    requestGAS(targetApi, 'getLanguageData').catch(() => null),
-                    requestGAS(targetApi, 'getBlocksData').catch(() => null),
-                    requestGAS(targetApi, 'getGrammarData').catch(() => null),
-                    requestGAS(targetApi, 'getDialogueData').catch(() => null),
-                    requestGAS(targetApi, 'getWordData').catch(() => null)
-                ]);
-
-                if (shadowRes && shadowRes.status === 'success') rawShadowData = shadowRes.data || [];
-                if (blocksRes && blocksRes.status === 'success') rawBlocksData = blocksRes.data || [];
-                if (grammarRes && grammarRes.status === 'success') {
-                    globalGrammarData = grammarRes.data || [];
-                    localStorage.setItem(cacheMap.grammar, JSON.stringify(grammarRes.data));
-                }
-                if (dialogueRes && dialogueRes.status === 'success') {
-                    rawDialogueData = dialogueRes.data || [];
-                    localStorage.setItem(cacheMap.dialogue, JSON.stringify(dialogueRes.data));
-                }
-                if (wordRes && wordRes.status === 'success') {
-                    rawWordData = wordRes.data || [];
-                    localStorage.setItem(cacheMap.word, JSON.stringify(wordRes.data));
-                }
-
-                localStorage.setItem(cacheMap.all, JSON.stringify({ shadow: rawShadowData, blocks: rawBlocksData }));
-                renderLevelMenu();
-            } catch(e) {
-                alert("無法連線至 API！請確認狀態。");
-            }
+            await Promise.all(fetchPromises);
+            renderLevelMenu();
         }
 
+        // 自快取讀取當前語言資料（用於切換語言時瞬間載入）
+        function loadCurrentLanguageFromCache() {
+            const cat = currentConfig.category;
+            try {
+                const cachedAll = JSON.parse(localStorage.getItem(`all_data_${cat}`) || 'null');
+                if (cachedAll) {
+                    rawShadowData = cachedAll.shadow || [];
+                    rawBlocksData = cachedAll.blocks || [];
+                }
+                globalGrammarData = JSON.parse(localStorage.getItem(`grammar_data_${cat}`) || '[]');
+                rawDialogueData = JSON.parse(localStorage.getItem(`dialogue_data_${cat}`) || '[]');
+                rawWordData = JSON.parse(localStorage.getItem(`word_data_${cat}`) || '[]');
+            } catch (e) {
+                console.error("讀取快取失敗:", e);
+            }
+            renderLevelMenu();
+        }
+
+        // 渲染程度選單（關鍵修復：優先讀取快取開通層級，修復回上一頁掉權限問題）
         function renderLevelMenu() {
             const container = document.getElementById('container-levels');
+            if (!container) return;
             container.innerHTML = "";
-            const userUnlocked = (window.currentUserData && window.currentUserData.unlockedLevels)
-                ? window.currentUserData.unlockedLevels.map(l => l.toUpperCase())
-                : ['0A'];
+
+            let cachedUnlocked = [];
+            try {
+                cachedUnlocked = JSON.parse(localStorage.getItem('cached_unlocked_levels') || '[]');
+            } catch(e) {}
+
+            const userUnlocked = ((window.currentUserData && window.currentUserData.unlockedLevels) 
+                ? window.currentUserData.unlockedLevels 
+                : (cachedUnlocked.length > 0 ? cachedUnlocked : ['0A'])).map(l => String(l).trim().toUpperCase());
 
             const krLevels = [
                 { code: '0A', title: '0A 認識字母' },
