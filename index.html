@@ -1013,7 +1013,7 @@
             color: #1e293b;
         }
 
-        /* ================= 全新：島嶼生成中 Loading 畫面樣式 ================= */
+        /* 全新：島嶼生成中 Loading 畫面樣式 */
         #game-loading-overlay {
             position: fixed;
             top: 0;
@@ -1113,7 +1113,7 @@
 </head>
 <body>
 
-    <!-- 全新：全螢幕「島嶼生成中...」遮罩，徹底解決自動登入顯示驗證中的陽春感 -->
+    <!-- 全新：全螢幕「島嶼生成中...」遮罩，點擊進入遊戲後才會觸發 -->
     <div id="game-loading-overlay">
         <div class="loading-island-icon">
             <i class="fa-solid fa-mountain-sun"></i>
@@ -1981,7 +1981,7 @@
         // 煙火動畫全域變數
         let fireworksAnimationId = null;
 
-        // 全新：「島嶼生成中...」全螢幕 Loading 控制器
+        // 「島嶼生成中...」全螢幕 Loading 控制器
         function showIslandLoading(subText = "冒險地圖與學習資料整備中", progressPct = 30) {
             const overlay = document.getElementById('game-loading-overlay');
             const subElem = document.getElementById('lbl-island-loading-sub');
@@ -2009,7 +2009,7 @@
             }, 300);
         }
 
-        // 專注時數顯示演算法：將秒數換算成「時分秒」
+        // 專注時數顯示演算法：將秒數轉換為「時分秒」
         function formatFocusDurationText(totalSeconds) {
             const secNum = Math.max(0, Math.floor(totalSeconds || 0));
             const hours = Math.floor(secNum / 3600);
@@ -2064,7 +2064,7 @@
             flagElem.innerText = flagMap[currentConfig.category] || '🌐';
         }
 
-        // 專注遊玩時數累加函式（依秒數儲存並即時更新為時分秒格式）
+        // 專注遊玩時數累加函式
         async function recordSessionFocusTime() {
             if (!challengeSessionStartTime) return 0;
             const now = Date.now();
@@ -2080,7 +2080,6 @@
             window.currentUserData.focusSeconds = updatedTotalSeconds;
             window.currentUserData.focusHours = Number((updatedTotalSeconds / 3600).toFixed(4));
 
-            // 即時同步頁面「時分秒」顯示
             const formattedText = formatFocusDurationText(updatedTotalSeconds);
             const dashFocus = document.getElementById('dash-focus-hours');
             const myAccountFocus = document.getElementById('myaccount-focus-text');
@@ -2237,7 +2236,7 @@
             }
         }
 
-        // 選擇挑戰模式彈窗（此處針對 0A 的單字選擇與聽打隱藏入門模式）
+        // 選擇挑戰模式彈窗（0A 程度單字選擇與聽打隱藏入門模式）
         function promptSelectModeType(lesson, mode, label) {
             if (mode === 'grammar') {
                 activeChallengeType = 'practice';
@@ -2252,7 +2251,6 @@
             const btnEntry = document.getElementById('btn-mode-choice-entry');
             const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
 
-            // 0A 程度的「單字選擇」和「單字聽打」刪除／隱藏入門程度
             if (is0ALevel && (mode === 'word_choice' || mode === 'word_type')) {
                 if (btnEntry) btnEntry.style.display = 'none';
             } else {
@@ -2596,10 +2594,22 @@
             btnAuthSubmit.innerText = '註冊帳號';
         };
 
-        function handleStartGameClick() {
+        // 點擊「進入遊戲」：先展開島嶼生成畫面，並自動強制同步試算表最新題庫
+        async function handleStartGameClick() {
             if (currentUser) {
-                showIslandLoading("冒險島嶼載入中...", 40);
-                resumeLastPlayedProgress();
+                showIslandLoading("🏝️ 島嶼生成中，正在同步最新試算表題庫...", 35);
+                try {
+                    await autoLoadCurrentCategory(true); // 自動強制更新試算表題庫
+                    updateIslandLoading("島嶼生成完畢，正在前往冒險地圖...", 90);
+                    setTimeout(() => {
+                        resumeLastPlayedProgress();
+                        hideIslandLoading();
+                    }, 400);
+                } catch (e) {
+                    hideIslandLoading();
+                    alert("同步最新題目失敗，將使用快取題目進入。");
+                    resumeLastPlayedProgress();
+                }
             } else {
                 authMode = 'login';
                 tabLogin.classList.replace('btn-3d-secondary', 'btn-3d-primary');
@@ -2623,7 +2633,6 @@
             } else {
                 goToStep('step-level');
             }
-            hideIslandLoading();
         }
 
         function handleOpenRegisterModal() {
@@ -2634,28 +2643,25 @@
             openModal('login-modal');
         }
 
+        // Firebase 認證狀態監聽：背景靜默同步，絕不在首頁跳轉或顯示「驗證中」
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 currentUser = user;
-                // 自動登入或手動登入觸發：顯示島嶼生成中遮罩
-                showIslandLoading("島嶼生成中，正在同步帳號資料...", 25);
-                await verifyAndSyncUser(user);
+                await verifyAndSyncUser(user, false);
             } else {
                 currentUser = null;
                 window.currentUserData = null;
-                hideIslandLoading();
                 goToStep('step-welcome');
                 document.getElementById('lbl-username').innerText = "訪客";
                 document.getElementById('lbl-xp').innerText = "0";
             }
         });
 
-        async function verifyAndSyncUser(user) {
+        async function verifyAndSyncUser(user, isInteractive = false) {
             try {
-                updateIslandLoading("正在驗證學員白名單...", 45);
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
                 if (!gasResult || gasResult.status !== "success") {
-                    hideIslandLoading();
+                    if (isInteractive) hideIslandLoading();
                     alert("您不在系統白名單內或帳號已被停權！\n請聯繫管理員開通。");
                     await auth.signOut();
                     return;
@@ -2680,7 +2686,6 @@
                     status: "active"
                 }));
 
-                updateIslandLoading("正在讀取學員冒險紀錄...", 65);
                 const firestoreData = await ProgressModel.loadProgress(user.uid);
                 if (!firestoreData) {
                     window.tempMemberInfo = {
@@ -2691,7 +2696,7 @@
                     };
                     window.tempMemberships = memberships;
                     window.tempUnlockedLevels = unlockedLevels;
-                    hideIslandLoading();
+                    if (isInteractive) hideIslandLoading();
                     closeModal('login-modal');
                     openModal('modal-setup-nickname');
                 } else {
@@ -2712,7 +2717,6 @@
                         window.currentUserData.modeScores = {};
                     }
 
-                    // 每日打卡判定
                     await processDailyCheckIn(user, window.currentUserData);
 
                     if (window.currentUserData.learnCategory) setLearnCategory(window.currentUserData.learnCategory);
@@ -2722,18 +2726,16 @@
                     closeModal('login-modal');
                     renderUserInfo();
 
-                    updateIslandLoading("載入試算表題庫中...", 85);
-                    await autoLoadCurrentCategory();
-
-                    hideIslandLoading();
-
-                    const welcomePage = document.getElementById('step-welcome');
-                    if (welcomePage && welcomePage.classList.contains('active')) {
+                    // 僅在用戶主動登入或註冊時自動進入，一般自動登入留在歡迎頁
+                    if (isInteractive) {
+                        updateIslandLoading("🏝️ 同步最新試算表題庫中...", 75);
+                        await autoLoadCurrentCategory(true);
+                        hideIslandLoading();
                         resumeLastPlayedProgress();
                     }
                 }
             } catch (err) {
-                hideIslandLoading();
+                if (isInteractive) hideIslandLoading();
                 console.error("驗證失敗:", err);
                 alert("伺服器連線驗證失敗：" + err.message);
                 await auth.signOut();
@@ -2796,8 +2798,8 @@
                 setUserLang(nativeLang);
                 renderUserInfo();
 
-                updateIslandLoading("試算表題庫加載中...", 80);
-                await autoLoadCurrentCategory();
+                updateIslandLoading("正在載入最新試算表題庫...", 85);
+                await autoLoadCurrentCategory(true);
                 hideIslandLoading();
                 resumeLastPlayedProgress();
             } catch (e) {
@@ -2824,8 +2826,8 @@
                     if (window.currentUserData) window.currentUserData.learnCategory = cat;
                 } catch (e) { console.error("更新學習語言偏好失敗:", e); }
             }
-            showIslandLoading("正在切換語言島嶼...", 50);
-            await autoLoadCurrentCategory();
+            showIslandLoading("正在切換語言島嶼並更新最新試算表...", 50);
+            await autoLoadCurrentCategory(true);
             hideIslandLoading();
             closeProfileView();
         }
@@ -2847,7 +2849,6 @@
             const xp = window.currentUserData.xp || 0;
             const displayName = window.currentUserData.displayName || "學生";
 
-            // 計算專注秒數並產生時分秒格式
             const totalSeconds = Number(window.currentUserData.focusSeconds || (window.currentUserData.focusHours ? window.currentUserData.focusHours * 3600 : 0));
             const focusText = formatFocusDurationText(totalSeconds);
 
@@ -2951,7 +2952,8 @@
         document.getElementById('btn-google-login').onclick = async () => {
             try { 
                 showIslandLoading("Google 登入驗證中...", 30);
-                await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); 
+                const cred = await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+                await verifyAndSyncUser(cred.user, true);
             } catch (err) { 
                 hideIslandLoading();
                 showLoginError(err.message); 
@@ -2964,8 +2966,10 @@
             if (!email || !password) return showLoginError("請輸入信箱與密碼！");
             try {
                 showIslandLoading("帳號驗證中...", 30);
-                if (authMode === 'login') await auth.signInWithEmailAndPassword(email, password);
-                else await auth.createUserWithEmailAndPassword(email, password);
+                let cred;
+                if (authMode === 'login') cred = await auth.signInWithEmailAndPassword(email, password);
+                else cred = await auth.createUserWithEmailAndPassword(email, password);
+                await verifyAndSyncUser(cred.user, true);
             } catch (err) {
                 hideIslandLoading();
                 showLoginError(err.message);
