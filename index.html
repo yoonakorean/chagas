@@ -576,7 +576,7 @@
             opacity: 0.55; background-color: #f3f4f6; border-color: #d1d5db; color: #9ca3af; cursor: not-allowed;
         }
 
-        /* 單元大區塊分類卡樣式 */
+        /* 階段大區塊分類卡樣式 */
         .unit-section-container {
             margin-bottom: 18px;
             background: #ffffff;
@@ -1478,20 +1478,20 @@
                 <div id="container-levels" class="option-grid grid-2"></div>
             </div>
 
-            <!-- 步驟 3：選擇課堂挑戰 (Lesson) -->
+            <!-- 步驟 3：選擇關卡挑戰 (Lesson) -->
             <div id="step-lesson" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
                     <span id="lbl-lesson-unit" style="font-weight: bold; color: var(--duo-blue);">課程關卡</span>
                 </div>
-                <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇課堂挑戰</h2>
+                <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇關卡挑戰</h2>
                 <div id="container-lessons"></div>
             </div>
 
             <!-- 步驟 5.5：語法介紹教室 -->
             <div id="step-grammar" class="step-page">
                 <div class="top-nav">
-                    <button class="btn-back-step" onclick="goToStep('step-lesson')"><i class="fa-solid fa-arrow-left"></i> 回課堂選擇</button>
+                    <button class="btn-back-step" onclick="goToStep('step-lesson')"><i class="fa-solid fa-arrow-left"></i> 回關卡選擇</button>
                     <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-purple);">關卡任務</span>
                 </div>
 
@@ -1930,18 +1930,19 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-<!-- 核心邏輯腳本開始 -->
+
+    <!-- 核心邏輯腳本開始 -->
     <script>
-        const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
+        const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";[cite: 1]
 
         const API_URLS = {
-            korean: "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
-            japanese: "https://script.google.com/macros/s/AKfycbxQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
+            korean: "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",[cite: 1]
+            japanese: "https://script.google.com/macros/s/AKfycbxQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",[cite: 1]
             english: ""
         };
 
-        let currentUser = null;
-        window.currentUserData = null;
+        let currentUser = null;[cite: 1]
+        window.currentUserData = null;[cite: 1]
 
         let currentConfig = {
             mode: 'shadow',
@@ -1950,73 +1951,73 @@
             unit_id: '1',
             lesson: '1',
             lang: localStorage.getItem('preferred_user_lang') || 'zh'
-        };
+        };[cite: 1]
 
         let rawShadowData = [];  
         let rawBlocksData = [];  
         let globalGrammarData = []; 
         let rawDialogueData = []; 
-        let rawWordData = [];
+        let rawWordData = [];[cite: 1]
 
-        let questions = [];
-        let currentIndex = 0;
-        let recognition = null;
-        let isRecording = false;
-        let isToggling = false; 
-        let selectedBlockIndices = [];
+        let questions = [];[cite: 1]
+        let currentIndex = 0;[cite: 1]
+        let recognition = null;[cite: 1]
+        let isRecording = false;[cite: 1]
+        let isToggling = false;[cite: 1]
+        let selectedBlockIndices = [];[cite: 1]
 
-        let isSentenceKeywordMode = false;
-        let isSentenceChallengeMode = false;
+        let isSentenceKeywordMode = false;[cite: 1]
+        let isSentenceChallengeMode = false;[cite: 1]
 
-        let challengeSessionStartTime = null;
+        let challengeSessionStartTime = null;[cite: 1]
 
-        let mediaRecorder = null;
-        let recordedAudioChunks = [];
-        let userRecordedAudioUrl = null;
-        let lastRecognizedSpeechText = "";
+        let mediaRecorder = null;[cite: 1]
+        let recordedAudioChunks = [];[cite: 1]
+        let userRecordedAudioUrl = null;[cite: 1]
+        let lastRecognizedSpeechText = "";[cite: 1]
 
-        let gridBoardCells = new Array(27).fill(null);
-        let selectedTargetGridIndex = null;
+        let gridBoardCells = new Array(27).fill(null);[cite: 1]
+        let selectedTargetGridIndex = null;[cite: 1]
 
-        let chatRounds = [];
-        let chatRoundIndex = 0;
-        let chatRole = 'A';
-        let isChatChallengeMode = false;
-        let chatRoundPassed = false;
+        let chatRounds = [];[cite: 1]
+        let chatRoundIndex = 0;[cite: 1]
+        let chatRole = 'A';[cite: 1]
+        let isChatChallengeMode = false;[cite: 1]
+        let chatRoundPassed = false;[cite: 1]
 
-        let wordQuestions = [];
-        let wordIndex = 0;
-        let currentWordPronMode = 'kr_pron';
+        let wordQuestions = [];[cite: 1]
+        let wordIndex = 0;[cite: 1]
+        let currentWordPronMode = 'kr_pron';[cite: 1]
 
-        let isCurrentQuestionAnswered = false;
+        let isCurrentQuestionAnswered = false;[cite: 1]
 
-        let currentChallengeScore = 0;
-        let pointsPerQuestion = 10;
-        let passedSubQuestions = new Set();
-        let totalChallengeQuestions = 0;
+        let currentChallengeScore = 0;[cite: 1]
+        let pointsPerQuestion = 10;[cite: 1]
+        let passedSubQuestions = new Set();[cite: 1]
+        let totalChallengeQuestions = 0;[cite: 1]
 
-        let activeChallengeType = 'practice';
-        let challengeTimerInterval = null;
-        let challengeTimeRemaining = 300;
-        let pendingLesson = null;
-        let pendingMode = null;
+        let activeChallengeType = 'practice';[cite: 1]
+        let challengeTimerInterval = null;[cite: 1]
+        let challengeTimeRemaining = 300;[cite: 1]
+        let pendingLesson = null;[cite: 1]
+        let pendingMode = null;[cite: 1]
 
-        let currentGrammarItem = null;
-        let currentDialogIndex = 0;
-        let userGrammarAnswers = [];
-        let activeBlankIndex = 0;
-        let typewriterTimer = null;
-        let isTypewriterTyping = false;
-        let currentFullDialogText = "";
-        let grammarQuizIndex = 0;
+        let currentGrammarItem = null;[cite: 1]
+        let currentDialogIndex = 0;[cite: 1]
+        let userGrammarAnswers = [];[cite: 1]
+        let activeBlankIndex = 0;[cite: 1]
+        let typewriterTimer = null;[cite: 1]
+        let isTypewriterTyping = false;[cite: 1]
+        let currentFullDialogText = "";[cite: 1]
+        let grammarQuizIndex = 0;[cite: 1]
 
-        let currentRankSubTab = 'global';
-        let fireworksAnimationId = null;
+        let currentRankSubTab = 'global';[cite: 1]
+        let fireworksAnimationId = null;[cite: 1]
 
         // 靜默 90 秒閒置防掛機變數
-        let idleTimer = null;
-        const IDLE_LIMIT_MS = 90 * 1000;
-        let isIdlePaused = false;
+        let idleTimer = null;[cite: 1]
+        const IDLE_LIMIT_MS = 90 * 1000;[cite: 1]
+        let isIdlePaused = false;[cite: 1]
 
         function showIslandLoading(subText = "冒險地圖與學習資料整備中", progressPct = 30) {
             const overlay = document.getElementById('game-loading-overlay');
@@ -2027,14 +2028,14 @@
                 if (subElem) subElem.innerText = subText;
                 if (bar) bar.style.width = `${progressPct}%`;
             }
-        }
+        }[cite: 1]
 
         function updateIslandLoading(subText, progressPct) {
             const subElem = document.getElementById('lbl-island-loading-sub');
             const bar = document.getElementById('island-loading-bar');
             if (subElem) subElem.innerText = subText;
             if (bar) bar.style.width = `${progressPct}%`;
-        }
+        }[cite: 1]
 
         function hideIslandLoading() {
             const bar = document.getElementById('island-loading-bar');
@@ -2043,7 +2044,7 @@
                 const overlay = document.getElementById('game-loading-overlay');
                 if (overlay) overlay.classList.remove('show');
             }, 300);
-        }
+        }[cite: 1]
 
         function formatFocusDurationText(totalSeconds) {
             const secNum = Math.max(0, Math.floor(totalSeconds || 0));
@@ -2058,18 +2059,18 @@
             } else {
                 return `${seconds}秒`;
             }
-        }
+        }[cite: 1]
 
         const PRAISE_MESSAGES = [
             "🎉 你真的太厲害了！",
             "🎉 你到底是怎麼做到的？你真的太強了",
             "🎉 我真的太崇拜你了",
             "🎉 簡直是天才！"
-        ];
+        ];[cite: 1]
 
         function getRandomPraise() {
             return PRAISE_MESSAGES[Math.floor(Math.random() * PRAISE_MESSAGES.length)];
-        }
+        }[cite: 1]
 
         function shuffleArray(arr) {
             const array = [...arr];
@@ -2078,14 +2079,14 @@
                 [array[i], array[j]] = [array[j], array[i]];
             }
             return array;
-        }
+        }[cite: 1]
 
         function formatDurationMMSS(totalSeconds) {
             if (!totalSeconds || totalSeconds < 0) return "--:--";
             const m = Math.floor(totalSeconds / 60);
             const s = Math.floor(totalSeconds % 60);
             return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        }
+        }[cite: 1]
 
         function updateUserFlagIcon() {
             const flagElem = document.getElementById('lbl-user-flag');
@@ -2096,7 +2097,7 @@
                 'english': '🇺🇸'
             };
             flagElem.innerText = flagMap[currentConfig.category] || '🌐';
-        }
+        }[cite: 1]
 
         async function recordSessionFocusTime() {
             if (!challengeSessionStartTime) return 0;
@@ -2131,20 +2132,20 @@
             }
 
             return elapsedSeconds;
-        }
+        }[cite: 1]
 
         function getModeTagText() {
             if (activeChallengeType === 'entry') return '(入門)';
             if (activeChallengeType === 'timed') return '(挑戰)';
             return '(練習)';
-        }
+        }[cite: 1]
 
         function getLocalDateString(d = new Date()) {
             const year = d.getFullYear();
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
-        }
+        }[cite: 1]
 
         async function processDailyCheckIn(user, userData) {
             const todayStr = getLocalDateString();
@@ -2191,7 +2192,7 @@
             }
 
             return { streakDays: streak, checkInHistory: history };
-        }
+        }[cite: 1]
 
         function getItemField(item, fieldName) {
             if (!item) return '';
@@ -2211,7 +2212,7 @@
             if (f === 'unitid' || f === 'unit') return String(item.unit_id || item.unitid || item.unit || '');
             if (f === 'level' || f === 'lvl') return String(item.level || item.lvl || '');
             return item[fieldName] !== undefined ? String(item[fieldName]) : (item[f] !== undefined ? String(item[f]) : '');
-        }
+        }[cite: 1]
 
         const ProgressModel = {
             loadProgress: async (uid) => {
@@ -2243,19 +2244,19 @@
                     console.error("更新進度失敗:", e);
                 }
             }
-        };
+        };[cite: 1]
 
         function calculateStars(score) {
             if (score >= 100) return { stars: 3, label: '⭐⭐⭐' };
             if (score >= 80) return { stars: 2, label: '⭐⭐' };
             if (score >= 60) return { stars: 1, label: '⭐' };
             return { stars: 0, label: '未達成' };
-        }
+        }[cite: 1]
 
         function getRecordKey(lesson, mode, chalType, unitId = null) {
             const actualUnit = unitId || currentConfig.unit_id;
             return `${currentConfig.category}_${currentConfig.level}_${actualUnit}_${lesson}_${mode}_${chalType}`;
-        }
+        }[cite: 1]
 
         function getStoredBestRecord(lesson, mode, chalType, unitId = null) {
             const key = getRecordKey(lesson, mode, chalType, unitId);
@@ -2266,7 +2267,7 @@
             } catch (e) {
                 return null;
             }
-        }
+        }[cite: 1]
 
         // ==================== 靜默 90 秒閒置與背景跳出防掛機邏輯 ====================
         function resetIdleTimer() {
@@ -2279,14 +2280,14 @@
                     handleIdleTimeout(false);
                 }, IDLE_LIMIT_MS);
             }
-        }
+        }[cite: 1]
 
         function clearIdleTimer() {
             if (idleTimer) {
                 clearTimeout(idleTimer);
                 idleTimer = null;
             }
-        }
+        }[cite: 1]
 
         async function handleIdleTimeout(isFromPageHidden = false) {
             isIdlePaused = true;
@@ -2314,7 +2315,7 @@
             }
 
             openModal('modal-idle-timeout');
-        }
+        }[cite: 1]
 
         function resumeFromIdle() {
             closeModal('modal-idle-timeout');
@@ -2331,7 +2332,7 @@
             }
 
             resetIdleTimer();
-        }
+        }[cite: 1]
 
         async function exitFromIdle() {
             closeModal('modal-idle-timeout');
@@ -2339,7 +2340,7 @@
             clearIdleTimer();
             stopChallengeTimer();
             goToStep('step-lesson');
-        }
+        }[cite: 1]
 
         function resumeChallengeTimer(targetModeKey) {
             const badgeElem = document.getElementById(`lbl-timer-${targetModeKey}`);
@@ -2365,24 +2366,24 @@
                     updateDisplay();
                 }
             }, 1000);
-        }
+        }[cite: 1]
 
         // 手機切換分頁、鎖定螢幕、滑掉背景時立即暫停計時
         function handleMobilePageHidden() {
             if (challengeSessionStartTime && !isIdlePaused) {
                 handleIdleTimeout(true);
             }
-        }
+        }[cite: 1]
 
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 handleMobilePageHidden();
             }
-        });
+        });[cite: 1]
 
         window.addEventListener('pagehide', () => {
             handleMobilePageHidden();
-        });
+        });[cite: 1]
 // 選擇挑戰模式彈窗（0A 程度完全隱藏入門模式）
         function promptSelectModeType(unitId, lesson, mode, label) {
             currentConfig.unit_id = String(unitId);
@@ -3168,7 +3169,8 @@
                 goToStep('step-welcome');
             }
         }
-function openModal(modalId) {
+
+        function openModal(modalId) {
             const m = document.getElementById(modalId);
             if (m) { m.classList.add('show'); m.classList.remove('hidden'); }
         }
@@ -3177,12 +3179,13 @@ function openModal(modalId) {
             if (m) { m.classList.remove('show'); m.classList.add('hidden'); }
         }
 
+        // 修改點：點擊暱稱進入 profile-view 時預設為排行榜
         function openProfileView() {
             clearIdleTimer();
             document.getElementById('learning-content-view').classList.add('hidden');
             document.getElementById('profile-view').classList.remove('hidden');
             renderUserInfo();
-            switchProfileTab('myaccount');
+            switchProfileTab('leaderboard');
         }
 
         function closeProfileView() {
@@ -3703,6 +3706,7 @@ function openModal(modalId) {
             goToStep('step-lesson');
         }
 
+        // 修改點：第一單元改為「第 X 階段」、11 堂課改為「11 關」、第 1 課 (1-2) 改為「第 1 關」
         function renderAllLessonsForLevel(level) {
             const container = document.getElementById('container-lessons');
             if (!container) return;
@@ -3740,8 +3744,8 @@ function openModal(modalId) {
                 const unitHeader = document.createElement('div');
                 unitHeader.className = "unit-section-header";
                 unitHeader.innerHTML = `
-                    <span><i class="fa-solid fa-map"></i> 第 ${unitStr} 單元</span>
-                    <span class="unit-badge-tag">${lessons.length} 堂課</span>
+                    <span><i class="fa-solid fa-map"></i> 第 ${unitStr} 階段</span>
+                    <span class="unit-badge-tag">${lessons.length} 關</span>
                 `;
                 unitSection.appendChild(unitHeader);
 
@@ -3776,7 +3780,7 @@ function openModal(modalId) {
 
                     const title = document.createElement('div');
                     title.className = "lesson-card-title";
-                    title.innerText = `第 ${lesStr} 課 (${unitStr}-${lesStr})`;
+                    title.innerText = `第 ${lesStr} 關`;
 
                     const btnGroup = document.createElement('div');
                     btnGroup.className = "lesson-btn-group";
@@ -3812,7 +3816,7 @@ function openModal(modalId) {
                     if (btnGroup.children.length === 0) {
                         const emptyTip = document.createElement('div');
                         emptyTip.style.cssText = "font-size:0.8rem; color:#94a3b8; padding: 6px 0;";
-                        emptyTip.innerText = "此課堂尚無開放挑戰";
+                        emptyTip.innerText = "此關卡尚無開放挑戰";
                         btnGroup.appendChild(emptyTip);
                     }
 
@@ -3824,7 +3828,8 @@ function openModal(modalId) {
                 container.appendChild(unitSection);
             });
         }
-function startChallengeTimer(targetModeKey) {
+
+        function startChallengeTimer(targetModeKey) {
             stopChallengeTimer();
             challengeTimeRemaining = 300;
 
@@ -3968,7 +3973,7 @@ function startChallengeTimer(targetModeKey) {
                 if (matchGrammar && ((matchGrammar.dialogs && matchGrammar.dialogs.length) || (matchGrammar.quizzes && matchGrammar.quizzes.length))) {
                     startGrammarChallenge(matchGrammar);
                 } else {
-                    alert("此課堂目前沒有設定獨立語法觀念喔！");
+                    alert("此關卡目前沒有設定獨立語法觀念喔！");
                 }
             } else if (mode === 'sentence_chat') {
                 startSentenceChatChallenge();
@@ -3992,7 +3997,7 @@ function startChallengeTimer(targetModeKey) {
             currentDialogIndex = 0;
             grammarQuizIndex = 0;
             
-            document.getElementById('lbl-grammar-info').innerText = `關卡任務 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Lesson ${currentConfig.lesson}`;
+            document.getElementById('lbl-grammar-info').innerText = `關卡任務 | Level ${currentConfig.level} - Stage ${currentConfig.unit_id} - Lesson ${currentConfig.lesson}`;
             
             document.getElementById('area-grammar-all-history').style.display = 'none';
             document.getElementById('area-grammar-quiz').style.display = 'none';
@@ -4046,7 +4051,7 @@ function startChallengeTimer(targetModeKey) {
                 if (hasQuiz) {
                     nextBtn.innerHTML = `進入挑戰 <i class="fa-solid fa-pen-to-square"></i>`;
                 } else {
-                    nextBtn.innerHTML = `🎉 完成課堂 <i class="fa-solid fa-check"></i>`;
+                    nextBtn.innerHTML = `🎉 完成關卡 <i class="fa-solid fa-check"></i>`;
                 }
             } else {
                 nextBtn.innerHTML = `下一步 <i class="fa-solid fa-arrow-right"></i>`;
@@ -4348,7 +4353,8 @@ function startChallengeTimer(targetModeKey) {
                 actionBtn.onclick = () => showGrammarQuizArea();
             }
         }
-// ==================== 通用單字挑戰邏輯 ====================
+
+        // ==================== 通用單字挑戰邏輯 ====================
 
         function getWordTranslation(item) {
             if (!item) return "";
@@ -4410,7 +4416,7 @@ function startChallengeTimer(targetModeKey) {
                 String(getItemField(v, 'lesson')) === String(currentConfig.lesson)
             );
 
-            if (filteredWords.length === 0) return alert("此課堂尚無單字題目資料！");
+            if (filteredWords.length === 0) return alert("此關卡尚無單字題目資料！");
 
             wordQuestions = shuffleArray(filteredWords);
 
@@ -4862,7 +4868,8 @@ function startChallengeTimer(targetModeKey) {
                 displayWordQuestion(); 
             } 
         }
-// ==================== 句子跟讀與字塊重組邏輯 ====================
+
+        // ==================== 句子跟讀與字塊重組邏輯 ====================
 
         function startMainQuiz() {
             stopSpeechRecognition();
@@ -4959,7 +4966,7 @@ function startChallengeTimer(targetModeKey) {
             }
 
             currentIndex = 0;
-            if (questions.length > 0) displayQuestion(); else alert("該課堂尚無練習題目！");
+            if (questions.length > 0) displayQuestion(); else alert("該關卡尚無練習題目！");
         }
 
         function displayQuestion() {
@@ -5312,7 +5319,7 @@ function startChallengeTimer(targetModeKey) {
                 }
             });
 
-            if (chatRounds.length === 0) return alert("此課堂 dialogue 分頁無題目資料！");
+            if (chatRounds.length === 0) return alert("此關卡 dialogue 分頁無題目資料！");
 
             chatRoundIndex = 0;
             totalChallengeQuestions = chatRounds.length;
