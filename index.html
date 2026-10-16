@@ -576,7 +576,7 @@
             opacity: 0.55; background-color: #f3f4f6; border-color: #d1d5db; color: #9ca3af; cursor: not-allowed;
         }
 
-        /* 單元大區塊分類卡樣式 */
+        /* 階段大區塊分類卡樣式 */
         .unit-section-container {
             margin-bottom: 18px;
             background: #ffffff;
@@ -1417,7 +1417,8 @@
             </div>
         </div>
     </div>
-<!-- 主介面容器 -->
+
+    <!-- 主介面容器 -->
     <div class="shadowing-card">
         
         <!-- 上方狀態列 -->
@@ -1478,20 +1479,20 @@
                 <div id="container-levels" class="option-grid grid-2"></div>
             </div>
 
-            <!-- 步驟 3：選擇課堂挑戰 (Lesson) -->
+            <!-- 步驟 3：選擇關卡挑戰 (已將「請選擇課堂挑戰」調整為「請選擇關卡挑戰」) -->
             <div id="step-lesson" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
                     <span id="lbl-lesson-unit" style="font-weight: bold; color: var(--duo-blue);">課程關卡</span>
                 </div>
-                <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇課堂挑戰</h2>
+                <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇關卡挑戰</h2>
                 <div id="container-lessons"></div>
             </div>
 
             <!-- 步驟 5.5：語法介紹教室 -->
             <div id="step-grammar" class="step-page">
                 <div class="top-nav">
-                    <button class="btn-back-step" onclick="goToStep('step-lesson')"><i class="fa-solid fa-arrow-left"></i> 回課堂選擇</button>
+                    <button class="btn-back-step" onclick="goToStep('step-lesson')"><i class="fa-solid fa-arrow-left"></i> 回關卡選擇</button>
                     <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-purple);">關卡任務</span>
                 </div>
 
@@ -1861,7 +1862,7 @@
 
                 <div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 14px; border: 1px solid #e2e8f0; display: flex-direction: column; gap: 10px;">
                     <div>
-                        <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex-align: center; gap: 6px;">
+                        <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
                             <i class="fa-solid fa-language" style="color: var(--duo-blue);"></i> 當前學習語言
                         </div>
                         <select id="select-account-learn-language" onchange="updateAccountLearnCategory(this.value)" style="margin: 0;">
@@ -2383,7 +2384,8 @@
         window.addEventListener('pagehide', () => {
             handleMobilePageHidden();
         });
-// 選擇挑戰模式彈窗（0A 程度完全隱藏入門模式）
+
+        // 選擇挑戰模式彈窗（0A 程度完全隱藏入門模式）
         function promptSelectModeType(unitId, lesson, mode, label) {
             currentConfig.unit_id = String(unitId);
             if (mode === 'grammar') {
@@ -3168,7 +3170,8 @@
                 goToStep('step-welcome');
             }
         }
-function openModal(modalId) {
+
+        function openModal(modalId) {
             const m = document.getElementById(modalId);
             if (m) { m.classList.add('show'); m.classList.remove('hidden'); }
         }
@@ -3177,12 +3180,13 @@ function openModal(modalId) {
             if (m) { m.classList.remove('show'); m.classList.add('hidden'); }
         }
 
+        // 點擊左上角暱稱時，預設顯示「排行榜」畫面
         function openProfileView() {
             clearIdleTimer();
             document.getElementById('learning-content-view').classList.add('hidden');
             document.getElementById('profile-view').classList.remove('hidden');
             renderUserInfo();
-            switchProfileTab('myaccount');
+            switchProfileTab('leaderboard');
         }
 
         function closeProfileView() {
@@ -3703,6 +3707,7 @@ function openModal(modalId) {
             goToStep('step-lesson');
         }
 
+        // 渲染選單：調整為「第 X 階段」、「X 關」與「第 X 關」
         function renderAllLessonsForLevel(level) {
             const container = document.getElementById('container-lessons');
             if (!container) return;
@@ -3739,9 +3744,10 @@ function openModal(modalId) {
 
                 const unitHeader = document.createElement('div');
                 unitHeader.className = "unit-section-header";
+                // 將「第 X 單元」改為「第 X 階段」，「X 堂課」改為「X 關」
                 unitHeader.innerHTML = `
-                    <span><i class="fa-solid fa-map"></i> 第 ${unitStr} 單元</span>
-                    <span class="unit-badge-tag">${lessons.length} 堂課</span>
+                    <span><i class="fa-solid fa-map"></i> 第 ${unitStr} 階段</span>
+                    <span class="unit-badge-tag">${lessons.length} 關</span>
                 `;
                 unitSection.appendChild(unitHeader);
 
@@ -3776,7 +3782,8 @@ function openModal(modalId) {
 
                     const title = document.createElement('div');
                     title.className = "lesson-card-title";
-                    title.innerText = `第 ${lesStr} 課 (${unitStr}-${lesStr})`;
+                    // 將「第 X 課 (Unit-Lesson)」改為「第 X 關」
+                    title.innerText = `第 ${lesStr} 關`;
 
                     const btnGroup = document.createElement('div');
                     btnGroup.className = "lesson-btn-group";
@@ -3812,7 +3819,7 @@ function openModal(modalId) {
                     if (btnGroup.children.length === 0) {
                         const emptyTip = document.createElement('div');
                         emptyTip.style.cssText = "font-size:0.8rem; color:#94a3b8; padding: 6px 0;";
-                        emptyTip.innerText = "此課堂尚無開放挑戰";
+                        emptyTip.innerText = "此關卡尚無開放挑戰";
                         btnGroup.appendChild(emptyTip);
                     }
 
@@ -3824,7 +3831,8 @@ function openModal(modalId) {
                 container.appendChild(unitSection);
             });
         }
-function startChallengeTimer(targetModeKey) {
+
+        function startChallengeTimer(targetModeKey) {
             stopChallengeTimer();
             challengeTimeRemaining = 300;
 
@@ -3968,7 +3976,7 @@ function startChallengeTimer(targetModeKey) {
                 if (matchGrammar && ((matchGrammar.dialogs && matchGrammar.dialogs.length) || (matchGrammar.quizzes && matchGrammar.quizzes.length))) {
                     startGrammarChallenge(matchGrammar);
                 } else {
-                    alert("此課堂目前沒有設定獨立語法觀念喔！");
+                    alert("此關卡目前沒有設定獨立語法觀念喔！");
                 }
             } else if (mode === 'sentence_chat') {
                 startSentenceChatChallenge();
@@ -4046,7 +4054,7 @@ function startChallengeTimer(targetModeKey) {
                 if (hasQuiz) {
                     nextBtn.innerHTML = `進入挑戰 <i class="fa-solid fa-pen-to-square"></i>`;
                 } else {
-                    nextBtn.innerHTML = `🎉 完成課堂 <i class="fa-solid fa-check"></i>`;
+                    nextBtn.innerHTML = `🎉 完成關卡 <i class="fa-solid fa-check"></i>`;
                 }
             } else {
                 nextBtn.innerHTML = `下一步 <i class="fa-solid fa-arrow-right"></i>`;
@@ -4348,7 +4356,8 @@ function startChallengeTimer(targetModeKey) {
                 actionBtn.onclick = () => showGrammarQuizArea();
             }
         }
-// ==================== 通用單字挑戰邏輯 ====================
+
+        // ==================== 通用單字挑戰邏輯 ====================
 
         function getWordTranslation(item) {
             if (!item) return "";
@@ -4410,7 +4419,7 @@ function startChallengeTimer(targetModeKey) {
                 String(getItemField(v, 'lesson')) === String(currentConfig.lesson)
             );
 
-            if (filteredWords.length === 0) return alert("此課堂尚無單字題目資料！");
+            if (filteredWords.length === 0) return alert("此關卡尚無單字題目資料！");
 
             wordQuestions = shuffleArray(filteredWords);
 
@@ -4486,7 +4495,6 @@ function startChallengeTimer(targetModeKey) {
                     targetTextElem.style.visibility = "hidden";
                     if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
                 } else if (activeChallengeType === 'timed') {
-                    // 0A 程度的挑戰模式依然顯示韓文
                     if (is0ALevel) {
                         targetTextElem.innerText = item.text || "";
                         targetTextElem.style.visibility = "visible";
@@ -4862,7 +4870,8 @@ function startChallengeTimer(targetModeKey) {
                 displayWordQuestion(); 
             } 
         }
-// ==================== 句子跟讀與字塊重組邏輯 ====================
+
+        // ==================== 句子跟讀與字塊重組邏輯 ====================
 
         function startMainQuiz() {
             stopSpeechRecognition();
@@ -4959,7 +4968,7 @@ function startChallengeTimer(targetModeKey) {
             }
 
             currentIndex = 0;
-            if (questions.length > 0) displayQuestion(); else alert("該課堂尚無練習題目！");
+            if (questions.length > 0) displayQuestion(); else alert("該關卡尚無練習題目！");
         }
 
         function displayQuestion() {
@@ -5220,7 +5229,7 @@ function startChallengeTimer(targetModeKey) {
                     '6': '여섯',
                     '7': '일곱',
                     '8': '여덟',
-                    '9': ' trap'
+                    '9': '아홉'
                 };
                 for (const [num, word] of Object.entries(singleMap)) {
                     clean = clean.replaceAll(num, word);
@@ -5312,7 +5321,7 @@ function startChallengeTimer(targetModeKey) {
                 }
             });
 
-            if (chatRounds.length === 0) return alert("此課堂 dialogue 分頁無題目資料！");
+            if (chatRounds.length === 0) return alert("此關卡 dialogue 分頁無題目資料！");
 
             chatRoundIndex = 0;
             totalChallengeQuestions = chatRounds.length;
