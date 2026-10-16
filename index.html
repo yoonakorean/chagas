@@ -1349,17 +1349,17 @@
         </div>
     </div>
 
-    <!-- 全新：閒置過久提示彈窗（防掛機機制，不在畫面上倒數，時間到自動暫停並彈出） -->
+    <!-- 閒置過久 / 背景切出防掛機提示彈窗 -->
     <div id="modal-idle-timeout" class="custom-modal" style="z-index: 9999999;">
         <div class="custom-modal-card" style="padding: 26px 20px;">
             <div style="font-size: 2.6rem; color: var(--duo-orange); margin-bottom: 10px;">
-                <i class="fa-solid fa-hourglass-end"></i>
+                <i class="fa-solid fa-pause"></i>
             </div>
-            <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 1.25rem; font-weight: 900;">
-                閒置過久囉！
+            <h3 style="margin: 0 0 10px 0; color: #1e293b; font-size: 1.25rem; font-weight: 900;" id="lbl-idle-modal-title">
+                學習已暫停
             </h3>
-            <p style="font-size: 0.9rem; color: #64748b; margin: 0 0 18px 0; line-height: 1.5;">
-                檢測到您已超過 90 秒未操作，系統已自動暫停專注計時。休息好了就繼續吧！
+            <p style="font-size: 0.9rem; color: #64748b; margin: 0 0 18px 0; line-height: 1.5;" id="lbl-idle-modal-desc">
+                檢測到您離開畫面或超過 90 秒未操作，系統已自動暫停計時。休息好了就繼續吧！
             </p>
             <button class="btn-3d btn-3d-primary" onclick="resumeFromIdle()" style="width: 100%; padding: 12px; font-size: 1.05rem; margin-bottom: 10px;">
                 <i class="fa-solid fa-play"></i> 繼續挑戰
@@ -1417,8 +1417,7 @@
             </div>
         </div>
     </div>
-
-    <!-- 主介面容器 -->
+<!-- 主介面容器 -->
     <div class="shadowing-card">
         
         <!-- 上方狀態列 -->
@@ -1445,7 +1444,8 @@
                 <i class="fa-solid fa-caret-down" style="font-size: 0.75rem; color: #9ca3af;"></i>
             </div>
         </div>
-<!-- 中間滾動主區塊 -->
+
+        <!-- 中間滾動主區塊 -->
         <div id="learning-content-view">
 
             <!-- 0. 全新開場畫面 -->
@@ -1861,7 +1861,7 @@
 
                 <div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 14px; border: 1px solid #e2e8f0; display: flex-direction: column; gap: 10px;">
                     <div>
-                        <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                        <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex-align: center; gap: 6px;">
                             <i class="fa-solid fa-language" style="color: var(--duo-blue);"></i> 當前學習語言
                         </div>
                         <select id="select-account-learn-language" onchange="updateAccountLearnCategory(this.value)" style="margin: 0;">
@@ -1930,8 +1930,7 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-
-    <!-- 核心邏輯腳本開始 -->
+<!-- 核心邏輯腳本開始 -->
     <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -2014,7 +2013,7 @@
         let currentRankSubTab = 'global';
         let fireworksAnimationId = null;
 
-        // 靜默 90 秒閒置防掛機變數（不向使用者倒數顯示）
+        // 靜默 90 秒閒置防掛機變數
         let idleTimer = null;
         const IDLE_LIMIT_MS = 90 * 1000;
         let isIdlePaused = false;
@@ -2268,7 +2267,8 @@
                 return null;
             }
         }
-// ==================== 靜默 90 秒閒置防掛機邏輯 ====================
+
+        // ==================== 靜默 90 秒閒置與背景跳出防掛機邏輯 ====================
         function resetIdleTimer() {
             if (isIdlePaused) return;
             if (idleTimer) clearTimeout(idleTimer);
@@ -2276,7 +2276,7 @@
             // 僅在進入題目挑戰與計時專注狀態時啟用
             if (challengeSessionStartTime) {
                 idleTimer = setTimeout(() => {
-                    handleIdleTimeout();
+                    handleIdleTimeout(false);
                 }, IDLE_LIMIT_MS);
             }
         }
@@ -2288,18 +2288,29 @@
             }
         }
 
-        async function handleIdleTimeout() {
+        async function handleIdleTimeout(isFromPageHidden = false) {
             isIdlePaused = true;
             clearIdleTimer();
             stopSpeechRecognition();
 
-            // 結算截至閒置前的專注時間，避免時數無限膨脹
+            // 結算截至離開/閒置前的專注時間，防止時數背景偷跑
             await recordSessionFocusTime();
 
             // 暫停 300 秒挑戰倒數計時器
             if (challengeTimerInterval) {
                 clearInterval(challengeTimerInterval);
                 challengeTimerInterval = null;
+            }
+
+            const titleElem = document.getElementById('lbl-idle-modal-title');
+            const descElem = document.getElementById('lbl-idle-modal-desc');
+
+            if (isFromPageHidden) {
+                if (titleElem) titleElem.innerText = "學習已暫停";
+                if (descElem) descElem.innerText = "檢測到您切換離開畫面，系統已自動暫停專注計時。休息好了就繼續吧！";
+            } else {
+                if (titleElem) titleElem.innerText = "閒置過久囉！";
+                if (descElem) descElem.innerText = "檢測到您已超過 90 秒未操作，系統已自動暫停專注計時。準備好就點擊繼續！";
             }
 
             openModal('modal-idle-timeout');
@@ -2356,7 +2367,23 @@
             }, 1000);
         }
 
-        // 選擇挑戰模式彈窗（0A 程度完全隱藏入門模式）
+        // 手機切換分頁、鎖定螢幕、滑掉背景時立即暫停計時
+        function handleMobilePageHidden() {
+            if (challengeSessionStartTime && !isIdlePaused) {
+                handleIdleTimeout(true);
+            }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                handleMobilePageHidden();
+            }
+        });
+
+        window.addEventListener('pagehide', () => {
+            handleMobilePageHidden();
+        });
+// 選擇挑戰模式彈窗（0A 程度完全隱藏入門模式）
         function promptSelectModeType(unitId, lesson, mode, label) {
             currentConfig.unit_id = String(unitId);
             if (mode === 'grammar') {
@@ -3141,8 +3168,7 @@
                 goToStep('step-welcome');
             }
         }
-
-        function openModal(modalId) {
+function openModal(modalId) {
             const m = document.getElementById(modalId);
             if (m) { m.classList.add('show'); m.classList.remove('hidden'); }
         }
@@ -3798,8 +3824,7 @@
                 container.appendChild(unitSection);
             });
         }
-
-        function startChallengeTimer(targetModeKey) {
+function startChallengeTimer(targetModeKey) {
             stopChallengeTimer();
             challengeTimeRemaining = 300;
 
@@ -4323,8 +4348,7 @@
                 actionBtn.onclick = () => showGrammarQuizArea();
             }
         }
-
-        // ==================== 通用單字挑戰邏輯 ====================
+// ==================== 通用單字挑戰邏輯 ====================
 
         function getWordTranslation(item) {
             if (!item) return "";
@@ -4425,7 +4449,6 @@
             displayWordQuestion();
         }
 
-        // 題目呈現函式（0A 單字跟讀挑戰模式下依然顯示韓文）
         function displayWordQuestion() {
             stopSpeechRecognition();
             resetSpeechEvalButtons();
@@ -4839,8 +4862,7 @@
                 displayWordQuestion(); 
             } 
         }
-
-        // ==================== 句子跟讀與字塊重組邏輯 ====================
+// ==================== 句子跟讀與字塊重組邏輯 ====================
 
         function startMainQuiz() {
             stopSpeechRecognition();
@@ -5517,7 +5539,6 @@
             });
         }
 
-        // 發音評分判斷函式（錯誤時無論任何程度都顯示下一題或結算按鈕）
         function evaluateUserSpeech() {
             if (!lastRecognizedSpeechText) {
                 return alert("尚未取得辨識結果，請重新錄音！");
@@ -5563,7 +5584,6 @@
                 scoreBadge.innerText = "⚠ 發音未達標，請再念一次或進入下一題！";
                 scoreBadge.style.color = "#ff4b4b";
 
-                // 答錯依然解鎖跳下一題，但不計入通過題數
                 isCurrentQuestionAnswered = true;
                 if (isWord) {
                     if (wordIndex < totalChallengeQuestions - 1) {
