@@ -1434,8 +1434,7 @@
 
     <!-- 主介面容器 -->
     <div class="shadowing-card">
-        
-        <!-- 上方狀態列 -->
+<!-- 上方狀態列 -->
         <div class="user-meta-bar" id="app-user-meta-bar" style="display: none;">
             <div class="user-meta-item" id="btn-profile-trigger" onclick="openProfileView()">
                 <span id="lbl-user-flag" style="font-size: 1.1rem; line-height: 1;">🇰🇷</span>
@@ -2398,7 +2397,6 @@
         // 選擇挑戰模式彈窗
         function promptSelectModeType(unitId, lesson, mode, label) {
             currentConfig.unit_id = String(unitId);
-            // 若為關卡任務，不需要任何評分模式，直接進入練習模式
             if (mode === 'grammar') {
                 activeChallengeType = 'practice';
                 selectLessonAndMode(lesson, mode);
@@ -2639,7 +2637,6 @@
             goToStep('step-lesson');
         }
 
-        // 關卡任務專屬完成關閉
         function closeGrammarCompleteModal() {
             closeModal('modal-grammar-complete');
             renderAllLessonsForLevel(currentConfig.level);
@@ -3197,7 +3194,6 @@
             if (m) { m.classList.remove('show'); m.classList.add('hidden'); }
         }
 
-        // 點擊左上角暱稱時，預設顯示「排行榜」畫面
         function openProfileView() {
             clearIdleTimer();
             document.getElementById('learning-content-view').classList.add('hidden');
@@ -3475,8 +3471,7 @@
             calendarCurrentDate.setMonth(calendarCurrentDate.getMonth() + 1);
             renderStreakCalendar(calendarCurrentDate);
         };
-
-        const initialLevelSelect = document.getElementById('initial-level-select');
+const initialLevelSelect = document.getElementById('initial-level-select');
 
         function triggerLevelSelectionModal() {
             let cachedUnlocked = [];
@@ -3933,7 +3928,6 @@
             }
         }
 
-        // 一般題目挑戰完成（含評分結算）
         async function finishCurrentChallenge() {
             clearIdleTimer();
             stopSpeechRecognition();
@@ -3967,7 +3961,6 @@
             });
         }
 
-        // 全新：關卡任務專屬完成函式（無評分、無星級）
         async function finishGrammarTask() {
             clearIdleTimer();
             stopSpeechRecognition();
@@ -4028,8 +4021,6 @@
                 startMainQuiz();
             }
         }
-
-        // ==================== 語法介紹邏輯 ====================
 
         function cleanInitialWhitespace(str) {
             return (str || '').replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
@@ -4398,8 +4389,6 @@
                 actionBtn.onclick = () => showGrammarQuizArea();
             }
         }
-
-        // ==================== 通用單字挑戰邏輯 ====================
 
         function getWordTranslation(item) {
             if (!item) return "";
@@ -4912,8 +4901,7 @@
                 displayWordQuestion(); 
             } 
         }
-
-        // ==================== 句子跟讀與字塊重組邏輯 ====================
+// ==================== 句子跟讀與字塊重組邏輯 ====================
 
         function startMainQuiz() {
             stopSpeechRecognition();
@@ -5255,11 +5243,130 @@
             synth.speak(utterance);
         }
 
-        // ==================== 韓文數字正規化比對核心演算法 ====================
+        // ==================== 日文假名與漢字正規化演算法 ====================
+
+        // 1. 片假名轉平假名（Unicode 偏移 0x60）
+        function katakanaToHiragana(str) {
+            return (str || '').replace(/[\u30a1-\u30f6]/g, ch => 
+                String.fromCharCode(ch.charCodeAt(0) - 0x60)
+            );
+        }
+
+        // 2. 日文常見漢字轉平假名對照表（持續自動支援，可隨時擴充）
+        const KANJI_TO_HIRAGANA_MAP = {
+            '時': 'とき',
+            '今': 'いま',
+            '雨': 'あめ',
+            '空': 'そら',
+            '海': 'うみ',
+            '山': 'やま',
+            '川': 'かわ',
+            '水': 'みず',
+            '火': 'ひ',
+            '日': 'ひ',
+            '月': 'つき',
+            '年': 'とし',
+            '人': 'ひと',
+            '男': 'おとこ',
+            '女': 'おんな',
+            '子': 'こ',
+            '母': 'はは',
+            '父': 'ちち',
+            '友': 'とも',
+            '友達': 'ともだち',
+            '私': 'わたし',
+            '僕': 'ぼく',
+            '車': 'くるま',
+            '道': 'みち',
+            '駅': 'えき',
+            '本': 'ほん',
+            '花': 'はな',
+            '魚': 'さかな',
+            '肉': 'にく',
+            '犬': 'いぬ',
+            '猫': 'ねこ',
+            '鳥': 'とり',
+            '目': 'め',
+            '耳': 'みみ',
+            '口': 'くち',
+            '手': 'て',
+            '足': 'あし',
+            '春': 'はる',
+            '夏': 'なつ',
+            '秋': 'あき',
+            '冬': 'ふゆ',
+            '朝': 'あさ',
+            '昼': 'ひる',
+            '夜': 'よる',
+            '夕方': 'ゆうがた',
+            '今日': 'きょう',
+            '明日': 'あした',
+            '昨日': 'きのう',
+            '毎日': 'まいにち',
+            '何': 'なに',
+            '誰': 'だれ',
+            '何処': 'どこ',
+            '上': 'うえ',
+            '下': 'した',
+            '前': 'まえ',
+            '後': 'うしろ',
+            '中': 'なか',
+            '外': 'そと',
+            '右': 'みぎ',
+            '左': 'ひだり',
+            '大': 'おお',
+            '小': 'ちい',
+            '白': 'しろ',
+            '黒': 'くろ',
+            '赤': 'あか',
+            '青': 'あお',
+            '黃': 'き',
+            '緑': 'みどり',
+            '先生': 'せんせい',
+            '学生': 'がくせい',
+            '学校': 'がっこう',
+            '部屋': 'へや',
+            '家': 'いえ',
+            '店': 'みせ',
+            '町': 'まち',
+            '国': 'くに',
+            '言葉': 'ことば',
+            '名前': 'なまえ',
+            '写真': 'しゃしん',
+            '時計': 'とけい',
+            '電話': 'でんわ',
+            '机': 'つくえ',
+            '椅子': 'いす',
+            '傘': 'かさ',
+            '靴': 'くつ',
+            '服': 'ふく',
+            '財布': 'さいふ',
+            'お金': 'おかね',
+            '切符': 'きっぷ',
+            '映画': 'えいが',
+            '音楽': 'おんがく',
+            '旅行': 'りょこう',
+            '勉強': 'べんきょう',
+            '仕事': 'しごと'
+        };
+
+        function kanjiToHiragana(str) {
+            let res = str || '';
+            const sortedKeys = Object.keys(KANJI_TO_HIRAGANA_MAP).sort((a, b) => b.length - a.length);
+            for (const k of sortedKeys) {
+                if (res.includes(k)) {
+                    res = res.replaceAll(k, KANJI_TO_HIRAGANA_MAP[k]);
+                }
+            }
+            return res;
+        }
+
+        // ==================== 跨語言字串標準化比對核心 ====================
 
         function cleanStringForCompare(str) {
-            let clean = (str || '').replace(/[.,?!~\s\r\n\t]/g, '').toLowerCase();
+            let clean = (str || '').replace(/[.,?!~\s\r\n\t、。！？]/g, '').toLowerCase();
 
+            // 韓文數字正規化
             if (currentConfig.category === 'korean') {
                 clean = clean.replace(/10/g, '열');
                 const singleMap = {
@@ -5277,6 +5384,13 @@
                     clean = clean.replaceAll(num, word);
                 }
             }
+
+            // 日文模式：片假名轉平假名 + 漢字轉平假名
+            if (currentConfig.category === 'japanese') {
+                clean = katakanaToHiragana(clean);
+                clean = kanjiToHiragana(clean);
+            }
+
             return clean;
         }
 
@@ -5290,6 +5404,7 @@
                 return true;
             }
 
+            // 韓文漢字音與原生數詞彈性容錯
             if (currentConfig.category === 'korean') {
                 let tAlt = tClean;
                 let sAlt = sClean;
@@ -5696,15 +5811,22 @@
                 }
 
                 const userSpeech = event.results[0][0].transcript;
-                lastRecognizedSpeechText = userSpeech;
+
+                // 若為日文模式，將辨識到的片假名/漢字自動轉為平假名顯示與儲存
+                let displaySpeech = userSpeech;
+                if (currentConfig.category === 'japanese') {
+                    displaySpeech = katakanaToHiragana(kanjiToHiragana(userSpeech));
+                }
+
+                lastRecognizedSpeechText = displaySpeech;
 
                 if (currentConfig.mode === 'sentence_chat') {
-                    document.getElementById('lbl-chat-recognized-text').innerText = userSpeech;
+                    document.getElementById('lbl-chat-recognized-text').innerText = displaySpeech;
                     const curRound = chatRounds[chatRoundIndex];
                     if (curRound) {
                         const expectedText = (chatRole === 'A') ? curRound.aText : curRound.bText;
-                        if (isSpeechPass(expectedText, userSpeech)) {
-                            handleChatSpeechSuccess(userSpeech);
+                        if (isSpeechPass(expectedText, displaySpeech)) {
+                            handleChatSpeechSuccess(displaySpeech);
                         } else {
                             document.getElementById('lbl-chat-score').innerText = "⚠ 發音未達標，請再念一次或進入下一題！";
                             document.getElementById('lbl-chat-score').style.color = "#ff4b4b";
@@ -5719,11 +5841,11 @@
                         }
                     }
                 } else if (currentConfig.mode === 'word_shadow') {
-                    document.getElementById('lbl-word-shadow-recognized-text').innerText = userSpeech;
+                    document.getElementById('lbl-word-shadow-recognized-text').innerText = displaySpeech;
                     document.getElementById('lbl-word-shadow-score').innerText = "發音已收錄！可回聽或點擊下方比對評分";
                     document.getElementById('lbl-word-shadow-score').style.color = "var(--duo-blue)";
                 } else {
-                    document.getElementById('lbl-recognized-text').innerText = userSpeech;
+                    document.getElementById('lbl-recognized-text').innerText = displaySpeech;
                     document.getElementById('lbl-score').innerText = "發音已收錄！可回聽或點擊下方比對評分";
                     document.getElementById('lbl-score').style.color = "var(--duo-blue)";
                 }
