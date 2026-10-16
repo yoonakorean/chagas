@@ -1370,7 +1370,21 @@
         </div>
     </div>
 
-    <!-- 全新挑戰通關結算彈窗 -->
+    <!-- 全新：關卡任務完成提示彈窗（無評分/無星級） -->
+    <div id="modal-grammar-complete" class="custom-modal">
+        <div class="custom-modal-card" style="padding: 26px 20px;">
+            <div style="font-size: 2.6rem; color: var(--duo-purple); margin-bottom: 10px;">
+                <i class="fa-solid fa-award"></i>
+            </div>
+            <h2 style="margin: 0 0 6px 0; color: #1e293b; font-size: 1.35rem; font-weight: 900;">🎉 任務完成！</h2>
+            <p style="font-size: 0.95rem; color: #64748b; font-weight: bold; margin: 0 0 16px 0;">已掌握本關卡觀念說明與句型結構</p>
+            <button class="btn-3d btn-3d-primary" onclick="closeGrammarCompleteModal()" style="width: 100%; padding: 12px; font-size: 1.05rem;">
+                <i class="fa-solid fa-arrow-right"></i> 返回關卡選單
+            </button>
+        </div>
+    </div>
+
+    <!-- 一般題型通關結算彈窗（含星級與評分） -->
     <div id="modal-challenge-settlement" class="custom-modal" style="background: rgba(15, 23, 42, 0.75);">
         <canvas id="settlement-canvas"></canvas>
         <div class="custom-modal-card" style="padding: 24px 20px; z-index: 101;">
@@ -1479,7 +1493,7 @@
                 <div id="container-levels" class="option-grid grid-2"></div>
             </div>
 
-            <!-- 步驟 3：選擇關卡挑戰 (已將「請選擇課堂挑戰」調整為「請選擇關卡挑戰」) -->
+            <!-- 步驟 3：選擇關卡挑戰 -->
             <div id="step-lesson" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
@@ -2274,7 +2288,6 @@
             if (isIdlePaused) return;
             if (idleTimer) clearTimeout(idleTimer);
 
-            // 僅在進入題目挑戰與計時專注狀態時啟用
             if (challengeSessionStartTime) {
                 idleTimer = setTimeout(() => {
                     handleIdleTimeout(false);
@@ -2294,10 +2307,8 @@
             clearIdleTimer();
             stopSpeechRecognition();
 
-            // 結算截至離開/閒置前的專注時間，防止時數背景偷跑
             await recordSessionFocusTime();
 
-            // 暫停 300 秒挑戰倒數計時器
             if (challengeTimerInterval) {
                 clearInterval(challengeTimerInterval);
                 challengeTimerInterval = null;
@@ -2368,7 +2379,6 @@
             }, 1000);
         }
 
-        // 手機切換分頁、鎖定螢幕、滑掉背景時立即暫停計時
         function handleMobilePageHidden() {
             if (challengeSessionStartTime && !isIdlePaused) {
                 handleIdleTimeout(true);
@@ -2385,9 +2395,10 @@
             handleMobilePageHidden();
         });
 
-        // 選擇挑戰模式彈窗（0A 程度完全隱藏入門模式）
+        // 選擇挑戰模式彈窗
         function promptSelectModeType(unitId, lesson, mode, label) {
             currentConfig.unit_id = String(unitId);
+            // 若為關卡任務，不需要任何評分模式，直接進入練習模式
             if (mode === 'grammar') {
                 activeChallengeType = 'practice';
                 selectLessonAndMode(lesson, mode);
@@ -2401,7 +2412,6 @@
             const btnEntry = document.getElementById('btn-mode-choice-entry');
             const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
 
-            // 0A 程度所有題型皆不提供入門模式，只保留練習與挑戰模式
             if (is0ALevel) {
                 if (btnEntry) btnEntry.style.display = 'none';
             } else {
@@ -2625,6 +2635,13 @@
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
             closeModal('modal-challenge-settlement');
+            renderAllLessonsForLevel(currentConfig.level);
+            goToStep('step-lesson');
+        }
+
+        // 關卡任務專屬完成關閉
+        function closeGrammarCompleteModal() {
+            closeModal('modal-grammar-complete');
             renderAllLessonsForLevel(currentConfig.level);
             goToStep('step-lesson');
         }
@@ -3707,7 +3724,6 @@
             goToStep('step-lesson');
         }
 
-        // 渲染選單：調整為「第 X 階段」、「X 關」與「第 X 關」
         function renderAllLessonsForLevel(level) {
             const container = document.getElementById('container-lessons');
             if (!container) return;
@@ -3744,7 +3760,6 @@
 
                 const unitHeader = document.createElement('div');
                 unitHeader.className = "unit-section-header";
-                // 將「第 X 單元」改為「第 X 階段」，「X 堂課」改為「X 關」
                 unitHeader.innerHTML = `
                     <span><i class="fa-solid fa-map"></i> 第 ${unitStr} 階段</span>
                     <span class="unit-badge-tag">${lessons.length} 關</span>
@@ -3782,7 +3797,6 @@
 
                     const title = document.createElement('div');
                     title.className = "lesson-card-title";
-                    // 將「第 X 課 (Unit-Lesson)」改為「第 X 關」
                     title.innerText = `第 ${lesStr} 關`;
 
                     const btnGroup = document.createElement('div');
@@ -3919,6 +3933,7 @@
             }
         }
 
+        // 一般題目挑戰完成（含評分結算）
         async function finishCurrentChallenge() {
             clearIdleTimer();
             stopSpeechRecognition();
@@ -3950,6 +3965,33 @@
                 elapsedSeconds: elapsedSeconds,
                 bestTime: result.bestTime
             });
+        }
+
+        // 全新：關卡任務專屬完成函式（無評分、無星級）
+        async function finishGrammarTask() {
+            clearIdleTimer();
+            stopSpeechRecognition();
+            stopChallengeTimer();
+
+            await recordSessionFocusTime();
+
+            const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_grammar`;
+            let completedList = (window.currentUserData && Array.isArray(window.currentUserData.completedLessons)) ? window.currentUserData.completedLessons : [];
+
+            if (!completedList.includes(lessonKey)) {
+                completedList.push(lessonKey);
+                window.currentUserData.completedLessons = completedList;
+                await addXP(60);
+                if (currentUser) {
+                    try {
+                        await db.collection("users").doc(currentUser.uid).set({ completedLessons: completedList }, { merge: true });
+                    } catch (err) {
+                        console.error("儲存通關紀錄失敗:", err);
+                    }
+                }
+            }
+
+            openModal('modal-grammar-complete');
         }
 
         function selectLessonAndMode(lesson, mode) {
@@ -4052,9 +4094,9 @@
             const nextBtn = document.getElementById('btn-next-dialog');
             if (currentDialogIndex === total - 1) {
                 if (hasQuiz) {
-                    nextBtn.innerHTML = `進入挑戰 <i class="fa-solid fa-pen-to-square"></i>`;
+                    nextBtn.innerHTML = `進入隨堂測驗 <i class="fa-solid fa-pen-to-square"></i>`;
                 } else {
-                    nextBtn.innerHTML = `🎉 完成關卡 <i class="fa-solid fa-check"></i>`;
+                    nextBtn.innerHTML = `🎉 完成任務 <i class="fa-solid fa-check"></i>`;
                 }
             } else {
                 nextBtn.innerHTML = `下一步 <i class="fa-solid fa-arrow-right"></i>`;
@@ -4185,7 +4227,7 @@
             if (currentGrammarItem.expandedQuizzes && currentGrammarItem.expandedQuizzes.length > 0) {
                 showGrammarQuizArea();
             } else {
-                finishCurrentChallenge();
+                finishGrammarTask();
             }
         }
 
@@ -4228,7 +4270,7 @@
 
             const quizList = currentGrammarItem.expandedQuizzes || [];
             if (!quizList.length) {
-                finishCurrentChallenge();
+                finishGrammarTask();
                 return;
             }
 
@@ -4345,9 +4387,9 @@
             if (isAllCorrect) {
                 resultText.innerText = (quizList[0].correct) || "🎉 完全正確！太厲害了！";
                 resultText.style.color = "#58cc02";
-                actionBtn.innerHTML = `<i class="fa-solid fa-flag-checkered"></i> 完成挑戰並領取獎勵`;
+                actionBtn.innerHTML = `<i class="fa-solid fa-flag-checkered"></i> 完成任務`;
                 actionBtn.style.background = "#58cc02";
-                actionBtn.onclick = () => finishCurrentChallenge();
+                actionBtn.onclick = () => finishGrammarTask();
             } else {
                 resultText.innerHTML = `❌ 答案不太對喔！<br><span style="font-size:0.95rem; color:#b91c1c;">正確答案是：<br>${correctAnswersList.join('<br>')}</span>`;
                 resultText.style.color = "#ff4b4b";
