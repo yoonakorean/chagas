@@ -32,7 +32,7 @@
             --duo-fire-red: #ef4444;
             --duo-teal: #0d9488;
             
-            /* 闖關地圖專用粉/紫/黃糖果配色 */
+            /* 闖關地圖糖果配色 */
             --path-pink: #f472b6;
             --path-pink-dark: #db2777;
             --candy-node-bg: #ec4899;
@@ -290,14 +290,14 @@
             z-index: 1;
         }
 
-        /* 地圖上的關卡節點清單容器 */
+        /* 地圖上的關卡節點清單容器（拉大間距避免與標籤重疊） */
         .roadmap-nodes-container {
             position: relative;
             z-index: 2;
             display: flex;
             flex-direction: column-reverse; /* 闖關由下往上走 */
             align-items: center;
-            gap: 40px;
+            gap: 56px !important;
             padding: 30px 10px 40px 10px;
         }
 
@@ -316,7 +316,7 @@
         .roadmap-node-row.offset-right-1 { transform: translateX(45px); }
         .roadmap-node-row.offset-right-2 { transform: translateX(90px); }
 
-        /* 圓形糖果闖關節點 (類似 Candy Crush / Duolingo) */
+        /* 圓形糖果闖關節點 */
         .candy-node-btn {
             width: 68px;
             height: 68px;
@@ -370,7 +370,24 @@
             letter-spacing: -1px;
         }
 
-        /* 角色站在當前關卡的大頭貼 Badge (如截圖的狗狗/角色頭像) */
+        /* 節點下方的迷你任務名稱膠囊標籤 */
+        .candy-node-label {
+            position: absolute;
+            bottom: -24px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1.5px solid #fbcfe8;
+            color: #475569;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 12px;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            pointer-events: none;
+            letter-spacing: 0.3px;
+        }
+
+        /* 角色站在當前關卡的大頭貼 Badge */
         .node-avatar-badge {
             position: absolute;
             left: -48px;
@@ -530,260 +547,7 @@
             font-weight: bold;
             margin-bottom: 24px;
         }
-
-        /* 點選關卡節點彈出的任務清單 Modal */
-        #modal-lesson-tasks {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.6);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 999999;
-            padding: 16px;
-        }
-        #modal-lesson-tasks.show {
-            display: flex !important;
-        }
-        .lesson-tasks-card {
-            background: white;
-            border-radius: 24px;
-            padding: 24px 20px;
-            width: 100%;
-            max-width: 380px;
-            text-align: center;
-            box-shadow: 0 10px 35px rgba(0,0,0,0.25);
-            position: relative;
-            animation: modalPopIn 0.2s ease-out;
-        }
-        .task-grid-buttons {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 16px;
-        }
-#step-welcome.active {
-            display: flex !important;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 85vh;
-            padding: 20px 10px;
-            animation: modalPopIn 0.3s ease-out;
-        }
-
-        .welcome-logo-icon {
-            font-size: 4.8rem;
-            color: var(--duo-blue);
-            margin-bottom: 16px;
-            filter: drop-shadow(0 6px 12px rgba(28, 176, 246, 0.25));
-            animation: floatLogo 2.5s ease-in-out infinite;
-        }
-
-        @keyframes floatLogo {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-
-        .welcome-title {
-            font-size: 2rem;
-            font-weight: 900;
-            color: #1e293b;
-            margin: 0 0 8px 0;
-            letter-spacing: 1px;
-        }
-
-        .welcome-subtitle {
-            font-size: 0.95rem;
-            color: #64748b;
-            font-weight: bold;
-            margin: 0 0 36px 0;
-            line-height: 1.5;
-        }
-
-        .welcome-actions-box {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            width: 100%;
-            max-width: 320px;
-        }
-
-        .btn-welcome-play {
-            width: 100%;
-            background: var(--duo-green);
-            color: white;
-            border: none;
-            border-bottom: 5px solid var(--duo-green-shadow);
-            padding: 15px;
-            font-size: 1.15rem;
-            font-weight: 900;
-            border-radius: 18px;
-            cursor: pointer;
-            box-shadow: 0 6px 16px rgba(88, 204, 2, 0.25);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.1s ease;
-        }
-        .btn-welcome-play:active {
-            transform: translateY(3px);
-            border-bottom-width: 2px;
-        }
-
-        .btn-welcome-register {
-            width: 100%;
-            background: #ffffff;
-            color: var(--duo-blue);
-            border: 2px solid #bae6fd;
-            border-bottom: 4px solid #bae6fd;
-            padding: 13px;
-            font-size: 1.05rem;
-            font-weight: 800;
-            border-radius: 18px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.1s ease;
-        }
-        .btn-welcome-register:active {
-            transform: translateY(2px);
-            border-bottom-width: 2px;
-        }
-
-        #step-grammar.active {
-            display: flex !important;
-            flex-direction: column;
-            flex: 1;
-            min-height: 100%;
-            text-align: center;
-        }
-
-        #area-grammar-dialog {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            width: 100%;
-        }
-
-        .grammar-dialog-box {
-            background: #eef2ff;
-            border: 2px solid #818cf8;
-            border-radius: 16px;
-            padding: 16px 14px;
-            font-size: 1.15rem;
-            color: #312e81;
-            display: block !important;
-            margin-bottom: 8px;
-            flex: none;
-            height: 260px;
-            max-height: 38vh;
-            overflow-y: auto;
-            line-height: 1.6;
-            position: relative;
-            cursor: pointer;
-            white-space: pre-wrap !important;
-            word-break: break-word;
-            text-align: left !important;
-            scroll-behavior: smooth;
-            box-sizing: border-box;
-        }
-        #lbl-grammar-dialog {
-            display: block !important;
-            text-align: left !important;
-            white-space: pre-wrap !important;
-        }
-
-        .grammar-example-box {
-            display: none;
-            background: #ffffff;
-            border: 2px solid #e0e7ff;
-            border-radius: 14px;
-            padding: 12px 14px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            text-align: left;
-            position: relative;
-            flex: 1;
-            max-height: 38vh;
-            overflow-y: auto;
-            box-sizing: border-box;
-        }
-        .grammar-example-title {
-            font-size: 0.88rem;
-            font-weight: 800;
-            color: #4338ca;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .grammar-example-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .grammar-example-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 8px 12px;
-            font-size: 1.1rem;
-            color: #1e293b;
-            font-weight: bold;
-            line-height: 1.4;
-            word-break: break-word;
-        }
-        .grammar-example-item-text {
-            flex: 1;
-            padding-right: 10px;
-            white-space: pre-wrap;
-        }
-        .btn-example-item-audio {
-            background: #6366f1;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 0.85rem;
-            flex-shrink: 0;
-            transition: transform 0.1s ease;
-        }
-        .btn-example-item-audio:active {
-            transform: scale(0.9);
-        }
-
-        .grammar-bottom-actions-container {
-            margin-top: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding-top: 10px;
-            width: 100%;
-        }
-
-        .grammar-nav-btns { display: flex; gap: 8px; width: 100%; }
-        .btn-grammar-sub {
-            flex: 1; background: #f3f4f6; border: 1px solid #d1d5db; border-bottom: 3px solid #d1d5db;
-            padding: 10px 8px; font-size: 0.9rem; font-weight: bold; color: #4b5563; border-radius: 12px; cursor: pointer;
-        }
-        .btn-grammar-sub:active { transform: translateY(2px); border-bottom-width: 1px; }
-
-        .custom-modal {
+.custom-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.55); display: none; justify-content: center;
             align-items: center; z-index: 999999;
@@ -903,7 +667,6 @@
         h2.step-title { color: var(--duo-dark); font-size: 1.25rem; margin-top: 0; margin-bottom: 16px; text-align: center; }
         .option-grid { display: grid; gap: 10px; margin-bottom: 16px; }
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
-        .grid-3 { grid-template-columns: repeat(3, 1fr); }
 
         .btn-option {
             background: white; border: 2px solid #e5e7eb; border-bottom: 4px solid #e5e7eb;
@@ -1138,19 +901,6 @@
         </div>
         <div class="gate-unlock-title" id="gate-unlock-title">🏰 正在解鎖下一階段...</div>
         <div class="gate-unlock-sub" id="gate-unlock-sub">前往第 2 階段全新領域！</div>
-    </div>
-
-    <!-- 點選地圖節點彈出的「關卡任務選單」Modal -->
-    <div id="modal-lesson-tasks">
-        <div class="lesson-tasks-card">
-            <div class="close-icon-circle" onclick="closeModal('modal-lesson-tasks')"><i class="fa-solid fa-xmark"></i></div>
-            <div style="font-size: 2.6rem; color: var(--candy-node-bg); margin-bottom: 6px;"><i class="fa-solid fa-flag-checkered"></i></div>
-            <h3 style="margin: 0; color: #1e293b; font-size: 1.3rem; font-weight: 900;" id="lbl-task-modal-title">第 1 關</h3>
-            <p style="font-size: 0.85rem; color: #64748b; margin: 4px 0 16px 0;">選擇一項挑戰進行通關練習</p>
-            <div class="task-grid-buttons" id="container-task-buttons">
-                <!-- 動態注入該關卡具備的模式按鈕 -->
-            </div>
-        </div>
     </div>
 
     <!-- 1. 登入 / 註冊彈窗 -->
@@ -1484,13 +1234,13 @@
             <!-- 步驟 2：程度選擇 -->
             <div id="step-level" class="step-page">
                 <div class="top-nav" style="justify-content: flex-end;">
-                    <button class="btn-sync-refresh" onclick="forceClearAndSync()" style="margin: 0; font-size: 0.8rem;"><i class="fa-solid fa-arrows-rotate"></i> 更新地圖資料</button>
+                    <button class="btn-sync-refresh" onclick="forceClearAndSync()" style="margin: 0; font-size: 0.8rem;"><i class="fa-solid fa-arrows-rotate"></i> 更新本課程資料</button>
                 </div>
-                <h2 class="step-title" style="margin-top: 6px;"><i class="fa-solid fa-layer-group"></i> 選擇程度</h2>
+                <h2 class="step-title" style="margin-top: 6px;"><i class="fa-solid fa-layer-group"></i> 選擇課程程度</h2>
                 <div id="container-levels" class="option-grid grid-2"></div>
             </div>
 
-            <!-- 步驟 3：全新 Candy Crush / Duolingo 風格闖關大地圖畫面 -->
+            <!-- 步驟 3：全新 Candy Crush 風格攤平式闖關大地圖畫面 -->
             <div id="step-lesson" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
@@ -2033,7 +1783,7 @@
         const IDLE_LIMIT_MS = 90 * 1000;
         let isIdlePaused = false;
 
-        function showIslandLoading(subText = "冒險地圖整備中", progressPct = 30) {
+        function showIslandLoading(subText = "冒險地圖與學習資料整備中", progressPct = 30) {
             const overlay = document.getElementById('game-loading-overlay');
             const subElem = document.getElementById('lbl-island-loading-sub');
             const bar = document.getElementById('island-loading-bar');
@@ -2265,7 +2015,7 @@ async function processDailyCheckIn(user, userData) {
             }
         }
 
-        // ================= 糖果闖關大地圖 (S-Curve Roadmap) 核心渲染 =================
+        // ================= 攤平式糖果闖關大地圖 (每個節點為獨立挑戰) =================
         function renderAllLessonsForLevel(level) {
             const targetLevelNormalized = normalizeLevelStr(level);
             document.getElementById('lbl-lesson-unit').innerText = `Level ${level} 冒險地圖`;
@@ -2278,7 +2028,7 @@ async function processDailyCheckIn(user, userData) {
                 .sort((a, b) => Number(a) - Number(b));
 
             if (units.length === 0) {
-                document.getElementById('roadmap-nodes-list').innerHTML = `<div style="color: #6b7280; padding: 40px 0;">目前 ${level} 尚未設定課程內容。</div>`;
+                document.getElementById('roadmap-nodes-list').innerHTML = `<div style="color: #6b7280; padding: 40px 0;">目前 ${level} 尚未在試算表設定課程內容。</div>`;
                 return;
             }
 
@@ -2350,24 +2100,78 @@ async function processDailyCheckIn(user, userData) {
                 return;
             }
 
+            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
             const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
-            
-            // S 型擺盪偏移模式 (如截圖波浪狀)
-            const offsets = ['offset-center', 'offset-left-1', 'offset-left-2', 'offset-left-1', 'offset-center', 'offset-right-1', 'offset-right-2', 'offset-right-1'];
 
-            // 找到最後一個通關的關卡或當前挑戰中的第一關
-            let currentActiveLesson = lessons[0];
-            for (let i = 0; i < lessons.length; i++) {
-                const les = lessons[i];
-                const hasAnyPass = ['grammar', 'shadow', 'blocks', 'sentence_chat', 'word_shadow'].some(m => 
-                    completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${les}_${m}`)
+            // 1. 將該階段的所有課別依序展開為獨立的闖關節點清單
+            let stageTasks = [];
+            lessons.forEach(les => {
+                const lesStr = String(les);
+
+                const matchFilter = (list) => list.some(item => 
+                    normalizeLevelStr(getItemField(item, 'level')) === targetLevelNormalized &&
+                    String(getItemField(item, 'unit_id')) === String(unitId) &&
+                    String(getItemField(item, 'lesson')) === lesStr
                 );
-                if (hasAnyPass) {
-                    currentActiveLesson = (i < lessons.length - 1) ? lessons[i + 1] : les;
+
+                const hasGrammar = globalGrammarData.some(g => 
+                    normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
+                    String(getItemField(g, 'unit_id')) === String(unitId) &&
+                    String(getItemField(g, 'lesson')) === lesStr &&
+                    ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0))
+                );
+
+                const hasWord = matchFilter(rawWordData);
+                const hasShadow = matchFilter(rawShadowData);
+                const hasBlocks = matchFilter(rawBlocksData);
+                const hasDialogue = rawDialogueData.some(d => 
+                    normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
+                    String(getItemField(d, 'unit_id')) === String(unitId) &&
+                    String(getItemField(d, 'lesson')) === lesStr &&
+                    ((d.a1 && d.a1.trim()) || (d.b1 && d.b1.trim()))
+                );
+
+                if (hasGrammar) {
+                    stageTasks.push({ unitId, lesson: lesStr, mode: 'grammar', title: `${lesStr} 關卡任務`, label: '關卡任務' });
+                }
+                if (hasWord) {
+                    stageTasks.push({ unitId, lesson: lesStr, mode: 'word_shadow', title: `${lesStr} 單字跟讀`, label: '單字跟讀' });
+                    stageTasks.push({ unitId, lesson: lesStr, mode: 'word_choice', title: `${lesStr} 單字選擇`, label: '單字選擇' });
+                    stageTasks.push({ unitId, lesson: lesStr, mode: 'word_type', title: `${lesStr} 單字聽打`, label: '單字聽打' });
+                }
+                if (hasShadow) {
+                    stageTasks.push({ unitId, lesson: lesStr, mode: 'shadow', title: `${lesStr} 句子跟讀`, label: '句子跟讀' });
+                }
+                if (hasBlocks) {
+                    stageTasks.push({ unitId, lesson: lesStr, mode: 'blocks', title: `${lesStr} 字塊重組`, label: '字塊重組' });
+                }
+                if (hasDialogue) {
+                    stageTasks.push({ unitId, lesson: lesStr, mode: 'sentence_chat', title: `${lesStr} 對話挑戰`, label: '對話挑戰' });
+                }
+            });
+
+            if (stageTasks.length === 0) {
+                nodesContainer.innerHTML = `<div style="color: #6b7280; padding: 40px 0;">此階段暫無可挑戰內容</div>`;
+                return;
+            }
+
+            // 2. 計算當前玩家停在哪個節點（第一個未完成的項目）
+            let currentTaskIndex = 0;
+            for (let i = 0; i < stageTasks.length; i++) {
+                const t = stageTasks[i];
+                const isPassed = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${t.lesson}_${t.mode}`);
+                if (isPassed) {
+                    currentTaskIndex = (i < stageTasks.length - 1) ? (i + 1) : i;
+                } else {
+                    currentTaskIndex = i;
+                    break;
                 }
             }
 
-            // 頂部大門入口（若有下個階段，置於頂端作為通往下一個領域的城堡大門）
+            // 3. S 型擺盪偏移模式
+            const offsets = ['offset-center', 'offset-left-1', 'offset-left-2', 'offset-left-1', 'offset-center', 'offset-right-1', 'offset-right-2', 'offset-right-1'];
+
+            // 4. 頂部通向下階段的大門入口
             const currentUnitIndex = units.indexOf(String(unitId));
             if (currentUnitIndex !== -1 && currentUnitIndex < units.length - 1) {
                 const nextUnitId = units[currentUnitIndex + 1];
@@ -2383,42 +2187,40 @@ async function processDailyCheckIn(user, userData) {
                 nodesContainer.appendChild(gateDiv);
             }
 
-            lessons.forEach((les, idx) => {
-                const lesStr = String(les);
+            // 5. 繪製所有關卡節點
+            stageTasks.forEach((task, idx) => {
+                const nodeNumber = idx + 1;
                 const offsetClass = offsets[idx % offsets.length];
+                const isCompleted = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${task.lesson}_${task.mode}`);
+                const isCurrent = (idx === currentTaskIndex);
 
-                const isCompleted = ['grammar', 'shadow', 'blocks', 'sentence_chat', 'word_shadow', 'word_type', 'word_choice'].some(m => 
-                    completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${lesStr}_${m}`)
-                );
-                const isCurrent = (String(les) === String(currentActiveLesson));
+                // 取得該具體項目的歷史最高星級
+                let bestStar = 0;
+                ['practice', 'entry', 'timed'].forEach(t => {
+                    const rec = getStoredBestRecord(task.lesson, task.mode, t, unitId);
+                    if (rec && rec.stars > bestStar) bestStar = rec.stars;
+                });
+                let starIcons = bestStar > 0 ? '★'.repeat(bestStar) : '• • •';
 
                 const row = document.createElement('div');
                 row.className = `roadmap-node-row ${offsetClass}`;
 
-                // 檢查該關卡的歷史最高星級
-                let bestStar = 0;
-                ['practice', 'entry', 'timed'].forEach(t => {
-                    ['grammar', 'shadow', 'blocks', 'sentence_chat', 'word_shadow'].forEach(m => {
-                        const rec = getStoredBestRecord(lesStr, m, t, unitId);
-                        if (rec && rec.stars > bestStar) bestStar = rec.stars;
-                    });
-                });
-
-                let starIcons = bestStar > 0 ? '★'.repeat(bestStar) : '• • •';
-
+                // 點擊節點直接調用 promptSelectModeType 開啟該項挑戰模式選擇
                 row.innerHTML = `
-                    <div style="position: relative;">
+                    <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
                         ${isCurrent ? `<img src="images/avatar.png" onerror="this.onerror=null; this.src='https://api.dicebear.com/7.x/bottts/svg?seed=Yoona';" class="node-avatar-badge" alt="Player">` : ''}
-                        <button class="candy-node-btn ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}" onclick="openLessonTasksModal('${unitId}', '${lesStr}')">
-                            <span class="candy-node-num">${lesStr}</span>
+                        <button class="candy-node-btn ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}" 
+                                onclick="promptSelectModeType('${task.unitId}', '${task.lesson}', '${task.mode}', '${task.title}')">
+                            <span class="candy-node-num">${nodeNumber}</span>
                             <span class="candy-node-stars">${starIcons}</span>
                         </button>
+                        <span class="candy-node-label">${task.label}</span>
                     </div>
                 `;
                 nodesContainer.appendChild(row);
             });
 
-            // 畫出連貫各節點的糖果粉色 S 型斑馬線/虛線
+            // 動態繪製連接道路
             setTimeout(() => drawRoadmapSvgPath(), 100);
         }
 
@@ -2457,67 +2259,6 @@ async function processDailyCheckIn(user, userData) {
                 <path d="${pathD}" fill="none" stroke="#fbcfe8" stroke-width="18" stroke-linecap="round" />
                 <path d="${pathD}" fill="none" stroke="#f472b6" stroke-width="8" stroke-linecap="round" stroke-dasharray="14 10" />
             `;
-        }
-
-        // 點擊節點彈出關卡任務視窗
-        function openLessonTasksModal(unitId, lesson) {
-            currentConfig.unit_id = String(unitId);
-            currentConfig.lesson = String(lesson);
-
-            document.getElementById('lbl-task-modal-title').innerText = `第 ${unitId} 階段 - 第 ${lesson} 關`;
-            const container = document.getElementById('container-task-buttons');
-            container.innerHTML = "";
-
-            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-            const matchFilter = (list) => list.some(item => 
-                normalizeLevelStr(getItemField(item, 'level')) === targetLevelNormalized &&
-                String(getItemField(item, 'unit_id')) === String(unitId) &&
-                String(getItemField(item, 'lesson')) === String(lesson)
-            );
-
-            const hasGrammar = globalGrammarData.some(g => 
-                normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
-                String(getItemField(g, 'unit_id')) === String(unitId) &&
-                String(getItemField(g, 'lesson')) === String(lesson) &&
-                ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0))
-            );
-
-            const hasWord = matchFilter(rawWordData);
-            const hasShadow = matchFilter(rawShadowData);
-            const hasBlocks = matchFilter(rawBlocksData);
-            const hasDialogue = rawDialogueData.some(d => 
-                normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
-                String(getItemField(d, 'unit_id')) === String(unitId) &&
-                String(getItemField(d, 'lesson')) === String(lesson) &&
-                ((d.a1 && d.a1.trim()) || (d.b1 && d.b1.trim()))
-            );
-
-            const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
-
-            const addTaskBtn = (mode, label, iconClass, colorClass) => {
-                const isCompleted = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${lesson}_${mode}`);
-                const btn = document.createElement('button');
-                btn.className = `btn-3d ${isCompleted ? 'btn-3d-primary' : colorClass}`;
-                btn.style.cssText = "padding: 12px 6px; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 6px;";
-                btn.innerHTML = `<i class="${iconClass}"></i> ${label} ${isCompleted ? '✓' : ''}`;
-                btn.onclick = () => {
-                    closeModal('modal-lesson-tasks');
-                    promptSelectModeType(unitId, lesson, mode, label);
-                };
-                container.appendChild(btn);
-            };
-
-            if (hasGrammar) addTaskBtn('grammar', '關卡任務', 'fa-solid fa-book-open', 'btn-3d-secondary');
-            if (hasWord) {
-                addTaskBtn('word_shadow', '單字跟讀', 'fa-solid fa-microphone', 'btn-3d-blue');
-                addTaskBtn('word_choice', '單字選擇', 'fa-solid fa-bullseye', 'btn-3d-blue');
-                addTaskBtn('word_type', '單字聽打', 'fa-solid fa-keyboard', 'btn-3d-blue');
-            }
-            if (hasShadow) addTaskBtn('shadow', '句子跟讀', 'fa-solid fa-volume-high', 'btn-3d-primary');
-            if (hasBlocks) addTaskBtn('blocks', '字塊重組', 'fa-solid fa-puzzle-piece', 'btn-3d-secondary');
-            if (hasDialogue) addTaskBtn('sentence_chat', '對話挑戰', 'fa-solid fa-comments', 'btn-3d-primary');
-
-            openModal('modal-lesson-tasks');
         }
 
         // ================= 90 秒閒置與背景防掛機機制 =================
@@ -2958,7 +2699,7 @@ async function processDailyCheckIn(user, userData) {
         async function handleStartGameClick() {
             if (currentUser) {
                 const langName = (currentConfig.category === 'japanese') ? '日文' : (currentConfig.category === 'english' ? '英文' : '韓文');
-                showIslandLoading(`🏝️ 島嶼生成中，正在同步${langName}最新地圖...`, 40);
+                showIslandLoading(`🏝️ 島嶼生成中，正在同步${langName}最新題庫...`, 40);
                 try {
                     await autoLoadCategoryData(currentConfig.category, true);
                     updateIslandLoading("島嶼生成完畢，正在前往冒險地圖...", 90);
@@ -3084,7 +2825,7 @@ async function processDailyCheckIn(user, userData) {
                     renderUserInfo();
 
                     if (isInteractive) {
-                        updateIslandLoading("🏝️ 同步最新地圖中...", 75);
+                        updateIslandLoading("🏝️ 同步最新試算表題庫中...", 75);
                         await autoLoadCategoryData(currentConfig.category, true);
                         hideIslandLoading();
                         resumeLastPlayedProgress();
@@ -3153,7 +2894,7 @@ async function processDailyCheckIn(user, userData) {
                 setUserLang(nativeLang);
                 renderUserInfo();
 
-                updateIslandLoading("正在載入最新地圖...", 85);
+                updateIslandLoading("正在載入最新試算表題庫...", 85);
                 await autoLoadCategoryData(learnCategory, true);
                 hideIslandLoading();
                 resumeLastPlayedProgress();
@@ -3184,7 +2925,7 @@ async function processDailyCheckIn(user, userData) {
 
             closeProfileView();
             const langName = (cat === 'japanese') ? '日文' : (cat === 'english' ? '英文' : '韓文');
-            showIslandLoading(`🏝️ 島嶼生成中，正在載入${langName}地圖...`, 35);
+            showIslandLoading(`🏝️ 島嶼生成中，正在載入${langName}題庫...`, 35);
             try {
                 await autoLoadCategoryData(cat, true);
                 hideIslandLoading();
@@ -3192,7 +2933,7 @@ async function processDailyCheckIn(user, userData) {
                 goToStep('step-lesson');
             } catch (e) {
                 hideIslandLoading();
-                alert(`載入${langName}地圖失敗，請確認網路！`);
+                alert(`載入${langName}題庫失敗，請確認網路！`);
             }
         }
 
@@ -3311,7 +3052,7 @@ async function processDailyCheckIn(user, userData) {
 
         document.getElementById('btn-google-login').onclick = async () => {
             try { 
-                showIslandLoading("登入驗證中...", 30);
+                showIslandLoading("Google 登入驗證中...", 30);
                 const cred = await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
                 await verifyAndSyncUser(cred.user, true);
             } catch (err) { 
@@ -3772,7 +3513,7 @@ async function processDailyCheckIn(user, userData) {
             ['all_data_', 'grammar_data_', 'dialogue_data_', 'word_data_'].forEach(k => {
                 localStorage.removeItem(k + currentConfig.category);
             });
-            showIslandLoading("快取清除完成，正在同步最新島嶼...", 40);
+            showIslandLoading("快取清除完成，正在同步最新島嶼題庫...", 40);
             await autoLoadCategoryData(currentConfig.category, true);
             hideIslandLoading();
         }
@@ -3827,7 +3568,7 @@ async function processDailyCheckIn(user, userData) {
 
                 renderLevelMenu();
             } catch (e) {
-                console.error(`自動更新 ${cat} 地圖失敗:`, e);
+                console.error(`自動更新 ${cat} 題庫失敗:`, e);
                 alert("無法連線至 API！請確認網路。");
             }
         }
