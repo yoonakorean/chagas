@@ -233,7 +233,7 @@
         }
         .step-page.active { display: block; }
 
-        /* ================= 首頁進入畫面樣式 ================= */
+        /* ================= 首頁進入畫面樣式修復 ================= */
         #step-welcome.active {
             display: flex !important;
             flex-direction: column;
@@ -327,7 +327,7 @@
             border-bottom-width: 2px !important;
         }
 
-        /* ================= 關卡任務（語法教室）垂直佈局 ================= */
+        /* ================= 關卡任務（語法教室）垂直佈局嚴格修復 ================= */
         #step-grammar.active {
             display: flex !important;
             flex-direction: column !important;
@@ -1064,7 +1064,7 @@
 </head>
 <body>
 
-    <!-- 全螢幕「小船航行中...」遮罩（已更換為小船） -->
+    <!-- 全螢幕「小船航行中...」遮罩（小船圖標） -->
     <div id="game-loading-overlay">
         <div class="loading-island-icon"><i class="fa-solid fa-sailboat"></i></div>
         <div class="loading-island-title" id="lbl-island-loading-title" style="font-size: 1.4rem; font-weight: 900; color: #1e293b; margin-bottom: 8px;">🏝️ 冒險地圖載入中...</div>
@@ -1721,7 +1721,7 @@
 
                 <div class="nav-controls">
                     <span class="lbl-progress" id="lbl-word-type-progress">0 / 0</span>
-                    <button class="btn-nav-next" id="btn-word-type-next" onclick="nextWordQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
+                    <button class="btn-word-type-next" id="btn-word-type-next" onclick="nextWordQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-word-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
@@ -2420,7 +2420,19 @@ async function processDailyCheckIn(user, userData) {
                 nodesContainer.appendChild(row);
             });
 
-            setTimeout(() => drawRoadmapSvgPath(), 100);
+            // 動態繪製連接道路並自動捲動定位至第 1 關 / 當前關卡
+            setTimeout(() => {
+                drawRoadmapSvgPath();
+
+                const mainScrollView = document.getElementById('learning-content-view');
+                const currentNode = document.querySelector('.candy-node-btn.current') || document.querySelector('.candy-node-btn');
+                
+                if (currentNode && mainScrollView) {
+                    currentNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else if (mainScrollView) {
+                    mainScrollView.scrollTop = mainScrollView.scrollHeight;
+                }
+            }, 120);
         }
 
         // SVG 動態繪製連接道路（經典藍白冒險線條）
@@ -3724,7 +3736,18 @@ async function processDailyCheckIn(user, userData) {
             }
 
             if (stepId === 'step-level') renderLevelMenu();
-            if (stepId === 'step-lesson') setTimeout(() => drawRoadmapSvgPath(), 100);
+            if (stepId === 'step-lesson') {
+                setTimeout(() => {
+                    drawRoadmapSvgPath();
+                    const mainScrollView = document.getElementById('learning-content-view');
+                    const currentNode = document.querySelector('.candy-node-btn.current') || document.querySelector('.candy-node-btn');
+                    if (currentNode && mainScrollView) {
+                        currentNode.scrollIntoView({ behavior: 'auto', block: 'center' });
+                    } else if (mainScrollView) {
+                        mainScrollView.scrollTop = mainScrollView.scrollHeight;
+                    }
+                }, 100);
+            }
         }
 
         function setUserLang(lang) {
@@ -5085,7 +5108,7 @@ async function processDailyCheckIn(user, userData) {
             let clean = (str || '').replace(/[.,?!~\s\r\n\t]/g, '').toLowerCase();
             if (currentConfig.category === 'korean') {
                 clean = clean.replace(/10/g, '열');
-                const singleMap = { '1': '한', '2': '두', '3': '세', '4': '네', '5': '다섯', '6': '여섯', '7': '일곱', '8': '여덟', '9': '阿홉' };
+                const singleMap = { '1': '한', '2': '두', '3': '세', '4': '네', '5': '다섯', '6': '여섯', '7': '일곱', '8': '여덟', '9': '아홉' };
                 for (const [num, word] of Object.entries(singleMap)) {
                     clean = clean.replaceAll(num, word);
                 }
