@@ -233,7 +233,6 @@
         }
         .step-page.active { display: block; }
 
-        /* ================= 首頁進入畫面樣式修復 ================= */
         #step-welcome.active {
             display: flex !important;
             flex-direction: column;
@@ -327,7 +326,6 @@
             border-bottom-width: 2px !important;
         }
 
-        /* ================= 關卡任務（語法教室）垂直佈局嚴格修復 ================= */
         #step-grammar.active {
             display: flex !important;
             flex-direction: column !important;
@@ -476,7 +474,6 @@
         }
         .btn-grammar-sub:active { transform: translateY(2px); border-bottom-width: 1px !important; }
 
-        /* ================= 闖關大地圖（藍色系清爽風格） ================= */
         .roadmap-container {
             position: relative;
             width: 100%;
@@ -618,7 +615,6 @@
             letter-spacing: 0.3px;
         }
 
-        /* 支線任務（單字聽打）獨立標籤按鈕 */
         .side-quest-badge {
             position: absolute;
             right: -72px;
@@ -669,7 +665,6 @@
             50% { transform: translateY(-62%) scale(1.05); }
         }
 
-        /* 城堡解鎖大門樣式 */
         .gate-portal-container {
             width: 100%;
             display: flex;
@@ -730,7 +725,8 @@
         .doors-opened .gate-unlock-shine { opacity: 1; transform: scale(2.2); }
         .gate-unlock-title { color: #ffffff; font-size: 1.6rem; font-weight: 900; letter-spacing: 1px; margin-bottom: 6px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .gate-unlock-sub { color: #cbd5e1; font-size: 0.95rem; font-weight: bold; margin-bottom: 24px; }
-.custom-modal {
+
+        .custom-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.55); display: none; justify-content: center;
             align-items: center; z-index: 999999;
@@ -1119,7 +1115,8 @@
             <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 10px;" class="hidden"></div>
         </div>
     </div>
-<!-- 忘記密碼 Modal -->
+
+    <!-- 忘記密碼 Modal -->
     <div id="modal-forgot-password" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
@@ -1219,7 +1216,7 @@
         <div class="custom-modal-card">
             <div class="close-icon-circle" id="btn-close-level-modal" onclick="closeModal('modal-select-initial-level')"><i class="fa-solid fa-xmark"></i></div>
             <h3 style="margin: 4px 0 8px 0; color: #1f2937; font-size: 1.2rem; font-weight: 800;">選擇程度</h3>
-            <p style="font-size: 0.85rem; color: #6b7280; margin: 0 0 10px 0;">切換您要挑戰的課程級別</p>
+            <p style="font-size: 0.85rem; color: #64748b; margin: 0 0 10px 0;">切換您要挑戰的課程級別</p>
             <select id="initial-level-select" class="level-select-box"></select>
             <button id="btn-confirm-initial-level" class="btn-3d btn-3d-primary" style="width: 100%; padding: 10px; margin-top: 4px;">確定切換</button>
         </div>
@@ -1393,7 +1390,7 @@
         <!-- 中間滾動主區塊 -->
         <div id="learning-content-view">
 
-            <!-- 0. 全新開場畫面 (按鈕 3D 效果已復原) -->
+            <!-- 0. 全新開場畫面 -->
             <div id="step-welcome" class="step-page active">
                 <div class="welcome-logo-icon">
                     <i class="fa-solid fa-gamepad"></i>
@@ -1430,10 +1427,8 @@
                     <span id="lbl-lesson-unit" style="font-weight: 900; color: var(--duo-blue);">冒險地圖</span>
                 </div>
                 
-                <!-- 階段選擇切換列 -->
                 <div class="stage-pill-selector" id="container-stage-pills"></div>
 
-                <!-- 闖關大地圖與 S 型路徑 -->
                 <div class="roadmap-container" id="roadmap-main-area">
                     <svg class="roadmap-svg-layer" id="roadmap-svg-canvas"></svg>
                     <div class="roadmap-nodes-container" id="roadmap-nodes-list"></div>
@@ -1879,8 +1874,7 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-
-    <!-- 核心邏輯腳本開始 -->
+<!-- 核心邏輯腳本開始 -->
     <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -1961,7 +1955,6 @@
         let currentRankSubTab = 'global';
         let fireworksAnimationId = null;
 
-        // 靜默 90 秒閒置防掛機變數
         let idleTimer = null;
         const IDLE_LIMIT_MS = 90 * 1000;
         let isIdlePaused = false;
@@ -2084,7 +2077,8 @@
             const day = String(d.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         }
-async function processDailyCheckIn(user, userData) {
+
+        async function processDailyCheckIn(user, userData) {
             const todayStr = getLocalDateString();
             let history = Array.isArray(userData.checkInHistory) ? [...userData.checkInHistory] : [];
             let lastDateStr = userData.lastCheckInDate || null;
@@ -2198,7 +2192,6 @@ async function processDailyCheckIn(user, userData) {
             }
         }
 
-        // ================= 攤平式藍色冒險地圖（單字聽打獨立為支線） =================
         function renderAllLessonsForLevel(level) {
             const targetLevelNormalized = normalizeLevelStr(level);
             document.getElementById('lbl-lesson-unit').innerText = `Level ${level} 冒險地圖`;
@@ -2240,7 +2233,6 @@ async function processDailyCheckIn(user, userData) {
             });
         }
 
-        // 觸發「解鎖大門」過場城堡動畫
         function triggerGateUnlockTransition(nextUnitId) {
             const modal = document.getElementById('gate-unlock-modal');
             const wrapper = document.getElementById('doors-wrapper-anim');
@@ -2284,7 +2276,6 @@ async function processDailyCheckIn(user, userData) {
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
             const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
 
-            // 1. 展開主線關卡，聽打抽離為主線外的「支線任務」
             let stageTasks = [];
             let sideQuestMap = {};
 
@@ -2314,12 +2305,10 @@ async function processDailyCheckIn(user, userData) {
                     ((d.a1 && d.a1.trim()) || (d.b1 && d.b1.trim()))
                 );
 
-                // 單字聽打單獨記錄為支線
                 if (hasWord) {
                     sideQuestMap[lesStr] = { unitId, lesson: lesStr, mode: 'word_type', title: `${lesStr} 單字聽打`, label: '⌨ 聽打支線' };
                 }
 
-                // 主線任務順序
                 if (hasGrammar) {
                     stageTasks.push({ unitId, lesson: lesStr, mode: 'grammar', title: `${lesStr} 關卡任務`, label: '關卡任務' });
                 }
@@ -2343,7 +2332,6 @@ async function processDailyCheckIn(user, userData) {
                 return;
             }
 
-            // 2. 計算當前主線進度
             let currentTaskIndex = 0;
             for (let i = 0; i < stageTasks.length; i++) {
                 const t = stageTasks[i];
@@ -2358,7 +2346,6 @@ async function processDailyCheckIn(user, userData) {
 
             const offsets = ['offset-center', 'offset-left-1', 'offset-left-2', 'offset-left-1', 'offset-center', 'offset-right-1', 'offset-right-2', 'offset-right-1'];
 
-            // 3. 頂部通向下階段的大門入口
             const currentUnitIndex = units.indexOf(String(unitId));
             if (currentUnitIndex !== -1 && currentUnitIndex < units.length - 1) {
                 const nextUnitId = units[currentUnitIndex + 1];
@@ -2374,7 +2361,6 @@ async function processDailyCheckIn(user, userData) {
                 nodesContainer.appendChild(gateDiv);
             }
 
-            // 4. 繪製節點，若該節點為該課的第一個單字任務（單字跟讀），則在其旁邊顯示「聽打支線」按鈕
             stageTasks.forEach((task, idx) => {
                 const nodeNumber = idx + 1;
                 const offsetClass = offsets[idx % offsets.length];
@@ -2388,7 +2374,6 @@ async function processDailyCheckIn(user, userData) {
                 });
                 let starIcons = bestStar > 0 ? '★'.repeat(bestStar) : '• • •';
 
-                // 檢查是否在此節點右側掛載「聽打支線」
                 const sideQuest = (task.mode === 'word_shadow' && sideQuestMap[task.lesson]) ? sideQuestMap[task.lesson] : null;
                 let sideQuestHtml = '';
                 if (sideQuest) {
@@ -2420,7 +2405,6 @@ async function processDailyCheckIn(user, userData) {
                 nodesContainer.appendChild(row);
             });
 
-            // 動態繪製連接道路並自動捲動定位至第 1 關 / 當前關卡
             setTimeout(() => {
                 drawRoadmapSvgPath();
 
@@ -2435,7 +2419,6 @@ async function processDailyCheckIn(user, userData) {
             }, 120);
         }
 
-        // SVG 動態繪製連接道路（經典藍白冒險線條）
         function drawRoadmapSvgPath() {
             const svg = document.getElementById('roadmap-svg-canvas');
             const container = document.getElementById('roadmap-main-area');
@@ -2472,7 +2455,6 @@ async function processDailyCheckIn(user, userData) {
             `;
         }
 
-        // ================= 90 秒閒置與背景防掛機機制 =================
         function resetIdleTimer() {
             if (isIdlePaused) return;
             if (idleTimer) clearTimeout(idleTimer);
@@ -2559,7 +2541,6 @@ async function processDailyCheckIn(user, userData) {
             }, 1000);
         }
 
-        // 切出畫面或跳窗時徹底關閉麥克風硬體
         function handleAppVisibilityLoss() {
             stopSpeechRecognition();
             if (challengeSessionStartTime && !isIdlePaused) {
@@ -2577,7 +2558,6 @@ async function processDailyCheckIn(user, userData) {
             if (isRecording) stopSpeechRecognition();
         });
 
-        // 選擇挑戰模式彈窗
         function promptSelectModeType(unitId, lesson, mode, label) {
             currentConfig.unit_id = String(unitId);
             if (mode === 'grammar') {
@@ -3680,8 +3660,7 @@ async function processDailyCheckIn(user, userData) {
                 document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
             }
         });
-
-        // 徹底停止音訊串流，釋放手機麥克風硬體
+// 徹底停止音訊串流，釋放手機麥克風硬體
         function stopMediaRecording() {
             if (mediaRecorder) {
                 if (mediaRecorder.state !== 'inactive') {
@@ -4375,8 +4354,7 @@ async function processDailyCheckIn(user, userData) {
                 actionBtn.onclick = () => showGrammarQuizArea();
             }
         }
-
-        // ================= 通用單字挑戰邏輯 =================
+// ================= 通用單字挑戰邏輯 =================
         function getWordTranslation(item) {
             if (!item) return "";
             return (currentConfig.lang === 'en') ? (item.en || item.zh_tw || "") :
@@ -4820,6 +4798,7 @@ async function processDailyCheckIn(user, userData) {
                     return {
                         id: getItemField(i, 'id') || idx + 1,
                         text: Array.isArray(i) ? i[4] : (i.text || ''),
+                        zh_tw: Array.isArray(i) ? i[5] : (i.zh_tw || i.zh || ''),
                         translation: trans,
                         audioUrl: Array.isArray(i) ? i[8] : (i.audiourl || i.audio_url || ''),
                         hint: Array.isArray(i) ? i[9] : (i.hint || '')
@@ -5105,7 +5084,7 @@ async function processDailyCheckIn(user, userData) {
         }
 
         function cleanStringForCompare(str) {
-            let clean = (str || '').replace(/[.,?!~\s\r\n\t]/g, '').toLowerCase();
+            let clean = (str || '').replace(/[.,?!~、。，？！\s\r\n\t]/g, '').toLowerCase();
             if (currentConfig.category === 'korean') {
                 clean = clean.replace(/10/g, '열');
                 const singleMap = { '1': '한', '2': '두', '3': '세', '4': '네', '5': '다섯', '6': '여섯', '7': '일곱', '8': '여덟', '9': '아홉' };
@@ -5116,31 +5095,57 @@ async function processDailyCheckIn(user, userData) {
             return clean;
         }
 
-        function isSpeechPass(target, spoken) {
+        // ================= 核心語音比對（支援日文中文欄位、去除括號、/ 分割） =================
+        function isSpeechPass(target, spoken, currentItem = null) {
             if (!target || !spoken) return false;
-            const tClean = cleanStringForCompare(target);
             const sClean = cleanStringForCompare(spoken);
+            if (!sClean) return false;
 
-            if (tClean === sClean || tClean.includes(sClean) || sClean.includes(tClean)) return true;
+            let targetCandidates = [];
 
-            if (currentConfig.category === 'korean') {
-                let tAlt = tClean;
-                let sAlt = sClean;
-                const sinoMap = { '1': '일', '2': '이', '3': '삼', '4': '사', '5': '오', '6': '육', '7': '칠', '8': '팔', '9': '구', '10': '십' };
-                for (const [k, v] of Object.entries(sinoMap)) {
-                    tAlt = tAlt.replaceAll(k, v);
-                    sAlt = sAlt.replaceAll(k, v);
+            // 1. 原本目標文字（支援多選項以 / 隔開）
+            const rawTargets = String(target).split('/').map(s => s.trim()).filter(Boolean);
+            targetCandidates.push(...rawTargets);
+
+            // 2. 若為日文且傳入題目物件，將 zh_tw 欄位過濾括號後拆分加入候選
+            if (currentConfig.category === 'japanese' && currentItem) {
+                const zhVal = currentItem.zh_tw || currentItem.zh || '';
+                if (zhVal) {
+                    const cleanedZh = zhVal.replace(/\([^)]*\)|（[^）]*）/g, '');
+                    const zhOptions = cleanedZh.split('/').map(s => s.trim()).filter(Boolean);
+                    targetCandidates.push(...zhOptions);
                 }
-                if (tAlt === sAlt || tAlt.includes(sAlt) || sAlt.includes(tAlt)) return true;
+            }
 
-                const nativeVariations = [[/하나/g, '한'], [/둘/g, '두'], [/셋/g, '세'], [/넷/g, '네']];
-                let tVar = tClean;
-                let sVar = sClean;
-                for (const [reg, rep] of nativeVariations) {
-                    tVar = tVar.replace(reg, rep);
-                    sVar = sVar.replace(reg, rep);
+            // 3. 逐一比對每個候選答案
+            for (const cand of targetCandidates) {
+                const tClean = cleanStringForCompare(cand);
+                if (!tClean) continue;
+
+                if (tClean === sClean || tClean.includes(sClean) || sClean.includes(tClean)) {
+                    return true;
                 }
-                if (tVar === sVar || tVar.includes(sVar) || sVar.includes(tVar)) return true;
+
+                // 韓文特有比對規則（完全保留不影響）
+                if (currentConfig.category === 'korean') {
+                    let tAlt = tClean;
+                    let sAlt = sClean;
+                    const sinoMap = { '1': '일', '2': '이', '3': '삼', '4': '사', '5': '오', '6': '육', '7': '칠', '8': '팔', '9': '구', '10': '십' };
+                    for (const [k, v] of Object.entries(sinoMap)) {
+                        tAlt = tAlt.replaceAll(k, v);
+                        sAlt = sAlt.replaceAll(k, v);
+                    }
+                    if (tAlt === sAlt || tAlt.includes(sAlt) || sAlt.includes(tAlt)) return true;
+
+                    const nativeVariations = [[/하나/g, '한'], [/둘/g, '두'], [/셋/g, '세'], [/넷/g, '네']];
+                    let tVar = tClean;
+                    let sVar = sClean;
+                    for (const [reg, rep] of nativeVariations) {
+                        tVar = tVar.replace(reg, rep);
+                        sVar = sVar.replace(reg, rep);
+                    }
+                    if (tVar === sVar || tVar.includes(sVar) || sVar.includes(tVar)) return true;
+                }
             }
             return false;
         }
@@ -5174,6 +5179,7 @@ async function processDailyCheckIn(user, userData) {
                         bxText: (d.bx1 || bText).trim(),
                         aAudio: d.a1_audio || d.audio_url || '',
                         bAudio: d.b1_audio || d.audio_url || '',
+                        zh_tw: d.zh_tw || d.zh || '',
                         hintZh: d.hint_zh || '',
                         hintEn: d.hint_en || '',
                         hintJp: d.hint_jp || ''
@@ -5388,7 +5394,8 @@ async function processDailyCheckIn(user, userData) {
             const targetText = currentQ ? (currentQ.text || "") : "";
             const scoreBadge = isWord ? document.getElementById('lbl-word-shadow-score') : document.getElementById('lbl-score');
 
-            if (isSpeechPass(targetText, lastRecognizedSpeechText)) {
+            // 將 currentQ 帶入比對，讓日文模式能讀取到 currentQ.zh_tw
+            if (isSpeechPass(targetText, lastRecognizedSpeechText, currentQ)) {
                 scoreBadge.innerText = "🎉 發音合格！";
                 scoreBadge.style.color = "#58cc02";
                 
@@ -5491,7 +5498,7 @@ async function processDailyCheckIn(user, userData) {
                     const curRound = chatRounds[chatRoundIndex];
                     if (curRound) {
                         const expectedText = (chatRole === 'A') ? curRound.aText : curRound.bText;
-                        if (isSpeechPass(expectedText, userSpeech)) {
+                        if (isSpeechPass(expectedText, userSpeech, curRound)) {
                             handleChatSpeechSuccess(userSpeech);
                         } else {
                             document.getElementById('lbl-chat-score').innerText = "⚠ 發音未達標，請再念一次或進入下一題！";
