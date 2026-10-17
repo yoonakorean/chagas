@@ -233,7 +233,7 @@
         }
         .step-page.active { display: block; }
 
-        /* ================= 首頁進入畫面樣式修復 ================= */
+        /* ================= 首頁進入畫面樣式 ================= */
         #step-welcome.active {
             display: flex !important;
             flex-direction: column;
@@ -327,7 +327,7 @@
             border-bottom-width: 2px !important;
         }
 
-        /* ================= 關卡任務（語法教室）排版嚴格修復 ================= */
+        /* ================= 關卡任務（語法教室）垂直佈局 ================= */
         #step-grammar.active {
             display: flex !important;
             flex-direction: column !important;
@@ -616,6 +616,38 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
             pointer-events: none;
             letter-spacing: 0.3px;
+        }
+
+        /* 支線任務（單字聽打）獨立標籤按鈕 */
+        .side-quest-badge {
+            position: absolute;
+            right: -72px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #ffffff;
+            border: 2px solid var(--duo-blue);
+            color: var(--duo-blue);
+            border-radius: 14px;
+            padding: 6px 10px;
+            font-size: 0.76rem;
+            font-weight: 900;
+            box-shadow: 0 4px 10px rgba(28, 176, 246, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        .side-quest-badge:active {
+            transform: translateY(-46%) scale(0.95);
+        }
+        .side-quest-badge.completed {
+            border-color: #86efac;
+            background: #f0fdf4;
+            color: #15803d;
         }
 
         .node-avatar-badge {
@@ -1032,11 +1064,11 @@
 </head>
 <body>
 
-    <!-- 全螢幕「島嶼生成中...」遮罩 -->
+    <!-- 全螢幕「小船航行中...」遮罩（已更換為小船） -->
     <div id="game-loading-overlay">
-        <div class="loading-island-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+        <div class="loading-island-icon"><i class="fa-solid fa-sailboat"></i></div>
         <div class="loading-island-title" id="lbl-island-loading-title" style="font-size: 1.4rem; font-weight: 900; color: #1e293b; margin-bottom: 8px;">🏝️ 冒險地圖載入中...</div>
-        <div class="loading-island-subtitle" id="lbl-island-loading-sub" style="font-size: 0.88rem; color: #64748b; font-weight: 800; margin-bottom: 24px;">關卡路徑與冒險地圖生成中</div>
+        <div class="loading-island-subtitle" id="lbl-island-loading-sub" style="font-size: 0.88rem; color: #64748b; font-weight: 800; margin-bottom: 24px;">航行中，正在探索全新島嶼地圖...</div>
         <div class="island-progress-track">
             <div class="island-progress-fill" id="island-loading-bar"></div>
         </div>
@@ -1387,7 +1419,7 @@
                 <div class="top-nav" style="justify-content: flex-end;">
                     <button class="btn-sync-refresh" onclick="forceClearAndSync()" style="margin: 0; font-size: 0.8rem;"><i class="fa-solid fa-arrows-rotate"></i> 更新本課程資料</button>
                 </div>
-                <h2 class="step-title" style="margin-top: 6px;"><i class="fa-solid fa-layer-group"></i> 選擇課程程度</h2>
+                <h2 class="step-title" style="margin-top: 6px;"><i class="fa-solid fa-layer-group"></i> 選擇程度</h2>
                 <div id="container-levels" class="option-grid grid-2"></div>
             </div>
 
@@ -2166,7 +2198,7 @@ async function processDailyCheckIn(user, userData) {
             }
         }
 
-        // ================= 攤平式藍色冒險地圖 (每個節點為獨立挑戰) =================
+        // ================= 攤平式藍色冒險地圖（單字聽打獨立為支線） =================
         function renderAllLessonsForLevel(level) {
             const targetLevelNormalized = normalizeLevelStr(level);
             document.getElementById('lbl-lesson-unit').innerText = `Level ${level} 冒險地圖`;
@@ -2221,12 +2253,10 @@ async function processDailyCheckIn(user, userData) {
             wrapper.classList.remove('doors-opened');
             modal.classList.add('show');
 
-            // 0.4秒後解鎖開啟大門
             setTimeout(() => {
                 wrapper.classList.add('doors-opened');
             }, 400);
 
-            // 1.8秒後關閉彈窗並切換地圖
             setTimeout(() => {
                 modal.classList.remove('show');
                 wrapper.classList.remove('doors-opened');
@@ -2254,8 +2284,10 @@ async function processDailyCheckIn(user, userData) {
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
             const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
 
-            // 1. 將該階段的所有課別依序展開為獨立的闖關節點清單
+            // 1. 展開主線關卡，聽打抽離為主線外的「支線任務」
             let stageTasks = [];
+            let sideQuestMap = {};
+
             lessons.forEach(les => {
                 const lesStr = String(les);
 
@@ -2282,13 +2314,18 @@ async function processDailyCheckIn(user, userData) {
                     ((d.a1 && d.a1.trim()) || (d.b1 && d.b1.trim()))
                 );
 
+                // 單字聽打單獨記錄為支線
+                if (hasWord) {
+                    sideQuestMap[lesStr] = { unitId, lesson: lesStr, mode: 'word_type', title: `${lesStr} 單字聽打`, label: '⌨ 聽打支線' };
+                }
+
+                // 主線任務順序
                 if (hasGrammar) {
                     stageTasks.push({ unitId, lesson: lesStr, mode: 'grammar', title: `${lesStr} 關卡任務`, label: '關卡任務' });
                 }
                 if (hasWord) {
                     stageTasks.push({ unitId, lesson: lesStr, mode: 'word_shadow', title: `${lesStr} 單字跟讀`, label: '單字跟讀' });
                     stageTasks.push({ unitId, lesson: lesStr, mode: 'word_choice', title: `${lesStr} 單字選擇`, label: '單字選擇' });
-                    stageTasks.push({ unitId, lesson: lesStr, mode: 'word_type', title: `${lesStr} 單字聽打`, label: '單字聽打' });
                 }
                 if (hasShadow) {
                     stageTasks.push({ unitId, lesson: lesStr, mode: 'shadow', title: `${lesStr} 句子跟讀`, label: '句子跟讀' });
@@ -2306,7 +2343,7 @@ async function processDailyCheckIn(user, userData) {
                 return;
             }
 
-            // 2. 計算當前玩家停在哪個節點（第一個未完成的項目）
+            // 2. 計算當前主線進度
             let currentTaskIndex = 0;
             for (let i = 0; i < stageTasks.length; i++) {
                 const t = stageTasks[i];
@@ -2319,10 +2356,9 @@ async function processDailyCheckIn(user, userData) {
                 }
             }
 
-            // 3. S 型擺盪偏移模式
             const offsets = ['offset-center', 'offset-left-1', 'offset-left-2', 'offset-left-1', 'offset-center', 'offset-right-1', 'offset-right-2', 'offset-right-1'];
 
-            // 4. 頂部通向下階段的大門入口
+            // 3. 頂部通向下階段的大門入口
             const currentUnitIndex = units.indexOf(String(unitId));
             if (currentUnitIndex !== -1 && currentUnitIndex < units.length - 1) {
                 const nextUnitId = units[currentUnitIndex + 1];
@@ -2338,14 +2374,13 @@ async function processDailyCheckIn(user, userData) {
                 nodesContainer.appendChild(gateDiv);
             }
 
-            // 5. 繪製所有關卡節點
+            // 4. 繪製節點，若該節點為該課的第一個單字任務（單字跟讀），則在其旁邊顯示「聽打支線」按鈕
             stageTasks.forEach((task, idx) => {
                 const nodeNumber = idx + 1;
                 const offsetClass = offsets[idx % offsets.length];
                 const isCompleted = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${task.lesson}_${task.mode}`);
                 const isCurrent = (idx === currentTaskIndex);
 
-                // 取得該具體項目的歷史最高星級
                 let bestStar = 0;
                 ['practice', 'entry', 'timed'].forEach(t => {
                     const rec = getStoredBestRecord(task.lesson, task.mode, t, unitId);
@@ -2353,10 +2388,23 @@ async function processDailyCheckIn(user, userData) {
                 });
                 let starIcons = bestStar > 0 ? '★'.repeat(bestStar) : '• • •';
 
+                // 檢查是否在此節點右側掛載「聽打支線」
+                const sideQuest = (task.mode === 'word_shadow' && sideQuestMap[task.lesson]) ? sideQuestMap[task.lesson] : null;
+                let sideQuestHtml = '';
+                if (sideQuest) {
+                    const isSideCompleted = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${sideQuest.lesson}_${sideQuest.mode}`);
+                    sideQuestHtml = `
+                        <div class="side-quest-badge ${isSideCompleted ? 'completed' : ''}" 
+                             onclick="promptSelectModeType('${sideQuest.unitId}', '${sideQuest.lesson}', '${sideQuest.mode}', '${sideQuest.title}')"
+                             title="支線任務：單字聽打">
+                            <i class="fa-solid fa-keyboard"></i>
+                            <span>聽打${isSideCompleted ? ' ✓' : ''}</span>
+                        </div>
+                    `;
+                }
+
                 const row = document.createElement('div');
                 row.className = `roadmap-node-row ${offsetClass}`;
-
-                // 點擊節點直接調用 promptSelectModeType 開啟該項挑戰模式選擇
                 row.innerHTML = `
                     <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
                         ${isCurrent ? `<img src="images/avatar.png" onerror="this.onerror=null; this.src='https://api.dicebear.com/7.x/bottts/svg?seed=Yoona';" class="node-avatar-badge" alt="Player">` : ''}
@@ -2366,16 +2414,16 @@ async function processDailyCheckIn(user, userData) {
                             <span class="candy-node-stars">${starIcons}</span>
                         </button>
                         <span class="candy-node-label">${task.label}</span>
+                        ${sideQuestHtml}
                     </div>
                 `;
                 nodesContainer.appendChild(row);
             });
 
-            // 動態繪製連接道路（經典藍白冒險線條）
             setTimeout(() => drawRoadmapSvgPath(), 100);
         }
 
-        // SVG 動態繪製連接道路
+        // SVG 動態繪製連接道路（經典藍白冒險線條）
         function drawRoadmapSvgPath() {
             const svg = document.getElementById('roadmap-svg-canvas');
             const container = document.getElementById('roadmap-main-area');
@@ -2499,13 +2547,22 @@ async function processDailyCheckIn(user, userData) {
             }, 1000);
         }
 
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden && challengeSessionStartTime && !isIdlePaused) {
+        // 切出畫面或跳窗時徹底關閉麥克風硬體
+        function handleAppVisibilityLoss() {
+            stopSpeechRecognition();
+            if (challengeSessionStartTime && !isIdlePaused) {
                 handleIdleTimeout(true);
             }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) handleAppVisibilityLoss();
         });
         window.addEventListener('pagehide', () => {
-            if (challengeSessionStartTime && !isIdlePaused) handleIdleTimeout(true);
+            handleAppVisibilityLoss();
+        });
+        window.addEventListener('blur', () => {
+            if (isRecording) stopSpeechRecognition();
         });
 
         // 選擇挑戰模式彈窗
@@ -3612,6 +3669,19 @@ async function processDailyCheckIn(user, userData) {
             }
         });
 
+        // 徹底停止音訊串流，釋放手機麥克風硬體
+        function stopMediaRecording() {
+            if (mediaRecorder) {
+                if (mediaRecorder.state !== 'inactive') {
+                    try { mediaRecorder.stop(); } catch (e) {}
+                }
+                if (mediaRecorder.stream) {
+                    mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                }
+            }
+        }
+
+        // 徹底關閉語音辨識與所有收音設備
         function stopSpeechRecognition() {
             if (recognition) {
                 try { 
@@ -3623,7 +3693,9 @@ async function processDailyCheckIn(user, userData) {
                 } catch (e) {}
                 recognition = null;
             }
+            stopMediaRecording();
             isRecording = false;
+            isToggling = false; // 解除防連點鎖，避免重新錄音卡死
             document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
         }
 
@@ -5013,7 +5085,7 @@ async function processDailyCheckIn(user, userData) {
             let clean = (str || '').replace(/[.,?!~\s\r\n\t]/g, '').toLowerCase();
             if (currentConfig.category === 'korean') {
                 clean = clean.replace(/10/g, '열');
-                const singleMap = { '1': '한', '2': '두', '3': '세', '4': '네', '5': '다섯', '6': '여섯', '7': '일곱', '8': '여덟', '9': '아홉' };
+                const singleMap = { '1': '한', '2': '두', '3': '세', '4': '네', '5': '다섯', '6': '여섯', '7': '일곱', '8': '여덟', '9': '阿홉' };
                 for (const [num, word] of Object.entries(singleMap)) {
                     clean = clean.replaceAll(num, word);
                 }
@@ -5259,12 +5331,6 @@ async function processDailyCheckIn(user, userData) {
             }
         }
 
-        function stopMediaRecording() {
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                try { mediaRecorder.stop(); } catch (e) {}
-            }
-        }
-
         function playUserRecording() {
             if (userRecordedAudioUrl) {
                 const audio = new Audio(userRecordedAudioUrl);
@@ -5357,7 +5423,7 @@ async function processDailyCheckIn(user, userData) {
             if (evalBtn) evalBtn.style.display = 'none';
         }
 
-        // ================= 語音辨識錄音 =================
+        // ================= 語音辨識錄音（解鎖防卡死與徹底清理） =================
         function initSpeechRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) return alert("您的瀏覽器不支援語音辨識，請使用 Chrome 或 Safari。");
@@ -5381,13 +5447,16 @@ async function processDailyCheckIn(user, userData) {
 
             recognition.onend = () => {
                 stopSpeechRecognition();
-                stopMediaRecording();
+            };
+
+            recognition.onerror = (e) => {
+                console.warn("語音辨識出錯:", e);
+                stopSpeechRecognition();
             };
 
             recognition.onresult = (event) => {
                 if (!event.results || !event.results[0] || !event.results[0][0]) {
                     stopSpeechRecognition();
-                    stopMediaRecording();
                     return;
                 }
 
@@ -5424,41 +5493,32 @@ async function processDailyCheckIn(user, userData) {
                     document.getElementById('lbl-score').style.color = "var(--duo-blue)";
                 }
                 stopSpeechRecognition();
-                stopMediaRecording();
-            };
-
-            recognition.onerror = () => {
-                stopSpeechRecognition();
-                stopMediaRecording();
             };
         }
 
         function toggleRecording() {
-            if (isCurrentQuestionAnswered || isToggling) return;
+            if (isCurrentQuestionAnswered) return;
+            if (isToggling) return;
             isToggling = true;
+
             if (window.speechSynthesis) window.speechSynthesis.cancel();
 
             if (isRecording) {
                 stopSpeechRecognition();
-                stopMediaRecording();
-                setTimeout(() => { isToggling = false; }, 300);
+                setTimeout(() => { isToggling = false; }, 200);
             } else {
-                stopSpeechRecognition();
-                stopMediaRecording();
-                setTimeout(() => {
-                    try {
-                        initSpeechRecognition();
-                        recognition.start();
-                        if (currentConfig.mode === 'shadow' || currentConfig.mode === 'word_shadow') {
-                            startMediaRecording();
-                        }
-                    } catch(err) {
-                        stopSpeechRecognition();
-                        stopMediaRecording();
-                    } finally {
-                        setTimeout(() => { isToggling = false; }, 400);
+                try {
+                    initSpeechRecognition();
+                    recognition.start();
+                    if (currentConfig.mode === 'shadow' || currentConfig.mode === 'word_shadow') {
+                        startMediaRecording();
                     }
-                }, 250);
+                } catch(err) {
+                    console.error("啟動錄音失敗:", err);
+                    stopSpeechRecognition();
+                } finally {
+                    setTimeout(() => { isToggling = false; }, 300);
+                }
             }
         }
 
@@ -5474,7 +5534,6 @@ async function processDailyCheckIn(user, userData) {
                 }
             });
 
-            // 監聽所有操作事件，只要有動作就重置 90 秒靜默計時
             ['mousedown', 'mousemove', 'touchstart', 'scroll', 'keydown', 'click'].forEach(evt => {
                 window.addEventListener(evt, () => {
                     if (!isIdlePaused && challengeSessionStartTime) resetIdleTimer();
