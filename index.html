@@ -928,7 +928,7 @@
             border: 1.5px solid #bae6fd; border-radius: 12px; padding: 6px 12px; margin: 6px auto 10px auto; display: inline-block; max-width: 95%;
         }
 
-        .controls { display: flex; justify-content: center; gap: 14px; margin-bottom: 12px; }
+        .controls { display: flex; justify-content: center; gap: 14px; margin-bottom: 12px; align-items: center; }
         .btn-circle {
             width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer;
             font-size: 1rem; color: white; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0;
@@ -937,6 +937,16 @@
         .btn-record { background: var(--duo-red); box-shadow: 0 4px 0 #ea2b2b; }
         .btn-record.recording { animation: pulse 1s infinite; background: #dc2626; }
         @keyframes pulse { 0%{transform: scale(1);} 50%{transform: scale(1.08);} 100%{transform: scale(1);} }
+
+        /* 新增：麥克風重置按鈕樣式 */
+        .btn-mic-reset {
+            background: var(--duo-orange);
+            box-shadow: 0 4px 0 #d97706;
+            width: 38px;
+            height: 38px;
+            font-size: 0.9rem;
+        }
+        .btn-mic-reset:active { transform: translateY(2px); box-shadow: 0 2px 0 #d97706; }
 
         .result-box { 
             background: #f3f4f6; border-radius: 12px; padding: 8px 12px; margin-top: 10px; font-size: 0.95rem; text-align: center;
@@ -1509,6 +1519,10 @@
                 <div class="controls">
                     <button class="btn-circle btn-listen" id="btn-play-audio" onclick="playAudio()"><i class="fa-solid fa-volume-high"></i></button>
                     <button class="btn-circle btn-record" id="btn-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
+                    <!-- 新增：麥克風重置按鈕 -->
+                    <button class="btn-circle btn-mic-reset" onclick="forceResetMicrophoneSession()" title="麥克風無聲音？點此重置">
+                        <i class="fa-solid fa-rotate"></i>
+                    </button>
                     <button class="btn-circle" id="btn-play-user-record" onclick="playUserRecording()" style="display:none; background:#10b981; box-shadow:0 4px 0 #059669;" title="播放我的發音">
                         <i class="fa-solid fa-headphones"></i>
                     </button>
@@ -1572,6 +1586,10 @@
                 <div class="controls">
                     <button class="btn-circle btn-listen" id="btn-chat-play-audio" onclick="playChatTargetAudio()"><i class="fa-solid fa-volume-high"></i></button>
                     <button class="btn-circle btn-record" id="btn-chat-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
+                    <!-- 新增：麥克風重置按鈕 -->
+                    <button class="btn-circle btn-mic-reset" onclick="forceResetMicrophoneSession()" title="麥克風無聲音？點此重置">
+                        <i class="fa-solid fa-rotate"></i>
+                    </button>
                 </div>
 
                 <div class="result-box">
@@ -1656,6 +1674,10 @@
                 <div class="controls">
                     <button class="btn-circle btn-listen" id="btn-word-shadow-play-audio" onclick="playWordAudio()"><i class="fa-solid fa-volume-high"></i></button>
                     <button class="btn-circle btn-record" id="btn-word-shadow-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
+                    <!-- 新增：麥克風重置按鈕 -->
+                    <button class="btn-circle btn-mic-reset" onclick="forceResetMicrophoneSession()" title="麥克風無聲音？點此重置">
+                        <i class="fa-solid fa-rotate"></i>
+                    </button>
                     <button class="btn-circle" id="btn-word-shadow-play-user-record" onclick="playUserRecording()" style="display:none; background:#10b981; box-shadow:0 4px 0 #059669;" title="播放我的發音">
                         <i class="fa-solid fa-headphones"></i>
                     </button>
@@ -1959,7 +1981,7 @@
         const IDLE_LIMIT_MS = 90 * 1000;
         let isIdlePaused = false;
 
-        // ================= 純前端日語零依賴高頻假名 <-> 漢字轉換引擎 =================
+        // ================= 純前端日語零依賴高頻假名 <-> 漢字擴充轉換引擎 =================
         function katakanaToHiragana(str) {
             return (str || '').replace(/[\u30A1-\u30F6]/g, function(match) {
                 return String.fromCharCode(match.charCodeAt(0) - 0x60);
@@ -1973,6 +1995,8 @@
             'あかい': ['赤い', '紅い'],
             'あう': ['会う', '合う', '遭う'],
             'あさ': ['朝', '麻'],
+            'あし': ['足', '脚'],
+            'あたま': ['頭'],
             'あめ': ['雨', '飴'],
             'いい': ['良い', 'いい'],
             'いえ': ['家'],
@@ -1985,22 +2009,30 @@
             'おいしい': ['美味しい'],
             'おおきい': ['大きい'],
             'おちゃ': ['お茶'],
+            'おとこ': ['男'],
             'おとな': ['大人'],
+            'おんな': ['女'],
             'かいしゃ': ['会社'],
             'かう': ['買う', '飼う'],
+            'かお': ['顔'],
+            'かく': ['書く', '描く', '画く', '掻く'],
             'がくせい': ['学生'],
             'がっこう': ['学校'],
             'かわ': ['川', '皮'],
             'きく': ['聞く', '聴く', '菊'],
             'きょう': ['今日'],
             'くるま': ['車'],
+            'くち': ['口'],
             'さかな': ['魚'],
             'した': ['下', '舌'],
             'じかん': ['時間'],
+            'しろ': ['白'],
+            'しろい': ['白い'],
             'せんせい': ['先生'],
             'そら': ['空'],
             'たべる': ['食べる'],
             'ちいさい': ['小さい'],
+            'て': ['手'],
             'ともだち': ['友達'],
             'なまえ': ['名前'],
             'にほん': ['日本'],
@@ -2012,7 +2044,9 @@
             'ひと': ['人'],
             'ほん': ['本'],
             'みず': ['水'],
+            'みみ': ['耳'],
             'みる': ['見る', '観る'],
+            'め': ['目'],
             'やま': ['山'],
             'よむ': ['読む'],
             'わたし': ['私'],
@@ -2067,6 +2101,27 @@
                 });
             }
             return Array.from(candidates);
+        }
+
+        // 強制重置麥克風收音連線（手動修復按鈕專用）
+        function forceResetMicrophoneSession() {
+            stopSpeechRecognition();
+            revokeUserAudioUrl();
+            isToggling = false;
+            isRecording = false;
+
+            const targetLblId = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-recognized-text' :
+                                (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-recognized-text' : 'lbl-recognized-text';
+            const lbl = document.getElementById(targetLblId);
+            if (lbl) lbl.innerText = "麥克風已重置，請點擊錄音";
+
+            const scoreLblId = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-score' :
+                               (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-score' : 'lbl-score';
+            const scoreLbl = document.getElementById(scoreLblId);
+            if (scoreLbl) {
+                scoreLbl.innerText = "判定結果：--";
+                scoreLbl.style.color = "var(--duo-blue)";
+            }
         }
 
         // 釋放先前建立的音訊 Blob URL 記憶體
@@ -5245,12 +5300,12 @@
                     const cClean = cleanStringForCompare(cand);
                     const cHiragana = katakanaToHiragana(cClean);
 
-                    // A. 直接文字相符（例如辨識出「青」或「会う」，候選池內含此漢字）
+                    // A. 直接文字相符（例如辨識出「顔」[cite: 6]、「描く」[cite: 7] 或「青」[cite: 5]，候選池內含此漢字）
                     if (cClean === sClean || cClean.includes(sClean) || sClean.includes(cClean)) {
                         return true;
                     }
 
-                    // B. 平假名相符（例如辨識出的「青」轉為「あお」與題目相同）
+                    // B. 平假名相符（例如辨識出的「顔」轉為「かお」[cite: 6]、「描く」轉為「かく」[cite: 7]，與題目相同）
                     if (cHiragana === spokenAsKana || cHiragana === spokenHiragana ||
                         cHiragana.includes(spokenAsKana) || spokenAsKana.includes(cHiragana)) {
                         return true;
