@@ -1959,7 +1959,7 @@
         const IDLE_LIMIT_MS = 90 * 1000;
         let isIdlePaused = false;
 
-        // ================= 輕量級日文平假名/片假名/漢字智慧雙向對照引擎 =================
+        // ================= 真・方法 A（方案二）：純前端羅馬音轉換 + 輕量 API 轉換 =================
         // 片假名轉平假名
         function katakanaToHiragana(str) {
             return (str || '').replace(/[\u30A1-\u30F6]/g, function(match) {
@@ -1967,76 +1967,95 @@
             });
         }
 
-        // 高頻常見日語詞彙平假名 <-> 漢字雙向對照表
-        const JP_KANJI_KANA_MAP = {
-            '私': 'わたし', '僕': 'ぼく', '俺': 'おれ', '先生': 'せんせい', '学生': 'がくせい',
-            '学校': 'がっこう', '友達': 'ともだち', '日本人': 'にほんじん', '日本': 'にほん',
-            '猫': 'ねこ', '犬': 'いぬ', '魚': 'さかな', '水': 'みず', 'お茶': 'おちゃ',
-            '本': 'ほん', '車': 'くるま', '電車': 'でんしゃ', '家': 'いえ', '部屋': 'へや',
-            '今日': 'きょう', '明日': 'あした', '昨日': 'きのう', '今': 'いま', '時間': 'じかん',
-            '名前': 'なまえ', '父': 'ちち', '母': 'はは', '兄': 'あに', '姉': 'あね',
-            '食べる': 'たべる', '飲む': 'のむ', '行く': 'いく', '来る': 'くる', '見る': 'みる',
-            '聞く': 'きく', '話す': 'はなす', '読む': 'よむ', '書く': 'かく', '買う': 'かう',
-            '大きい': 'おおきい', '小さい': 'ちいさい', '良い': 'いい', '悪い': 'わるい',
-            '美味しい': 'おいしい', '楽しい': 'たのしい', '嬉しい': 'うれしい', '何': 'なに',
-            '誰': 'だれ', 'どこ': 'どこ', '朝': 'あさ', '昼': 'ひる', '夜': 'よる',
-            '雨': 'あめ', '空': 'そら', '山': 'やま', '川': 'かわ', '海': 'うみ'
+        // 純前端日文假名轉羅馬音（Romaji）正規化表
+        const KANA_TO_ROMAJI_MAP = {
+            'あ': 'a', 'い': 'i', 'う': 'u', 'え': 'e', 'お': 'o',
+            'か': 'ka', 'き': 'ki', 'く': 'ku', 'け': 'ke', 'こ': 'ko',
+            'さ': 'sa', 'し': 'shi', 'す': 'su', 'せ': 'se', 'そ': 'so',
+            'た': 'ta', 'ち': 'chi', 'つ': 'tsu', 'て': 'te', 'と': 'to',
+            'な': 'na', 'に': 'ni', 'ぬ': 'nu', 'ね': 'ne', 'の': 'no',
+            'は': 'ha', 'ひ': 'hi', 'ふ': 'fu', 'へ': 'he', 'ほ': 'ho',
+            'ま': 'ma', 'み': 'mi', 'む': 'mu', 'め': 'me', 'も': 'mo',
+            'や': 'ya', 'ゆ': 'yu', 'よ': 'yo',
+            'ら': 'ra', 'り': 'ri', 'る': 'ru', 'れ': 're', 'ろ': 'ro',
+            'わ': 'wa', 'を': 'o', 'ん': 'n',
+            'が': 'ga', 'ぎ': 'gi', 'ぐ': 'gu', 'げ': 'ge', 'ご': 'go',
+            'ざ': 'za', 'じ': 'ji', 'ず': 'zu', 'ぜ': 'ze', 'ぞ': 'zo',
+            'だ': 'da', 'ぢ': 'ji', 'づ': 'zu', 'で': 'de', 'ど': 'do',
+            'ば': 'ba', 'び': 'bi', 'ぶ': 'bu', 'べ': 'be', 'ぼ': 'bo',
+            'ぱ': 'pa', 'ぴ': 'pi', 'ぷ': 'pu', 'ぺ': 'pe', 'ぽ': 'po',
+            'きゃ': 'kya', 'きゅ': 'kyu', 'きょ': 'kyo',
+            'しゃ': 'sha', 'しゅ': 'shu', 'しょ': 'sho',
+            'ちゃ': 'cha', 'ちゅ': 'chu', 'ちょ': 'cho',
+            'にゃ': 'nya', 'にゅ': 'nyu', 'にょ': 'nyo',
+            'ひゃ': 'hya', 'ひゅ': 'hyu', 'ひょ': 'hyo',
+            'みゃ': 'mya', 'みゅ': 'myu', 'みょ': 'myo',
+            'りゃ': 'rya', 'りゅ': 'ryu', 'りょ': 'ryo',
+            'ぎゃ': 'gya', 'ぎゅ': 'gyu', 'ぎょ': 'gyo',
+            'じゃ': 'ja', 'じゅ': 'ju', 'じょ': 'jo',
+            'びゃ': 'bya', 'びゅ': 'byu', 'びょ': 'byo',
+            'ぴゃ': 'pya', 'ぴゅ': 'pyu', 'ぴょ': 'pyo'
         };
 
-        // 建立平假名對漢字的反向對照
-        const JP_KANA_KANJI_MAP = {};
-        for (const [kanji, kana] of Object.entries(JP_KANJI_KANA_MAP)) {
-            JP_KANA_KANJI_MAP[kana] = kanji;
+        function convertKanaToRomaji(kanaText) {
+            let text = katakanaToHiragana(kanaText || '');
+            let romaji = '';
+            for (let i = 0; i < text.length; i++) {
+                if (i < text.length - 1) {
+                    const twoChar = text.substring(i, i + 2);
+                    if (KANA_TO_ROMAJI_MAP[twoChar]) {
+                        romaji += KANA_TO_ROMAJI_MAP[twoChar];
+                        i++;
+                        continue;
+                    }
+                }
+                const oneChar = text[i];
+                if (oneChar === 'っ' && i < text.length - 1) {
+                    const nextRomaji = KANA_TO_ROMAJI_MAP[text[i + 1]] || '';
+                    if (nextRomaji) {
+                        romaji += nextRomaji[0];
+                        continue;
+                    }
+                }
+                romaji += KANA_TO_ROMAJI_MAP[oneChar] || oneChar;
+            }
+            return romaji.toLowerCase().replace(/[^a-z]/g, '');
         }
 
-        // 提取並擴增日文題目中所有可能的合法發音與文字變形
-        function buildJapaneseMatchCandidates(text, currentItem = null) {
-            let candidates = new Set();
-            if (!text) return Array.from(candidates);
+        // 判斷字串是否含有日文漢字
+        function hasKanji(str) {
+            return /[\u4E00-\u9FAF\u3400-\u4DBF]/.test(str || '');
+        }
 
-            const rawList = String(text).split('/').map(s => s.trim()).filter(Boolean);
-            rawList.forEach(itemStr => {
-                candidates.add(itemStr);
-                const hira = katakanaToHiragana(itemStr);
-                candidates.add(hira);
+        // 記憶體快取，避免重複呼叫 API
+        const kanjiToKanaCache = {};
 
-                // 檢查是否能將漢字轉為平假名
-                if (JP_KANJI_KANA_MAP[itemStr]) {
-                    candidates.add(JP_KANJI_KANA_MAP[itemStr]);
-                }
-                // 檢查是否能將平假名轉為漢字
-                if (JP_KANA_KANJI_MAP[hira]) {
-                    candidates.add(JP_KANA_KANJI_MAP[hira]);
-                }
-            });
+        // 免金鑰輕量 Web 假名轉換 API（Failsafe 非同步獲取）
+        async function fetchKanjiToHiragana(text) {
+            if (!text || !hasKanji(text)) return katakanaToHiragana(text);
+            const cleanText = text.trim();
+            if (kanjiToKanaCache[cleanText]) return kanjiToKanaCache[cleanText];
 
-            // 若有提供題庫物件，提取其他欄位可能的漢字/假名（例如翻譯、羅馬字欄位中常含有括號附註）
-            if (currentItem) {
-                const checkFields = [currentItem.zh_tw, currentItem.zh, currentItem.hint, currentItem.kr_pron, currentItem.romanization];
-                checkFields.forEach(val => {
-                    if (val && typeof val === 'string') {
-                        // 提取括號外的純漢字或日文
-                        const noBrackets = val.replace(/\([^)]*\)|（[^）]*）/g, '').trim();
-                        if (noBrackets) candidates.add(noBrackets);
+            try {
+                // 使用免費開放的日文漢字假名註音公共 API
+                const url = `https://api.funtranslations.com/translate/furigana.json?text=${encodeURIComponent(cleanText)}`;
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 2000); // 2秒逾時降級保護
 
-                        // 提取括號內的文字
-                        const matches = val.match(/\(([^)]+)\)|（([^）]+)）/g);
-                        if (matches) {
-                            matches.forEach(m => {
-                                const clean = m.replace(/[()（）]/g, '').trim();
-                                if (clean) {
-                                    candidates.add(clean);
-                                    candidates.add(katakanaToHiragana(clean));
-                                    if (JP_KANJI_KANA_MAP[clean]) candidates.add(JP_KANJI_KANA_MAP[clean]);
-                                    if (JP_KANA_KANJI_MAP[katakanaToHiragana(clean)]) candidates.add(JP_KANA_KANJI_MAP[katakanaToHiragana(clean)]);
-                                }
-                            });
-                        }
+                const res = await fetch(`https://hiragana-api.deno.dev/api?text=${encodeURIComponent(cleanText)}`, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json && json.hiragana) {
+                        kanjiToKanaCache[cleanText] = json.hiragana;
+                        return json.hiragana;
                     }
-                });
+                }
+            } catch (err) {
+                console.warn("假名轉換 API 逾時或離線，使用直接比對與快取模式");
             }
-
-            return Array.from(candidates);
+            return cleanText;
         }
 
         // 釋放先前建立的音訊 Blob URL 記憶體，防止長時期使用造成記憶體洩漏
@@ -4455,8 +4474,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 actionBtn.onclick = () => showGrammarQuizArea();
             }
         }
-
-        // ================= 通用單字挑戰邏輯 =================
+// ================= 通用單字挑戰邏輯 =================
         function getWordTranslation(item) {
             if (!item) return "";
             return (currentConfig.lang === 'en') ? (item.en || item.zh_tw || "") :
@@ -5197,38 +5215,61 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             return clean;
         }
 
-        // ================= 核心語音比對（全支援日語平假名/漢字/片假名、中文括號欄位與韓語變體） =================
-        function isSpeechPass(target, spoken, currentItem = null) {
+        // ================= 真・方法 A（方案二）：非同步平假名／漢字／羅馬音雙向比對 =================
+        async function isSpeechPass(target, spoken, currentItem = null) {
             if (!target || !spoken) return false;
             const sClean = cleanStringForCompare(spoken);
             if (!sClean) return false;
 
-            let targetCandidates = [];
-
-            // 1. 日文模式專用智慧比對擴增（平假名/片假名/漢字互轉）
+            // 1. 日文模式專用比對（假名、羅馬音與漢字動態轉譯）
             if (currentConfig.category === 'japanese') {
-                targetCandidates = buildJapaneseMatchCandidates(target, currentItem);
+                let targetList = String(target).split('/').map(s => s.trim()).filter(Boolean);
 
-                // 檢查使用者語音的假名形態
-                const spokenHiragana = katakanaToHiragana(sClean);
-                for (const cand of targetCandidates) {
-                    const cClean = cleanStringForCompare(cand);
-                    const cHiragana = katakanaToHiragana(cClean);
+                // 如果題目附帶其他括號內外資訊也納入
+                if (currentItem) {
+                    [currentItem.zh_tw, currentItem.zh, currentItem.hint].forEach(val => {
+                        if (val && typeof val === 'string') {
+                            const noBrackets = val.replace(/\([^)]*\)|（[^）]*）/g, '').trim();
+                            if (noBrackets) targetList.push(noBrackets);
+                        }
+                    });
+                }
 
-                    if (cClean === sClean || cHiragana === spokenHiragana ||
-                        cClean.includes(sClean) || sClean.includes(cClean) ||
-                        cHiragana.includes(spokenHiragana) || spokenHiragana.includes(cHiragana)) {
+                // 取得使用者輸入語音的假名形式（若為漢字則呼叫 API 轉譯）
+                let spokenHiragana = katakanaToHiragana(sClean);
+                if (hasKanji(sClean)) {
+                    spokenHiragana = await fetchKanjiToHiragana(sClean);
+                }
+
+                const spokenRomaji = convertKanaToRomaji(spokenHiragana);
+
+                for (const t of targetList) {
+                    const tClean = cleanStringForCompare(t);
+                    let tHiragana = katakanaToHiragana(tClean);
+                    if (hasKanji(tClean)) {
+                        tHiragana = await fetchKanjiToHiragana(tClean);
+                    }
+                    const tRomaji = convertKanaToRomaji(tHiragana);
+
+                    // A. 直接文字相符（如 葵===葵 或 あおい===あおい）
+                    if (tClean === sClean || tClean.includes(sClean) || sClean.includes(tClean)) {
+                        return true;
+                    }
+                    // B. 平假名相符（如 会う 轉 あう === あう）
+                    if (tHiragana && spokenHiragana && (tHiragana === spokenHiragana || tHiragana.includes(spokenHiragana) || spokenHiragana.includes(tHiragana))) {
+                        return true;
+                    }
+                    // C. 羅馬拼音音節完全相符（如 aoi === aoi、au === au）
+                    if (tRomaji && spokenRomaji && (tRomaji === spokenRomaji || tRomaji.includes(spokenRomaji) || spokenRomaji.includes(tRomaji))) {
                         return true;
                     }
                 }
                 return false;
             }
 
-            // 2. 一般多語系比對模式（含韓語、英語）
+            // 2. 韓文、英文等一般比對模式
             const rawTargets = String(target).split('/').map(s => s.trim()).filter(Boolean);
-            targetCandidates.push(...rawTargets);
-
-            for (const cand of targetCandidates) {
+            for (const cand of rawTargets) {
                 const tClean = cleanStringForCompare(cand);
                 if (!tClean) continue;
 
@@ -5236,7 +5277,6 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                     return true;
                 }
 
-                // 韓文特有比對規則（完全保留不影響）
                 if (currentConfig.category === 'korean') {
                     let tAlt = tClean;
                     let sAlt = sClean;
@@ -5503,7 +5543,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             });
         }
 
-        function evaluateUserSpeech() {
+        async function evaluateUserSpeech() {
             if (!lastRecognizedSpeechText) return alert("尚未取得辨識結果，請重新錄音！");
 
             const isWord = (currentConfig.mode === 'word_shadow');
@@ -5511,7 +5551,11 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             const targetText = currentQ ? (currentQ.text || "") : "";
             const scoreBadge = isWord ? document.getElementById('lbl-word-shadow-score') : document.getElementById('lbl-score');
 
-            if (isSpeechPass(targetText, lastRecognizedSpeechText, currentQ)) {
+            // 支援非同步比對
+            scoreBadge.innerText = "比對評分中...";
+            const isPass = await isSpeechPass(targetText, lastRecognizedSpeechText, currentQ);
+
+            if (isPass) {
                 scoreBadge.innerText = "🎉 發音合格！";
                 scoreBadge.style.color = "#58cc02";
                 
@@ -5600,7 +5644,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 stopSpeechRecognition();
             };
 
-            recognition.onresult = (event) => {
+            recognition.onresult = async (event) => {
                 if (!event.results || !event.results[0] || !event.results[0][0]) {
                     stopSpeechRecognition();
                     return;
@@ -5614,7 +5658,8 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                     const curRound = chatRounds[chatRoundIndex];
                     if (curRound) {
                         const expectedText = (chatRole === 'A') ? curRound.aText : curRound.bText;
-                        if (isSpeechPass(expectedText, userSpeech, curRound)) {
+                        const isPass = await isSpeechPass(expectedText, userSpeech, curRound);
+                        if (isPass) {
                             handleChatSpeechSuccess(userSpeech);
                         } else {
                             document.getElementById('lbl-chat-score').innerText = "⚠ 發音未達標，請再念一次或進入下一題！";
