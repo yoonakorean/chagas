@@ -1153,8 +1153,7 @@
             <button id="btn-save-initial-nickname" class="btn-3d btn-3d-primary" style="width:100%; padding:10px; margin-top:12px;">完成設定並開始學習</button>
         </div>
     </div>
-
-    <!-- 新增好友 Modal -->
+<!-- 新增好友 Modal -->
     <div id="modal-add-friend" class="custom-modal">
         <div class="custom-modal-card">
             <div class="close-icon-circle" onclick="closeModal('modal-add-friend')"><i class="fa-solid fa-xmark"></i></div>
@@ -1210,7 +1209,8 @@
             </div>
         </div>
     </div>
-<!-- 選擇課程程度 Modal -->
+
+    <!-- 選擇課程程度 Modal -->
     <div id="modal-select-initial-level" class="custom-modal">
         <div class="custom-modal-card">
             <div class="close-icon-circle" id="btn-close-level-modal" onclick="closeModal('modal-select-initial-level')"><i class="fa-solid fa-xmark"></i></div>
@@ -1803,9 +1803,9 @@
                     <p style="font-size: 0.85rem; color: #64748b; margin: 4px 0 0 0;" id="myaccount-email">email@example.com</p>
                 </div>
 
-                <div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 14px; border: 1px solid #e2e8f0; display: flex-direction: column; gap: 10px;">
+                <div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 14px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 10px;">
                     <div>
-                        <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex-align: center; gap: 6px;">
+                        <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
                             <i class="fa-solid fa-language" style="color: var(--duo-blue);"></i> 當前學習語言
                         </div>
                         <select id="select-account-learn-language" onchange="updateAccountLearnCategory(this.value)" style="margin: 0;">
@@ -1958,6 +1958,86 @@
         let idleTimer = null;
         const IDLE_LIMIT_MS = 90 * 1000;
         let isIdlePaused = false;
+
+        // ================= 輕量級日文平假名/片假名/漢字智慧雙向對照引擎 =================
+        // 片假名轉平假名
+        function katakanaToHiragana(str) {
+            return (str || '').replace(/[\u30A1-\u30F6]/g, function(match) {
+                return String.fromCharCode(match.charCodeAt(0) - 0x60);
+            });
+        }
+
+        // 高頻常見日語詞彙平假名 <-> 漢字雙向對照表
+        const JP_KANJI_KANA_MAP = {
+            '私': 'わたし', '僕': 'ぼく', '俺': 'おれ', '先生': 'せんせい', '学生': 'がくせい',
+            '学校': 'がっこう', '友達': 'ともだち', '日本人': 'にほんじん', '日本': 'にほん',
+            '猫': 'ねこ', '犬': 'いぬ', '魚': 'さかな', '水': 'みず', 'お茶': 'おちゃ',
+            '本': 'ほん', '車': 'くるま', '電車': 'でんしゃ', '家': 'いえ', '部屋': 'へや',
+            '今日': 'きょう', '明日': 'あした', '昨日': 'きのう', '今': 'いま', '時間': 'じかん',
+            '名前': 'なまえ', '父': 'ちち', '母': 'はは', '兄': 'あに', '姉': 'あね',
+            '食べる': 'たべる', '飲む': 'のむ', '行く': 'いく', '来る': 'くる', '見る': 'みる',
+            '聞く': 'きく', '話す': 'はなす', '読む': 'よむ', '書く': 'かく', '買う': 'かう',
+            '大きい': 'おおきい', '小さい': 'ちいさい', '良い': 'いい', '悪い': 'わるい',
+            '美味しい': 'おいしい', '楽しい': 'たのしい', '嬉しい': 'うれしい', '何': 'なに',
+            '誰': 'だれ', 'どこ': 'どこ', '朝': 'あさ', '昼': 'ひる', '夜': 'よる',
+            '雨': 'あめ', '空': 'そら', '山': 'やま', '川': 'かわ', '海': 'うみ'
+        };
+
+        // 建立平假名對漢字的反向對照
+        const JP_KANA_KANJI_MAP = {};
+        for (const [kanji, kana] of Object.entries(JP_KANJI_KANA_MAP)) {
+            JP_KANA_KANJI_MAP[kana] = kanji;
+        }
+
+        // 提取並擴增日文題目中所有可能的合法發音與文字變形
+        function buildJapaneseMatchCandidates(text, currentItem = null) {
+            let candidates = new Set();
+            if (!text) return Array.from(candidates);
+
+            const rawList = String(text).split('/').map(s => s.trim()).filter(Boolean);
+            rawList.forEach(itemStr => {
+                candidates.add(itemStr);
+                const hira = katakanaToHiragana(itemStr);
+                candidates.add(hira);
+
+                // 檢查是否能將漢字轉為平假名
+                if (JP_KANJI_KANA_MAP[itemStr]) {
+                    candidates.add(JP_KANJI_KANA_MAP[itemStr]);
+                }
+                // 檢查是否能將平假名轉為漢字
+                if (JP_KANA_KANJI_MAP[hira]) {
+                    candidates.add(JP_KANA_KANJI_MAP[hira]);
+                }
+            });
+
+            // 若有提供題庫物件，提取其他欄位可能的漢字/假名（例如翻譯、羅馬字欄位中常含有括號附註）
+            if (currentItem) {
+                const checkFields = [currentItem.zh_tw, currentItem.zh, currentItem.hint, currentItem.kr_pron, currentItem.romanization];
+                checkFields.forEach(val => {
+                    if (val && typeof val === 'string') {
+                        // 提取括號外的純漢字或日文
+                        const noBrackets = val.replace(/\([^)]*\)|（[^）]*）/g, '').trim();
+                        if (noBrackets) candidates.add(noBrackets);
+
+                        // 提取括號內的文字
+                        const matches = val.match(/\(([^)]+)\)|（([^）]+)）/g);
+                        if (matches) {
+                            matches.forEach(m => {
+                                const clean = m.replace(/[()（）]/g, '').trim();
+                                if (clean) {
+                                    candidates.add(clean);
+                                    candidates.add(katakanaToHiragana(clean));
+                                    if (JP_KANJI_KANA_MAP[clean]) candidates.add(JP_KANJI_KANA_MAP[clean]);
+                                    if (JP_KANA_KANJI_MAP[katakanaToHiragana(clean)]) candidates.add(JP_KANA_KANJI_MAP[katakanaToHiragana(clean)]);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+
+            return Array.from(candidates);
+        }
 
         // 釋放先前建立的音訊 Blob URL 記憶體，防止長時期使用造成記憶體洩漏
         function revokeUserAudioUrl() {
@@ -5117,7 +5197,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             return clean;
         }
 
-        // ================= 核心語音比對（支援日文中文欄位、去除括號、/ 分割） =================
+        // ================= 核心語音比對（全支援日語平假名/漢字/片假名、中文括號欄位與韓語變體） =================
         function isSpeechPass(target, spoken, currentItem = null) {
             if (!target || !spoken) return false;
             const sClean = cleanStringForCompare(spoken);
@@ -5125,21 +5205,29 @@ async function verifyAndSyncUser(user, isInteractive = false) {
 
             let targetCandidates = [];
 
-            // 1. 原本目標文字（支援多選項以 / 隔開）
+            // 1. 日文模式專用智慧比對擴增（平假名/片假名/漢字互轉）
+            if (currentConfig.category === 'japanese') {
+                targetCandidates = buildJapaneseMatchCandidates(target, currentItem);
+
+                // 檢查使用者語音的假名形態
+                const spokenHiragana = katakanaToHiragana(sClean);
+                for (const cand of targetCandidates) {
+                    const cClean = cleanStringForCompare(cand);
+                    const cHiragana = katakanaToHiragana(cClean);
+
+                    if (cClean === sClean || cHiragana === spokenHiragana ||
+                        cClean.includes(sClean) || sClean.includes(cClean) ||
+                        cHiragana.includes(spokenHiragana) || spokenHiragana.includes(cHiragana)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            // 2. 一般多語系比對模式（含韓語、英語）
             const rawTargets = String(target).split('/').map(s => s.trim()).filter(Boolean);
             targetCandidates.push(...rawTargets);
 
-            // 2. 若為日文且傳入題目物件，將 zh_tw 欄位過濾括號後拆分加入候選
-            if (currentConfig.category === 'japanese' && currentItem) {
-                const zhVal = currentItem.zh_tw || currentItem.zh || '';
-                if (zhVal) {
-                    const cleanedZh = zhVal.replace(/\([^)]*\)|（[^）]*）/g, '');
-                    const zhOptions = cleanedZh.split('/').map(s => s.trim()).filter(Boolean);
-                    targetCandidates.push(...zhOptions);
-                }
-            }
-
-            // 3. 逐一比對每個候選答案
             for (const cand of targetCandidates) {
                 const tClean = cleanStringForCompare(cand);
                 if (!tClean) continue;
