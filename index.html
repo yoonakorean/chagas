@@ -31,6 +31,13 @@
             --duo-gold: #f59e0b;
             --duo-fire-red: #ef4444;
             --duo-teal: #0d9488;
+            
+            /* 闖關地圖專用粉/紫/黃糖果配色 */
+            --path-pink: #f472b6;
+            --path-pink-dark: #db2777;
+            --candy-node-bg: #ec4899;
+            --candy-node-shadow: #be185d;
+            --candy-node-glow: rgba(236, 72, 153, 0.45);
         }
 
         * { box-sizing: border-box; }
@@ -40,7 +47,7 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background: #f9fafb;
+            background: #fdf2f8;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -51,14 +58,14 @@
         }
 
         .shadowing-card {
-            background: white;
-            border: 2px solid #e5e7eb;
-            border-radius: 20px;
+            background: #ffffff;
+            border: 2px solid #fbcfe8;
+            border-radius: 24px;
             width: 100%;
             max-width: 480px;
             height: 100vh;
             height: 100dvh;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 24px rgba(236, 72, 153, 0.12);
             display: flex;
             flex-direction: column;
             padding: 12px 14px 0 14px;
@@ -75,7 +82,7 @@
             align-items: center;
             padding-bottom: 10px;
             margin-bottom: 8px;
-            border-bottom: 2px solid #e5e7eb;
+            border-bottom: 2px solid #fce7f3;
             font-size: 0.9rem;
             font-weight: 800;
             gap: 4px;
@@ -90,13 +97,13 @@
             color: #374151;
             cursor: pointer;
             padding: 5px 8px;
-            border-radius: 10px;
+            border-radius: 12px;
             user-select: none;
             transition: all 0.15s ease;
             white-space: nowrap;
             font-size: 0.88rem;
         }
-        .user-meta-item:hover { background: #f3f4f6; }
+        .user-meta-item:hover { background: #fdf2f8; }
 
         .lbl-quiz-info {
             display: inline-block !important;
@@ -153,18 +160,18 @@
             z-index: 100;
             padding: 0 12px calc(10px + env(safe-area-inset-bottom)) 12px;
             pointer-events: none;
-            background: linear-gradient(to top, rgba(255,255,255,1) 70%, rgba(255,255,255,0) 100%);
+            background: linear-gradient(to top, rgba(255,255,255,1) 75%, rgba(255,255,255,0) 100%);
         }
 
         .bottom-fixed-bar {
             background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(12px);
-            border: 2px solid #e5e7eb;
+            border: 2px solid #fbcfe8;
             border-radius: 20px;
             padding: 8px 14px;
             width: 100%;
             max-width: 480px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 24px rgba(236, 72, 153, 0.15);
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -180,7 +187,7 @@
             justify-content: center;
             gap: 6px;
             padding: 8px 10px;
-            border-radius: 12px;
+            border-radius: 14px;
             font-size: 0.9rem;
             font-weight: 800;
             cursor: pointer;
@@ -199,13 +206,13 @@
             background: #e0e7ff;
         }
         .bottom-nav-item.map-btn {
-            background: #f8fafc;
-            color: #475569;
-            border-color: #e2e8f0;
+            background: #fdf2f8;
+            color: var(--candy-node-bg);
+            border-color: #fbcfe8;
         }
         .bottom-nav-item.map-btn:active {
             transform: translateY(2px);
-            background: #f1f5f9;
+            background: #fce7f3;
         }
 
         #learning-content-view {
@@ -226,7 +233,339 @@
         }
         .step-page.active { display: block; }
 
-        #step-welcome.active {
+        /* ================= 糖果闖關大地圖專屬樣式 ================= */
+        .roadmap-container {
+            position: relative;
+            width: 100%;
+            min-height: 100%;
+            padding: 10px 0 100px 0;
+            background: radial-gradient(circle at 50% 10%, #fff7ed 0%, #fef2f2 30%, #fdf2f8 70%, #f0fdf4 100%);
+            border-radius: 20px;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        /* 階段選擇 Header 標籤列 */
+        .stage-pill-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            border: 2px solid #fbcfe8;
+            box-shadow: 0 4px 12px rgba(244, 114, 182, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+        .stage-pill-btn {
+            background: #f3f4f6;
+            border: none;
+            color: #4b5563;
+            font-weight: 800;
+            font-size: 0.85rem;
+            padding: 6px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .stage-pill-btn.active {
+            background: linear-gradient(135deg, #ec4899, #f43f5e);
+            color: white;
+            box-shadow: 0 3px 8px rgba(236, 72, 153, 0.35);
+        }
+
+        /* 闖關地圖 SVG 連接路徑層 */
+        .roadmap-svg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* 地圖上的關卡節點清單容器 */
+        .roadmap-nodes-container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column-reverse; /* 闖關由下往上走 */
+            align-items: center;
+            gap: 40px;
+            padding: 30px 10px 40px 10px;
+        }
+
+        .roadmap-node-row {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* S 型擺盪偏移 */
+        .roadmap-node-row.offset-center { transform: translateX(0); }
+        .roadmap-node-row.offset-left-1 { transform: translateX(-45px); }
+        .roadmap-node-row.offset-left-2 { transform: translateX(-90px); }
+        .roadmap-node-row.offset-right-1 { transform: translateX(45px); }
+        .roadmap-node-row.offset-right-2 { transform: translateX(90px); }
+
+        /* 圓形糖果闖關節點 (類似 Candy Crush / Duolingo) */
+        .candy-node-btn {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            border: 4px solid #ffffff;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            background: linear-gradient(145deg, #f472b6, #ec4899);
+            box-shadow: 0 8px 0 var(--candy-node-shadow), 0 12px 18px var(--candy-node-glow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+            user-select: none;
+        }
+        .candy-node-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 var(--candy-node-shadow), 0 6px 10px var(--candy-node-glow);
+        }
+        .candy-node-btn.completed {
+            background: linear-gradient(145deg, #fbbf24, #f59e0b);
+            box-shadow: 0 8px 0 #d97706, 0 12px 18px rgba(245, 158, 11, 0.45);
+        }
+        .candy-node-btn.locked {
+            background: linear-gradient(145deg, #cbd5e1, #94a3b8);
+            box-shadow: 0 8px 0 #64748b, 0 10px 14px rgba(100, 116, 139, 0.25);
+            cursor: not-allowed;
+            opacity: 0.85;
+        }
+        .candy-node-btn.current {
+            animation: nodePulse 1.8s infinite;
+        }
+        @keyframes nodePulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 0 var(--candy-node-shadow), 0 0 20px rgba(236, 72, 153, 0.8); }
+            50% { transform: scale(1.08); box-shadow: 0 10px 0 var(--candy-node-shadow), 0 0 30px rgba(236, 72, 153, 1); }
+        }
+
+        .candy-node-num {
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            line-height: 1;
+        }
+        .candy-node-stars {
+            font-size: 0.65rem;
+            color: #fef08a;
+            margin-top: 2px;
+            letter-spacing: -1px;
+        }
+
+        /* 角色站在當前關卡的大頭貼 Badge (如截圖的狗狗/角色頭像) */
+        .node-avatar-badge {
+            position: absolute;
+            left: -48px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            border: 3px solid #38bdf8;
+            box-shadow: 0 4px 10px rgba(56, 189, 248, 0.4);
+            background: #ffffff;
+            object-fit: cover;
+            animation: avatarFloat 2s ease-in-out infinite;
+        }
+        @keyframes avatarFloat {
+            0%, 100% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-62%) scale(1.05); }
+        }
+
+        /* ================= 階段解鎖大門 (Gate Unlock) 專屬樣式 ================= */
+        .gate-portal-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            position: relative;
+            z-index: 5;
+        }
+
+        .castle-gate-btn {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            border: 3px solid #c7d2fe;
+            border-radius: 24px;
+            padding: 14px 24px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+        .castle-gate-btn:active {
+            transform: translateY(2px);
+        }
+
+        /* 解鎖大門全螢幕動畫彈窗 */
+        #gate-unlock-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 99999999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        #gate-unlock-modal.show {
+            display: flex !important;
+        }
+
+        .gate-doors-wrapper {
+            position: relative;
+            width: 260px;
+            height: 320px;
+            perspective: 1000px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .gate-door {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(135deg, #7c2d12, #9a3412);
+            border: 4px solid #fde047;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: left center;
+        }
+        .gate-door.left-door {
+            left: 0;
+            border-radius: 20px 0 0 10px;
+            transform-origin: left center;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+        }
+        .gate-door.right-door {
+            right: 0;
+            border-radius: 0 20px 10px 0;
+            transform-origin: right center;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-left: 8px;
+        }
+        .gate-lock-icon {
+            position: absolute;
+            z-index: 20;
+            font-size: 3.5rem;
+            color: #facc15;
+            filter: drop-shadow(0 6px 12px rgba(250, 204, 21, 0.6));
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s;
+        }
+        .gate-unlock-shine {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(250, 204, 21, 0.8) 0%, rgba(250, 204, 21, 0) 70%);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.8s, transform 1s;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* 開門觸發的 CSS 動畫 Class */
+        .doors-opened .gate-door.left-door {
+            transform: rotateY(-110deg);
+        }
+        .doors-opened .gate-door.right-door {
+            transform: rotateY(110deg);
+        }
+        .doors-opened .gate-lock-icon {
+            transform: scale(1.4) translateY(-30px);
+            opacity: 0;
+        }
+        .doors-opened .gate-unlock-shine {
+            opacity: 1;
+            transform: scale(2.2);
+        }
+
+        .gate-unlock-title {
+            color: #ffffff;
+            font-size: 1.6rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .gate-unlock-sub {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            font-weight: bold;
+            margin-bottom: 24px;
+        }
+
+        /* 點選關卡節點彈出的任務清單 Modal */
+        #modal-lesson-tasks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999999;
+            padding: 16px;
+        }
+        #modal-lesson-tasks.show {
+            display: flex !important;
+        }
+        .lesson-tasks-card {
+            background: white;
+            border-radius: 24px;
+            padding: 24px 20px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.25);
+            position: relative;
+            animation: modalPopIn 0.2s ease-out;
+        }
+        .task-grid-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 16px;
+        }
+#step-welcome.active {
             display: flex !important;
             flex-direction: column;
             align-items: center;
@@ -576,52 +915,6 @@
             opacity: 0.55; background-color: #f3f4f6; border-color: #d1d5db; color: #9ca3af; cursor: not-allowed;
         }
 
-        /* 階段大區塊分類卡樣式 */
-        .unit-section-container {
-            margin-bottom: 18px;
-            background: #ffffff;
-            border: 2px solid #e2e8f0;
-            border-radius: 18px;
-            padding: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            text-align: left;
-        }
-        .unit-section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 1.05rem;
-            font-weight: 900;
-            color: #1e293b;
-            padding-bottom: 8px;
-            margin-bottom: 10px;
-            border-bottom: 2px dashed #e2e8f0;
-        }
-        .unit-badge-tag {
-            background: #e0f2fe;
-            color: var(--duo-blue);
-            font-size: 0.78rem;
-            font-weight: 800;
-            padding: 3px 8px;
-            border-radius: 10px;
-        }
-
-        .lesson-card-item {
-            background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 14px;
-            padding: 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 6px;
-        }
-        .lesson-card-title { font-weight: bold; color: var(--duo-dark); text-align: left; font-size: 0.95rem; margin-bottom: 2px; }
-        .lesson-btn-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
-        .btn-lesson-action {
-            background: white; border: 2px solid #cbd5e1; border-bottom: 3px solid #cbd5e1;
-            border-radius: 10px; padding: 8px 4px; font-size: 0.82rem; font-weight: bold;
-            color: #334155; cursor: pointer; transition: all 0.15s ease; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .btn-lesson-action:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
-        .btn-lesson-action.btn-grammar-lesson:hover { border-color: var(--duo-purple); color: var(--duo-purple); }
-        .btn-lesson-action.btn-chat-lesson:hover { border-color: #ec4899; color: #ec4899; }
-        .btn-lesson-action.btn-word-action:hover { border-color: var(--duo-teal); color: var(--duo-teal); }
-
         .btn-confirm {
             width: 100%; background: var(--duo-green); color: white; border: none;
             border-bottom: 4px solid #46a302; padding: 13px; font-size: 1.05rem;
@@ -682,54 +975,21 @@
             padding: 8px 14px; border-radius: 12px; display: inline-block; margin-bottom: 14px; font-weight: bold;
         }
 
-        #lbl-word-shadow-subtext {
-            font-size: 1.1rem;
-            color: #475569;
-            font-weight: bold;
-            margin-bottom: 6px;
-            min-height: 1.6rem;
-            line-height: 1.6rem;
-            display: block;
-        }
-
-        #lbl-word-choice-sub {
-            font-size: 1.15rem;
-            color: #475569;
-            font-weight: bold;
-            margin-bottom: 8px;
-            min-height: 1.6rem;
-            line-height: 1.6rem;
-            display: block;
-        }
-
+        #lbl-word-shadow-subtext,
+        #lbl-word-choice-sub,
         #lbl-word-type-hint {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #4b5563;
-            min-height: 1.6rem;
-            line-height: 1.6rem;
-            margin-bottom: 8px;
-            display: block;
+            font-size: 1.15rem; color: #475569; font-weight: bold; margin-bottom: 8px; min-height: 1.6rem; line-height: 1.6rem; display: block;
         }
 
         .instruction-badge-bar {
-            font-size: 0.98rem;
-            font-weight: 800;
-            color: var(--duo-blue);
-            background: #f0f9ff;
-            border: 1.5px solid #bae6fd;
-            border-radius: 12px;
-            padding: 6px 12px;
-            margin: 6px auto 10px auto;
-            display: inline-block;
-            max-width: 95%;
+            font-size: 0.98rem; font-weight: 800; color: var(--duo-blue); background: #f0f9ff;
+            border: 1.5px solid #bae6fd; border-radius: 12px; padding: 6px 12px; margin: 6px auto 10px auto; display: inline-block; max-width: 95%;
         }
 
         .controls { display: flex; justify-content: center; gap: 14px; margin-bottom: 12px; }
         .btn-circle {
             width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer;
-            font-size: 1rem; color: white; display: flex; align-items: center;
-            justify-content: center; transition: all 0.2s; flex-shrink: 0;
+            font-size: 1rem; color: white; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0;
         }
         .btn-listen { background: var(--duo-blue); box-shadow: 0 4px 0 #1899d6; }
         .btn-record { background: var(--duo-red); box-shadow: 0 4px 0 #ea2b2b; }
@@ -737,407 +997,122 @@
         @keyframes pulse { 0%{transform: scale(1);} 50%{transform: scale(1.08);} 100%{transform: scale(1);} }
 
         .result-box { 
-            background: #f3f4f6; 
-            border-radius: 12px; 
-            padding: 8px 12px; 
-            margin-top: 10px; 
-            font-size: 0.95rem; 
-            text-align: center;
-            min-height: 82px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            box-sizing: border-box;
+            background: #f3f4f6; border-radius: 12px; padding: 8px 12px; margin-top: 10px; font-size: 0.95rem; text-align: center;
+            min-height: 82px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box;
         }
 
-        .score-badge { 
-            font-size: 1.05rem; 
-            font-weight: bold; 
-            color: var(--duo-green); 
-            margin-top: 2px;
-            line-height: 1.45;
-            word-break: break-word;
-        }
+        .score-badge { font-size: 1.05rem; font-weight: bold; color: var(--duo-green); margin-top: 2px; line-height: 1.45; word-break: break-word; }
 
         .nav-controls { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            position: relative;
-            margin-top: 14px; 
-            min-height: 42px;
-            width: 100%;
+            display: flex; justify-content: center; align-items: center; position: relative; margin-top: 14px; min-height: 42px; width: 100%;
         }
-        .nav-controls .lbl-progress {
-            color: #6b7280; 
-            font-size: 0.95rem; 
-            font-weight: 800;
-            text-align: center;
-        }
-
+        .nav-controls .lbl-progress { color: #6b7280; font-size: 0.95rem; font-weight: 800; text-align: center; }
         .nav-controls .btn-nav-next {
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--duo-blue); 
-            color: white;
-            border: none;
-            border-bottom: 3.5px solid var(--duo-blue-shadow);
-            padding: 8px 16px;
-            border-radius: 12px; 
-            cursor: pointer; 
-            font-weight: 800; 
-            font-size: 0.92rem;
-            display: none;
-            animation: nextBtnPopIn 0.18s ease-out forwards;
+            position: absolute; right: 0; top: 50%; transform: translateY(-50%); background: var(--duo-blue); 
+            color: white; border: none; border-bottom: 3.5px solid var(--duo-blue-shadow); padding: 8px 16px; border-radius: 12px; 
+            cursor: pointer; font-weight: 800; font-size: 0.92rem; display: none; animation: nextBtnPopIn 0.18s ease-out forwards;
         }
-        .nav-controls .btn-nav-next:active {
-            transform: translateY(calc(-50% + 2px));
-            border-bottom-width: 1.5px;
-        }
-
         @keyframes nextBtnPopIn {
-            from { 
-                transform: translateY(-50%) scale(0.88); 
-                opacity: 0; 
-            }
-            to { 
-                transform: translateY(-50%) scale(1); 
-                opacity: 1; 
-            }
+            from { transform: translateY(-50%) scale(0.88); opacity: 0; }
+            to { transform: translateY(-50%) scale(1); opacity: 1; }
         }
 
         .mode-select-btn {
-            padding: 11px 14px; 
-            font-size: 1rem; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            width: 100%;
-            box-sizing: border-box;
+            padding: 11px 14px; font-size: 1rem; display: flex; align-items: center; justify-content: space-between; width: 100%; box-sizing: border-box;
         }
-        .mode-right-meta {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 2px;
-        }
-        .mode-time-tag {
-            font-size: 0.76rem;
-            font-weight: 800;
-            color: #ffffff;
-            opacity: 0.92;
-            letter-spacing: 0.5px;
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-        }
-        .mode-star-tag {
-            font-size: 0.82rem;
-            font-weight: 900;
-            color: #fef08a;
-            letter-spacing: 2px;
-            background: rgba(0, 0, 0, 0.22);
-            padding: 2px 7px;
-            border-radius: 7px;
-            display: inline-flex;
-            align-items: center;
-        }
+        .mode-right-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+        .mode-time-tag { font-size: 0.76rem; font-weight: 800; color: #ffffff; opacity: 0.92; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 3px; }
+        .mode-star-tag { font-size: 0.82rem; font-weight: 900; color: #fef08a; letter-spacing: 2px; background: rgba(0, 0, 0, 0.22); padding: 2px 7px; border-radius: 7px; display: inline-flex; align-items: center; }
 
         .gear-menu-container { position: relative; }
         .btn-gear {
-            background: #f3f4f6; border: 1px solid #d1d5db; width: 34px; height: 34px;
-            border-radius: 50%; cursor: pointer; color: #4b5563; font-size: 0.95rem;
+            background: #f3f4f6; border: 1px solid #d1d5db; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; color: #4b5563; font-size: 0.95rem;
             display: flex; align-items: center; justify-content: center; transition: all 0.2s;
         }
         .gear-dropdown {
-            display: none; position: absolute; top: 40px; right: 0; background: white;
-            border: 2px solid #e5e7eb; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none; position: absolute; top: 40px; right: 0; background: white; border: 2px solid #e5e7eb; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             padding: 6px; z-index: 100; min-width: 140px; flex-direction: column; gap: 4px;
         }
         .gear-dropdown.show { display: flex; }
         .gear-dropdown-item {
-            background: none; border: none; padding: 8px 12px; text-align: left;
-            font-size: 0.85rem; font-weight: bold; color: #374151; border-radius: 8px;
+            background: none; border: none; padding: 8px 12px; text-align: left; font-size: 0.85rem; font-weight: bold; color: #374151; border-radius: 8px;
             cursor: pointer; display: flex; align-items: center; gap: 8px; width: 100%; box-sizing: border-box;
         }
         .gear-dropdown-item:hover { background: #ddf4ff; color: var(--duo-blue); }
         .gear-dropdown-item.quit-item:hover { background: #fee2e2; color: var(--duo-red); }
 
         .block-zone {
-            min-height: 65px; border-bottom: 2px dashed #cbd5e1; display: flex;
-            flex-wrap: wrap; gap: 6px; padding: 8px; justify-content: center;
-            align-items: center; margin-bottom: 16px;
+            min-height: 65px; border-bottom: 2px dashed #cbd5e1; display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; justify-content: center; align-items: center; margin-bottom: 16px;
         }
         .block-chip {
-            background: white; border: 2px solid #cbd5e1; border-bottom: 3.5px solid #cbd5e1;
-            border-radius: 12px; padding: 8px 14px; font-size: 1.05rem; font-weight: bold;
+            background: white; border: 2px solid #cbd5e1; border-bottom: 3.5px solid #cbd5e1; border-radius: 12px; padding: 8px 14px; font-size: 1.05rem; font-weight: bold;
             color: var(--duo-dark); cursor: pointer; user-select: none; transition: transform 0.1s;
         }
         .block-chip:active { transform: translateY(2px); border-bottom-width: 2px; }
         .block-chip.used { opacity: 0.3; pointer-events: none; background: #f3f4f6; }
         .block-chip.locked-chip { pointer-events: none !important; opacity: 0.75; }
 
-        .hangul-grid-board-wrapper {
-            width: 100%; overflow-x: auto; padding: 6px 0; display: flex; justify-content: center; -webkit-overflow-scrolling: touch;
-        }
+        .hangul-grid-board-wrapper { width: 100%; overflow-x: auto; padding: 6px 0; display: flex; justify-content: center; -webkit-overflow-scrolling: touch; }
         .hangul-grid-board {
-            display: grid; grid-template-rows: repeat(3, 44px); grid-template-columns: repeat(9, 44px);
-            gap: 4px; background: #ffffff; border: 2px solid #bae6fd; border-radius: 16px; padding: 8px;
-            box-shadow: 0 4px 12px rgba(28, 176, 246, 0.08); margin: 0 auto;
+            display: grid; grid-template-rows: repeat(3, 44px); grid-template-columns: repeat(9, 44px); gap: 4px; background: #ffffff; border: 2px solid #bae6fd;
+            border-radius: 16px; padding: 8px; box-shadow: 0 4px 12px rgba(28, 176, 246, 0.08); margin: 0 auto;
         }
         .hangul-grid-cell {
-            background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 8px; display: flex;
-            align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 900;
-            color: #94a3b8; cursor: pointer; user-select: none; transition: all 0.12s ease;
+            background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
+            font-weight: 900; color: #94a3b8; cursor: pointer; user-select: none; transition: all 0.12s ease;
         }
-        .hangul-grid-cell:hover:not(.filled) { background: #f1f5f9; border-color: var(--duo-blue); }
-        .hangul-grid-cell.filled {
-            background: #ddf4ff; border: 2px solid var(--duo-blue); color: #0369a1; box-shadow: 0 2px 4px rgba(0,0,0,0.06);
-        }
-        .hangul-grid-cell.filled:active { transform: scale(0.92); }
-        .hangul-grid-cell.locked-cell { pointer-events: none !important; }
+        .hangul-grid-cell.filled { background: #ddf4ff; border: 2px solid var(--duo-blue); color: #0369a1; box-shadow: 0 2px 4px rgba(0,0,0,0.06); }
 
         .vocab-input {
-            width: 88%; max-width: 320px; padding: 10px; font-size: 1.15rem; border: 2px solid #cbd5e1;
-            border-radius: 12px; text-align: center; outline: none; margin: 10px auto; font-weight: bold; display: block;
+            width: 88%; max-width: 320px; padding: 10px; font-size: 1.15rem; border: 2px solid #cbd5e1; border-radius: 12px; text-align: center; outline: none; margin: 10px auto; font-weight: bold; display: block;
         }
-        .vocab-input:focus { border-color: var(--duo-blue); }
         .vocab-choice-list { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
         .btn-vocab-choice {
-            background: white; border: 2px solid #e5e7eb; border-bottom: 3px solid #e5e7eb;
-            border-radius: 12px; padding: 12px; font-size: 1.05rem; font-weight: bold;
+            background: white; border: 2px solid #e5e7eb; border-bottom: 3px solid #e5e7eb; border-radius: 12px; padding: 12px; font-size: 1.05rem; font-weight: bold;
             color: var(--duo-dark); cursor: pointer; transition: all 0.15s ease; text-align: center;
         }
-        .btn-vocab-choice:hover:not(:disabled) { border-color: var(--duo-blue); color: var(--duo-blue); }
-        .btn-vocab-choice:disabled { opacity: 0.65; cursor: not-allowed; }
 
         .role-switch-box { display: flex; justify-content: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-        .btn-role {
-            padding: 5px 12px; border-radius: 20px; border: 2px solid #e5e7eb; background: white;
-            font-weight: bold; cursor: pointer; font-size: 0.8rem;
-        }
+        .btn-role { padding: 5px 12px; border-radius: 20px; border: 2px solid #e5e7eb; background: white; font-weight: bold; cursor: pointer; font-size: 0.8rem; }
         .btn-role.active { border-color: var(--duo-blue); background: #ddf4ff; color: var(--duo-blue); }
 
-        .grammar-q-item {
-            font-size: 1.1rem; color: var(--duo-dark); line-height: 1.8; font-weight: 600; word-break: break-word;
-        }
-        .blank-slot {
-            display: inline-block; min-width: 44px; border-bottom: 2.5px solid var(--duo-blue);
-            color: var(--duo-blue); text-align: center; padding: 0 4px; cursor: pointer; font-weight: bold; margin: 0 3px;
-        }
-
         .dialog-history-list {
-            text-align: left !important; max-height: 220px; overflow-y: auto; background: #ffffff;
-            border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; margin-bottom: 12px;
+            text-align: left !important; max-height: 220px; overflow-y: auto; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; margin-bottom: 12px;
         }
-        .dialog-history-item {
-            padding: 6px 8px;
-            border-bottom: 1px solid #f3f4f6;
-            font-size: 0.95rem;
-            color: #374151;
-            line-height: 1.5;
-            text-align: left !important;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-        .dialog-history-item:last-child { border-bottom: none; }
-        .dialog-history-item .num-title {
-            font-weight: 800;
-            color: var(--duo-blue);
-            display: block;
-            margin-bottom: 1px;
-        }
-        .dialog-history-item .text-body {
-            display: block;
-            color: #334155;
-        }
+        .dialog-history-item { padding: 6px 8px; border-bottom: 1px solid #f3f4f6; font-size: 0.95rem; color: #374151; line-height: 1.5; text-align: left !important; white-space: pre-wrap; word-break: break-word; }
 
-        .profile-avatar-large {
-            width: 72px; height: 72px; border-radius: 50%;
-            border: 3px solid var(--duo-blue); margin: 0 auto 8px auto; object-fit: cover; display: block;
-        }
+        .profile-avatar-large { width: 72px; height: 72px; border-radius: 50%; border: 3px solid var(--duo-blue); margin: 0 auto 8px auto; object-fit: cover; display: block; }
+        .quit-modal-img { width: 120px; height: 120px; object-fit: contain; margin: 0 auto 12px auto; display: block; }
 
-        .quit-modal-img {
-            width: 120px;
-            height: 120px;
-            object-fit: contain;
-            margin: 0 auto 12px auto;
-            display: block;
-        }
-
-        /* 結算彈窗與煙火特效樣式 */
-        #settlement-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 100;
-        }
-
-        .settlement-stars-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            margin: 14px 0 16px 0;
-        }
-
-        .settlement-star {
-            font-size: 3.2rem;
-            color: #e2e8f0;
-            transform: scale(0.6);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .settlement-star.active {
-            color: #f59e0b;
-            filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.45));
-            transform: scale(1.15);
-            opacity: 1;
-        }
-
-        .settlement-star.inactive {
-            color: #cbd5e1;
-            transform: scale(1);
-            opacity: 0.5;
-        }
-
-        @keyframes starPop {
-            0% { transform: scale(0.3) rotate(-20deg); opacity: 0; }
-            70% { transform: scale(1.3) rotate(10deg); opacity: 1; }
-            100% { transform: scale(1.15) rotate(0deg); opacity: 1; }
-        }
+        #settlement-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+        .settlement-stars-container { display: flex; justify-content: center; align-items: center; gap: 12px; margin: 14px 0 16px 0; }
+        .settlement-star { font-size: 3.2rem; color: #e2e8f0; transform: scale(0.6); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .settlement-star.active { color: #f59e0b; filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.45)); transform: scale(1.15); opacity: 1; }
+        .settlement-star.inactive { color: #cbd5e1; transform: scale(1); opacity: 0.5; }
 
         .star-anim-1 { animation: starPop 0.5s ease-out 0.2s forwards; }
         .star-anim-2 { animation: starPop 0.5s ease-out 0.5s forwards; }
         .star-anim-3 { animation: starPop 0.5s ease-out 0.8s forwards; }
 
         .settlement-stat-card {
-            background: #f8fafc;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 12px 14px;
-            margin-bottom: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            text-align: left;
+            background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 12px 14px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; text-align: left;
         }
-        .settlement-stat-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.95rem;
-            font-weight: 800;
-            color: #475569;
-        }
-        .settlement-stat-val {
-            font-weight: 900;
-            font-size: 1.05rem;
-            color: #1e293b;
-        }
+        .settlement-stat-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; font-weight: 800; color: #475569; }
+        .settlement-stat-val { font-weight: 900; font-size: 1.05rem; color: #1e293b; }
 
-        /* 全新：島嶼生成中 Loading 畫面樣式 */
         #game-loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: radial-gradient(circle at center, #ffffff 0%, #f0fdf4 100%);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999999;
-            padding: 24px;
-            box-sizing: border-box;
-            transition: opacity 0.35s ease;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at center, #ffffff 0%, #fdf2f8 100%);
+            display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999999; padding: 24px; box-sizing: border-box; transition: opacity 0.35s ease;
         }
-        #game-loading-overlay.show {
-            display: flex !important;
-        }
-        .loading-island-icon {
-            font-size: 4.8rem;
-            color: var(--duo-green);
-            margin-bottom: 20px;
-            animation: islandFloat 2.6s ease-in-out infinite;
-            filter: drop-shadow(0 10px 18px rgba(88, 204, 2, 0.28));
-        }
-        @keyframes islandFloat {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-12px) rotate(2deg); }
-        }
-        .loading-island-title {
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: #1e293b;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
-        }
-        .loading-island-subtitle {
-            font-size: 0.88rem;
-            color: #64748b;
-            font-weight: 800;
-            margin-bottom: 24px;
-        }
-        .island-progress-track {
-            width: 100%;
-            max-width: 280px;
-            height: 14px;
-            background: #e2e8f0;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 2px solid #cbd5e1;
-            position: relative;
-        }
-        .island-progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #58cc02, #22c55e);
-            border-radius: 20px;
-            transition: width 0.35s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .island-progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: trackShine 1.4s infinite;
-        }
-        @keyframes trackShine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
+        #game-loading-overlay.show { display: flex !important; }
+        .loading-island-icon { font-size: 4.8rem; color: #ec4899; margin-bottom: 20px; animation: islandFloat 2.6s ease-in-out infinite; filter: drop-shadow(0 10px 18px rgba(236, 72, 153, 0.28)); }
+        @keyframes islandFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        .island-progress-track { width: 100%; max-width: 280px; height: 14px; background: #fce7f3; border-radius: 20px; overflow: hidden; border: 2px solid #fbcfe8; position: relative; }
+        .island-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ec4899, #f43f5e); border-radius: 20px; transition: width 0.35s ease; position: relative; }
 
         @media (max-width: 440px) {
             .hangul-grid-board { grid-template-rows: repeat(3, 38px); grid-template-columns: repeat(9, 38px); gap: 3px; padding: 6px; }
             .hangul-grid-cell { font-size: 1.1rem; }
-        }
-
-        @media (max-width: 420px) {
-            .shadowing-card { padding: 10px 8px 0 8px; border-radius: 16px; }
-            .user-meta-bar { font-size: 0.82rem; padding-bottom: 6px; margin-bottom: 6px; }
-            .user-meta-item { padding: 4px 6px; font-size: 0.8rem; }
-            h2.step-title { font-size: 1.15rem; margin-bottom: 14px; }
-            .target-text { font-size: 1.8rem; }
-            .translation-text { font-size: 1.05rem; }
-            .btn-option { padding: 10px 6px; font-size: 0.88rem; border-radius: 12px; }
-            .lesson-btn-group { grid-template-columns: repeat(2, 1fr); gap: 4px; }
-            .btn-lesson-action { font-size: 0.78rem; padding: 7px 2px; }
-            .block-chip { padding: 6px 10px; font-size: 0.95rem; }
-            .grammar-dialog-box { font-size: 1.05rem; padding: 14px 12px; height: 230px; }
-            .grammar-q-item { font-size: 1rem; }
-            .bottom-fixed-bar { padding: 6px 10px; }
-            .bottom-nav-item { font-size: 0.82rem; padding: 7px 8px; }
         }
     </style>
 </head>
@@ -1145,13 +1120,36 @@
 
     <!-- 全螢幕「島嶼生成中...」遮罩 -->
     <div id="game-loading-overlay">
-        <div class="loading-island-icon">
-            <i class="fa-solid fa-mountain-sun"></i>
-        </div>
-        <div class="loading-island-title" id="lbl-island-loading-title">🏝️ 島嶼生成中...</div>
-        <div class="loading-island-subtitle" id="lbl-island-loading-sub">冒險地圖與學習資料整備中</div>
+        <div class="loading-island-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+        <div class="loading-island-title" id="lbl-island-loading-title" style="font-size: 1.4rem; font-weight: 900; color: #1e293b; margin-bottom: 8px;">🏝️ 冒險地圖載入中...</div>
+        <div class="loading-island-subtitle" id="lbl-island-loading-sub" style="font-size: 0.88rem; color: #64748b; font-weight: 800; margin-bottom: 24px;">關卡路徑與糖果地圖生成中</div>
         <div class="island-progress-track">
             <div class="island-progress-fill" id="island-loading-bar"></div>
+        </div>
+    </div>
+
+    <!-- 解鎖大門全螢幕動畫過場 Modal -->
+    <div id="gate-unlock-modal">
+        <div class="gate-doors-wrapper" id="doors-wrapper-anim">
+            <div class="gate-unlock-shine"></div>
+            <i class="fa-solid fa-lock gate-lock-icon" id="gate-lock-symbol"></i>
+            <div class="gate-door left-door"><i class="fa-solid fa-shield-halved" style="color: #ca8a04; font-size: 2.2rem;"></i></div>
+            <div class="gate-door right-door"><i class="fa-solid fa-shield-halved" style="color: #ca8a04; font-size: 2.2rem;"></i></div>
+        </div>
+        <div class="gate-unlock-title" id="gate-unlock-title">🏰 正在解鎖下一階段...</div>
+        <div class="gate-unlock-sub" id="gate-unlock-sub">前往第 2 階段全新領域！</div>
+    </div>
+
+    <!-- 點選地圖節點彈出的「關卡任務選單」Modal -->
+    <div id="modal-lesson-tasks">
+        <div class="lesson-tasks-card">
+            <div class="close-icon-circle" onclick="closeModal('modal-lesson-tasks')"><i class="fa-solid fa-xmark"></i></div>
+            <div style="font-size: 2.6rem; color: var(--candy-node-bg); margin-bottom: 6px;"><i class="fa-solid fa-flag-checkered"></i></div>
+            <h3 style="margin: 0; color: #1e293b; font-size: 1.3rem; font-weight: 900;" id="lbl-task-modal-title">第 1 關</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin: 4px 0 16px 0;">選擇一項挑戰進行通關練習</p>
+            <div class="task-grid-buttons" id="container-task-buttons">
+                <!-- 動態注入該關卡具備的模式按鈕 -->
+            </div>
         </div>
     </div>
 
@@ -1188,8 +1186,7 @@
             <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 10px;" class="hidden"></div>
         </div>
     </div>
-
-    <!-- 忘記密碼 Modal -->
+<!-- 忘記密碼 Modal -->
     <div id="modal-forgot-password" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
@@ -1370,7 +1367,7 @@
         </div>
     </div>
 
-    <!-- 全新：關卡任務完成提示彈窗（無評分/無星級） -->
+    <!-- 關卡任務完成提示彈窗（無評分/無星級） -->
     <div id="modal-grammar-complete" class="custom-modal">
         <div class="custom-modal-card" style="padding: 26px 20px;">
             <div style="font-size: 2.6rem; color: var(--duo-purple); margin-bottom: 10px;">
@@ -1493,20 +1490,26 @@
                 <div id="container-levels" class="option-grid grid-2"></div>
             </div>
 
-            <!-- 步驟 3：選擇關卡挑戰 -->
+            <!-- 步驟 3：全新 Candy Crush / Duolingo 風格闖關大地圖畫面 -->
             <div id="step-lesson" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
-                    <span id="lbl-lesson-unit" style="font-weight: bold; color: var(--duo-blue);">課程關卡</span>
+                    <span id="lbl-lesson-unit" style="font-weight: 900; color: var(--candy-node-bg);">冒險地圖</span>
                 </div>
-                <h2 class="step-title"><i class="fa-solid fa-flag-checkered"></i> 請選擇關卡挑戰</h2>
-                <div id="container-lessons"></div>
-            </div>
+                
+                <!-- 階段選擇切換列 -->
+                <div class="stage-pill-selector" id="container-stage-pills"></div>
 
-            <!-- 步驟 5.5：語法介紹教室 -->
+                <!-- 闖關大地圖與 S 型路徑 -->
+                <div class="roadmap-container" id="roadmap-main-area">
+                    <svg class="roadmap-svg-layer" id="roadmap-svg-canvas"></svg>
+                    <div class="roadmap-nodes-container" id="roadmap-nodes-list"></div>
+                </div>
+            </div>
+<!-- 步驟 5.5：語法介紹教室 -->
             <div id="step-grammar" class="step-page">
                 <div class="top-nav">
-                    <button class="btn-back-step" onclick="goToStep('step-lesson')"><i class="fa-solid fa-arrow-left"></i> 回關卡選擇</button>
+                    <button class="btn-back-step" onclick="goToStep('step-lesson')"><i class="fa-solid fa-arrow-left"></i> 回闖關地圖</button>
                     <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-purple);">關卡任務</span>
                 </div>
 
@@ -1622,9 +1625,7 @@
                 </div>
 
                 <div>
-                    <div class="instruction-badge-bar" id="lbl-chat-instruction-top">
-                        請依指引念出句子：
-                    </div>
+                    <div class="instruction-badge-bar" id="lbl-chat-instruction-top">請依指引念出句子：</div>
                 </div>
 
                 <div id="chat-a-hint-bubble" style="display: none; background: #fef3c7; border: 1.5px solid #fde68a; border-radius: 14px; padding: 10px; margin-bottom: 10px; text-align: left;">
@@ -1938,14 +1939,15 @@
                     <span id="lbl-bottom-grammar">關卡任務</span>
                 </div>
                 <div class="bottom-nav-item map-btn" onclick="goToStep('step-level')">
-                    <i class="fa-solid fa-map-location-dot" style="color: var(--duo-blue);"></i>
+                    <i class="fa-solid fa-map-location-dot" style="color: var(--candy-node-bg);"></i>
                     <span>課程地圖</span>
                 </div>
             </div>
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-<!-- 核心邏輯腳本開始 -->
+
+    <!-- 核心邏輯腳本開始 -->
     <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -1982,7 +1984,6 @@
 
         let isSentenceKeywordMode = false;
         let isSentenceChallengeMode = false;
-
         let challengeSessionStartTime = null;
 
         let mediaRecorder = null;
@@ -2004,7 +2005,6 @@
         let currentWordPronMode = 'kr_pron';
 
         let isCurrentQuestionAnswered = false;
-
         let currentChallengeScore = 0;
         let pointsPerQuestion = 10;
         let passedSubQuestions = new Set();
@@ -2065,14 +2065,9 @@
             const hours = Math.floor(secNum / 3600);
             const minutes = Math.floor((secNum % 3600) / 60);
             const seconds = secNum % 60;
-
-            if (hours > 0) {
-                return `${hours}時 ${minutes}分 ${seconds}秒`;
-            } else if (minutes > 0) {
-                return `${minutes}分 ${seconds}秒`;
-            } else {
-                return `${seconds}秒`;
-            }
+            if (hours > 0) return `${hours}時 ${minutes}分 ${seconds}秒`;
+            if (minutes > 0) return `${minutes}分 ${seconds}秒`;
+            return `${seconds}秒`;
         }
 
         const PRAISE_MESSAGES = [
@@ -2105,11 +2100,7 @@
         function updateUserFlagIcon() {
             const flagElem = document.getElementById('lbl-user-flag');
             if (!flagElem) return;
-            const flagMap = {
-                'korean': '🇰🇷',
-                'japanese': '🇯🇵',
-                'english': '🇺🇸'
-            };
+            const flagMap = { 'korean': '🇰🇷', 'japanese': '🇯🇵', 'english': '🇺🇸' };
             flagElem.innerText = flagMap[currentConfig.category] || '🌐';
         }
 
@@ -2160,8 +2151,7 @@
             const day = String(d.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         }
-
-        async function processDailyCheckIn(user, userData) {
+async function processDailyCheckIn(user, userData) {
             const todayStr = getLocalDateString();
             let history = Array.isArray(userData.checkInHistory) ? [...userData.checkInHistory] : [];
             let lastDateStr = userData.lastCheckInDate || null;
@@ -2178,16 +2168,11 @@
                 const todayDate = new Date(todayStr + "T00:00:00");
                 const diffDays = Math.round((todayDate - lastDate) / (1000 * 60 * 60 * 24));
 
-                if (diffDays === 1) {
-                    streak += 1;
-                } else if (diffDays > 1) {
-                    streak = 1;
-                }
+                if (diffDays === 1) streak += 1;
+                else if (diffDays > 1) streak = 1;
             }
 
-            if (!history.includes(todayStr)) {
-                history.push(todayStr);
-            }
+            if (!history.includes(todayStr)) history.push(todayStr);
 
             userData.streakDays = streak;
             userData.lastCheckInDate = todayStr;
@@ -2239,11 +2224,8 @@
                 }
             },
             saveProgress: async (uid, data) => {
-                try { 
-                    await db.collection("users").doc(uid).set(data, { merge: true }); 
-                } catch (e) { 
-                    console.error("儲存失敗:", e); 
-                }
+                try { await db.collection("users").doc(uid).set(data, { merge: true }); }
+                catch (e) { console.error("儲存失敗:", e); }
             },
             updateUnitProgress: async (uid, unit, lesson) => {
                 try {
@@ -2283,30 +2265,278 @@
             }
         }
 
-        // ==================== 靜默 90 秒閒置與背景跳出防掛機邏輯 ====================
+        // ================= 糖果闖關大地圖 (S-Curve Roadmap) 核心渲染 =================
+        function renderAllLessonsForLevel(level) {
+            const targetLevelNormalized = normalizeLevelStr(level);
+            document.getElementById('lbl-lesson-unit').innerText = `Level ${level} 冒險地圖`;
+
+            const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawWordData];
+            const filteredByLevel = combinedData.filter(i => normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized);
+
+            const units = [...new Set(filteredByLevel.map(i => getItemField(i, 'unit_id')))]
+                .filter(Boolean)
+                .sort((a, b) => Number(a) - Number(b));
+
+            if (units.length === 0) {
+                document.getElementById('roadmap-nodes-list').innerHTML = `<div style="color: #6b7280; padding: 40px 0;">目前 ${level} 尚未在試算表設定課程內容。</div>`;
+                return;
+            }
+
+            if (!units.includes(String(currentConfig.unit_id))) {
+                currentConfig.unit_id = units[0];
+            }
+
+            renderStagePills(units);
+            renderCandyRoadmap(currentConfig.unit_id, filteredByLevel, units);
+        }
+
+        function renderStagePills(units) {
+            const pillContainer = document.getElementById('container-stage-pills');
+            pillContainer.innerHTML = "";
+
+            units.forEach(u => {
+                const btn = document.createElement('button');
+                btn.className = `stage-pill-btn ${String(u) === String(currentConfig.unit_id) ? 'active' : ''}`;
+                btn.innerHTML = `<i class="fa-solid fa-flag"></i> 第 ${u} 階段`;
+                btn.onclick = () => {
+                    if (String(u) !== String(currentConfig.unit_id)) {
+                        triggerGateUnlockTransition(u);
+                    }
+                };
+                pillContainer.appendChild(btn);
+            });
+        }
+
+        // 觸發「解鎖大門」過場城堡動畫
+        function triggerGateUnlockTransition(nextUnitId) {
+            const modal = document.getElementById('gate-unlock-modal');
+            const wrapper = document.getElementById('doors-wrapper-anim');
+            const title = document.getElementById('gate-unlock-title');
+            const sub = document.getElementById('gate-unlock-sub');
+
+            title.innerText = `🏰 解鎖前往第 ${nextUnitId} 階段...`;
+            sub.innerText = "大門正在開啟，準備迎接全新挑戰！";
+
+            wrapper.classList.remove('doors-opened');
+            modal.classList.add('show');
+
+            // 0.4秒後解鎖開啟大門
+            setTimeout(() => {
+                wrapper.classList.add('doors-opened');
+            }, 400);
+
+            // 1.8秒後關閉彈窗並切換地圖
+            setTimeout(() => {
+                modal.classList.remove('show');
+                wrapper.classList.remove('doors-opened');
+                currentConfig.unit_id = String(nextUnitId);
+                renderAllLessonsForLevel(currentConfig.level);
+            }, 1900);
+        }
+
+        function renderCandyRoadmap(unitId, filteredByLevel, units) {
+            const nodesContainer = document.getElementById('roadmap-nodes-list');
+            const svgCanvas = document.getElementById('roadmap-svg-canvas');
+            nodesContainer.innerHTML = "";
+            svgCanvas.innerHTML = "";
+
+            const itemsInUnit = filteredByLevel.filter(i => String(getItemField(i, 'unit_id')) === String(unitId));
+            const lessons = [...new Set(itemsInUnit.map(i => getItemField(i, 'lesson')))]
+                .filter(Boolean)
+                .sort((a, b) => Number(a) - Number(b));
+
+            if (lessons.length === 0) {
+                nodesContainer.innerHTML = `<div style="color: #6b7280; padding: 40px 0;">此階段暫無關卡</div>`;
+                return;
+            }
+
+            const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
+            
+            // S 型擺盪偏移模式 (如截圖波浪狀)
+            const offsets = ['offset-center', 'offset-left-1', 'offset-left-2', 'offset-left-1', 'offset-center', 'offset-right-1', 'offset-right-2', 'offset-right-1'];
+
+            // 找到最後一個通關的關卡或當前挑戰中的第一關
+            let currentActiveLesson = lessons[0];
+            for (let i = 0; i < lessons.length; i++) {
+                const les = lessons[i];
+                const hasAnyPass = ['grammar', 'shadow', 'blocks', 'sentence_chat', 'word_shadow'].some(m => 
+                    completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${les}_${m}`)
+                );
+                if (hasAnyPass) {
+                    currentActiveLesson = (i < lessons.length - 1) ? lessons[i + 1] : les;
+                }
+            }
+
+            // 頂部大門入口（若有下個階段，置於頂端作為通往下一個領域的城堡大門）
+            const currentUnitIndex = units.indexOf(String(unitId));
+            if (currentUnitIndex !== -1 && currentUnitIndex < units.length - 1) {
+                const nextUnitId = units[currentUnitIndex + 1];
+                const gateDiv = document.createElement('div');
+                gateDiv.className = "gate-portal-container";
+                gateDiv.innerHTML = `
+                    <button class="castle-gate-btn" onclick="triggerGateUnlockTransition('${nextUnitId}')">
+                        <i class="fa-solid fa-dungeon" style="font-size: 1.4rem;"></i>
+                        <span>通往第 ${nextUnitId} 階段大門</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </button>
+                `;
+                nodesContainer.appendChild(gateDiv);
+            }
+
+            lessons.forEach((les, idx) => {
+                const lesStr = String(les);
+                const offsetClass = offsets[idx % offsets.length];
+
+                const isCompleted = ['grammar', 'shadow', 'blocks', 'sentence_chat', 'word_shadow', 'word_type', 'word_choice'].some(m => 
+                    completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${lesStr}_${m}`)
+                );
+                const isCurrent = (String(les) === String(currentActiveLesson));
+
+                const row = document.createElement('div');
+                row.className = `roadmap-node-row ${offsetClass}`;
+
+                // 檢查該關卡的歷史最高星級
+                let bestStar = 0;
+                ['practice', 'entry', 'timed'].forEach(t => {
+                    ['grammar', 'shadow', 'blocks', 'sentence_chat', 'word_shadow'].forEach(m => {
+                        const rec = getStoredBestRecord(lesStr, m, t, unitId);
+                        if (rec && rec.stars > bestStar) bestStar = rec.stars;
+                    });
+                });
+
+                let starIcons = bestStar > 0 ? '★'.repeat(bestStar) : '• • •';
+
+                row.innerHTML = `
+                    <div style="position: relative;">
+                        ${isCurrent ? `<img src="images/avatar.png" onerror="this.onerror=null; this.src='https://api.dicebear.com/7.x/bottts/svg?seed=Yoona';" class="node-avatar-badge" alt="Player">` : ''}
+                        <button class="candy-node-btn ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}" onclick="openLessonTasksModal('${unitId}', '${lesStr}')">
+                            <span class="candy-node-num">${lesStr}</span>
+                            <span class="candy-node-stars">${starIcons}</span>
+                        </button>
+                    </div>
+                `;
+                nodesContainer.appendChild(row);
+            });
+
+            // 畫出連貫各節點的糖果粉色 S 型斑馬線/虛線
+            setTimeout(() => drawRoadmapSvgPath(), 100);
+        }
+
+        // SVG 動態繪製連接道路
+        function drawRoadmapSvgPath() {
+            const svg = document.getElementById('roadmap-svg-canvas');
+            const container = document.getElementById('roadmap-main-area');
+            const btns = Array.from(document.querySelectorAll('.candy-node-btn'));
+
+            if (!svg || !container || btns.length < 2) return;
+
+            svg.setAttribute('width', container.offsetWidth);
+            svg.setAttribute('height', container.offsetHeight);
+
+            const containerRect = container.getBoundingClientRect();
+            const points = btns.map(b => {
+                const r = b.getBoundingClientRect();
+                return {
+                    x: r.left + r.width / 2 - containerRect.left,
+                    y: r.top + r.height / 2 - containerRect.top + container.scrollTop
+                };
+            });
+
+            let pathD = `M ${points[0].x} ${points[0].y}`;
+            for (let i = 0; i < points.length - 1; i++) {
+                const p1 = points[i];
+                const p2 = points[i + 1];
+                const cx1 = p1.x;
+                const cy1 = (p1.y + p2.y) / 2;
+                const cx2 = p2.x;
+                const cy2 = (p1.y + p2.y) / 2;
+                pathD += ` C ${cx1} ${cy1}, ${cx2} ${cy2}, ${p2.x} ${p2.y}`;
+            }
+
+            svg.innerHTML = `
+                <path d="${pathD}" fill="none" stroke="#fbcfe8" stroke-width="18" stroke-linecap="round" />
+                <path d="${pathD}" fill="none" stroke="#f472b6" stroke-width="8" stroke-linecap="round" stroke-dasharray="14 10" />
+            `;
+        }
+
+        // 點擊節點彈出關卡任務視窗
+        function openLessonTasksModal(unitId, lesson) {
+            currentConfig.unit_id = String(unitId);
+            currentConfig.lesson = String(lesson);
+
+            document.getElementById('lbl-task-modal-title').innerText = `第 ${unitId} 階段 - 第 ${lesson} 關`;
+            const container = document.getElementById('container-task-buttons');
+            container.innerHTML = "";
+
+            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+            const matchFilter = (list) => list.some(item => 
+                normalizeLevelStr(getItemField(item, 'level')) === targetLevelNormalized &&
+                String(getItemField(item, 'unit_id')) === String(unitId) &&
+                String(getItemField(item, 'lesson')) === String(lesson)
+            );
+
+            const hasGrammar = globalGrammarData.some(g => 
+                normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
+                String(getItemField(g, 'unit_id')) === String(unitId) &&
+                String(getItemField(g, 'lesson')) === String(lesson) &&
+                ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0))
+            );
+
+            const hasWord = matchFilter(rawWordData);
+            const hasShadow = matchFilter(rawShadowData);
+            const hasBlocks = matchFilter(rawBlocksData);
+            const hasDialogue = rawDialogueData.some(d => 
+                normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
+                String(getItemField(d, 'unit_id')) === String(unitId) &&
+                String(getItemField(d, 'lesson')) === String(lesson) &&
+                ((d.a1 && d.a1.trim()) || (d.b1 && d.b1.trim()))
+            );
+
+            const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
+
+            const addTaskBtn = (mode, label, iconClass, colorClass) => {
+                const isCompleted = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${lesson}_${mode}`);
+                const btn = document.createElement('button');
+                btn.className = `btn-3d ${isCompleted ? 'btn-3d-primary' : colorClass}`;
+                btn.style.cssText = "padding: 12px 6px; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 6px;";
+                btn.innerHTML = `<i class="${iconClass}"></i> ${label} ${isCompleted ? '✓' : ''}`;
+                btn.onclick = () => {
+                    closeModal('modal-lesson-tasks');
+                    promptSelectModeType(unitId, lesson, mode, label);
+                };
+                container.appendChild(btn);
+            };
+
+            if (hasGrammar) addTaskBtn('grammar', '關卡任務', 'fa-solid fa-book-open', 'btn-3d-secondary');
+            if (hasWord) {
+                addTaskBtn('word_shadow', '單字跟讀', 'fa-solid fa-microphone', 'btn-3d-blue');
+                addTaskBtn('word_choice', '單字選擇', 'fa-solid fa-bullseye', 'btn-3d-blue');
+                addTaskBtn('word_type', '單字聽打', 'fa-solid fa-keyboard', 'btn-3d-blue');
+            }
+            if (hasShadow) addTaskBtn('shadow', '句子跟讀', 'fa-solid fa-volume-high', 'btn-3d-primary');
+            if (hasBlocks) addTaskBtn('blocks', '字塊重組', 'fa-solid fa-puzzle-piece', 'btn-3d-secondary');
+            if (hasDialogue) addTaskBtn('sentence_chat', '對話挑戰', 'fa-solid fa-comments', 'btn-3d-primary');
+
+            openModal('modal-lesson-tasks');
+        }
+
+        // ================= 90 秒閒置與背景防掛機機制 =================
         function resetIdleTimer() {
             if (isIdlePaused) return;
             if (idleTimer) clearTimeout(idleTimer);
-
             if (challengeSessionStartTime) {
-                idleTimer = setTimeout(() => {
-                    handleIdleTimeout(false);
-                }, IDLE_LIMIT_MS);
+                idleTimer = setTimeout(() => handleIdleTimeout(false), IDLE_LIMIT_MS);
             }
         }
 
         function clearIdleTimer() {
-            if (idleTimer) {
-                clearTimeout(idleTimer);
-                idleTimer = null;
-            }
+            if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
         }
 
         async function handleIdleTimeout(isFromPageHidden = false) {
             isIdlePaused = true;
             clearIdleTimer();
             stopSpeechRecognition();
-
             await recordSessionFocusTime();
 
             if (challengeTimerInterval) {
@@ -2319,12 +2549,11 @@
 
             if (isFromPageHidden) {
                 if (titleElem) titleElem.innerText = "學習已暫停";
-                if (descElem) descElem.innerText = "檢測到您切換離開畫面，系統已自動暫停專注計時。休息好了就繼續吧！";
+                if (descElem) descElem.innerText = "檢測到您切換離開畫面，系統已自動暫停計時。休息好了就繼續吧！";
             } else {
                 if (titleElem) titleElem.innerText = "閒置過久囉！";
-                if (descElem) descElem.innerText = "檢測到您已超過 90 秒未操作，系統已自動暫停專注計時。準備好就點擊繼續！";
+                if (descElem) descElem.innerText = "檢測到您已超過 90 秒未操作，系統已自動暫停計時。準備好就點擊繼續！";
             }
-
             openModal('modal-idle-timeout');
         }
 
@@ -2341,7 +2570,6 @@
                                   (currentConfig.mode === 'blocks') ? 'blocks' : 'shadow';
                 resumeChallengeTimer(targetKey);
             }
-
             resetIdleTimer();
         }
 
@@ -2379,26 +2607,18 @@
             }, 1000);
         }
 
-        function handleMobilePageHidden() {
-            if (challengeSessionStartTime && !isIdlePaused) {
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && challengeSessionStartTime && !isIdlePaused) {
                 handleIdleTimeout(true);
             }
-        }
-
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                handleMobilePageHidden();
-            }
         });
-
         window.addEventListener('pagehide', () => {
-            handleMobilePageHidden();
+            if (challengeSessionStartTime && !isIdlePaused) handleIdleTimeout(true);
         });
 
         // 選擇挑戰模式彈窗
         function promptSelectModeType(unitId, lesson, mode, label) {
             currentConfig.unit_id = String(unitId);
-            // 若為關卡任務，不需要任何評分模式，直接進入練習模式
             if (mode === 'grammar') {
                 activeChallengeType = 'practice';
                 selectLessonAndMode(lesson, mode);
@@ -2411,12 +2631,7 @@
 
             const btnEntry = document.getElementById('btn-mode-choice-entry');
             const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
-
-            if (is0ALevel) {
-                if (btnEntry) btnEntry.style.display = 'none';
-            } else {
-                if (btnEntry) btnEntry.style.display = 'flex';
-            }
+            if (btnEntry) btnEntry.style.display = is0ALevel ? 'none' : 'flex';
 
             ['practice', 'entry', 'timed'].forEach(t => {
                 const tagElem = document.getElementById(`tag-star-${t}`);
@@ -2458,7 +2673,6 @@
         async function saveChallengeScoreRecord(finalScore, elapsedSeconds = null) {
             const starInfo = calculateStars(finalScore);
             const key = getRecordKey(currentConfig.lesson, currentConfig.mode, activeChallengeType);
-            
             const existingRecord = getStoredBestRecord(currentConfig.lesson, currentConfig.mode, activeChallengeType);
             const bestScore = existingRecord ? Math.max(existingRecord.score, finalScore) : finalScore;
             const bestStars = existingRecord ? Math.max(existingRecord.stars, starInfo.stars) : starInfo.stars;
@@ -2466,9 +2680,7 @@
 
             let bestTime = existingRecord ? (existingRecord.bestTime || null) : null;
             if (elapsedSeconds !== null && elapsedSeconds > 0) {
-                if (bestTime === null || elapsedSeconds < bestTime) {
-                    bestTime = elapsedSeconds;
-                }
+                if (bestTime === null || elapsedSeconds < bestTime) bestTime = elapsedSeconds;
             }
 
             const recordData = {
@@ -2503,7 +2715,6 @@
             const canvas = document.getElementById('settlement-canvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
-            
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 
@@ -2516,19 +2727,16 @@
             const colors = ['#f59e0b', '#1cb0f6', '#58cc02', '#ff4b4b', '#ec4899', '#8b5cf6', '#eab308'];
 
             function createFirework(x, y) {
-                const count = 35;
-                for (let i = 0; i < count; i++) {
+                for (let i = 0; i < 35; i++) {
                     const angle = Math.random() * Math.PI * 2;
                     const speed = Math.random() * 5 + 2;
                     particles.push({
-                        x: x,
-                        y: y,
+                        x: x, y: y,
                         vx: Math.cos(angle) * speed,
                         vy: Math.sin(angle) * speed,
                         size: Math.random() * 4 + 2,
                         color: colors[Math.floor(Math.random() * colors.length)],
-                        alpha: 1,
-                        decay: Math.random() * 0.015 + 0.015
+                        alpha: 1, decay: Math.random() * 0.015 + 0.015
                     });
                 }
             }
@@ -2540,13 +2748,9 @@
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 const now = Date.now();
 
-                if (now - startTime < durationMs) {
-                    if (now - lastBurst > 280) {
-                        const randX = canvas.width * 0.2 + Math.random() * (canvas.width * 0.6);
-                        const randY = canvas.height * 0.15 + Math.random() * (canvas.height * 0.35);
-                        createFirework(randX, randY);
-                        lastBurst = now;
-                    }
+                if (now - startTime < durationMs && now - lastBurst > 280) {
+                    createFirework(canvas.width * 0.2 + Math.random() * (canvas.width * 0.6), canvas.height * 0.15 + Math.random() * (canvas.height * 0.35));
+                    lastBurst = now;
                 }
 
                 for (let i = particles.length - 1; i >= 0; i--) {
@@ -2556,9 +2760,8 @@
                     p.vy += 0.06;
                     p.alpha -= p.decay;
 
-                    if (p.alpha <= 0) {
-                        particles.splice(i, 1);
-                    } else {
+                    if (p.alpha <= 0) particles.splice(i, 1);
+                    else {
                         ctx.save();
                         ctx.globalAlpha = p.alpha;
                         ctx.fillStyle = p.color;
@@ -2576,7 +2779,6 @@
                     fireworksAnimationId = null;
                 }
             }
-
             animate();
         }
 
@@ -2609,19 +2811,13 @@
                 const starElem = document.getElementById(`settlement-star-${i}`);
                 if (starElem) {
                     starElem.className = 'fa-solid fa-star settlement-star';
-                    if (i <= starsCount) {
-                        starElem.classList.add('active', `star-anim-${i}`);
-                    } else {
-                        starElem.classList.add('inactive');
-                    }
+                    if (i <= starsCount) starElem.classList.add('active', `star-anim-${i}`);
+                    else starElem.classList.add('inactive');
                 }
             }
 
             openModal('modal-challenge-settlement');
-
-            if (starsCount > 0) {
-                triggerFireworks(3500);
-            }
+            if (starsCount > 0) triggerFireworks(3500);
         }
 
         function closeSettlementAndReturn() {
@@ -2639,7 +2835,6 @@
             goToStep('step-lesson');
         }
 
-        // 關卡任務專屬完成關閉
         function closeGrammarCompleteModal() {
             closeModal('modal-grammar-complete');
             renderAllLessonsForLevel(currentConfig.level);
@@ -2716,7 +2911,6 @@
 
         function triggerBottomGrammarAction() {
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-            
             let matchGrammar = globalGrammarData.find(g => 
                 normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
                 String(getItemField(g, 'unit_id')) === String(currentConfig.unit_id) &&
@@ -2788,11 +2982,8 @@
 
         function resumeLastPlayedProgress() {
             const lastLevel = localStorage.getItem('last_played_level');
-            
             let cachedUnlocked = [];
-            try {
-                cachedUnlocked = JSON.parse(localStorage.getItem('cached_unlocked_levels') || '[]');
-            } catch(e) {}
+            try { cachedUnlocked = JSON.parse(localStorage.getItem('cached_unlocked_levels') || '[]'); } catch(e) {}
             const unlocked = ((window.currentUserData && window.currentUserData.unlockedLevels) 
                 ? window.currentUserData.unlockedLevels 
                 : (cachedUnlocked.length > 0 ? cachedUnlocked : ['0A'])).map(l => String(l).trim().toUpperCase());
@@ -2850,7 +3041,6 @@
                     });
                 }
                 if (unlockedLevels.length === 0) unlockedLevels = ['0A'];
-
                 localStorage.setItem('cached_unlocked_levels', JSON.stringify(unlockedLevels));
 
                 const memberships = unlockedLevels.map(lvl => ({
@@ -2880,15 +3070,9 @@
                     window.currentUserData.memberships = memberships;
                     window.currentUserData.unlockedLevels = unlockedLevels;
                     
-                    if (!Array.isArray(window.currentUserData.completedLessons)) {
-                        window.currentUserData.completedLessons = [];
-                    }
-                    if (!Array.isArray(window.currentUserData.friends)) {
-                        window.currentUserData.friends = [];
-                    }
-                    if (!window.currentUserData.modeScores) {
-                        window.currentUserData.modeScores = {};
-                    }
+                    if (!Array.isArray(window.currentUserData.completedLessons)) window.currentUserData.completedLessons = [];
+                    if (!Array.isArray(window.currentUserData.friends)) window.currentUserData.friends = [];
+                    if (!window.currentUserData.modeScores) window.currentUserData.modeScores = {};
 
                     await processDailyCheckIn(user, window.currentUserData);
 
@@ -2938,7 +3122,6 @@
                 }
 
                 showIslandLoading("角色誕生！正在開闢專屬島嶼...", 50);
-
                 const todayStr = getLocalDateString();
                 const initialData = {
                     email: currentUser.email,
@@ -2996,9 +3179,7 @@
                 try {
                     await db.collection('users').doc(currentUser.uid).set({ learnCategory: cat }, { merge: true });
                     if (window.currentUserData) window.currentUserData.learnCategory = cat;
-                } catch (e) { 
-                    console.error("更新學習語言偏好失敗:", e); 
-                }
+                } catch (e) { console.error("更新學習語言偏好失敗:", e); }
             }
 
             closeProfileView();
@@ -3031,7 +3212,6 @@
             const streakDays = window.currentUserData.streakDays || 1;
             const xp = window.currentUserData.xp || 0;
             const displayName = window.currentUserData.displayName || "學生";
-
             const totalSeconds = Number(window.currentUserData.focusSeconds || (window.currentUserData.focusHours ? window.currentUserData.focusHours * 3600 : 0));
             const focusText = formatFocusDurationText(totalSeconds);
 
@@ -3046,7 +3226,6 @@
             if (accountLearnLangSelect) accountLearnLangSelect.value = savedCategory;
 
             updateUserFlagIcon();
-
             document.getElementById('lbl-username').innerText = displayName;
             document.getElementById('lbl-streak-days').innerText = streakDays;
             document.getElementById('lbl-xp').innerText = xp;
@@ -3128,9 +3307,7 @@
         };
 
         const btnCancelNickname = document.getElementById('btn-cancel-nickname');
-        if (btnCancelNickname) {
-            btnCancelNickname.onclick = () => closeModal('modal-edit-nickname');
-        }
+        if (btnCancelNickname) btnCancelNickname.onclick = () => closeModal('modal-edit-nickname');
 
         document.getElementById('btn-google-login').onclick = async () => {
             try { 
@@ -3197,7 +3374,6 @@
             if (m) { m.classList.remove('show'); m.classList.add('hidden'); }
         }
 
-        // 點擊左上角暱稱時，預設顯示「排行榜」畫面
         function openProfileView() {
             clearIdleTimer();
             document.getElementById('learning-content-view').classList.add('hidden');
@@ -3436,10 +3612,7 @@
 
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
-
-            const historyList = (window.currentUserData && Array.isArray(window.currentUserData.checkInHistory))
-                ? window.currentUserData.checkInHistory
-                : [];
+            const historyList = (window.currentUserData && Array.isArray(window.currentUserData.checkInHistory)) ? window.currentUserData.checkInHistory : [];
 
             for (let i = 0; i < firstDayIndex; i++) {
                 const emptyCell = document.createElement('div');
@@ -3451,13 +3624,8 @@
                 const dayCell = document.createElement('div');
                 dayCell.className = "calendar-day";
                 dayCell.innerText = day;
-
                 const currentCellDateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-
-                if (historyList.includes(currentCellDateStr)) {
-                    dayCell.classList.add('checked');
-                }
-
+                if (historyList.includes(currentCellDateStr)) dayCell.classList.add('checked');
                 container.appendChild(dayCell);
             }
         }
@@ -3480,9 +3648,7 @@
 
         function triggerLevelSelectionModal() {
             let cachedUnlocked = [];
-            try {
-                cachedUnlocked = JSON.parse(localStorage.getItem('cached_unlocked_levels') || '[]');
-            } catch(e) {}
+            try { cachedUnlocked = JSON.parse(localStorage.getItem('cached_unlocked_levels') || '[]'); } catch(e) {}
             const userUnlocked = ((window.currentUserData && window.currentUserData.unlockedLevels)
                 ? window.currentUserData.unlockedLevels
                 : (cachedUnlocked.length > 0 ? cachedUnlocked : ['0A'])).map(l => String(l).trim().toUpperCase());
@@ -3593,9 +3759,8 @@
                 bottomBar.style.display = (stepId === 'step-lesson') ? 'flex' : 'none';
             }
 
-            if (stepId === 'step-level') {
-                renderLevelMenu();
-            }
+            if (stepId === 'step-level') renderLevelMenu();
+            if (stepId === 'step-lesson') setTimeout(() => drawRoadmapSvgPath(), 100);
         }
 
         function setUserLang(lang) {
@@ -3673,10 +3838,7 @@
             container.innerHTML = "";
 
             let cachedUnlocked = [];
-            try {
-                cachedUnlocked = JSON.parse(localStorage.getItem('cached_unlocked_levels') || '[]');
-            } catch(e) {}
-
+            try { cachedUnlocked = JSON.parse(localStorage.getItem('cached_unlocked_levels') || '[]'); } catch(e) {}
             const userUnlocked = ((window.currentUserData && window.currentUserData.unlockedLevels) 
                 ? window.currentUserData.unlockedLevels 
                 : (cachedUnlocked.length > 0 ? cachedUnlocked : ['0A'])).map(l => String(l).trim().toUpperCase());
@@ -3724,128 +3886,6 @@
             goToStep('step-lesson');
         }
 
-        function renderAllLessonsForLevel(level) {
-            const container = document.getElementById('container-lessons');
-            if (!container) return;
-            container.innerHTML = "";
-
-            const targetLevelNormalized = normalizeLevelStr(level);
-            document.getElementById('lbl-lesson-unit').innerText = `Level ${level}`;
-
-            const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawWordData];
-            const filteredByLevel = combinedData.filter(i => normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized);
-
-            const units = [...new Set(filteredByLevel.map(i => getItemField(i, 'unit_id')))]
-                .filter(Boolean)
-                .sort((a, b) => Number(a) - Number(b));
-
-            const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
-
-            if (units.length === 0) {
-                container.innerHTML = `<div style="color: #6b7280; padding: 25px 0;">目前 ${level} 尚未在試算表設定課程內容。</div>`;
-                return;
-            }
-
-            units.forEach(unitId => {
-                const unitStr = String(unitId);
-                const itemsInUnit = filteredByLevel.filter(i => String(getItemField(i, 'unit_id')) === unitStr);
-                const lessons = [...new Set(itemsInUnit.map(i => getItemField(i, 'lesson')))]
-                    .filter(Boolean)
-                    .sort((a, b) => Number(a) - Number(b));
-
-                if (lessons.length === 0) return;
-
-                const unitSection = document.createElement('div');
-                unitSection.className = "unit-section-container";
-
-                const unitHeader = document.createElement('div');
-                unitHeader.className = "unit-section-header";
-                unitHeader.innerHTML = `
-                    <span><i class="fa-solid fa-map"></i> 第 ${unitStr} 階段</span>
-                    <span class="unit-badge-tag">${lessons.length} 關</span>
-                `;
-                unitSection.appendChild(unitHeader);
-
-                lessons.forEach(les => {
-                    const lesStr = String(les);
-
-                    const matchFilter = (list) => list.some(item => 
-                        normalizeLevelStr(getItemField(item, 'level')) === targetLevelNormalized &&
-                        String(getItemField(item, 'unit_id')) === unitStr &&
-                        String(getItemField(item, 'lesson')) === lesStr
-                    );
-
-                    const hasGrammar = globalGrammarData.some(g => 
-                        normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
-                        String(getItemField(g, 'unit_id')) === unitStr &&
-                        String(getItemField(g, 'lesson')) === lesStr &&
-                        ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0))
-                    );
-
-                    const hasWord = matchFilter(rawWordData);
-                    const hasShadow = matchFilter(rawShadowData);
-                    const hasBlocks = matchFilter(rawBlocksData);
-                    const hasDialogue = rawDialogueData.some(d => 
-                        normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
-                        String(getItemField(d, 'unit_id')) === unitStr &&
-                        String(getItemField(d, 'lesson')) === lesStr &&
-                        ((d.a1 && d.a1.trim()) || (d.b1 && d.b1.trim()))
-                    );
-
-                    const card = document.createElement('div');
-                    card.className = "lesson-card-item";
-
-                    const title = document.createElement('div');
-                    title.className = "lesson-card-title";
-                    title.innerText = `第 ${lesStr} 關`;
-
-                    const btnGroup = document.createElement('div');
-                    btnGroup.className = "lesson-btn-group";
-
-                    const createActionButton = (mode, label, defaultClass = '') => {
-                        const btn = document.createElement('button');
-                        const isCompleted = completedList.includes(`${currentConfig.category}_${level}_${unitStr}_${lesStr}_${mode}`);
-                        btn.className = `btn-lesson-action ${defaultClass}`;
-                        if (isCompleted) {
-                            btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${label}`;
-                            btn.style.backgroundColor = '#f59e0b';
-                            btn.style.color = '#ffffff';
-                            btn.style.borderColor = '#d97706';
-                        } else {
-                            btn.innerHTML = label;
-                        }
-                        btn.onclick = () => promptSelectModeType(unitStr, lesStr, mode, label);
-                        return btn;
-                    };
-
-                    if (hasGrammar) btnGroup.appendChild(createActionButton('grammar', '關卡任務', 'btn-grammar-lesson'));
-                    
-                    if (hasWord) {
-                        btnGroup.appendChild(createActionButton('word_shadow', '🗣 單字跟讀', 'btn-word-action'));
-                        btnGroup.appendChild(createActionButton('word_choice', '🎯 單字選擇', 'btn-word-action'));
-                        btnGroup.appendChild(createActionButton('word_type', '⌨ 單字聽打', 'btn-word-action'));
-                    }
-
-                    if (hasShadow) btnGroup.appendChild(createActionButton('shadow', '🎙 句子跟讀'));
-                    if (hasBlocks) btnGroup.appendChild(createActionButton('blocks', '🧩 字塊重組'));
-                    if (hasDialogue) btnGroup.appendChild(createActionButton('sentence_chat', '🗣 句子問答', 'btn-chat-lesson'));
-
-                    if (btnGroup.children.length === 0) {
-                        const emptyTip = document.createElement('div');
-                        emptyTip.style.cssText = "font-size:0.8rem; color:#94a3b8; padding: 6px 0;";
-                        emptyTip.innerText = "此關卡尚無開放挑戰";
-                        btnGroup.appendChild(emptyTip);
-                    }
-
-                    card.appendChild(title);
-                    card.appendChild(btnGroup);
-                    unitSection.appendChild(card);
-                });
-
-                container.appendChild(unitSection);
-            });
-        }
-
         function startChallengeTimer(targetModeKey) {
             stopChallengeTimer();
             challengeTimeRemaining = 300;
@@ -3867,17 +3907,12 @@
                 const pct = (challengeTimeRemaining / 300) * 100;
                 barElem.style.width = `${pct}%`;
 
-                if (challengeTimeRemaining <= 30) {
-                    barElem.style.background = 'var(--duo-fire-red)';
-                } else if (challengeTimeRemaining <= 90) {
-                    barElem.style.background = 'var(--duo-gold)';
-                } else {
-                    barElem.style.background = 'linear-gradient(90deg, var(--duo-blue), var(--duo-green))';
-                }
+                if (challengeTimeRemaining <= 30) barElem.style.background = 'var(--duo-fire-red)';
+                else if (challengeTimeRemaining <= 90) barElem.style.background = 'var(--duo-gold)';
+                else barElem.style.background = 'linear-gradient(90deg, var(--duo-blue), var(--duo-green))';
             }
 
             updateDisplay();
-
             challengeTimerInterval = setInterval(() => {
                 challengeTimeRemaining--;
                 if (challengeTimeRemaining <= 0) {
@@ -3933,7 +3968,6 @@
             }
         }
 
-        // 一般題目挑戰完成（含評分結算）
         async function finishCurrentChallenge() {
             clearIdleTimer();
             stopSpeechRecognition();
@@ -3967,12 +4001,10 @@
             });
         }
 
-        // 全新：關卡任務專屬完成函式（無評分、無星級）
         async function finishGrammarTask() {
             clearIdleTimer();
             stopSpeechRecognition();
             stopChallengeTimer();
-
             await recordSessionFocusTime();
 
             const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_grammar`;
@@ -3990,7 +4022,6 @@
                     }
                 }
             }
-
             openModal('modal-grammar-complete');
         }
 
@@ -4029,8 +4060,7 @@
             }
         }
 
-        // ==================== 語法介紹邏輯 ====================
-
+        // ================= 語法介紹教室邏輯 =================
         function cleanInitialWhitespace(str) {
             return (str || '').replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
         }
@@ -4043,7 +4073,6 @@
             grammarQuizIndex = 0;
             
             document.getElementById('lbl-grammar-info').innerText = `關卡任務 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Lesson ${currentConfig.lesson}`;
-            
             document.getElementById('area-grammar-all-history').style.display = 'none';
             document.getElementById('area-grammar-quiz').style.display = 'none';
 
@@ -4093,18 +4122,13 @@
 
             const nextBtn = document.getElementById('btn-next-dialog');
             if (currentDialogIndex === total - 1) {
-                if (hasQuiz) {
-                    nextBtn.innerHTML = `進入隨堂測驗 <i class="fa-solid fa-pen-to-square"></i>`;
-                } else {
-                    nextBtn.innerHTML = `🎉 完成任務 <i class="fa-solid fa-check"></i>`;
-                }
+                nextBtn.innerHTML = hasQuiz ? `進入隨堂測驗 <i class="fa-solid fa-pen-to-square"></i>` : `🎉 完成任務 <i class="fa-solid fa-check"></i>`;
             } else {
                 nextBtn.innerHTML = `下一步 <i class="fa-solid fa-arrow-right"></i>`;
             }
 
             const currentDialogObj = currentGrammarItem.dialogs[currentDialogIndex];
             currentFullDialogText = cleanInitialWhitespace(currentDialogObj.text || "");
-
             const mainDialogBox = document.getElementById('box-grammar-dialog-main');
 
             if (currentFullDialogText) {
@@ -4130,20 +4154,14 @@
                     exArr.forEach((singleEx, exIdx) => {
                         const itemDiv = document.createElement('div');
                         itemDiv.className = 'grammar-example-item';
-
                         const textSpan = document.createElement('div');
                         textSpan.className = 'grammar-example-item-text';
                         textSpan.innerText = `${exIdx + 1}. ${singleEx}`;
-
                         const playBtn = document.createElement('button');
                         playBtn.className = 'btn-example-item-audio';
                         playBtn.title = '播放此例句語音';
                         playBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
-                        playBtn.onclick = (e) => {
-                            e.stopPropagation();
-                            speakTTS(singleEx, 0.85);
-                        };
-
+                        playBtn.onclick = (e) => { e.stopPropagation(); speakTTS(singleEx, 0.85); };
                         itemDiv.appendChild(textSpan);
                         itemDiv.appendChild(playBtn);
                         listExample.appendChild(itemDiv);
@@ -4168,15 +4186,11 @@
                 if (charIndex < text.length) {
                     box.textContent = text.substring(0, charIndex + 1);
                     charIndex++;
-                    if (container) {
-                        container.scrollTop = container.scrollHeight;
-                    }
+                    if (container) container.scrollTop = container.scrollHeight;
                 } else {
                     clearInterval(typewriterTimer);
                     isTypewriterTyping = false;
-                    if (container) {
-                        container.scrollTop = container.scrollHeight;
-                    }
+                    if (container) container.scrollTop = container.scrollHeight;
                 }
             }, 35);
         }
@@ -4188,16 +4202,13 @@
                 const container = document.getElementById('box-grammar-dialog-main');
                 box.textContent = currentFullDialogText;
                 isTypewriterTyping = false;
-                if (container) {
-                    setTimeout(() => { container.scrollTop = container.scrollHeight; }, 10);
-                }
+                if (container) setTimeout(() => { container.scrollTop = container.scrollHeight; }, 10);
             }
         }
 
         function nextGrammarDialog() {
             if (isTypewriterTyping) { completeTypewriterImmediately(); return; }
             if (!currentGrammarItem) return;
-
             if (currentGrammarItem.dialogs && currentDialogIndex < currentGrammarItem.dialogs.length - 1) {
                 currentDialogIndex++;
                 showCurrentGrammarDialog();
@@ -4223,7 +4234,6 @@
         function processAfterDialogs() {
             renderGrammarHistoryList();
             document.getElementById('area-grammar-dialog').style.display = 'none';
-            
             if (currentGrammarItem.expandedQuizzes && currentGrammarItem.expandedQuizzes.length > 0) {
                 showGrammarQuizArea();
             } else {
@@ -4240,7 +4250,6 @@
                 list.forEach((itemObj, idx) => {
                     const item = document.createElement('div');
                     item.className = 'dialog-history-item';
-                    
                     let exHtml = '';
                     if (itemObj.example) {
                         const splitted = itemObj.example.split('/').map(s => s.trim()).filter(Boolean);
@@ -4250,7 +4259,6 @@
                             </div>`;
                         }
                     }
-
                     item.innerHTML = `
                         <span class="num-title">${idx + 1}.</span>
                         <div class="text-body">${cleanInitialWhitespace(itemObj.text)}${exHtml}</div>
@@ -4265,18 +4273,13 @@
             document.getElementById('area-grammar-dialog').style.display = 'none';
             document.getElementById('area-grammar-quiz').style.display = 'block';
             document.getElementById('box-grammar-result').style.display = 'none';
-
             renderGrammarHistoryList();
 
             const quizList = currentGrammarItem.expandedQuizzes || [];
-            if (!quizList.length) {
-                finishGrammarTask();
-                return;
-            }
+            if (!quizList.length) { finishGrammarTask(); return; }
 
             const qContainer = document.getElementById('container-grammar-questions');
             qContainer.innerHTML = '';
-
             let totalSlots = 0;
             quizList.forEach(q => {
                 const matches = (q.question || '').match(/_+/g) || [];
@@ -4285,12 +4288,10 @@
 
             userGrammarAnswers = new Array(totalSlots).fill('');
             activeBlankIndex = 0;
-
             let globalSlotIdx = 0;
 
             quizList.forEach((qObj, qIdx) => {
                 const qStr = qObj.question || "";
-                
                 const formattedHtml = qStr.replace(/_+/g, () => {
                     const currentId = globalSlotIdx;
                     const slotHtml = `<span class="blank-slot" id="blank-slot-${currentId}" onclick="setActiveBlank(${currentId})">___</span>`;
@@ -4307,7 +4308,6 @@
 
             const cContainer = document.getElementById('container-grammar-choices');
             cContainer.innerHTML = '';
-            
             let allChoices = [];
             quizList.forEach(q => {
                 const cArr = (q.choice || '').split(/[\/,]/).map(s => s.trim()).filter(Boolean);
@@ -4324,9 +4324,7 @@
             });
         }
 
-        function setActiveBlank(index) {
-            activeBlankIndex = index;
-        }
+        function setActiveBlank(index) { activeBlankIndex = index; }
 
         function fillGrammarAnswer(optionText) {
             userGrammarAnswers[activeBlankIndex] = optionText;
@@ -4339,10 +4337,7 @@
         function checkGrammarQuiz() {
             const quizList = currentGrammarItem.expandedQuizzes || [];
             if (!quizList.length) return;
-
-            if (userGrammarAnswers.includes('')) {
-                return alert('請填寫完所有空格後再送出答案！');
-            }
+            if (userGrammarAnswers.includes('')) return alert('請填寫完所有空格後再送出答案！');
 
             let globalSlotIdx = 0;
             let isAllCorrect = true;
@@ -4351,7 +4346,6 @@
             quizList.forEach((qObj, idx) => {
                 const expectedAnswer = (qObj.answer || '').replace(/\s+/g, '');
                 correctAnswersList.push(`第 ${idx + 1} 題：【${qObj.answer}】`);
-
                 const matches = (qObj.question || '').match(/_+/g) || [];
                 
                 let thisQuestionAnswers = [];
@@ -4370,11 +4364,7 @@
                 const ansJoined = thisQuestionAnswers.join('').replace(/\s+/g, '');
                 const ansSlash = thisQuestionAnswers.join('/').replace(/\s+/g, '');
 
-                const isThisPass = (fullUserSentence === expectedAnswer) || 
-                                   (ansJoined === expectedAnswer) || 
-                                   (ansSlash === expectedAnswer);
-
-                if (!isThisPass) {
+                if ((fullUserSentence !== expectedAnswer) && (ansJoined !== expectedAnswer) && (ansSlash !== expectedAnswer)) {
                     isAllCorrect = false;
                 }
             });
@@ -4399,8 +4389,7 @@
             }
         }
 
-        // ==================== 通用單字挑戰邏輯 ====================
-
+        // ================= 通用單字挑戰邏輯 =================
         function getWordTranslation(item) {
             if (!item) return "";
             return (currentConfig.lang === 'en') ? (item.en || item.zh_tw || "") :
@@ -4410,9 +4399,7 @@
         function toggleWordPronunciationMode() {
             currentWordPronMode = (currentWordPronMode === 'kr_pron') ? 'romanization' : 'kr_pron';
             const lbl = document.getElementById('lbl-toggle-word-pron-text');
-            if (lbl) {
-                lbl.innerText = (currentWordPronMode === 'kr_pron') ? '切換 羅馬拼音' : '切換 音標';
-            }
+            if (lbl) lbl.innerText = (currentWordPronMode === 'kr_pron') ? '切換 羅馬拼音' : '切換 音標';
             document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
             renderWordShadowSubtext();
         }
@@ -4432,19 +4419,12 @@
 
             let pronStr = "";
             if (currentWordPronMode === 'kr_pron') {
-                if (item.kr_pron) {
-                    pronStr = `[${item.kr_pron}]`;
-                } else if (item.romanization) {
-                    pronStr = `[${item.romanization}]`;
-                }
+                if (item.kr_pron) pronStr = `[${item.kr_pron}]`;
+                else if (item.romanization) pronStr = `[${item.romanization}]`;
             } else {
-                if (item.romanization) {
-                    pronStr = `[${item.romanization}]`;
-                } else if (item.kr_pron) {
-                    pronStr = `[${item.kr_pron}]`;
-                }
+                if (item.romanization) pronStr = `[${item.romanization}]`;
+                else if (item.kr_pron) pronStr = `[${item.kr_pron}]`;
             }
-
             subElem.innerText = pronStr;
             subElem.style.visibility = pronStr ? "visible" : "hidden";
         }
@@ -4464,18 +4444,14 @@
             if (filteredWords.length === 0) return alert("此關卡尚無單字題目資料！");
 
             wordQuestions = shuffleArray(filteredWords);
-
             wordIndex = 0;
             totalChallengeQuestions = wordQuestions.length;
             pointsPerQuestion = 100 / totalChallengeQuestions;
             currentWordPronMode = 'kr_pron';
 
             const isHard = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
-
             const btnTogglePron = document.getElementById('btn-toggle-word-pron');
-            if (btnTogglePron) {
-                btnTogglePron.style.display = isHard ? 'none' : 'flex';
-            }
+            if (btnTogglePron) btnTogglePron.style.display = isHard ? 'none' : 'flex';
 
             const lbl = document.getElementById('lbl-toggle-word-pron-text');
             if (lbl) lbl.innerText = '切換 羅馬拼音';
@@ -4517,14 +4493,12 @@
 
             if (currentConfig.mode === 'word_shadow') {
                 document.getElementById('lbl-word-shadow-progress').innerText = `${wordIndex + 1} / ${total}`;
-                
                 const targetTextElem = document.getElementById('lbl-word-shadow-target-text');
                 const transElem = document.getElementById('lbl-word-shadow-translation');
                 const playAudioBtn = document.getElementById('btn-word-shadow-play-audio');
                 const recordBtn = document.getElementById('btn-word-shadow-start-record');
 
                 if (recordBtn) recordBtn.disabled = false;
-
                 const nativeTrans = getWordTranslation(item);
                 transElem.innerText = nativeTrans || "";
 
@@ -4537,18 +4511,12 @@
                     targetTextElem.style.visibility = "hidden";
                     if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
                 } else if (activeChallengeType === 'timed') {
-                    if (is0ALevel) {
-                        targetTextElem.innerText = item.text || "";
-                        targetTextElem.style.visibility = "visible";
-                    } else {
-                        targetTextElem.innerText = item.text || "題目";
-                        targetTextElem.style.visibility = "hidden";
-                    }
+                    targetTextElem.innerText = is0ALevel ? (item.text || "") : "題目";
+                    targetTextElem.style.visibility = is0ALevel ? "visible" : "hidden";
                     if (playAudioBtn) playAudioBtn.style.display = 'none';
                 }
 
                 renderWordShadowSubtext();
-
                 document.getElementById('lbl-word-shadow-recognized-text').innerText = "-";
                 document.getElementById('lbl-word-shadow-score').innerText = "判定結果：--";
                 document.getElementById('lbl-word-shadow-score').style.color = "#58cc02";
@@ -4561,41 +4529,20 @@
 
                 const playBtn = document.getElementById('btn-word-type-play');
                 const subTextElem = document.getElementById('lbl-word-type-subtext');
-                if (subTextElem) {
-                    subTextElem.innerText = "";
-                    subTextElem.style.display = 'none';
-                }
+                if (subTextElem) { subTextElem.innerText = ""; subTextElem.style.display = 'none'; }
 
                 const hintElem = document.getElementById('lbl-word-type-hint');
                 const trans = getWordTranslation(item);
 
                 if (activeChallengeType === 'entry') {
-                    if (playBtn) {
-                        playBtn.style.visibility = 'visible';
-                        playBtn.style.pointerEvents = 'auto';
-                    }
-                    if (hintElem) {
-                        hintElem.innerText = "提示佔位";
-                        hintElem.style.visibility = "hidden";
-                    }
+                    if (playBtn) { playBtn.style.visibility = 'visible'; playBtn.style.pointerEvents = 'auto'; }
+                    if (hintElem) { hintElem.innerText = "提示佔位"; hintElem.style.visibility = "hidden"; }
                 } else if (activeChallengeType === 'timed') {
-                    if (playBtn) {
-                        playBtn.style.visibility = 'hidden';
-                        playBtn.style.pointerEvents = 'none';
-                    }
-                    if (hintElem) {
-                        hintElem.innerText = trans ? `提示：${trans}` : "";
-                        hintElem.style.visibility = trans ? "visible" : "hidden";
-                    }
+                    if (playBtn) { playBtn.style.visibility = 'hidden'; playBtn.style.pointerEvents = 'none'; }
+                    if (hintElem) { hintElem.innerText = trans ? `提示：${trans}` : ""; hintElem.style.visibility = trans ? "visible" : "hidden"; }
                 } else {
-                    if (playBtn) {
-                        playBtn.style.visibility = 'visible';
-                        playBtn.style.pointerEvents = 'auto';
-                    }
-                    if (hintElem) {
-                        hintElem.innerText = trans ? `提示：${trans}` : "提示佔位";
-                        hintElem.style.visibility = trans ? "visible" : "hidden";
-                    }
+                    if (playBtn) { playBtn.style.visibility = 'visible'; playBtn.style.pointerEvents = 'auto'; }
+                    if (hintElem) { hintElem.innerText = trans ? `提示：${trans}` : "提示佔位"; hintElem.style.visibility = trans ? "visible" : "hidden"; }
                 }
 
                 const inputElem = document.getElementById('input-word-type');
@@ -4609,9 +4556,7 @@
                 document.getElementById('lbl-word-type-score').innerText = "等待輸入...";
                 document.getElementById('lbl-word-type-score').style.color = "#58cc02";
 
-                if (activeChallengeType !== 'timed') {
-                    playWordAudio();
-                }
+                if (activeChallengeType !== 'timed') playWordAudio();
 
             } else if (currentConfig.mode === 'word_choice') {
                 document.getElementById('lbl-word-choice-progress').innerText = `${wordIndex + 1} / ${total}`;
@@ -4624,8 +4569,7 @@
                 function pickRandomDistractors(candidateList, correctVal, count = 3) {
                     const cleanCorrect = (correctVal || '').trim();
                     const filtered = candidateList.filter(val => val && val.trim() !== '' && val.trim() !== cleanCorrect);
-                    const shuffled = shuffleArray(filtered);
-                    return shuffled.slice(0, count);
+                    return shuffleArray(filtered).slice(0, count);
                 }
 
                 const currentLevelNormalized = normalizeLevelStr(currentConfig.level);
@@ -4644,28 +4588,19 @@
 
                 if (is0ALevel) {
                     if (activeChallengeType === 'practice') {
-                        if (audioPlayerBtn) {
-                            audioPlayerBtn.style.visibility = 'visible';
-                            audioPlayerBtn.style.pointerEvents = 'auto';
-                        }
+                        if (audioPlayerBtn) { audioPlayerBtn.style.visibility = 'visible'; audioPlayerBtn.style.pointerEvents = 'auto'; }
                         targetTextElem.innerText = item.text || "題目";
                         targetTextElem.style.visibility = "hidden";
                         choiceSubElem.innerText = nativeTrans ? `(${nativeTrans})` : "";
                         choiceSubElem.style.visibility = nativeTrans ? "visible" : "hidden";
                     } else if (activeChallengeType === 'entry') {
-                        if (audioPlayerBtn) {
-                            audioPlayerBtn.style.visibility = 'visible';
-                            audioPlayerBtn.style.pointerEvents = 'auto';
-                        }
+                        if (audioPlayerBtn) { audioPlayerBtn.style.visibility = 'visible'; audioPlayerBtn.style.pointerEvents = 'auto'; }
                         targetTextElem.innerText = item.text || "題目";
                         targetTextElem.style.visibility = "hidden";
                         choiceSubElem.innerText = "提示佔位";
                         choiceSubElem.style.visibility = "hidden";
                     } else {
-                        if (audioPlayerBtn) {
-                            audioPlayerBtn.style.visibility = 'hidden';
-                            audioPlayerBtn.style.pointerEvents = 'none';
-                        }
+                        if (audioPlayerBtn) { audioPlayerBtn.style.visibility = 'hidden'; audioPlayerBtn.style.pointerEvents = 'none'; }
                         targetTextElem.innerText = item.text || "題目";
                         targetTextElem.style.visibility = "hidden";
                         choiceSubElem.innerText = nativeTrans ? `提示：${nativeTrans}` : "";
@@ -4681,9 +4616,7 @@
                     if (item.choice && item.choice.trim()) {
                         const parsedChoices = item.choice.split(/[\/,]/).map(s => s.trim()).filter(Boolean);
                         finalChoices = [...new Set(parsedChoices)];
-                        if (!finalChoices.includes(correctWord)) {
-                            finalChoices.push(correctWord);
-                        }
+                        if (!finalChoices.includes(correctWord)) finalChoices.push(correctWord);
                     } else {
                         const allTargetWords = [...new Set(poolWords.map(w => (w.text || '').trim()).filter(Boolean))];
                         finalChoices = [correctWord, ...pickRandomDistractors(allTargetWords, correctWord, 3)];
@@ -4697,39 +4630,14 @@
                         container.appendChild(btn);
                     });
 
-                    if (activeChallengeType !== 'timed') {
-                        setTimeout(() => playWordAudio(), 300);
-                    }
+                    if (activeChallengeType !== 'timed') setTimeout(() => playWordAudio(), 300);
 
                 } else {
-                    if (activeChallengeType === 'entry') {
-                        if (audioPlayerBtn) {
-                            audioPlayerBtn.style.visibility = 'visible';
-                            audioPlayerBtn.style.pointerEvents = 'auto';
-                        }
-                        targetTextElem.innerText = item.text || "";
-                        targetTextElem.style.visibility = "visible";
-                        choiceSubElem.innerText = "提示佔位";
-                        choiceSubElem.style.visibility = "hidden";
-                    } else if (activeChallengeType === 'timed') {
-                        if (audioPlayerBtn) {
-                            audioPlayerBtn.style.visibility = 'visible';
-                            audioPlayerBtn.style.pointerEvents = 'auto';
-                        }
-                        targetTextElem.innerText = item.text || "題目";
-                        targetTextElem.style.visibility = "hidden";
-                        choiceSubElem.innerText = "提示佔位";
-                        choiceSubElem.style.visibility = "hidden";
-                    } else {
-                        if (audioPlayerBtn) {
-                            audioPlayerBtn.style.visibility = 'visible';
-                            audioPlayerBtn.style.pointerEvents = 'auto';
-                        }
-                        targetTextElem.innerText = item.text || "";
-                        targetTextElem.style.visibility = "visible";
-                        choiceSubElem.innerText = "提示佔位";
-                        choiceSubElem.style.visibility = "hidden";
-                    }
+                    if (audioPlayerBtn) { audioPlayerBtn.style.visibility = 'visible'; audioPlayerBtn.style.pointerEvents = 'auto'; }
+                    targetTextElem.innerText = (activeChallengeType === 'timed') ? "題目" : (item.text || "");
+                    targetTextElem.style.visibility = (activeChallengeType === 'timed') ? "hidden" : "visible";
+                    choiceSubElem.innerText = "提示佔位";
+                    choiceSubElem.style.visibility = "hidden";
 
                     document.getElementById('lbl-word-choice-score').innerText = "判定結果：--";
                     document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
@@ -4741,14 +4649,11 @@
                     if (distractors.length < 3 && item.choice) {
                         const originalChoices = (item.choice || '').split(/[\/,]/).map(s => s.trim()).filter(Boolean);
                         originalChoices.forEach(c => {
-                            if (distractors.length < 3 && c !== correctMeaning && !distractors.includes(c)) {
-                                distractors.push(c);
-                            }
+                            if (distractors.length < 3 && c !== correctMeaning && !distractors.includes(c)) distractors.push(c);
                         });
                     }
 
                     const finalChoices = shuffleArray([correctMeaning, ...distractors]);
-
                     finalChoices.forEach(mText => {
                         const btn = document.createElement('button');
                         btn.className = 'btn-vocab-choice';
@@ -4756,7 +4661,6 @@
                         btn.onclick = () => checkWordChoiceAnswer(mText);
                         container.appendChild(btn);
                     });
-
                     setTimeout(() => playWordAudio(), 300);
                 }
             }
@@ -4782,32 +4686,25 @@
             if (checkBtn) checkBtn.disabled = true;
 
             const playBtn = document.getElementById('btn-word-type-play');
-            if (playBtn) {
-                playBtn.style.visibility = 'visible';
-                playBtn.style.pointerEvents = 'auto';
-            }
+            if (playBtn) { playBtn.style.visibility = 'visible'; playBtn.style.pointerEvents = 'auto'; }
 
             if (isMatch) {
                 scoreBadge.innerText = "🎉 完全正確！";
                 scoreBadge.style.color = "#58cc02";
-                
                 if (typeTextElem) typeTextElem.style.display = 'none';
                 if (subTextElem) subTextElem.style.display = 'none';
 
                 const nativeTrans = getWordTranslation(item);
                 const correctKorean = item.text || "";
                 transElem.innerText = `${correctKorean} ${nativeTrans}`.trim();
-
                 playWordAudio();
                 markQuestionAnswered(wordIndex);
             } else {
                 scoreBadge.innerHTML = `❌ 答案不正確！<br><span style="color:#b91c1c; font-size:1rem;">正確答案是：【${item.text || ''}】</span>`;
                 scoreBadge.style.color = "#ff4b4b";
-                
                 const nativeTrans = getWordTranslation(item);
                 const correctKorean = item.text || "";
                 transElem.innerText = `${correctKorean} ${nativeTrans}`.trim();
-
                 playWordAudio();
 
                 isCurrentQuestionAnswered = true;
@@ -4822,7 +4719,6 @@
 
         function checkWordChoiceAnswer(selectedText) {
             if (isCurrentQuestionAnswered) return;
-
             const choiceBtns = document.querySelectorAll('.btn-vocab-choice');
             choiceBtns.forEach(btn => btn.disabled = true);
 
@@ -4831,19 +4727,14 @@
             const scoreBadge = document.getElementById('lbl-word-choice-score');
             const targetTextElem = document.getElementById('lbl-word-choice-text');
             const choiceSubElem = document.getElementById('lbl-word-choice-sub');
-
             const audioPlayerBtn = document.getElementById('btn-word-choice-play');
-            if (audioPlayerBtn) {
-                audioPlayerBtn.style.visibility = 'visible';
-                audioPlayerBtn.style.pointerEvents = 'auto';
-            }
+            if (audioPlayerBtn) { audioPlayerBtn.style.visibility = 'visible'; audioPlayerBtn.style.pointerEvents = 'auto'; }
 
             if (is0ALevel) {
                 const correctKorean = (item.text || '').trim();
                 if (selectedText.trim() === correctKorean) {
                     scoreBadge.innerText = getRandomPraise();
                     scoreBadge.style.color = "#58cc02";
-                    
                     targetTextElem.innerText = correctKorean;
                     targetTextElem.style.visibility = "visible";
 
@@ -4860,7 +4751,6 @@
                     targetTextElem.style.visibility = "visible";
 
                     playWordAudio();
-
                     isCurrentQuestionAnswered = true;
                     if (wordIndex < totalChallengeQuestions - 1) {
                         const nextBtn = document.getElementById('btn-word-choice-next');
@@ -4878,7 +4768,6 @@
                 if (selectedText.trim() === correctMeaning) {
                     scoreBadge.innerText = getRandomPraise();
                     scoreBadge.style.color = "#58cc02";
-                    
                     targetTextElem.innerText = item.text || "";
                     targetTextElem.style.visibility = "visible";
 
@@ -4894,7 +4783,6 @@
                     targetTextElem.style.visibility = "visible";
 
                     playWordAudio();
-
                     isCurrentQuestionAnswered = true;
                     if (wordIndex < totalChallengeQuestions - 1) {
                         const nextBtn = document.getElementById('btn-word-choice-next');
@@ -4913,8 +4801,7 @@
             } 
         }
 
-        // ==================== 句子跟讀與字塊重組邏輯 ====================
-
+        // ================= 句子跟讀與字塊重組邏輯 =================
         function startMainQuiz() {
             stopSpeechRecognition();
             stopChallengeTimer();
@@ -4925,19 +4812,10 @@
             if (currentConfig.mode === 'shadow') {
                 const titleElem = document.getElementById('lbl-shadow-mode-title');
                 if (titleElem) titleElem.innerText = `句子跟讀 ${tag}`;
-
                 goToStep('step-quiz-shadow');
 
-                if (activeChallengeType === 'practice') {
-                    isSentenceKeywordMode = false;
-                    isSentenceChallengeMode = false;
-                } else if (activeChallengeType === 'entry') {
-                    isSentenceKeywordMode = true;
-                    isSentenceChallengeMode = false;
-                } else if (activeChallengeType === 'timed') {
-                    isSentenceKeywordMode = false;
-                    isSentenceChallengeMode = true;
-                }
+                isSentenceKeywordMode = (activeChallengeType === 'entry');
+                isSentenceChallengeMode = (activeChallengeType === 'timed');
 
                 const rawList = rawShadowData.filter(i => 
                     normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized &&
@@ -4964,14 +4842,11 @@
                 questions = shuffleArray(rawList);
                 totalChallengeQuestions = questions.length;
                 pointsPerQuestion = totalChallengeQuestions > 0 ? (100 / totalChallengeQuestions) : 10;
-
                 if (activeChallengeType === 'timed') startChallengeTimer('shadow');
+
             } else {
                 const blocksTitleElem = document.getElementById('lbl-blocks-mode-title');
-                if (blocksTitleElem) {
-                    blocksTitleElem.innerText = `字塊重組 ${tag}`;
-                }
-
+                if (blocksTitleElem) blocksTitleElem.innerText = `字塊重組 ${tag}`;
                 goToStep('step-quiz-blocks');
 
                 const rawList = rawBlocksData.filter(i => 
@@ -5003,10 +4878,7 @@
                 questions = shuffleArray(rawList);
                 totalChallengeQuestions = questions.length;
                 pointsPerQuestion = totalChallengeQuestions > 0 ? (100 / totalChallengeQuestions) : 10;
-
-                if (activeChallengeType === 'timed') {
-                    startChallengeTimer('blocks');
-                }
+                if (activeChallengeType === 'timed') startChallengeTimer('blocks');
             }
 
             currentIndex = 0;
@@ -5065,7 +4937,6 @@
                 const transElem = document.getElementById('lbl-block-translation');
                 const playAudioBtn = document.getElementById('btn-play-block-audio');
                 const checkBlockBtn = document.getElementById('btn-check-block');
-
                 if (checkBlockBtn) checkBlockBtn.disabled = false;
 
                 if (activeChallengeType === 'practice') {
@@ -5086,10 +4957,7 @@
                 gridBoardCells = new Array(27).fill(null);
                 selectedTargetGridIndex = null;
                 renderBlocks();
-
-                if (activeChallengeType !== 'timed') {
-                    playBlockAudio();
-                }
+                if (activeChallengeType !== 'timed') playBlockAudio();
             }
         }
 
@@ -5110,7 +4978,6 @@
 
                 btn.onclick = () => {
                     if (isCurrentQuestionAnswered) return;
-
                     if (is0AKorean) {
                         let targetIdx = selectedTargetGridIndex;
                         if (targetIdx === null || gridBoardCells[targetIdx] !== null) {
@@ -5185,13 +5052,11 @@
 
         function checkBlockAnswer() {
             if (isCurrentQuestionAnswered) return;
-
             const checkBlockBtn = document.getElementById('btn-check-block');
             if (checkBlockBtn) checkBlockBtn.disabled = true;
 
             const q = questions[currentIndex];
             const is0AKorean = (normalizeLevelStr(currentConfig.level) === '0A' && currentConfig.category === 'korean');
-            
             const userSentence = is0AKorean ? gridBoardCells.filter(idx => idx !== null).map(idx => q.options[idx]).join('') : selectedBlockIndices.map(i => q.options[i]).join('');
             const scoreBadge = document.getElementById('lbl-block-score');
 
@@ -5204,10 +5069,7 @@
             if (cleanStringForCompare(userSentence) === cleanStringForCompare(q.fullText)) {
                 scoreBadge.innerText = `🎉 完全正確！${(q.voice && q.voice.trim()) ? ` [${q.voice.trim()}]` : ''}`;
                 scoreBadge.style.color = "#58cc02";
-                
-                if (activeChallengeType !== 'timed') {
-                    playBlockAudio();
-                }
+                if (activeChallengeType !== 'timed') playBlockAudio();
                 markQuestionAnswered(currentIndex);
             } else {
                 scoreBadge.innerHTML = `❌ 答案不太對喔！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${q.fullText}】</span>`;
@@ -5255,24 +5117,11 @@
             synth.speak(utterance);
         }
 
-        // ==================== 韓文數字正規化比對核心演算法 ====================
-
         function cleanStringForCompare(str) {
             let clean = (str || '').replace(/[.,?!~\s\r\n\t]/g, '').toLowerCase();
-
             if (currentConfig.category === 'korean') {
                 clean = clean.replace(/10/g, '열');
-                const singleMap = {
-                    '1': '한',
-                    '2': '두',
-                    '3': '세',
-                    '4': '네',
-                    '5': '다섯',
-                    '6': '여섯',
-                    '7': '일곱',
-                    '8': '여덟',
-                    '9': '아홉'
-                };
+                const singleMap = { '1': '한', '2': '두', '3': '세', '4': '네', '5': '다섯', '6': '여섯', '7': '일곱', '8': '여덟', '9': '아홉' };
                 for (const [num, word] of Object.entries(singleMap)) {
                     clean = clean.replaceAll(num, word);
                 }
@@ -5282,52 +5131,34 @@
 
         function isSpeechPass(target, spoken) {
             if (!target || !spoken) return false;
-
             const tClean = cleanStringForCompare(target);
             const sClean = cleanStringForCompare(spoken);
 
-            if (tClean === sClean || tClean.includes(sClean) || sClean.includes(tClean)) {
-                return true;
-            }
+            if (tClean === sClean || tClean.includes(sClean) || sClean.includes(tClean)) return true;
 
             if (currentConfig.category === 'korean') {
                 let tAlt = tClean;
                 let sAlt = sClean;
-
-                const sinoMap = {
-                    '1': '일', '2': '이', '3': '삼', '4': '사', '5': '오',
-                    '6': '육', '7': '칠', '8': '팔', '9': '구', '10': '십'
-                };
+                const sinoMap = { '1': '일', '2': '이', '3': '삼', '4': '사', '5': '오', '6': '육', '7': '칠', '8': '팔', '9': '구', '10': '십' };
                 for (const [k, v] of Object.entries(sinoMap)) {
                     tAlt = tAlt.replaceAll(k, v);
                     sAlt = sAlt.replaceAll(k, v);
                 }
-                if (tAlt === sAlt || tAlt.includes(sAlt) || sAlt.includes(tAlt)) {
-                    return true;
-                }
+                if (tAlt === sAlt || tAlt.includes(sAlt) || sAlt.includes(tAlt)) return true;
 
-                const nativeVariations = [
-                    [/하나/g, '한'],
-                    [/둘/g, '두'],
-                    [/셋/g, '세'],
-                    [/넷/g, '네']
-                ];
+                const nativeVariations = [[/하나/g, '한'], [/둘/g, '두'], [/셋/g, '세'], [/넷/g, '네']];
                 let tVar = tClean;
                 let sVar = sClean;
                 for (const [reg, rep] of nativeVariations) {
                     tVar = tVar.replace(reg, rep);
                     sVar = sVar.replace(reg, rep);
                 }
-                if (tVar === sVar || tVar.includes(sVar) || sVar.includes(tVar)) {
-                    return true;
-                }
+                if (tVar === sVar || tVar.includes(sVar) || sVar.includes(tVar)) return true;
             }
-
             return false;
         }
 
-        // ==================== 句子問答邏輯 ====================
-
+        // ================= 句子問答邏輯 =================
         function startSentenceChatChallenge() {
             stopSpeechRecognition();
             stopChallengeTimer();
@@ -5369,13 +5200,10 @@
             totalChallengeQuestions = chatRounds.length;
             pointsPerQuestion = totalChallengeQuestions > 0 ? (100 / totalChallengeQuestions) : 10;
             chatRole = 'A';
-
-            const isHard = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
-            isChatChallengeMode = isHard;
+            isChatChallengeMode = (activeChallengeType === 'timed' || activeChallengeType === 'entry');
 
             switchChatRole('A');
             goToStep('step-quiz-sentence-chat');
-
             if (activeChallengeType === 'timed') startChallengeTimer('chat');
         }
 
@@ -5418,7 +5246,6 @@
 
             if (chatRole === 'A') {
                 partnerBubble.style.display = 'none';
-
                 if (isChatChallengeMode) {
                     instructionTopElem.innerText = `【角色 A】挑戰模式：請參考下方關鍵字提示回答：`;
                     targetTextElem.innerText = "挑戰模式中，請念出完整句子";
@@ -5446,7 +5273,6 @@
                 document.getElementById('lbl-partner-text').innerText = curRound.aText;
 
                 instructionTopElem.innerText = isChatChallengeMode ? `【角色 B】挑戰模式：請聽 Speaker A 語音並念出回答：` : `【角色 B】請聽取 Speaker A 語音並念出回答：`;
-
                 targetTextElem.innerText = isChatChallengeMode ? "聽取對方語音後直接回應" : (curRound.bxText || curRound.bText);
                 transElem.innerText = "";
 
@@ -5475,7 +5301,6 @@
                 document.getElementById('lbl-chat-score').innerText = "🎉 發音合格！";
                 document.getElementById('lbl-chat-score').style.color = "#58cc02";
                 targetTextElem.innerText = curRound.aText;
-
                 partnerBubble.style.display = 'block';
                 document.getElementById('lbl-partner-title').innerText = `對方 (Speaker B) 回覆：`;
                 document.getElementById('lbl-partner-text').innerText = curRound.bText;
@@ -5484,7 +5309,6 @@
                 document.getElementById('lbl-chat-score').innerText = "🎉 回應合格！";
                 document.getElementById('lbl-chat-score').style.color = "#58cc02";
                 targetTextElem.innerText = curRound.bText;
-
                 partnerBubble.style.display = 'block';
                 document.getElementById('lbl-partner-title').innerText = `對方 (Speaker A)：`;
                 document.getElementById('lbl-partner-text').innerText = curRound.aText;
@@ -5498,20 +5322,10 @@
             } 
         }
 
-        // ==================== 跨瀏覽器錄音與手動比對評分模組 ====================
-
         function getSupportedMimeType() {
-            const types = [
-                'audio/webm;codecs=opus',
-                'audio/webm',
-                'audio/mp4',
-                'audio/aac',
-                'audio/ogg'
-            ];
+            const types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/aac', 'audio/ogg'];
             for (const t of types) {
-                if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) {
-                    return t;
-                }
+                if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) return t;
             }
             return '';
         }
@@ -5528,9 +5342,7 @@
 
                 mediaRecorder = new MediaRecorder(stream, options);
                 mediaRecorder.ondataavailable = (e) => {
-                    if (e.data && e.data.size > 0) {
-                        recordedAudioChunks.push(e.data);
-                    }
+                    if (e.data && e.data.size > 0) recordedAudioChunks.push(e.data);
                 };
 
                 mediaRecorder.onstop = () => {
@@ -5549,7 +5361,6 @@
                         mediaRecorder.stream.getTracks().forEach(track => track.stop());
                     }
                 };
-
                 mediaRecorder.start(200);
             } catch (err) {
                 console.warn("無法取得麥克風音訊進行錄音備份：", err);
@@ -5558,9 +5369,7 @@
 
         function stopMediaRecording() {
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                try {
-                    mediaRecorder.stop();
-                } catch (e) {}
+                try { mediaRecorder.stop(); } catch (e) {}
             }
         }
 
@@ -5591,9 +5400,7 @@
         }
 
         function evaluateUserSpeech() {
-            if (!lastRecognizedSpeechText) {
-                return alert("尚未取得辨識結果，請重新錄音！");
-            }
+            if (!lastRecognizedSpeechText) return alert("尚未取得辨識結果，請重新錄音！");
 
             const isWord = (currentConfig.mode === 'word_shadow');
             const currentQ = isWord ? wordQuestions[wordIndex] : questions[currentIndex];
@@ -5620,7 +5427,6 @@
                         if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
                         playWordAudio();
                     }
-
                     markQuestionAnswered(wordIndex);
                 } else {
                     if (isSentenceChallengeMode || isSentenceKeywordMode) {
@@ -5634,7 +5440,6 @@
             } else {
                 scoreBadge.innerText = "⚠ 發音未達標，請再念一次或進入下一題！";
                 scoreBadge.style.color = "#ff4b4b";
-
                 isCurrentQuestionAnswered = true;
                 if (isWord) {
                     if (wordIndex < totalChallengeQuestions - 1) {
@@ -5660,8 +5465,7 @@
             if (evalBtn) evalBtn.style.display = 'none';
         }
 
-        // ==================== 語音辨識錄音 ====================
-
+        // ================= 語音辨識錄音 =================
         function initSpeechRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) return alert("您的瀏覽器不支援語音辨識，請使用 Chrome 或 Safari。");
@@ -5738,8 +5542,7 @@
         }
 
         function toggleRecording() {
-            if (isCurrentQuestionAnswered) return;
-            if (isToggling) return;
+            if (isCurrentQuestionAnswered || isToggling) return;
             isToggling = true;
             if (window.speechSynthesis) window.speechSynthesis.cancel();
 
@@ -5773,12 +5576,16 @@
             updateUserFlagIcon();
             goToStep('step-welcome');
 
+            window.addEventListener('resize', () => {
+                if (document.getElementById('step-lesson').classList.contains('active')) {
+                    drawRoadmapSvgPath();
+                }
+            });
+
             // 監聽所有操作事件，只要有動作就重置 90 秒靜默計時
             ['mousedown', 'mousemove', 'touchstart', 'scroll', 'keydown', 'click'].forEach(evt => {
                 window.addEventListener(evt, () => {
-                    if (!isIdlePaused && challengeSessionStartTime) {
-                        resetIdleTimer();
-                    }
+                    if (!isIdlePaused && challengeSessionStartTime) resetIdleTimer();
                 }, { passive: true });
             });
         };
