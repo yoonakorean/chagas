@@ -326,19 +326,19 @@
             border-bottom-width: 2px !important;
         }
 
+        /* 關卡任務（語法教室）版面樣式優化，保證按鈕絕不被擠出畫面 */
         #step-grammar.active {
             display: flex !important;
             flex-direction: column !important;
-            flex: 1;
-            min-height: 100%;
+            width: 100%;
             text-align: center;
         }
 
         #area-grammar-dialog {
-            display: flex !important;
-            flex-direction: column !important;
-            flex: 1;
+            display: flex;
+            flex-direction: column;
             width: 100%;
+            margin-bottom: 16px;
         }
 
         .grammar-dialog-header {
@@ -353,14 +353,13 @@
             background: #f0fdf4;
             border: 2px solid #86efac;
             border-radius: 16px;
-            padding: 16px 14px;
-            font-size: 1.15rem;
+            padding: 14px 12px;
+            font-size: 1.05rem;
             color: #14532d;
-            display: block !important;
+            display: block;
             margin-bottom: 8px;
-            flex: none;
-            height: 240px;
-            max-height: 36vh;
+            min-height: 100px;
+            max-height: 200px;
             overflow-y: auto;
             line-height: 1.6;
             position: relative;
@@ -383,13 +382,11 @@
             background: #ffffff;
             border: 2px solid #bae6fd;
             border-radius: 14px;
-            padding: 12px 14px;
+            padding: 10px 12px;
             margin-bottom: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             text-align: left;
-            position: relative;
-            flex: 1;
-            max-height: 38vh;
+            max-height: 160px;
             overflow-y: auto;
             box-sizing: border-box;
             width: 100%;
@@ -398,7 +395,7 @@
             font-size: 0.88rem;
             font-weight: 800;
             color: var(--duo-blue);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
             gap: 5px;
@@ -406,7 +403,7 @@
         .grammar-example-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
         .grammar-example-item {
             display: flex;
@@ -415,8 +412,8 @@
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 10px;
-            padding: 8px 12px;
-            font-size: 1.1rem;
+            padding: 6px 10px;
+            font-size: 0.98rem;
             color: #1e293b;
             font-weight: bold;
             line-height: 1.4;
@@ -424,7 +421,7 @@
         }
         .grammar-example-item-text {
             flex: 1;
-            padding-right: 10px;
+            padding-right: 8px;
             white-space: pre-wrap;
         }
         .btn-example-item-audio {
@@ -432,8 +429,8 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -445,12 +442,12 @@
         .btn-example-item-audio:active { transform: scale(0.9); }
 
         .grammar-bottom-actions-container {
-            margin-top: auto;
             display: flex !important;
             flex-direction: column !important;
             gap: 8px;
-            padding-top: 10px;
+            padding: 8px 0;
             width: 100%;
+            box-sizing: border-box;
         }
 
         .grammar-nav-btns { 
@@ -1464,7 +1461,7 @@
                     <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-purple);">關卡任務</span>
                 </div>
 
-                <!-- 語法第一階段：觀念說明、例句與打字機（含上一步/下一步/跳過對話） -->
+                <!-- 語法第一階段：觀念說明與例句導覽（下一步/上一步/跳過對話在下方依序流式排列） -->
                 <div id="area-grammar-dialog">
                     <div class="grammar-dialog-header">
                         <h3 style="margin: 0; color: #4338ca; font-size: 1.15rem;"><i class="fa-solid fa-book-open"></i> 觀念說明</h3>
@@ -1489,7 +1486,7 @@
                     </div>
                 </div>
 
-                <!-- 語法第二階段：小試身手單獨視圖（徹底獨立，絕不長在下方） -->
+                <!-- 語法第二階段：小試身手單獨視圖（第一階段完成後獨立呈現） -->
                 <div id="area-grammar-quiz" style="display: none; margin-top: 15px;">
                     <h3 style="margin-top: 0; color: var(--duo-dark); text-align: center; font-size: 1.15rem;"><i class="fa-solid fa-pen-to-square"></i> 小試身手</h3>
                     <p style="font-size: 0.9rem; color: #6b7280; text-align: center; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
@@ -1755,7 +1752,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-word-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 步驟 6-F：通用單字選擇題畫面（按鈕已保證完美置中） -->
+            <!-- 步驟 6-F：通用單字選擇題畫面（按鈕已修正置中排版） -->
             <div id="step-quiz-word-choice" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-word-choice-title" id="lbl-word-choice-title">單字選擇</div>
@@ -1782,7 +1779,7 @@
                 <div class="target-text" id="lbl-word-choice-text">  </div>
                 <div id="lbl-word-choice-sub"></div>
                 
-                <!-- 選項清單容器 -->
+                <!-- 選項清單容器（採用 flex 置中） -->
                 <div class="vocab-choice-list" id="container-word-choices"></div>
                 
                 <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-word-choice-score">判定結果：--</div></div>
@@ -4164,7 +4161,7 @@
             const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_${currentConfig.mode}`;
             let completedList = (window.currentUserData && Array.isArray(window.currentUserData.completedLessons)) ? window.currentUserData.completedLessons : [];
 
-            // 門檻改動：只有獲得 1 顆星以上（>= 60 分）才算過關並寫入完成清單（地圖節點變黃色）
+            // 門檻：獲得 1 顆星以上（>= 60 分）才算過關變黃色
             const isPassedStar = result.starInfo && result.starInfo.stars >= 1;
 
             if (isPassedStar && !completedList.includes(lessonKey)) {
@@ -4197,7 +4194,7 @@
             const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_grammar`;
             let completedList = (window.currentUserData && Array.isArray(window.currentUserData.completedLessons)) ? window.currentUserData.completedLessons : [];
 
-            // 觀念任務維持只要完成即變黃
+            // 關卡任務維持看完即標記過關變黃
             if (!completedList.includes(lessonKey)) {
                 completedList.push(lessonKey);
                 window.currentUserData.completedLessons = completedList;
@@ -4901,7 +4898,7 @@
                 playWordAudio();
                 markQuestionAnswered(wordIndex);
             } else {
-                scoreBadge.innerHTML = `慢慢唸，下次就能成功過關囉！<br><span style="color:#b91c1c; font-size:1rem;">正確答案是：【${item.text || ''}】</span>`;
+                scoreBadge.innerHTML = `太可惜了 繼續加油！<br><span style="color:#b91c1c; font-size:1rem;">正確答案是：【${item.text || ''}】</span>`;
                 scoreBadge.style.color = "#ff4b4b";
                 const nativeTrans = getWordTranslation(item);
                 const correctKorean = item.text || "";
@@ -4946,7 +4943,7 @@
                     playWordAudio();
                     markQuestionAnswered(wordIndex);
                 } else {
-                    scoreBadge.innerHTML = `慢慢唸，下次就能成功過關囉！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${correctKorean}】</span>`;
+                    scoreBadge.innerHTML = `太可惜了 繼續加油！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${correctKorean}】</span>`;
                     scoreBadge.style.color = "#ff4b4b";
                     targetTextElem.innerText = correctKorean;
                     targetTextElem.style.visibility = "visible";
@@ -4978,7 +4975,7 @@
                     playWordAudio();
                     markQuestionAnswered(wordIndex);
                 } else {
-                    scoreBadge.innerHTML = `慢慢唸，下次就能成功過關囉！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${correctMeaning}】</span>`;
+                    scoreBadge.innerHTML = `太可惜了 繼續加油！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${correctMeaning}】</span>`;
                     scoreBadge.style.color = "#ff4b4b";
                     targetTextElem.innerText = item.text || "";
                     targetTextElem.style.visibility = "visible";
@@ -5274,7 +5271,7 @@
                 if (activeChallengeType !== 'timed') playBlockAudio();
                 markQuestionAnswered(currentIndex);
             } else {
-                scoreBadge.innerHTML = `慢慢唸，下次就能成功過關囉！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${q.fullText}】</span>`;
+                scoreBadge.innerHTML = `太可惜了 繼續加油！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${q.fullText}】</span>`;
                 scoreBadge.style.color = "#ff4b4b";
 
                 isCurrentQuestionAnswered = true;
