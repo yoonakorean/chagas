@@ -1018,11 +1018,24 @@
         .vocab-input {
             width: 88%; max-width: 320px; padding: 10px; font-size: 1.15rem; border: 2px solid #cbd5e1; border-radius: 12px; text-align: center; outline: none; margin: 10px auto; font-weight: bold; display: block;
         }
-        .vocab-choice-list { display: flex-direction: column; gap: 8px; margin: 12px 0; display: flex; }
-        .btn-vocab-choice {
-            background: white; border: 2px solid #e5e7eb; border-bottom: 3px solid #e5e7eb; border-radius: 12px; padding: 12px; font-size: 1.05rem; font-weight: bold;
-            color: var(--duo-dark); cursor: pointer; transition: all 0.15s ease; text-align: center;
+        
+        /* 核心修復：單字選擇容器與選項水平/垂直置中 */
+        .vocab-choice-list { 
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            justify-content: center !important;
+            align-items: center !important;
+            gap: 10px !important;
+            margin: 16px auto !important;
+            width: 100% !important;
+            max-width: 400px !important;
         }
+        .btn-vocab-choice {
+            background: white; border: 2px solid #e5e7eb; border-bottom: 3.5px solid #e5e7eb; border-radius: 14px; padding: 12px 18px; font-size: 1.05rem; font-weight: bold;
+            color: var(--duo-dark); cursor: pointer; transition: all 0.15s ease; text-align: center; display: inline-flex; justify-content: center; align-items: center; min-width: 75px;
+        }
+        .btn-vocab-choice:active { transform: translateY(2px); border-bottom-width: 1.5px; }
 
         .role-switch-box { display: flex; justify-content: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
         .btn-role { padding: 5px 12px; border-radius: 20px; border: 2px solid #e5e7eb; background: white; font-weight: bold; cursor: pointer; font-size: 0.8rem; }
@@ -1451,6 +1464,7 @@
                     <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-purple);">關卡任務</span>
                 </div>
 
+                <!-- 語法第一階段：觀念說明、例句與打字機（含上一步/下一步/跳過對話） -->
                 <div id="area-grammar-dialog">
                     <div class="grammar-dialog-header">
                         <h3 style="margin: 0; color: #4338ca; font-size: 1.15rem;"><i class="fa-solid fa-book-open"></i> 觀念說明</h3>
@@ -1475,6 +1489,7 @@
                     </div>
                 </div>
 
+                <!-- 語法第二階段：小試身手單獨視圖（徹底獨立，絕不長在下方） -->
                 <div id="area-grammar-quiz" style="display: none; margin-top: 15px;">
                     <h3 style="margin-top: 0; color: var(--duo-dark); text-align: center; font-size: 1.15rem;"><i class="fa-solid fa-pen-to-square"></i> 小試身手</h3>
                     <p style="font-size: 0.9rem; color: #6b7280; text-align: center; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
@@ -1740,7 +1755,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-word-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 步驟 6-F：通用單字選擇題畫面 -->
+            <!-- 步驟 6-F：通用單字選擇題畫面（按鈕已保證完美置中） -->
             <div id="step-quiz-word-choice" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-word-choice-title" id="lbl-word-choice-title">單字選擇</div>
@@ -1766,7 +1781,10 @@
 
                 <div class="target-text" id="lbl-word-choice-text">  </div>
                 <div id="lbl-word-choice-sub"></div>
+                
+                <!-- 選項清單容器 -->
                 <div class="vocab-choice-list" id="container-word-choices"></div>
+                
                 <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-word-choice-score">判定結果：--</div></div>
                 
                 <div class="nav-controls">
@@ -2100,7 +2118,7 @@
             return Array.from(candidates);
         }
 
-        // 強制重置麥克風收音連線（深層切斷音軌）
+        // 強制重置麥克風收音連線（深層切斷音軌，避免 iOS 搶麥卡死）
         function forceResetMicrophoneSession() {
             if (recognition) {
                 try {
@@ -4231,7 +4249,7 @@
             }
         }
 
-        // ================= 語法介紹教室邏輯 =================
+        // ================= 語法介紹教室邏輯（雙階段切換修復） =================
         function cleanInitialWhitespace(str) {
             return (str || '').replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
         }
@@ -4270,10 +4288,11 @@
             currentGrammarItem.expandedQuizzes = expandedQuizzes;
 
             if (currentGrammarItem.dialogs && currentGrammarItem.dialogs.length > 0) {
+                // 第一階段：正常顯示觀念說明、對話與例句區塊
                 document.getElementById('area-grammar-dialog').style.display = 'flex';
                 showCurrentGrammarDialog();
             } else if (currentGrammarItem.expandedQuizzes && currentGrammarItem.expandedQuizzes.length > 0) {
-                document.getElementById('area-grammar-dialog').style.display = 'none';
+                // 無對話直接進入小試身手
                 showGrammarQuizArea();
             } else {
                 alert("此關卡無可呈現的語法內容！");
@@ -4288,6 +4307,12 @@
             if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
             const total = currentGrammarItem.dialogs.length;
             const hasQuiz = (currentGrammarItem.expandedQuizzes && currentGrammarItem.expandedQuizzes.length > 0);
+
+            // 確保第一階段的容器都正常呈現
+            const areaDialog = document.getElementById('area-grammar-dialog');
+            if (areaDialog) areaDialog.style.display = 'flex';
+            document.getElementById('area-grammar-quiz').style.display = 'none';
+            document.getElementById('area-grammar-all-history').style.display = 'none';
 
             document.getElementById('lbl-dialog-counter').innerText = `${currentDialogIndex + 1} / ${total}`;
             document.getElementById('btn-prev-dialog').disabled = currentDialogIndex === 0;
@@ -4404,8 +4429,6 @@
         }
 
         function processAfterDialogs() {
-            renderGrammarHistoryList();
-            document.getElementById('area-grammar-dialog').style.display = 'none';
             if (currentGrammarItem.expandedQuizzes && currentGrammarItem.expandedQuizzes.length > 0) {
                 showGrammarQuizArea();
             } else {
@@ -4441,20 +4464,17 @@
             }
         }
 
-        // 小試身手排版修復：強制隱藏上方的觀念說明與例句區塊
+        // 第二階段：小試身手單獨呈現，徹底隱藏前置觀念說明、例句與打字機容器
         function showGrammarQuizArea() {
             const areaDialog = document.getElementById('area-grammar-dialog');
             if (areaDialog) areaDialog.style.display = 'none';
 
-            const boxDialog = document.getElementById('box-grammar-dialog-main');
-            if (boxDialog) boxDialog.style.display = 'none';
-
-            const boxExample = document.getElementById('box-grammar-example');
-            if (boxExample) boxExample.style.display = 'none';
+            // 徹底隱藏歷史紀錄總覽，呈現獨立小試身手畫面
+            const areaHistory = document.getElementById('area-grammar-all-history');
+            if (areaHistory) areaHistory.style.display = 'none';
 
             document.getElementById('area-grammar-quiz').style.display = 'block';
             document.getElementById('box-grammar-result').style.display = 'none';
-            renderGrammarHistoryList();
 
             const quizList = currentGrammarItem.expandedQuizzes || [];
             if (!quizList.length) { finishGrammarTask(); return; }
