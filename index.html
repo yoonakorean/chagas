@@ -40,7 +40,22 @@
             --candy-node-glow: rgba(28, 176, 246, 0.4);
         }
 
-        * { box-sizing: border-box; }
+        * { 
+            box-sizing: border-box; 
+            /* 防選取與防複製保護 */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* 允許使用者在輸入框正常打字 */
+        input, textarea {
+            -webkit-user-select: auto !important;
+            -moz-user-select: auto !important;
+            -ms-user-select: auto !important;
+            user-select: auto !important;
+        }
 
         html, body {
             height: 100%;
@@ -98,7 +113,6 @@
             cursor: pointer;
             padding: 5px 8px;
             border-radius: 12px;
-            user-select: none;
             transition: all 0.15s ease;
             white-space: nowrap;
             font-size: 0.88rem;
@@ -192,7 +206,6 @@
             font-weight: 800;
             cursor: pointer;
             border: 1.5px solid transparent;
-            user-select: none;
             transition: all 0.15s ease;
             text-align: center;
         }
@@ -564,7 +577,6 @@
             align-items: center;
             justify-content: center;
             transition: transform 0.12s ease, box-shadow 0.12s ease;
-            user-select: none;
         }
         .candy-node-btn:active {
             transform: translateY(4px);
@@ -629,7 +641,6 @@
             align-items: center;
             gap: 4px;
             cursor: pointer;
-            user-select: none;
             transition: all 0.15s ease;
             white-space: nowrap;
             z-index: 10;
@@ -768,7 +779,7 @@
         .btn-3d {
             font-size: 0.95rem; font-weight: bold; border: none;
             border-radius: 14px; cursor: pointer; transition: all 0.1s ease;
-            user-select: none; touch-action: manipulation;
+            touch-action: manipulation;
         }
         .btn-3d-primary { background: var(--duo-green); color: white; box-shadow: 0 4px 0 var(--duo-green-shadow); }
         .btn-3d-primary:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--duo-green-shadow); }
@@ -995,7 +1006,7 @@
         }
         .block-chip {
             background: white; border: 2px solid #cbd5e1; border-bottom: 3.5px solid #cbd5e1; border-radius: 12px; padding: 8px 14px; font-size: 1.05rem; font-weight: bold;
-            color: var(--duo-dark); cursor: pointer; user-select: none; transition: transform 0.1s;
+            color: var(--duo-dark); cursor: pointer; transition: transform 0.1s;
         }
         .block-chip:active { transform: translateY(2px); border-bottom-width: 2px; }
         .block-chip.used { opacity: 0.3; pointer-events: none; background: #f3f4f6; }
@@ -1008,7 +1019,7 @@
         }
         .hangul-grid-cell {
             background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
-            font-weight: 900; color: #94a3b8; cursor: pointer; user-select: none; transition: all 0.12s ease;
+            font-weight: 900; color: #94a3b8; cursor: pointer; transition: all 0.12s ease;
         }
         .hangul-grid-cell.filled { background: #ddf4ff; border: 2px solid var(--duo-blue); color: #0369a1; box-shadow: 0 2px 4px rgba(0,0,0,0.06); }
 
@@ -5825,6 +5836,36 @@
                 window.addEventListener(evt, () => {
                     if (!isIdlePaused && challengeSessionStartTime) resetIdleTimer();
                 }, { passive: true });
+            });
+
+            // ================= 強化前端安全防護（防右鍵、防 F12、防檢視原始碼） =================
+            // 1. 禁用滑鼠右鍵選單
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+
+            // 2. 禁用 F12 及常見開發者工具/檢視原始碼快捷鍵
+            document.addEventListener('keydown', function(e) {
+                // F12 鍵
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                // Ctrl+Shift+I (Windows) 或 Cmd+Option+I (Mac) - 開發者工具
+                if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+                    e.preventDefault();
+                    return false;
+                }
+                // Ctrl+U / Cmd+U - 檢視網頁原始碼
+                if ((e.ctrlKey || e.metaKey) && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+                // Ctrl+S / Cmd+S - 另存網頁
+                if ((e.ctrlKey || e.metaKey) && e.keyCode === 83) {
+                    e.preventDefault();
+                    return false;
+                }
             });
         };
     </script>
