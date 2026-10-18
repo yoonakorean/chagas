@@ -5629,7 +5629,7 @@
                     markQuestionAnswered(currentIndex);
                 }
             } else {
-                scoreBadge.innerText = "慢慢唸，下次就能成功過關！";
+                scoreBadge.innerText = "慢慢唸，下次就能成功過關囉！";
                 scoreBadge.style.color = "#ff4b4b";
                 isCurrentQuestionAnswered = true;
                 if (isWord) {
@@ -5704,7 +5704,7 @@
                         if (isSpeechPass(expectedText, userSpeech, curRound)) {
                             handleChatSpeechSuccess(userSpeech);
                         } else {
-                            document.getElementById('lbl-chat-score').innerText = "⚠ 發音未達標，請再念一次或進入下一題！";
+                            document.getElementById('lbl-chat-score').innerText = "慢慢唸，下次就能成功過關囉！";
                             document.getElementById('lbl-chat-score').style.color = "#ff4b4b";
 
                             isCurrentQuestionAnswered = true;
