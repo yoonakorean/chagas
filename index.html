@@ -938,7 +938,7 @@
         .btn-record.recording { animation: pulse 1s infinite; background: #dc2626; }
         @keyframes pulse { 0%{transform: scale(1);} 50%{transform: scale(1.08);} 100%{transform: scale(1);} }
 
-        /* 新增：麥克風重置按鈕樣式 */
+        /* 麥克風重置按鈕樣式 */
         .btn-mic-reset {
             background: var(--duo-orange);
             box-shadow: 0 4px 0 #d97706;
@@ -1018,7 +1018,7 @@
         .vocab-input {
             width: 88%; max-width: 320px; padding: 10px; font-size: 1.15rem; border: 2px solid #cbd5e1; border-radius: 12px; text-align: center; outline: none; margin: 10px auto; font-weight: bold; display: block;
         }
-        .vocab-choice-list { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+        .vocab-choice-list { display: flex-direction: column; gap: 8px; margin: 12px 0; display: flex; }
         .btn-vocab-choice {
             background: white; border: 2px solid #e5e7eb; border-bottom: 3px solid #e5e7eb; border-radius: 12px; padding: 12px; font-size: 1.05rem; font-weight: bold;
             color: var(--duo-dark); cursor: pointer; transition: all 0.15s ease; text-align: center;
@@ -1070,7 +1070,7 @@
 </head>
 <body>
 
-    <!-- 全螢幕「小船航行中...」遮罩（小船圖標） -->
+    <!-- 全螢幕「小船航行中...」遮罩 -->
     <div id="game-loading-overlay">
         <div class="loading-island-icon"><i class="fa-solid fa-sailboat"></i></div>
         <div class="loading-island-title" id="lbl-island-loading-title" style="font-size: 1.4rem; font-weight: 900; color: #1e293b; margin-bottom: 8px;">🏝️ 冒險地圖載入中...</div>
@@ -1519,7 +1519,6 @@
                 <div class="controls">
                     <button class="btn-circle btn-listen" id="btn-play-audio" onclick="playAudio()"><i class="fa-solid fa-volume-high"></i></button>
                     <button class="btn-circle btn-record" id="btn-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
-                    <!-- 新增：麥克風重置按鈕 -->
                     <button class="btn-circle btn-mic-reset" onclick="forceResetMicrophoneSession()" title="麥克風無聲音？點此重置">
                         <i class="fa-solid fa-rotate"></i>
                     </button>
@@ -1586,7 +1585,6 @@
                 <div class="controls">
                     <button class="btn-circle btn-listen" id="btn-chat-play-audio" onclick="playChatTargetAudio()"><i class="fa-solid fa-volume-high"></i></button>
                     <button class="btn-circle btn-record" id="btn-chat-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
-                    <!-- 新增：麥克風重置按鈕 -->
                     <button class="btn-circle btn-mic-reset" onclick="forceResetMicrophoneSession()" title="麥克風無聲音？點此重置">
                         <i class="fa-solid fa-rotate"></i>
                     </button>
@@ -1674,7 +1672,6 @@
                 <div class="controls">
                     <button class="btn-circle btn-listen" id="btn-word-shadow-play-audio" onclick="playWordAudio()"><i class="fa-solid fa-volume-high"></i></button>
                     <button class="btn-circle btn-record" id="btn-word-shadow-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
-                    <!-- 新增：麥克風重置按鈕 -->
                     <button class="btn-circle btn-mic-reset" onclick="forceResetMicrophoneSession()" title="麥克風無聲音？點此重置">
                         <i class="fa-solid fa-rotate"></i>
                     </button>
@@ -2016,8 +2013,8 @@
             'かう': ['買う', '飼う'],
             'かお': ['顔'],
             'かく': ['書く', '描く', '画く', '掻く'],
-            'がくせい': ['学生'],
-            'がっこう': ['学校'],
+            'がくせい': ['學生', '学生'],
+            'がっこう': ['學校', '学校'],
             'かわ': ['川', '皮'],
             'きく': ['聞く', '聴く', '菊'],
             'きょう': ['今日'],
@@ -2045,7 +2042,7 @@
             'ほん': ['本'],
             'みず': ['水'],
             'みみ': ['耳'],
-            'みる': ['見る', '観る'],
+            'みる': ['見る', '觀る', '観る'],
             'め': ['目'],
             'やま': ['山'],
             'よむ': ['読む'],
@@ -2103,17 +2100,38 @@
             return Array.from(candidates);
         }
 
-        // 強制重置麥克風收音連線（手動修復按鈕專用）
+        // 強制重置麥克風收音連線（深層切斷音軌）
         function forceResetMicrophoneSession() {
-            stopSpeechRecognition();
+            if (recognition) {
+                try {
+                    recognition.onstart = null;
+                    recognition.onend = null;
+                    recognition.onerror = null;
+                    recognition.onresult = null;
+                    recognition.abort();
+                } catch(e) {}
+                recognition = null;
+            }
+
+            if (mediaRecorder && mediaRecorder.stream) {
+                try {
+                    mediaRecorder.stream.getTracks().forEach(track => {
+                        track.stop();
+                        track.enabled = false;
+                    });
+                } catch(e) {}
+                mediaRecorder = null;
+            }
+
             revokeUserAudioUrl();
-            isToggling = false;
             isRecording = false;
+            isToggling = false;
+            document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
 
             const targetLblId = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-recognized-text' :
                                 (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-recognized-text' : 'lbl-recognized-text';
             const lbl = document.getElementById(targetLblId);
-            if (lbl) lbl.innerText = "麥克風已重置，請點擊錄音";
+            if (lbl) lbl.innerText = "麥克風已完全釋放，請點擊錄音";
 
             const scoreLblId = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-score' :
                                (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-score' : 'lbl-score';
@@ -2124,7 +2142,7 @@
             }
         }
 
-        // 釋放先前建立的音訊 Blob URL 記憶體
+        // 釋放音訊記憶體
         function revokeUserAudioUrl() {
             if (userRecordedAudioUrl) {
                 try {
@@ -2136,7 +2154,7 @@
             }
         }
 
-        function showIslandLoading(subText = "冒險地圖與學習資料整備中", progressPct = 30) {
+        function showIslandLoading(subText = "🏝️ 島嶼生成中，正在同步最新地圖...", progressPct = 30) {
             const overlay = document.getElementById('game-loading-overlay');
             const subElem = document.getElementById('lbl-island-loading-sub');
             const bar = document.getElementById('island-loading-bar');
@@ -3075,8 +3093,7 @@
 
         async function handleStartGameClick() {
             if (currentUser) {
-                const langName = (currentConfig.category === 'japanese') ? '日文' : (currentConfig.category === 'english' ? '英文' : '韓文');
-                showIslandLoading(`🏝️ 島嶼生成中，正在同步${langName}最新地圖...`, 40);
+                showIslandLoading(`🏝️ 島嶼生成中，正在同步最新地圖...`, 40);
                 try {
                     await autoLoadCategoryData(currentConfig.category, true);
                     updateIslandLoading("島嶼生成完畢，正在前往冒險地圖...", 90);
@@ -3301,8 +3318,7 @@
             }
 
             closeProfileView();
-            const langName = (cat === 'japanese') ? '日文' : (cat === 'english' ? '英文' : '韓文');
-            showIslandLoading(`🏝️ 島嶼生成中，正在載入${langName}地圖...`, 35);
+            showIslandLoading(`🏝️ 島嶼生成中，正在同步最新地圖...`, 35);
             try {
                 await autoLoadCategoryData(cat, true);
                 hideIslandLoading();
@@ -3310,7 +3326,7 @@
                 goToStep('step-lesson');
             } catch (e) {
                 hideIslandLoading();
-                alert(`載入${langName}地圖失敗，請確認網路！`);
+                alert(`載入地圖失敗，請確認網路！`);
             }
         }
 
@@ -3448,7 +3464,7 @@
                 if (authMode === 'login') cred = await auth.signInWithEmailAndPassword(email, password);
                 else cred = await auth.createUserWithEmailAndPassword(email, password);
                 await verifyAndSyncUser(cred.user, true);
-            } catch (err) {
+            } catch (err) { 
                 hideIslandLoading();
                 showLoginError(err.message); 
             }
@@ -4130,7 +4146,10 @@
             const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_${currentConfig.mode}`;
             let completedList = (window.currentUserData && Array.isArray(window.currentUserData.completedLessons)) ? window.currentUserData.completedLessons : [];
 
-            if (!completedList.includes(lessonKey)) {
+            // 門檻改動：只有獲得 1 顆星以上（>= 60 分）才算過關並寫入完成清單（地圖節點變黃色）
+            const isPassedStar = result.starInfo && result.starInfo.stars >= 1;
+
+            if (isPassedStar && !completedList.includes(lessonKey)) {
                 completedList.push(lessonKey);
                 window.currentUserData.completedLessons = completedList;
                 await addXP(100);
@@ -4160,6 +4179,7 @@
             const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_grammar`;
             let completedList = (window.currentUserData && Array.isArray(window.currentUserData.completedLessons)) ? window.currentUserData.completedLessons : [];
 
+            // 觀念任務維持只要完成即變黃
             if (!completedList.includes(lessonKey)) {
                 completedList.push(lessonKey);
                 window.currentUserData.completedLessons = completedList;
@@ -4421,8 +4441,17 @@
             }
         }
 
+        // 小試身手排版修復：強制隱藏上方的觀念說明與例句區塊
         function showGrammarQuizArea() {
-            document.getElementById('area-grammar-dialog').style.display = 'none';
+            const areaDialog = document.getElementById('area-grammar-dialog');
+            if (areaDialog) areaDialog.style.display = 'none';
+
+            const boxDialog = document.getElementById('box-grammar-dialog-main');
+            if (boxDialog) boxDialog.style.display = 'none';
+
+            const boxExample = document.getElementById('box-grammar-example');
+            if (boxExample) boxExample.style.display = 'none';
+
             document.getElementById('area-grammar-quiz').style.display = 'block';
             document.getElementById('box-grammar-result').style.display = 'none';
             renderGrammarHistoryList();
@@ -4852,7 +4881,7 @@
                 playWordAudio();
                 markQuestionAnswered(wordIndex);
             } else {
-                scoreBadge.innerHTML = `❌ 答案不正確！<br><span style="color:#b91c1c; font-size:1rem;">正確答案是：【${item.text || ''}】</span>`;
+                scoreBadge.innerHTML = `慢慢唸，下次就能成功過關囉！<br><span style="color:#b91c1c; font-size:1rem;">正確答案是：【${item.text || ''}】</span>`;
                 scoreBadge.style.color = "#ff4b4b";
                 const nativeTrans = getWordTranslation(item);
                 const correctKorean = item.text || "";
@@ -4897,7 +4926,7 @@
                     playWordAudio();
                     markQuestionAnswered(wordIndex);
                 } else {
-                    scoreBadge.innerHTML = `❌ 答錯囉！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${correctKorean}】</span>`;
+                    scoreBadge.innerHTML = `慢慢唸，下次就能成功過關囉！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${correctKorean}】</span>`;
                     scoreBadge.style.color = "#ff4b4b";
                     targetTextElem.innerText = correctKorean;
                     targetTextElem.style.visibility = "visible";
@@ -4929,7 +4958,7 @@
                     playWordAudio();
                     markQuestionAnswered(wordIndex);
                 } else {
-                    scoreBadge.innerHTML = `❌ 答錯囉！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${correctMeaning}】</span>`;
+                    scoreBadge.innerHTML = `慢慢唸，下次就能成功過關囉！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${correctMeaning}】</span>`;
                     scoreBadge.style.color = "#ff4b4b";
                     targetTextElem.innerText = item.text || "";
                     targetTextElem.style.visibility = "visible";
@@ -5225,7 +5254,7 @@
                 if (activeChallengeType !== 'timed') playBlockAudio();
                 markQuestionAnswered(currentIndex);
             } else {
-                scoreBadge.innerHTML = `❌ 答案不太對喔！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${q.fullText}】</span>`;
+                scoreBadge.innerHTML = `慢慢唸，下次就能成功過關囉！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${q.fullText}】</span>`;
                 scoreBadge.style.color = "#ff4b4b";
 
                 isCurrentQuestionAnswered = true;
@@ -5282,7 +5311,7 @@
             return clean;
         }
 
-        // ================= 核心語音比對（全支援日語平假名/漢字/片假名、中文括號欄位與韓語變體） =================
+        // ================= 核心語音比對（支援日語平假名/漢字/片假名、中文括號欄位與韓語變體） =================
         function isSpeechPass(target, spoken, currentItem = null) {
             if (!target || !spoken) return false;
             const sClean = cleanStringForCompare(spoken);
@@ -5300,12 +5329,12 @@
                     const cClean = cleanStringForCompare(cand);
                     const cHiragana = katakanaToHiragana(cClean);
 
-                    // A. 直接文字相符（例如辨識出「顔」[cite: 6]、「描く」[cite: 7] 或「青」[cite: 5]，候選池內含此漢字）
+                    // A. 直接文字相符（例如辨識出「顔」、「描く」或「青」，候選池內含此漢字）
                     if (cClean === sClean || cClean.includes(sClean) || sClean.includes(cClean)) {
                         return true;
                     }
 
-                    // B. 平假名相符（例如辨識出的「顔」轉為「かお」[cite: 6]、「描く」轉為「かく」[cite: 7]，與題目相同）
+                    // B. 平假名相符（例如辨識出的「顔」轉為「かお」、「描く」轉為「かく」，與題目相同）
                     if (cHiragana === spokenAsKana || cHiragana === spokenHiragana ||
                         cHiragana.includes(spokenAsKana) || spokenAsKana.includes(cHiragana)) {
                         return true;
@@ -5718,17 +5747,24 @@
                     }
                 } else if (currentConfig.mode === 'word_shadow') {
                     document.getElementById('lbl-word-shadow-recognized-text').innerText = userSpeech;
-                    document.getElementById('lbl-word-shadow-score').innerText = "發音已收錄！可回聽或點擊下方比對評分";
+                    document.getElementById('lbl-word-shadow-score').innerText = "發音已收錄！可點擊下方比對評分";
                     document.getElementById('lbl-word-shadow-score').style.color = "var(--duo-blue)";
+
+                    const evalBtn = document.getElementById('btn-word-shadow-submit-speech-eval');
+                    if (evalBtn) evalBtn.style.display = 'block';
                 } else {
                     document.getElementById('lbl-recognized-text').innerText = userSpeech;
-                    document.getElementById('lbl-score').innerText = "發音已收錄！可回聽或點擊下方比對評分";
+                    document.getElementById('lbl-score').innerText = "發音已收錄！可點擊下方比對評分";
                     document.getElementById('lbl-score').style.color = "var(--duo-blue)";
+
+                    const evalBtn = document.getElementById('btn-submit-speech-eval');
+                    if (evalBtn) evalBtn.style.display = 'block';
                 }
                 stopSpeechRecognition();
             };
         }
 
+        // 解決 iOS 麥克風搶佔與卡死問題：取消並行的 MediaRecorder 爭搶
         function toggleRecording() {
             if (isCurrentQuestionAnswered) return;
             if (isToggling) return;
@@ -5741,16 +5777,12 @@
                 setTimeout(() => { isToggling = false; }, 200);
             } else {
                 try {
-                    // 優先啟動語音辨識
+                    // 1. 強制清空殘留的串流音軌
+                    stopMediaRecording();
+
+                    // 2. 啟動系統語音辨識
                     initSpeechRecognition();
                     recognition.start();
-
-                    // 延遲 150 毫秒啟動本機音訊備份，避開 iOS Safari 麥克風音訊通道衝突
-                    if (currentConfig.mode === 'shadow' || currentConfig.mode === 'word_shadow') {
-                        setTimeout(() => {
-                            if (isRecording) startMediaRecording();
-                        }, 150);
-                    }
                 } catch(err) {
                     console.error("啟動錄音失敗:", err);
                     stopSpeechRecognition();
