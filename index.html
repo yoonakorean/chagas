@@ -32,7 +32,6 @@
             --duo-fire-red: #ef4444;
             --duo-teal: #0d9488;
             
-            /* 闖關地圖藍色冒險配色 */
             --path-blue: #bae6fd;
             --path-blue-dark: #0284c7;
             --candy-node-bg: #1cb0f6;
@@ -337,7 +336,6 @@
             border-bottom-width: 2px !important;
         }
 
-        /* 關卡任務（語法教室）版面樣式優化：放大並固定高度、按鈕固定在下方、自適應調整 */
         #step-grammar.active {
             display: flex !important;
             flex-direction: column !important;
@@ -365,17 +363,18 @@
             flex-shrink: 0;
         }
 
+        /* 綠色語法介紹框：固定高度與最大高度，絕不隨內容變大 */
         .grammar-dialog-box {
             background: #f0fdf4;
             border: 2px solid #86efac;
             border-radius: 16px;
-            padding: 16px 14px;
-            font-size: 1.05rem;
+            padding: 14px 14px;
+            font-size: 1.02rem;
             color: #14532d;
             display: block;
             margin-bottom: 10px;
-            min-height: 130px;
-            max-height: 220px;
+            height: 140px;
+            max-height: 140px;
             overflow-y: auto;
             line-height: 1.6;
             position: relative;
@@ -403,7 +402,7 @@
             margin-bottom: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             text-align: left;
-            max-height: 150px;
+            max-height: 140px;
             overflow-y: auto;
             box-sizing: border-box;
             width: 100%;
@@ -458,7 +457,6 @@
         }
         .btn-example-item-audio:active { transform: scale(0.9); }
 
-        /* 將下一步/上一步/跳過對話按鈕固定在底部 */
         .grammar-bottom-actions-container {
             position: absolute;
             bottom: 4px;
@@ -968,7 +966,6 @@
         .btn-record.recording { animation: pulse 1s infinite; background: #dc2626; }
         @keyframes pulse { 0%{transform: scale(1);} 50%{transform: scale(1.08);} 100%{transform: scale(1);} }
 
-        /* 麥克風重置按鈕樣式 */
         .btn-mic-reset {
             background: var(--duo-orange);
             box-shadow: 0 4px 0 #d97706;
@@ -1034,17 +1031,6 @@
         .block-chip.used { opacity: 0.3; pointer-events: none; background: #f3f4f6; }
         .block-chip.locked-chip { pointer-events: none !important; opacity: 0.65; cursor: not-allowed; }
 
-        .hangul-grid-board-wrapper { width: 100%; overflow-x: auto; padding: 6px 0; display: flex; justify-content: center; -webkit-overflow-scrolling: touch; }
-        .hangul-grid-board {
-            display: grid; grid-template-rows: repeat(3, 44px); grid-template-columns: repeat(9, 44px); gap: 4px; background: #ffffff; border: 2px solid #bae6fd;
-            border-radius: 16px; padding: 8px; box-shadow: 0 4px 12px rgba(28, 176, 246, 0.08); margin: 0 auto;
-        }
-        .hangul-grid-cell {
-            background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
-            font-weight: 900; color: #94a3b8; cursor: pointer; transition: all 0.12s ease;
-        }
-        .hangul-grid-cell.filled { background: #ddf4ff; border: 2px solid var(--duo-blue); color: #0369a1; box-shadow: 0 2px 4px rgba(0,0,0,0.06); }
-
         .vocab-input {
             width: 88%; max-width: 320px; padding: 10px; font-size: 1.15rem; border: 2px solid #cbd5e1; border-radius: 12px; text-align: center; outline: none; margin: 10px auto; font-weight: bold; display: block;
         }
@@ -1103,11 +1089,6 @@
         @keyframes islandFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
         .island-progress-track { width: 100%; max-width: 280px; height: 14px; background: #e0f2fe; border-radius: 20px; overflow: hidden; border: 2px solid #bae6fd; position: relative; }
         .island-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #38bdf8, #0284c7); border-radius: 20px; transition: width 0.35s ease; position: relative; }
-
-        @media (max-width: 440px) {
-            .hangul-grid-board { grid-template-rows: repeat(3, 38px); grid-template-columns: repeat(9, 38px); gap: 3px; padding: 6px; }
-            .hangul-grid-cell { font-size: 1.1rem; }
-        }
     </style>
 </head>
 <body>
@@ -1983,9 +1964,6 @@
         let recordedAudioChunks = [];
         let userRecordedAudioUrl = null;
         let lastRecognizedSpeechText = "";
-
-        let gridBoardCells = new Array(27).fill(null);
-        let selectedTargetGridIndex = null;
 
         let chatRounds = [];
         let chatRoundIndex = 0;
@@ -5210,13 +5188,12 @@
                 document.getElementById('lbl-block-score').style.color = "#58cc02";
 
                 selectedBlockIndices = [];
-                gridBoardCells = new Array(27).fill(null);
-                selectedTargetGridIndex = null;
                 renderBlocks();
                 if (activeChallengeType !== 'timed') playBlockAudio();
             }
         }
 
+        // 統一採用標準橫向排列填寫格子（完全刪除 0A 3x9 網格）
         function renderBlocks() {
             const q = questions[currentIndex];
             const zoneOptions = document.getElementById('zone-options');
@@ -5224,86 +5201,31 @@
             zoneOptions.innerHTML = "";
             zoneAnswer.innerHTML = "";
 
-            const is0AKorean = (normalizeLevelStr(currentConfig.level) === '0A' && currentConfig.category === 'korean');
-
             q.options.forEach((optText, optIdx) => {
-                const isUsed = is0AKorean ? gridBoardCells.includes(optIdx) : selectedBlockIndices.includes(optIdx);
+                const isUsed = selectedBlockIndices.includes(optIdx);
                 const btn = document.createElement('div');
                 btn.className = 'block-chip' + (isUsed ? ' used' : '') + (isCurrentQuestionAnswered ? ' locked-chip' : '');
                 btn.innerText = optText;
 
                 btn.onclick = () => {
                     if (isCurrentQuestionAnswered) return;
-                    if (is0AKorean) {
-                        let targetIdx = selectedTargetGridIndex;
-                        if (targetIdx === null || gridBoardCells[targetIdx] !== null) {
-                            targetIdx = gridBoardCells.findIndex(val => val === null);
-                        }
-                        if (targetIdx !== -1) {
-                            gridBoardCells[targetIdx] = optIdx;
-                            const nextEmpty = gridBoardCells.findIndex((val, i) => val === null && i > targetIdx);
-                            selectedTargetGridIndex = (nextEmpty !== -1) ? nextEmpty : null;
-                            renderBlocks();
-                        }
-                    } else {
-                        selectedBlockIndices.push(optIdx);
-                        renderBlocks();
-                    }
+                    selectedBlockIndices.push(optIdx);
+                    renderBlocks();
                 };
                 zoneOptions.appendChild(btn);
             });
 
-            if (is0AKorean) {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'hangul-grid-board-wrapper';
-                const board = document.createElement('div');
-                board.className = 'hangul-grid-board';
-
-                for (let i = 0; i < 27; i++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'hangul-grid-cell' + (isCurrentQuestionAnswered ? ' locked-cell' : '');
-                    const assignedOptIdx = gridBoardCells[i];
-
-                    if (assignedOptIdx !== null) {
-                        cell.classList.add('filled');
-                        cell.innerText = q.options[assignedOptIdx];
-                        cell.title = isCurrentQuestionAnswered ? "" : "點擊收回此字塊";
-                        cell.onclick = () => {
-                            if (isCurrentQuestionAnswered) return;
-                            gridBoardCells[i] = null;
-                            selectedTargetGridIndex = i;
-                            renderBlocks();
-                        };
-                    } else {
-                        cell.innerText = "";
-                        if (selectedTargetGridIndex === i && !isCurrentQuestionAnswered) {
-                            cell.style.borderColor = "var(--duo-blue)";
-                            cell.style.backgroundColor = "#e0f2fe";
-                        }
-                        cell.title = isCurrentQuestionAnswered ? "" : "點擊選取放置位置";
-                        cell.onclick = () => {
-                            if (isCurrentQuestionAnswered) return;
-                            selectedTargetGridIndex = i;
-                            renderBlocks();
-                        };
-                    }
-                    board.appendChild(cell);
-                }
-                wrapper.appendChild(board);
-                zoneAnswer.appendChild(wrapper);
-            } else {
-                selectedBlockIndices.forEach(idx => {
-                    const btn = document.createElement('div');
-                    btn.className = 'block-chip' + (isCurrentQuestionAnswered ? ' locked-chip' : '');
-                    btn.innerText = q.options[idx];
-                    btn.onclick = () => {
-                        if (isCurrentQuestionAnswered) return;
-                        selectedBlockIndices = selectedBlockIndices.filter(i => i !== idx);
-                        renderBlocks();
-                    };
-                    zoneAnswer.appendChild(btn);
-                });
-            }
+            selectedBlockIndices.forEach(idx => {
+                const btn = document.createElement('div');
+                btn.className = 'block-chip' + (isCurrentQuestionAnswered ? ' locked-chip' : '');
+                btn.innerText = q.options[idx];
+                btn.onclick = () => {
+                    if (isCurrentQuestionAnswered) return;
+                    selectedBlockIndices = selectedBlockIndices.filter(i => i !== idx);
+                    renderBlocks();
+                };
+                zoneAnswer.appendChild(btn);
+            });
         }
 
         function checkBlockAnswer() {
@@ -5312,8 +5234,7 @@
             if (checkBlockBtn) checkBlockBtn.disabled = true;
 
             const q = questions[currentIndex];
-            const is0AKorean = (normalizeLevelStr(currentConfig.level) === '0A' && currentConfig.category === 'korean');
-            const userSentence = is0AKorean ? gridBoardCells.filter(idx => idx !== null).map(idx => q.options[idx]).join('') : selectedBlockIndices.map(i => q.options[i]).join('');
+            const userSentence = selectedBlockIndices.map(i => q.options[i]).join('');
             const scoreBadge = document.getElementById('lbl-block-score');
 
             if (activeChallengeType === 'timed') {
