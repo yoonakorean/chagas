@@ -363,7 +363,7 @@
             flex-shrink: 0;
         }
 
-        /* 綠色語法介紹框：固定高度與最大高度改為 160px */
+        /* 綠色語法介紹框：固定高度與最大高度，絕不隨內容變大 */
         .grammar-dialog-box {
             background: #f0fdf4;
             border: 2px solid #86efac;
@@ -373,8 +373,8 @@
             color: #14532d;
             display: block;
             margin-bottom: 10px;
-            height: 160px;
-            max-height: 160px;
+            height: 140px;
+            max-height: 140px;
             overflow-y: auto;
             line-height: 1.6;
             position: relative;
@@ -503,12 +503,6 @@
             font-weight: 900;
             color: var(--duo-blue);
             cursor: pointer;
-        }
-        .blank-slot.incorrect-slot {
-            color: var(--duo-red) !important;
-            border-bottom-color: var(--duo-red) !important;
-            background-color: #fee2e2;
-            border-radius: 6px;
         }
 .roadmap-container {
             position: relative;
@@ -1107,8 +1101,7 @@
             <div class="island-progress-fill" id="island-loading-bar"></div>
         </div>
     </div>
-
-    <!-- 解鎖大門全螢幕動畫過場 Modal -->
+<!-- 解鎖大門全螢幕動畫過場 Modal -->
     <div id="gate-unlock-modal">
         <div class="gate-doors-wrapper" id="doors-wrapper-anim">
             <div class="gate-unlock-shine"></div>
@@ -1927,7 +1920,8 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-<!-- 核心邏輯腳本開始 -->
+
+    <!-- 核心邏輯腳本開始 -->
     <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -2111,7 +2105,7 @@
                         const noBrackets = val.replace(/\([^)]*\)|（[^）]*）/g, '').trim();
                         if (noBrackets) candidates.add(noBrackets);
 
-                        const matches = val.match(/\(([^)]+)\)|（([^）]+）/g);
+                        const matches = val.match(/\(([^)]+)\)|（([^）]+)）/g);
                         if (matches) {
                             matches.forEach(m => {
                                 const clean = m.replace(/[()（）]/g, '').trim();
@@ -4553,7 +4547,6 @@
             if (nextBlank !== -1) activeBlankIndex = nextBlank;
         }
 
-        // 小試身手批改：錯誤時直接反紅並在題目空格旁標示正確答案
         function checkGrammarQuiz() {
             if (isGrammarQuizSubmitted) return;
             const quizList = currentGrammarItem.expandedQuizzes || [];
@@ -4574,41 +4567,31 @@
 
             let globalSlotIdx = 0;
             let isAllCorrect = true;
+            let correctAnswersList = [];
 
             quizList.forEach((qObj, idx) => {
-                const expectedAnswersList = (qObj.answer || '').split('/').map(s => s.trim()).filter(Boolean);
+                const expectedAnswer = (qObj.answer || '').replace(/\s+/g, '');
+                correctAnswersList.push(`第 ${idx + 1} 題：【${qObj.answer}】`);
                 const matches = (qObj.question || '').match(/_+/g) || [];
                 
                 let thisQuestionAnswers = [];
-                let thisQuestionSlots = [];
                 for (let i = 0; i < matches.length; i++) {
-                    const slotIdx = globalSlotIdx;
-                    thisQuestionSlots.push(slotIdx);
-                    thisQuestionAnswers.push(userGrammarAnswers[slotIdx] || '');
+                    thisQuestionAnswers.push(userGrammarAnswers[globalSlotIdx] || '');
                     globalSlotIdx++;
                 }
 
+                let subSlot = 0;
+                const fullUserSentence = (qObj.question || '').replace(/_+/g, () => {
+                    const ans = thisQuestionAnswers[subSlot] || '';
+                    subSlot++;
+                    return ans;
+                }).replace(/\s+/g, '');
+
                 const ansJoined = thisQuestionAnswers.join('').replace(/\s+/g, '');
-                const expectedJoined = expectedAnswersList.join('').replace(/\s+/g, '');
+                const ansSlash = thisQuestionAnswers.join('/').replace(/\s+/g, '');
 
-                const isThisQCorrect = (ansJoined === expectedJoined || (thisQuestionAnswers.length === 1 && thisQuestionAnswers[0] === (expectedAnswersList[0] || '')));
-
-                if (!isThisQCorrect) {
+                if ((fullUserSentence !== expectedAnswer) && (ansJoined !== expectedAnswer) && (ansSlash !== expectedAnswer)) {
                     isAllCorrect = false;
-                    // 將答錯的空格標記為紅色反紅
-                    thisQuestionSlots.forEach(sIdx => {
-                        const slotElem = document.getElementById(`blank-slot-${sIdx}`);
-                        if (slotElem) slotElem.classList.add('incorrect-slot');
-                    });
-
-                    // 在題目對應空格旁直接顯示正確答案
-                    const lastSlotElem = document.getElementById(`blank-slot-${thisQuestionSlots[thisQuestionSlots.length - 1]}`);
-                    if (lastSlotElem) {
-                        const hintSpan = document.createElement('span');
-                        hintSpan.style.cssText = "font-size: 0.88rem; color: #dc2626; font-weight: bold; margin-left: 6px; background: #fee2e2; padding: 2px 6px; border-radius: 6px;";
-                        hintSpan.innerHTML = `(正確: ${qObj.answer})`;
-                        lastSlotElem.after(hintSpan);
-                    }
                 }
             });
 
@@ -4624,7 +4607,7 @@
                 actionBtn.style.background = "#58cc02";
                 actionBtn.onclick = () => finishGrammarTask();
             } else {
-                resultText.innerHTML = `❌ 填寫有誤！請參考上方紅字與正確解答，點擊下方按鈕再試一次。`;
+                resultText.innerHTML = `❌ 答案不太對喔！<br><span style="font-size:0.95rem; color:#b91c1c;">正確答案是：<br>${correctAnswersList.join('<br>')}</span>`;
                 resultText.style.color = "#ff4b4b";
                 actionBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> 再試一次`;
                 actionBtn.style.background = "#ff4b4b";
@@ -5210,6 +5193,7 @@
             }
         }
 
+        // 統一採用標準橫向排列填寫格子（完全刪除 0A 3x9 網格）
         function renderBlocks() {
             const q = questions[currentIndex];
             const zoneOptions = document.getElementById('zone-options');
