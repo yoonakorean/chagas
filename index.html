@@ -337,19 +337,23 @@
             border-bottom-width: 2px !important;
         }
 
-        /* 關卡任務（語法教室）版面樣式優化 */
+        /* 關卡任務（語法教室）版面樣式優化：放大並固定高度、按鈕固定在下方、自適應調整 */
         #step-grammar.active {
             display: flex !important;
             flex-direction: column !important;
             width: 100%;
             text-align: center;
+            position: relative;
+            height: 100%;
         }
 
         #area-grammar-dialog {
             display: flex;
             flex-direction: column;
             width: 100%;
-            margin-bottom: 16px;
+            flex: 1;
+            padding-bottom: 70px;
+            box-sizing: border-box;
         }
 
         .grammar-dialog-header {
@@ -358,19 +362,20 @@
             align-items: center;
             margin-bottom: 8px;
             width: 100%;
+            flex-shrink: 0;
         }
 
         .grammar-dialog-box {
             background: #f0fdf4;
             border: 2px solid #86efac;
             border-radius: 16px;
-            padding: 14px 12px;
+            padding: 16px 14px;
             font-size: 1.05rem;
             color: #14532d;
             display: block;
-            margin-bottom: 8px;
-            min-height: 100px;
-            max-height: 200px;
+            margin-bottom: 10px;
+            min-height: 130px;
+            max-height: 220px;
             overflow-y: auto;
             line-height: 1.6;
             position: relative;
@@ -381,6 +386,7 @@
             scroll-behavior: smooth;
             box-sizing: border-box;
             width: 100%;
+            flex-shrink: 0;
         }
         #lbl-grammar-dialog {
             display: block !important;
@@ -397,7 +403,7 @@
             margin-bottom: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             text-align: left;
-            max-height: 160px;
+            max-height: 150px;
             overflow-y: auto;
             box-sizing: border-box;
             width: 100%;
@@ -424,7 +430,7 @@
             border: 1px solid #e2e8f0;
             border-radius: 10px;
             padding: 6px 10px;
-            font-size: 0.98rem;
+            font-size: 0.95rem;
             color: #1e293b;
             font-weight: bold;
             line-height: 1.4;
@@ -452,13 +458,20 @@
         }
         .btn-example-item-audio:active { transform: scale(0.9); }
 
+        /* 將下一步/上一步/跳過對話按鈕固定在底部 */
         .grammar-bottom-actions-container {
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            right: 0;
             display: flex !important;
             flex-direction: column !important;
-            gap: 8px;
-            padding: 8px 0;
+            gap: 6px;
+            padding: 6px 0;
             width: 100%;
             box-sizing: border-box;
+            background: linear-gradient(to top, rgba(255,255,255,1) 80%, rgba(255,255,255,0) 100%);
+            z-index: 30;
         }
 
         .grammar-nav-btns { 
@@ -472,13 +485,14 @@
             background: #f3f4f6 !important; 
             border: 1px solid #d1d5db !important; 
             border-bottom: 3px solid #d1d5db !important;
-            padding: 10px 8px !important; 
-            font-size: 0.9rem !important; 
+            padding: 9px 6px !important; 
+            font-size: 0.85rem !important; 
             font-weight: bold !important; 
             color: #4b5563 !important; 
             border-radius: 12px !important; 
             cursor: pointer;
             text-align: center;
+            white-space: nowrap;
         }
         .btn-grammar-sub:active { transform: translateY(2px); border-bottom-width: 1px !important; }
 
@@ -492,8 +506,7 @@
             color: var(--duo-blue);
             cursor: pointer;
         }
-
-        .roadmap-container {
+.roadmap-container {
             position: relative;
             width: 100%;
             min-height: 100%;
@@ -995,7 +1008,7 @@
 
         .gear-menu-container { position: relative; }
         .btn-gear {
-            background: #f3f4f6; border: 1px solid #d1d5db; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; color: #4b5563; font-size: 0.95rem;
+            background: #f3f4f6; border: 1.1px solid #d1d5db; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; color: #4b5563; font-size: 0.95rem;
             display: flex; align-items: center; justify-content: center; transition: all 0.2s;
         }
         .gear-dropdown {
@@ -1098,7 +1111,7 @@
     </style>
 </head>
 <body>
-<!-- 全螢幕「小船航行中...」遮罩 -->
+    <!-- 全螢幕「小船航行中...」遮罩 -->
     <div id="game-loading-overlay">
         <div class="loading-island-icon"><i class="fa-solid fa-sailboat"></i></div>
         <div class="loading-island-title" id="lbl-island-loading-title" style="font-size: 1.4rem; font-weight: 900; color: #1e293b; margin-bottom: 8px;">🏝️ 冒險地圖載入中...</div>
@@ -1107,8 +1120,7 @@
             <div class="island-progress-fill" id="island-loading-bar"></div>
         </div>
     </div>
-
-    <!-- 解鎖大門全螢幕動畫過場 Modal -->
+<!-- 解鎖大門全螢幕動畫過場 Modal -->
     <div id="gate-unlock-modal">
         <div class="gate-doors-wrapper" id="doors-wrapper-anim">
             <div class="gate-unlock-shine"></div>
@@ -1927,7 +1939,8 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-<!-- 核心邏輯腳本開始 -->
+
+    <!-- 核心邏輯腳本開始 -->
     <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -2013,7 +2026,6 @@
         const IDLE_LIMIT_MS = 90 * 1000;
         let isIdlePaused = false;
 
-        // ================= 純前端日語零依賴高頻假名 <-> 漢字擴充轉換引擎 =================
         function katakanaToHiragana(str) {
             return (str || '').replace(/[\u30A1-\u30F6]/g, function(match) {
                 return String.fromCharCode(match.charCodeAt(0) - 0x60);
@@ -2135,7 +2147,6 @@
             return Array.from(candidates);
         }
 
-        // 強制重置麥克風收音連線（深層切斷音軌，避免 iOS 搶麥卡死）
         function forceResetMicrophoneSession() {
             if (recognition) {
                 try {
@@ -2177,7 +2188,6 @@
             }
         }
 
-        // 釋放音訊記憶體
         function revokeUserAudioUrl() {
             if (userRecordedAudioUrl) {
                 try {
@@ -3888,7 +3898,7 @@
                 document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
             }
         });
-// 徹底停止音訊串流，釋放手機麥克風硬體
+
         function stopMediaRecording() {
             if (mediaRecorder) {
                 if (mediaRecorder.state !== 'inactive') {
@@ -3905,7 +3915,6 @@
             }
         }
 
-        // 徹底關閉語音辨識與所有收音設備，防止殘留占用
         function stopSpeechRecognition() {
             if (recognition) {
                 try { 
@@ -3919,7 +3928,7 @@
             }
             stopMediaRecording();
             isRecording = false;
-            isToggling = false; // 解除防連點鎖，避免重新錄音卡死
+            isToggling = false;
             document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
         }
 
@@ -4181,7 +4190,6 @@
             const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_${currentConfig.mode}`;
             let completedList = (window.currentUserData && Array.isArray(window.currentUserData.completedLessons)) ? window.currentUserData.completedLessons : [];
 
-            // 門檻：獲得 1 顆星以上（>= 60 分）才算過關變黃色
             const isPassedStar = result.starInfo && result.starInfo.stars >= 1;
 
             if (isPassedStar && !completedList.includes(lessonKey)) {
@@ -4214,7 +4222,6 @@
             const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_grammar`;
             let completedList = (window.currentUserData && Array.isArray(window.currentUserData.completedLessons)) ? window.currentUserData.completedLessons : [];
 
-            // 關卡任務維持看完即標記過關變黃
             if (!completedList.includes(lessonKey)) {
                 completedList.push(lessonKey);
                 window.currentUserData.completedLessons = completedList;
@@ -4266,7 +4273,6 @@
             }
         }
 
-        // ================= 語法介紹教室邏輯（雙階段切換與鎖定機制） =================
         function cleanInitialWhitespace(str) {
             return (str || '').replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
         }
@@ -4478,14 +4484,12 @@
             }
         }
 
-        // 第二階段：小試身手單獨呈現
         function showGrammarQuizArea() {
-            isGrammarQuizSubmitted = false; // 解鎖作答狀態
+            isGrammarQuizSubmitted = false;
 
             const areaDialog = document.getElementById('area-grammar-dialog');
             if (areaDialog) areaDialog.style.display = 'none';
 
-            // 作答中小試身手時先隱藏觀念總覽
             const areaHistory = document.getElementById('area-grammar-all-history');
             if (areaHistory) areaHistory.style.display = 'none';
 
@@ -4544,7 +4548,7 @@
                 btn.className = 'block-chip';
                 btn.innerText = opt;
                 btn.onclick = () => {
-                    if (isGrammarQuizSubmitted) return; // 送出後禁止再填入
+                    if (isGrammarQuizSubmitted) return;
                     fillGrammarAnswer(opt);
                 };
                 cContainer.appendChild(btn);
@@ -4552,12 +4556,12 @@
         }
 
         function setActiveBlank(index) { 
-            if (isGrammarQuizSubmitted) return; // 送出後禁止再切換空格
+            if (isGrammarQuizSubmitted) return;
             activeBlankIndex = index; 
         }
 
         function fillGrammarAnswer(optionText) {
-            if (isGrammarQuizSubmitted) return; // 送出後禁止再改答案
+            if (isGrammarQuizSubmitted) return;
             userGrammarAnswers[activeBlankIndex] = optionText;
             const slot = document.getElementById(`blank-slot-${activeBlankIndex}`);
             if (slot) slot.innerText = optionText;
@@ -4571,7 +4575,6 @@
             if (!quizList.length) return;
             if (userGrammarAnswers.includes('')) return alert('請填寫完所有空格後再送出答案！');
 
-            // 1. 標記已送出，徹底鎖定題目與按鈕，禁止修改答案
             isGrammarQuizSubmitted = true;
             const btnCheck = document.getElementById('btn-check-grammar');
             if (btnCheck) {
@@ -4580,7 +4583,6 @@
                 btnCheck.style.cursor = 'not-allowed';
             }
 
-            // 將選項字塊加上鎖定樣式禁止點選
             document.querySelectorAll('#container-grammar-choices .block-chip').forEach(btn => {
                 btn.classList.add('locked-chip');
             });
@@ -4631,10 +4633,9 @@
                 resultText.style.color = "#ff4b4b";
                 actionBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> 再試一次`;
                 actionBtn.style.background = "#ff4b4b";
-                actionBtn.onclick = () => showGrammarQuizArea(); // 點擊再試一次才會重新解鎖
+                actionBtn.onclick = () => showGrammarQuizArea();
             }
 
-            // 2. 回答完送出後，在最下方渲染並展開「觀念總覽」
             renderGrammarHistoryList();
             const historyContainer = document.getElementById('area-grammar-all-history');
             if (historyContainer) {
@@ -4645,7 +4646,6 @@
             }
         }
 
-        // ================= 通用單字挑戰邏輯 =================
         function getWordTranslation(item) {
             if (!item) return "";
             return (currentConfig.lang === 'en') ? (item.en || item.zh_tw || "") :
@@ -5057,7 +5057,6 @@
             } 
         }
 
-        // ================= 句子跟讀與字塊重組邏輯 =================
         function startMainQuiz() {
             stopSpeechRecognition();
             stopChallengeTimer();
@@ -5386,13 +5385,11 @@
             return clean;
         }
 
-        // ================= 核心語音比對（支援日語平假名/漢字/片假名、中文括號欄位與韓語變體） =================
         function isSpeechPass(target, spoken, currentItem = null) {
             if (!target || !spoken) return false;
             const sClean = cleanStringForCompare(spoken);
             if (!sClean) return false;
 
-            // 1. 日文模式專用比對
             if (currentConfig.category === 'japanese') {
                 const targetCandidates = buildJapaneseMatchCandidates(target, currentItem);
                 const spokenHiragana = katakanaToHiragana(sClean);
@@ -5414,7 +5411,6 @@
                 return false;
             }
 
-            // 2. 一般多語系比對模式（含韓語、英語）
             const rawTargets = String(target).split('/').map(s => s.trim()).filter(Boolean);
             for (const cand of rawTargets) {
                 const tClean = cleanStringForCompare(cand);
@@ -5447,7 +5443,6 @@
             return false;
         }
 
-        // ================= 句子問答邏輯 =================
         function startSentenceChatChallenge() {
             stopSpeechRecognition();
             stopChallengeTimer();
@@ -5756,7 +5751,6 @@
             if (evalBtn) evalBtn.style.display = 'none';
         }
 
-        // ================= 語音辨識錄音（解鎖防卡死與徹底清理） =================
         function initSpeechRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) return alert("您的瀏覽器不支援語音辨識，請使用 Chrome 或 Safari。");
@@ -5835,7 +5829,6 @@
             };
         }
 
-        // 解決 iOS 麥克風搶佔與卡死問題：取消並行的 MediaRecorder 爭搶
         function toggleRecording() {
             if (isCurrentQuestionAnswered) return;
             if (isToggling) return;
@@ -5848,10 +5841,7 @@
                 setTimeout(() => { isToggling = false; }, 200);
             } else {
                 try {
-                    // 1. 強制清空殘留的串流音軌
                     stopMediaRecording();
-
-                    // 2. 啟動系統語音辨識
                     initSpeechRecognition();
                     recognition.start();
                 } catch(err) {
@@ -5881,30 +5871,23 @@
                 }, { passive: true });
             });
 
-            // ================= 強化前端安全防護（防右鍵、防 F12、防檢視原始碼） =================
-            // 1. 禁用滑鼠右鍵選單
             document.addEventListener('contextmenu', function(e) {
                 e.preventDefault();
             });
 
-            // 2. 禁用 F12 及常見開發者工具/檢視原始碼快捷鍵
             document.addEventListener('keydown', function(e) {
-                // F12 鍵
                 if (e.keyCode === 123) {
                     e.preventDefault();
                     return false;
                 }
-                // Ctrl+Shift+I (Windows) 或 Cmd+Option+I (Mac) - 開發者工具
                 if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
                     e.preventDefault();
                     return false;
                 }
-                // Ctrl+U / Cmd+U - 檢視網頁原始碼
                 if ((e.ctrlKey || e.metaKey) && e.keyCode === 85) {
                     e.preventDefault();
                     return false;
                 }
-                // Ctrl+S / Cmd+S - 另存網頁
                 if ((e.ctrlKey || e.metaKey) && e.keyCode === 83) {
                     e.preventDefault();
                     return false;
