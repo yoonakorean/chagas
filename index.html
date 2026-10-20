@@ -3480,7 +3480,7 @@
 
         document.getElementById('btn-google-login').onclick = async () => {
             try { 
-                showIslandLoading("Google 登入驗證中...", 30);
+                showIslandLoading("地圖生成中...", 30);
                 const cred = await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
                 await verifyAndSyncUser(cred.user, true);
             } catch (err) { 
