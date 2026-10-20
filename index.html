@@ -2701,10 +2701,10 @@
 
             if (isFromPageHidden) {
                 if (titleElem) titleElem.innerText = "學習已暫停";
-                if (descElem) descElem.innerText = "檢測到您切換離開畫面，系統已自動暫停計時。休息好了就繼續吧！";
+                if (descElem) descElem.innerText = "休息好了就繼續吧！";
             } else {
                 if (titleElem) titleElem.innerText = "閒置過久囉！";
-                if (descElem) descElem.innerText = "檢測到您已超過 90 秒未操作，系統已自動暫停計時。準備好就點擊繼續！";
+                if (descElem) descElem.innerText = "準備好就點擊繼續！";
             }
             openModal('modal-idle-timeout');
         }
