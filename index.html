@@ -363,7 +363,6 @@
             flex-shrink: 0;
         }
 
-        /* 綠色語法介紹框：固定高度與最大高度，絕不隨內容變大 */
         .grammar-dialog-box {
             background: #f0fdf4;
             border: 2px solid #86efac;
@@ -504,7 +503,7 @@
             color: var(--duo-blue);
             cursor: pointer;
         }
-.roadmap-container {
+        .roadmap-container {
             position: relative;
             width: 100%;
             min-height: 100%;
@@ -1101,7 +1100,8 @@
             <div class="island-progress-fill" id="island-loading-bar"></div>
         </div>
     </div>
-<!-- 解鎖大門全螢幕動畫過場 Modal -->
+
+    <!-- 解鎖大門全螢幕動畫過場 Modal -->
     <div id="gate-unlock-modal">
         <div class="gate-doors-wrapper" id="doors-wrapper-anim">
             <div class="gate-unlock-shine"></div>
@@ -1146,8 +1146,7 @@
             <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 10px;" class="hidden"></div>
         </div>
     </div>
-
-    <!-- 忘記密碼 Modal -->
+<!-- 忘記密碼 Modal -->
     <div id="modal-forgot-password" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
@@ -1389,8 +1388,7 @@
             </div>
         </div>
     </div>
-
-    <!-- 主介面容器 -->
+<!-- 主介面容器 -->
     <div class="shadowing-card">
         
         <!-- 上方狀態列 -->
@@ -1920,8 +1918,7 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-
-    <!-- 核心邏輯腳本開始 -->
+<!-- 核心邏輯腳本開始 -->
     <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -2387,10 +2384,11 @@
             }
         };
 
+        // 🌟 更新後的評分條件
         function calculateStars(score) {
-            if (score >= 100) return { stars: 3, label: '⭐⭐⭐' };
-            if (score >= 80) return { stars: 2, label: '⭐⭐' };
-            if (score >= 60) return { stars: 1, label: '⭐' };
+            if (score >= 90) return { stars: 3, label: '⭐⭐⭐' };
+            if (score >= 71) return { stars: 2, label: '⭐⭐' };
+            if (score >= 51) return { stars: 1, label: '⭐' };
             return { stars: 0, label: '未達成' };
         }
 
@@ -3232,8 +3230,6 @@
                     if (!Array.isArray(window.currentUserData.friends)) window.currentUserData.friends = [];
                     if (!window.currentUserData.modeScores) window.currentUserData.modeScores = {};
 
-                    await processDailyCheckIn(user, window.currentUserData);
-
                     if (window.currentUserData.learnCategory) setLearnCategory(window.currentUserData.learnCategory);
                     if (window.currentUserData.nativeLanguage) setUserLang(window.currentUserData.nativeLanguage);
                     if (!unlockedLevels.includes(currentConfig.level)) currentConfig.level = unlockedLevels[0];
@@ -3289,10 +3285,10 @@
                     status: "開通中",
                     learnCategory: learnCategory,
                     nativeLanguage: nativeLang,
-                    xp: 20,
-                    streakDays: 1,
-                    lastCheckInDate: todayStr,
-                    checkInHistory: [todayStr],
+                    xp: 0,
+                    streakDays: 0,
+                    lastCheckInDate: "",
+                    checkInHistory: [],
                     focusSeconds: 0,
                     focusHours: 0.0,
                     unlockedLevels: window.tempUnlockedLevels || ['0A'],
@@ -3366,7 +3362,7 @@
 
         function renderUserInfo() {
             if (!window.currentUserData) return;
-            const streakDays = window.currentUserData.streakDays || 1;
+            const streakDays = window.currentUserData.streakDays || 0;
             const xp = window.currentUserData.xp || 0;
             const displayName = window.currentUserData.displayName || "學生";
             const totalSeconds = Number(window.currentUserData.focusSeconds || (window.currentUserData.focusHours ? window.currentUserData.focusHours * 3600 : 0));
@@ -3614,7 +3610,7 @@
                         </div>
                         <div style="text-align: right; flex-shrink: 0;">
                             <div style="font-weight: 800; color: var(--duo-gold); font-size: 0.92rem;"><i class="fa-solid fa-star"></i> ${data.xp || 0}</div>
-                            <div style="font-size: 0.75rem; color: var(--duo-fire-red); font-weight: bold;"><i class="fa-solid fa-fire"></i> ${data.streakDays || 1} 天</div>
+                            <div style="font-size: 0.75rem; color: var(--duo-fire-red); font-weight: bold;"><i class="fa-solid fa-fire"></i> ${data.streakDays || 0} 天</div>
                         </div>
                     `;
                     container.appendChild(row);
@@ -3638,7 +3634,7 @@
                 email: currentUser.email,
                 displayName: window.currentUserData.displayName || "我",
                 xp: window.currentUserData.xp || 0,
-                streakDays: window.currentUserData.streakDays || 1,
+                streakDays: window.currentUserData.streakDays || 0,
                 level: window.currentUserData.unlockedLevels ? window.currentUserData.unlockedLevels[0] : '1A',
                 isMe: true
             }];
@@ -3654,7 +3650,7 @@
                                 email: d.email,
                                 displayName: d.displayName || "好友",
                                 xp: d.xp || 0,
-                                streakDays: d.streakDays || 1,
+                                streakDays: d.streakDays || 0,
                                 level: d.unlockedLevels ? d.unlockedLevels[0] : '1A',
                                 isMe: false
                             });
@@ -3684,7 +3680,7 @@
                         <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                             <div style="text-align: right;">
                                 <div style="font-weight: 800; color: var(--duo-gold); font-size: 0.92rem;"><i class="fa-solid fa-star"></i> ${u.xp || 0}</div>
-                                <div style="font-size: 0.75rem; color: var(--duo-fire-red); font-weight: bold;"><i class="fa-solid fa-fire"></i> ${u.streakDays || 1} 天</div>
+                                <div style="font-size: 0.75rem; color: var(--duo-fire-red); font-weight: bold;"><i class="fa-solid fa-fire"></i> ${u.streakDays || 0} 天</div>
                             </div>
                             ${!u.isMe ? `<button onclick="removeFriend('${u.email}')" title="刪除好友" style="background:none; border:none; color:#9ca3af; cursor:pointer; padding:4px;"><i class="fa-solid fa-user-xmark"></i></button>` : ''}
                         </div>
@@ -4165,6 +4161,11 @@
             const finalScore = Math.min(100, Math.round(passedSubQuestions.size * pointsPerQuestion));
             const result = await saveChallengeScoreRecord(finalScore, elapsedSeconds);
 
+            // 🌟 成功通關才執行每日簽到與累積！
+            if (currentUser && window.currentUserData) {
+                await processDailyCheckIn(currentUser, window.currentUserData);
+            }
+
             const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_${currentConfig.mode}`;
             let completedList = (window.currentUserData && Array.isArray(window.currentUserData.completedLessons)) ? window.currentUserData.completedLessons : [];
 
@@ -4196,6 +4197,11 @@
             stopSpeechRecognition();
             stopChallengeTimer();
             await recordSessionFocusTime();
+
+            // 🌟 語法任務通關也一併計入每日簽到
+            if (currentUser && window.currentUserData) {
+                await processDailyCheckIn(currentUser, window.currentUserData);
+            }
 
             const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_grammar`;
             let completedList = (window.currentUserData && Array.isArray(window.currentUserData.completedLessons)) ? window.currentUserData.completedLessons : [];
@@ -5193,7 +5199,6 @@
             }
         }
 
-        // 統一採用標準橫向排列填寫格子（完全刪除 0A 3x9 網格）
         function renderBlocks() {
             const q = questions[currentIndex];
             const zoneOptions = document.getElementById('zone-options');
