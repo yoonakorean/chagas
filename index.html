@@ -87,6 +87,7 @@
             text-align: center;
         }
 
+        /* 🌟 頂部狀態列自適應優化：緊湊排列、防止名稱過長撐爆 */
         .user-meta-bar {
             flex-shrink: 0;
             display: flex;
@@ -119,6 +120,7 @@
         }
         .user-meta-item:hover { background: #f0f9ff; }
 
+        /* 🌟 名稱過長時自動顯示省略號 (...) */
         #lbl-username {
             max-width: 72px;
             overflow: hidden;
@@ -355,8 +357,6 @@
             text-align: center;
             position: relative;
             height: 100%;
-            box-sizing: border-box;
-            padding-bottom: 150px;
         }
 
         #area-grammar-dialog {
@@ -364,6 +364,7 @@
             flex-direction: column;
             width: 100%;
             flex: 1;
+            padding-bottom: 70px;
             box-sizing: border-box;
         }
 
@@ -471,16 +472,16 @@
 
         .grammar-bottom-actions-container {
             position: absolute;
-            bottom: 10px;
-            left: 14px;
-            right: 14px;
+            bottom: 4px;
+            left: 0;
+            right: 0;
             display: flex !important;
             flex-direction: column !important;
             gap: 6px;
-            padding: 8px 0;
-            width: calc(100% - 28px);
+            padding: 6px 0;
+            width: 100%;
             box-sizing: border-box;
-            background: linear-gradient(to top, rgba(240,249,255,1) 85%, rgba(240,249,255,0) 100%);
+            background: linear-gradient(to top, rgba(255,255,255,1) 80%, rgba(255,255,255,0) 100%);
             z-index: 30;
         }
 
@@ -506,20 +507,6 @@
         }
         .btn-grammar-sub:active { transform: translateY(2px); border-bottom-width: 1px !important; }
 
-        .grammar-q-item {
-            transition: all 0.2s ease;
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 8px 10px;
-            background: #ffffff;
-            margin-bottom: 10px;
-        }
-        .grammar-q-item.active-current-q {
-            border-color: var(--duo-blue) !important;
-            background: #f0f9ff !important;
-            box-shadow: 0 4px 12px rgba(28, 176, 246, 0.2);
-        }
-
         .blank-slot {
             display: inline-block;
             min-width: 60px;
@@ -530,12 +517,6 @@
             color: var(--duo-blue);
             cursor: pointer;
         }
-        .blank-slot.active-slot {
-            background: #e0f2fe;
-            border-radius: 4px;
-            border-bottom-color: #0284c7;
-        }
-
         .roadmap-container {
             position: relative;
             width: 100%;
@@ -1951,7 +1932,8 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-<script>
+<!-- 核心邏輯腳本開始 -->
+    <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
         const API_URLS = {
@@ -2044,9 +2026,9 @@
             'あおい': ['青い', '葵', '蒼い'],
             'あか': ['赤', '紅'],
             'あかい': ['赤い', '紅い'],
-            'あう': ['會う', '合う', '遭う'],
+            'あう': ['会う', '合う', '遭う'],
             'あさ': ['朝', '麻'],
-            'あし': ['足', '腳'],
+            'あし': ['足', '脚'],
             'あたま': ['頭'],
             'あめ': ['雨', '飴'],
             'いい': ['良い', 'いい'],
@@ -2063,7 +2045,7 @@
             'おとこ': ['男'],
             'おとな': ['大人'],
             'おんな': ['女'],
-            'かいしゃ': ['會社'],
+            'かいしゃ': ['会社'],
             'かう': ['買う', '飼う'],
             'かお': ['顔'],
             'かく': ['書く', '描く', '画く', '掻く'],
@@ -2515,7 +2497,701 @@
                 await auth.signOut();
             }
         }
+    </script>
+<script>
+        function renderAllLessonsForLevel(level) {
+            const targetLevelNormalized = normalizeLevelStr(level);
+            document.getElementById('lbl-lesson-unit').innerText = `Level ${level} 冒險地圖`;
 
+            const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawWordData];
+            const filteredByLevel = combinedData.filter(i => normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized);
+
+            const units = [...new Set(filteredByLevel.map(i => getItemField(i, 'unit_id')))]
+                .filter(Boolean)
+                .sort((a, b) => Number(a) - Number(b));
+
+            if (units.length === 0) {
+                document.getElementById('roadmap-nodes-list').innerHTML = `<div style="color: #6b7280; padding: 40px 0;">目前 ${level} 尚未設定課程內容。</div>`;
+                return;
+            }
+
+            if (!units.includes(String(currentConfig.unit_id))) {
+                currentConfig.unit_id = units[0];
+            }
+
+            renderStagePills(units);
+            renderCandyRoadmap(currentConfig.unit_id, filteredByLevel, units);
+        }
+
+        function renderStagePills(units) {
+            const pillContainer = document.getElementById('container-stage-pills');
+            pillContainer.innerHTML = "";
+
+            units.forEach(u => {
+                const btn = document.createElement('button');
+                btn.className = `stage-pill-btn ${String(u) === String(currentConfig.unit_id) ? 'active' : ''}`;
+                btn.innerHTML = `<i class="fa-solid fa-flag"></i> 第 ${u} 階段`;
+                btn.onclick = () => {
+                    if (String(u) !== String(currentConfig.unit_id)) {
+                        triggerGateUnlockTransition(u);
+                    }
+                };
+                pillContainer.appendChild(btn);
+            });
+        }
+
+        function triggerGateUnlockTransition(nextUnitId) {
+            const modal = document.getElementById('gate-unlock-modal');
+            const wrapper = document.getElementById('doors-wrapper-anim');
+            const title = document.getElementById('gate-unlock-title');
+            const sub = document.getElementById('gate-unlock-sub');
+
+            title.innerText = `🏰 解鎖前往第 ${nextUnitId} 階段...`;
+            sub.innerText = "大門正在開啟，準備迎接全新挑戰！";
+
+            wrapper.classList.remove('doors-opened');
+            modal.classList.add('show');
+
+            setTimeout(() => {
+                wrapper.classList.add('doors-opened');
+            }, 400);
+
+            setTimeout(() => {
+                modal.classList.remove('show');
+                wrapper.classList.remove('doors-opened');
+                currentConfig.unit_id = String(nextUnitId);
+                renderAllLessonsForLevel(currentConfig.level);
+            }, 1900);
+        }
+
+        function renderCandyRoadmap(unitId, filteredByLevel, units) {
+            const nodesContainer = document.getElementById('roadmap-nodes-list');
+            const svgCanvas = document.getElementById('roadmap-svg-canvas');
+            nodesContainer.innerHTML = "";
+            svgCanvas.innerHTML = "";
+
+            const itemsInUnit = filteredByLevel.filter(i => String(getItemField(i, 'unit_id')) === String(unitId));
+            const lessons = [...new Set(itemsInUnit.map(i => getItemField(i, 'lesson')))]
+                .filter(Boolean)
+                .sort((a, b) => Number(a) - Number(b));
+
+            if (lessons.length === 0) {
+                nodesContainer.innerHTML = `<div style="color: #6b7280; padding: 40px 0;">此階段暫無關卡</div>`;
+                return;
+            }
+
+            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+            const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
+
+            let stageTasks = [];
+            let sideQuestMap = {};
+
+            lessons.forEach(les => {
+                const lesStr = String(les);
+
+                const matchFilter = (list) => list.some(item => 
+                    normalizeLevelStr(getItemField(item, 'level')) === targetLevelNormalized &&
+                    String(getItemField(item, 'unit_id')) === String(unitId) &&
+                    String(getItemField(item, 'lesson')) === lesStr
+                );
+
+                const hasGrammar = globalGrammarData.some(g => 
+                    normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
+                    String(getItemField(g, 'unit_id')) === String(unitId) &&
+                    String(getItemField(g, 'lesson')) === lesStr &&
+                    ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0))
+                );
+
+                const hasWord = matchFilter(rawWordData);
+                const hasShadow = matchFilter(rawShadowData);
+                const hasBlocks = matchFilter(rawBlocksData);
+                const hasDialogue = rawDialogueData.some(d => 
+                    normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
+                    String(getItemField(d, 'unit_id')) === String(unitId) &&
+                    String(getItemField(d, 'lesson')) === lesStr &&
+                    ((d.a1 && d.a1.trim()) || (d.b1 && d.b1.trim()))
+                );
+
+                if (hasWord) {
+                    sideQuestMap[lesStr] = { unitId, lesson: lesStr, mode: 'word_type', title: `${lesStr} 單字聽打`, label: '⌨ 聽打支線' };
+                }
+
+                if (hasGrammar) {
+                    stageTasks.push({ unitId, lesson: lesStr, mode: 'grammar', title: `${lesStr} 關卡任務`, label: '關卡任務' });
+                }
+                if (hasWord) {
+                    stageTasks.push({ unitId, lesson: lesStr, mode: 'word_shadow', title: `${lesStr} 單字跟讀`, label: '單字跟讀' });
+                    stageTasks.push({ unitId, lesson: lesStr, mode: 'word_choice', title: `${lesStr} 單字選擇`, label: '單字選擇' });
+                }
+                if (hasShadow) {
+                    stageTasks.push({ unitId, lesson: lesStr, mode: 'shadow', title: `${lesStr} 句子跟讀`, label: '句子跟讀' });
+                }
+                if (hasBlocks) {
+                    stageTasks.push({ unitId, lesson: lesStr, mode: 'blocks', title: `${lesStr} 字塊重組`, label: '字塊重組' });
+                }
+                if (hasDialogue) {
+                    stageTasks.push({ unitId, lesson: lesStr, mode: 'sentence_chat', title: `${lesStr} 對話挑戰`, label: '對話挑戰' });
+                }
+            });
+
+            if (stageTasks.length === 0) {
+                nodesContainer.innerHTML = `<div style="color: #6b7280; padding: 40px 0;">此階段暫無可挑戰內容</div>`;
+                return;
+            }
+
+            let currentTaskIndex = 0;
+            for (let i = 0; i < stageTasks.length; i++) {
+                const t = stageTasks[i];
+                const isPassed = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${t.lesson}_${t.mode}`);
+                if (isPassed) {
+                    currentTaskIndex = (i < stageTasks.length - 1) ? (i + 1) : i;
+                } else {
+                    currentTaskIndex = i;
+                    break;
+                }
+            }
+
+            const offsets = ['offset-center', 'offset-left-1', 'offset-left-2', 'offset-left-1', 'offset-center', 'offset-right-1', 'offset-right-2', 'offset-right-1'];
+
+            const currentUnitIndex = units.indexOf(String(unitId));
+            if (currentUnitIndex !== -1 && currentUnitIndex < units.length - 1) {
+                const nextUnitId = units[currentUnitIndex + 1];
+                const gateDiv = document.createElement('div');
+                gateDiv.className = "gate-portal-container";
+                gateDiv.innerHTML = `
+                    <button class="castle-gate-btn" onclick="triggerGateUnlockTransition('${nextUnitId}')">
+                        <i class="fa-solid fa-dungeon" style="font-size: 1.4rem;"></i>
+                        <span>通往第 ${nextUnitId} 階段大門</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </button>
+                `;
+                nodesContainer.appendChild(gateDiv);
+            }
+
+            stageTasks.forEach((task, idx) => {
+                const nodeNumber = idx + 1;
+                const offsetClass = offsets[idx % offsets.length];
+                const isCompleted = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${task.lesson}_${task.mode}`);
+                const isCurrent = (idx === currentTaskIndex);
+
+                let bestStar = 0;
+                ['practice', 'entry', 'timed'].forEach(t => {
+                    const rec = getStoredBestRecord(task.lesson, task.mode, t, unitId);
+                    if (rec && rec.stars > bestStar) bestStar = rec.stars;
+                });
+                let starIcons = bestStar > 0 ? '★'.repeat(bestStar) : '• • •';
+
+                const sideQuest = (task.mode === 'word_shadow' && sideQuestMap[task.lesson]) ? sideQuestMap[task.lesson] : null;
+                let sideQuestHtml = '';
+                if (sideQuest) {
+                    const isSideCompleted = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${sideQuest.lesson}_${sideQuest.mode}`);
+                    sideQuestHtml = `
+                        <div class="side-quest-badge ${isSideCompleted ? 'completed' : ''}" 
+                             onclick="promptSelectModeType('${sideQuest.unitId}', '${sideQuest.lesson}', '${sideQuest.mode}', '${sideQuest.title}')"
+                             title="支線任務：單字聽打">
+                            <i class="fa-solid fa-keyboard"></i>
+                            <span>聽打${isSideCompleted ? ' ✓' : ''}</span>
+                        </div>
+                    `;
+                }
+
+                const row = document.createElement('div');
+                row.className = `roadmap-node-row ${offsetClass}`;
+                row.innerHTML = `
+                    <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+                        ${isCurrent ? `<img src="images/avatar.png" onerror="this.onerror=null; this.src='https://api.dicebear.com/7.x/bottts/svg?seed=Yoona';" class="node-avatar-badge" alt="Player">` : ''}
+                        <button class="candy-node-btn ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}" 
+                                onclick="promptSelectModeType('${task.unitId}', '${task.lesson}', '${task.mode}', '${task.title}')">
+                            <span class="candy-node-num">${nodeNumber}</span>
+                            <span class="candy-node-stars">${starIcons}</span>
+                        </button>
+                        <span class="candy-node-label">${task.label}</span>
+                        ${sideQuestHtml}
+                    </div>
+                `;
+                nodesContainer.appendChild(row);
+            });
+
+            setTimeout(() => {
+                drawRoadmapSvgPath();
+
+                const mainScrollView = document.getElementById('learning-content-view');
+                const currentNode = document.querySelector('.candy-node-btn.current') || document.querySelector('.candy-node-btn');
+                
+                if (currentNode && mainScrollView) {
+                    currentNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else if (mainScrollView) {
+                    mainScrollView.scrollTop = mainScrollView.scrollHeight;
+                }
+            }, 120);
+        }
+
+        function drawRoadmapSvgPath() {
+            const svg = document.getElementById('roadmap-svg-canvas');
+            const container = document.getElementById('roadmap-main-area');
+            const btns = Array.from(document.querySelectorAll('.candy-node-btn'));
+
+            if (!svg || !container || btns.length < 2) return;
+
+            svg.setAttribute('width', container.offsetWidth);
+            svg.setAttribute('height', container.offsetHeight);
+
+            const containerRect = container.getBoundingClientRect();
+            const points = btns.map(b => {
+                const r = b.getBoundingClientRect();
+                return {
+                    x: r.left + r.width / 2 - containerRect.left,
+                    y: r.top + r.height / 2 - containerRect.top + container.scrollTop
+                };
+            });
+
+            let pathD = `M ${points[0].x} ${points[0].y}`;
+            for (let i = 0; i < points.length - 1; i++) {
+                const p1 = points[i];
+                const p2 = points[i + 1];
+                const cx1 = p1.x;
+                const cy1 = (p1.y + p2.y) / 2;
+                const cx2 = p2.x;
+                const cy2 = (p1.y + p2.y) / 2;
+                pathD += ` C ${cx1} ${cy1}, ${cx2} ${cy2}, ${p2.x} ${p2.y}`;
+            }
+
+            svg.innerHTML = `
+                <path d="${pathD}" fill="none" stroke="#bae6fd" stroke-width="18" stroke-linecap="round" />
+                <path d="${pathD}" fill="none" stroke="#0284c7" stroke-width="8" stroke-linecap="round" stroke-dasharray="14 10" />
+            `;
+        }
+
+        function resetIdleTimer() {
+            if (isIdlePaused) return;
+            if (idleTimer) clearTimeout(idleTimer);
+            if (challengeSessionStartTime) {
+                idleTimer = setTimeout(() => handleIdleTimeout(false), IDLE_LIMIT_MS);
+            }
+        }
+
+        function clearIdleTimer() {
+            if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
+        }
+
+        async function handleIdleTimeout(isFromPageHidden = false) {
+            isIdlePaused = true;
+            clearIdleTimer();
+            stopSpeechRecognition();
+            await recordSessionFocusTime();
+
+            if (challengeTimerInterval) {
+                clearInterval(challengeTimerInterval);
+                challengeTimerInterval = null;
+            }
+
+            const titleElem = document.getElementById('lbl-idle-modal-title');
+            const descElem = document.getElementById('lbl-idle-modal-desc');
+
+            if (isFromPageHidden) {
+                if (titleElem) titleElem.innerText = "學習已暫停";
+                if (descElem) descElem.innerText = "休息好了就繼續吧！";
+            } else {
+                if (titleElem) titleElem.innerText = "閒置過久囉！";
+                if (descElem) descElem.innerText = "準備好就點擊繼續！";
+            }
+            openModal('modal-idle-timeout');
+        }
+
+        function resumeFromIdle() {
+            closeModal('modal-idle-timeout');
+            isIdlePaused = false;
+            challengeSessionStartTime = Date.now();
+
+            if (activeChallengeType === 'timed') {
+                const targetKey = (currentConfig.mode === 'word_shadow') ? 'word-shadow' :
+                                  (currentConfig.mode === 'word_type') ? 'word-type' :
+                                  (currentConfig.mode === 'word_choice') ? 'word-choice' :
+                                  (currentConfig.mode === 'sentence_chat') ? 'chat' :
+                                  (currentConfig.mode === 'blocks') ? 'blocks' : 'shadow';
+                resumeChallengeTimer(targetKey);
+            }
+            resetIdleTimer();
+        }
+
+        async function exitFromIdle() {
+            closeModal('modal-idle-timeout');
+            isIdlePaused = false;
+            clearIdleTimer();
+            stopChallengeTimer();
+            goToStep('step-lesson');
+        }
+
+        function resumeChallengeTimer(targetModeKey) {
+            const badgeElem = document.getElementById(`lbl-timer-${targetModeKey}`);
+            const barElem = document.getElementById(`bar-progress-${targetModeKey}`);
+
+            function updateDisplay() {
+                const mins = Math.floor(challengeTimeRemaining / 60);
+                const secs = challengeTimeRemaining % 60;
+                if (badgeElem) badgeElem.innerText = `⏱ ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                const pct = (challengeTimeRemaining / 300) * 100;
+                if (barElem) barElem.style.width = `${pct}%`;
+            }
+
+            challengeTimerInterval = setInterval(() => {
+                challengeTimeRemaining--;
+                if (challengeTimeRemaining <= 0) {
+                    stopChallengeTimer();
+                    updateDisplay();
+                    recordSessionFocusTime();
+                    alert("⏰ 時間到！300 秒挑戰已結束。再試一次吧！");
+                    goToStep('step-lesson');
+                } else {
+                    updateDisplay();
+                }
+            }, 1000);
+        }
+
+        function handleAppVisibilityLoss() {
+            stopSpeechRecognition();
+            if (challengeSessionStartTime && !isIdlePaused) {
+                handleIdleTimeout(true);
+            }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) handleAppVisibilityLoss();
+        });
+        window.addEventListener('pagehide', () => {
+            handleAppVisibilityLoss();
+        });
+        window.addEventListener('blur', () => {
+            if (isRecording) stopSpeechRecognition();
+        });
+
+        function promptSelectModeType(unitId, lesson, mode, label) {
+            currentConfig.unit_id = String(unitId);
+            if (mode === 'grammar') {
+                activeChallengeType = 'practice';
+                selectLessonAndMode(lesson, mode);
+                return;
+            }
+
+            pendingLesson = lesson;
+            pendingMode = mode;
+            document.getElementById('lbl-mode-dialog-title').innerText = `${label} - 模式選擇`;
+
+            const btnPractice = document.getElementById('btn-mode-choice-practice');
+            const btnEntry = document.getElementById('btn-mode-choice-entry');
+            const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
+            
+            if (btnPractice) btnPractice.style.display = is0ALevel ? 'none' : 'flex';
+            if (btnEntry) btnEntry.style.display = 'flex';
+
+            ['practice', 'entry', 'timed'].forEach(t => {
+                const tagElem = document.getElementById(`tag-star-${t}`);
+                const timeElem = document.getElementById(`tag-time-${t}`);
+                const record = getStoredBestRecord(lesson, mode, t, unitId);
+
+                if (tagElem) {
+                    if (record && record.stars > 0) {
+                        tagElem.innerText = record.starLabel;
+                        tagElem.style.color = '#fef08a';
+                    } else {
+                        tagElem.innerText = '未達成';
+                        tagElem.style.color = '#94a3b8';
+                    }
+                }
+
+                if (timeElem) {
+                    if (record && record.bestTime && record.bestTime > 0) {
+                        timeElem.innerHTML = `<i class="fa-solid fa-stopwatch"></i> ${formatDurationMMSS(record.bestTime)}`;
+                        timeElem.style.opacity = '1';
+                    } else {
+                        timeElem.innerHTML = `<i class="fa-solid fa-stopwatch"></i> --:--`;
+                        timeElem.style.opacity = '0.7';
+                    }
+                }
+            });
+
+            openModal('modal-select-mode-type');
+        }
+
+        function confirmLaunchMode(type) {
+            closeModal('modal-select-mode-type');
+            const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
+            if (is0ALevel && type === 'entry') {
+                activeChallengeType = 'practice';
+            } else {
+                activeChallengeType = type;
+            }
+            if (pendingLesson && pendingMode) {
+                selectLessonAndMode(pendingLesson, pendingMode);
+            }
+        }
+
+        async function saveChallengeScoreRecord(finalScore, elapsedSeconds = null) {
+            const starInfo = calculateStars(finalScore);
+            const key = getRecordKey(currentConfig.lesson, currentConfig.mode, activeChallengeType);
+            const existingRecord = getStoredBestRecord(currentConfig.lesson, currentConfig.mode, activeChallengeType);
+            const bestScore = existingRecord ? Math.max(existingRecord.score, finalScore) : finalScore;
+            const bestStars = existingRecord ? Math.max(existingRecord.stars, starInfo.stars) : starInfo.stars;
+            const bestStarLabel = calculateStars(bestScore).label;
+
+            let bestTime = existingRecord ? (existingRecord.bestTime || null) : null;
+            if (elapsedSeconds !== null && elapsedSeconds > 0) {
+                if (bestTime === null || elapsedSeconds < bestTime) bestTime = elapsedSeconds;
+            }
+
+            const recordData = {
+                score: bestScore,
+                stars: bestStars,
+                starLabel: bestStarLabel,
+                lastScore: finalScore,
+                bestTime: bestTime,
+                lastTime: elapsedSeconds,
+                updatedAt: Date.now()
+            };
+
+            localStorage.setItem(`score_${key}`, JSON.stringify(recordData));
+
+            if (!window.currentUserData.modeScores) window.currentUserData.modeScores = {};
+            window.currentUserData.modeScores[key] = recordData;
+
+            if (currentUser) {
+                try {
+                    await db.collection("users").doc(currentUser.uid).set({
+                        modeScores: { [key]: recordData }
+                    }, { merge: true });
+                } catch (e) {
+                    console.error("儲存成績至雲端失敗:", e);
+                }
+            }
+
+            return { finalScore, starInfo, bestScore, bestStarLabel, bestTime, elapsedSeconds };
+        }
+
+        function triggerFireworks(durationMs = 3500) {
+            const canvas = document.getElementById('settlement-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            if (fireworksAnimationId) {
+                cancelAnimationFrame(fireworksAnimationId);
+                fireworksAnimationId = null;
+            }
+
+            const particles = [];
+            const colors = ['#f59e0b', '#1cb0f6', '#58cc02', '#ff4b4b', '#ec4899', '#8b5cf6', '#eab308'];
+
+            function createFirework(x, y) {
+                for (let i = 0; i < 35; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = Math.random() * 5 + 2;
+                    particles.push({
+                        x: x, y: y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        size: Math.random() * 4 + 2,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        alpha: 1, decay: Math.random() * 0.015 + 0.015
+                    });
+                }
+            }
+
+            const startTime = Date.now();
+            let lastBurst = 0;
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const now = Date.now();
+
+                if (now - startTime < durationMs && now - lastBurst > 280) {
+                    createFirework(canvas.width * 0.2 + Math.random() * (canvas.width * 0.6), canvas.height * 0.15 + Math.random() * (canvas.height * 0.35));
+                    lastBurst = now;
+                }
+
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.06;
+                    p.alpha -= p.decay;
+
+                    if (p.alpha <= 0) particles.splice(i, 1);
+                    else {
+                        ctx.save();
+                        ctx.globalAlpha = p.alpha;
+                        ctx.fillStyle = p.color;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+                    }
+                }
+
+                if (particles.length > 0 || (now - startTime < durationMs)) {
+                    fireworksAnimationId = requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    fireworksAnimationId = null;
+                }
+            }
+            animate();
+        }
+
+        function launchSettlementModal(data) {
+            const { finalScore, starInfo, elapsedSeconds, bestTime } = data;
+            const starsCount = starInfo.stars;
+
+            document.getElementById('lbl-settlement-score').innerText = `${finalScore} 分`;
+            document.getElementById('lbl-settlement-time').innerText = formatDurationMMSS(elapsedSeconds);
+            document.getElementById('lbl-settlement-best-time').innerText = formatDurationMMSS(bestTime);
+
+            const titleElem = document.getElementById('lbl-settlement-title');
+            const subElem = document.getElementById('lbl-settlement-subtitle');
+
+            if (starsCount === 3) {
+                titleElem.innerText = "🏆 完美滿分！";
+                subElem.innerText = "太神啦！獲得三星榮譽 ⭐⭐⭐";
+            } else if (starsCount === 2) {
+                titleElem.innerText = "🎉 表現優異！";
+                subElem.innerText = "獲得二星榮譽 ⭐⭐";
+            } else if (starsCount === 1) {
+                titleElem.innerText = "👍 挑戰成功！";
+                subElem.innerText = "獲得一星榮譽 ⭐";
+            } else {
+                titleElem.innerText = "💪 挑戰完成！";
+                subElem.innerText = "再接再厲即可奪得星級！";
+            }
+
+            for (let i = 1; i <= 3; i++) {
+                const starElem = document.getElementById(`settlement-star-${i}`);
+                if (starElem) {
+                    starElem.className = 'fa-solid fa-star settlement-star';
+                    if (i <= starsCount) starElem.classList.add('active', `star-anim-${i}`);
+                    else starElem.classList.add('inactive');
+                }
+            }
+
+            openModal('modal-challenge-settlement');
+            if (starsCount > 0) triggerFireworks(3500);
+        }
+
+        function closeSettlementAndReturn() {
+            if (fireworksAnimationId) {
+                cancelAnimationFrame(fireworksAnimationId);
+                fireworksAnimationId = null;
+            }
+            const canvas = document.getElementById('settlement-canvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+            closeModal('modal-challenge-settlement');
+            renderAllLessonsForLevel(currentConfig.level);
+            goToStep('step-lesson');
+        }
+
+        function closeGrammarCompleteModal() {
+            closeModal('modal-grammar-complete');
+            renderAllLessonsForLevel(currentConfig.level);
+            goToStep('step-lesson');
+        }
+
+        async function isNicknameTaken(nickname, excludeUid = null) {
+            try {
+                const snap = await db.collection("users").where("displayName", "==", nickname).get();
+                if (snap.empty) return false;
+                if (excludeUid) {
+                    let hasOtherUser = false;
+                    snap.forEach(doc => { if (doc.id !== excludeUid) hasOtherUser = true; });
+                    return hasOtherUser;
+                }
+                return true;
+            } catch (err) {
+                console.error("檢查暱稱失敗:", err);
+                return false;
+            }
+        }
+
+        async function requestGAS(apiUrl, actionName = '', extraParams = '') {
+            let url = new URL(apiUrl);
+            if (actionName) url.searchParams.set('action', actionName);
+            url.searchParams.set('t', Date.now());
+
+            if (extraParams) {
+                const clean = extraParams.startsWith('&') ? extraParams.slice(1) : extraParams;
+                new URLSearchParams(clean).forEach((v, k) => url.searchParams.set(k, v));
+            }
+
+            try {
+                const res = await fetch(url.toString(), { method: 'GET', redirect: 'follow' });
+                if (res.ok) {
+                    const text = (await res.text()).trim();
+                    if (text.startsWith('{') || text.startsWith('[')) return JSON.parse(text);
+                    const match = text.match(/^[a-zA-Z0-9_]+\s*\(([\s\S]*)\)\s*;?$/);
+                    if (match && match[1]) return JSON.parse(match[1]);
+                }
+            } catch (e) {
+                console.warn("切換至 JSONP 模式:", e);
+            }
+
+            return new Promise((resolve, reject) => {
+                const callbackName = 'gas_cb_' + Date.now() + Math.floor(Math.random() * 1000);
+                const script = document.createElement('script');
+                window[callbackName] = function(data) {
+                    delete window[callbackName];
+                    if (document.body.contains(script)) document.body.removeChild(script);
+                    resolve(data);
+                };
+                script.onerror = function() {
+                    delete window[callbackName];
+                    if (document.body.contains(script)) document.body.removeChild(script);
+                    reject(new Error("API 連線失敗，請確認網路！"));
+                };
+                url.searchParams.set('prefix', callbackName);
+                script.src = url.toString();
+                document.body.appendChild(script);
+            });
+        }
+
+        function playAudioOrTTS(audioUrl, fallbackText, rate = 0.85) {
+            stopSpeechRecognition();
+            if (audioUrl && audioUrl.trim() !== '' && audioUrl.toLowerCase() !== 'yes') {
+                const audio = new Audio(audioUrl);
+                audio.playbackRate = rate;
+                audio.play().catch(() => { if (fallbackText) speakTTS(fallbackText, rate); });
+            } else if (fallbackText) {
+                speakTTS(fallbackText, rate);
+            }
+        }
+
+        function triggerBottomGrammarAction() {
+            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+            let matchGrammar = globalGrammarData.find(g => 
+                normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
+                String(getItemField(g, 'unit_id')) === String(currentConfig.unit_id) &&
+                String(getItemField(g, 'lesson')) === String(currentConfig.lesson) &&
+                ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0))
+            );
+
+            if (!matchGrammar) {
+                matchGrammar = globalGrammarData.find(g => 
+                    normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
+                    ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0))
+                );
+            }
+
+            if (matchGrammar) {
+                currentConfig.mode = 'grammar';
+                currentConfig.unit_id = getItemField(matchGrammar, 'unit_id') || currentConfig.unit_id;
+                currentConfig.lesson = getItemField(matchGrammar, 'lesson') || currentConfig.lesson;
+                startGrammarChallenge(matchGrammar);
+            } else {
+                alert(`Level ${currentConfig.level} 尚未設定語法說明喔！`);
+            }
+        }
+    </script>
+<script>
         let authMode = 'login';
         const tabLogin = document.getElementById('tab-login');
         const tabRegister = document.getElementById('tab-register');
@@ -2865,6 +3541,15 @@
             }
         }
 
+        function openModal(modalId) {
+            const m = document.getElementById(modalId);
+            if (m) { m.classList.add('show'); m.classList.remove('hidden'); }
+        }
+        function closeModal(modalId) {
+            const m = document.getElementById(modalId);
+            if (m) { m.classList.remove('show'); m.classList.add('hidden'); }
+        }
+
         function openProfileView() {
             clearIdleTimer();
             document.getElementById('learning-content-view').classList.add('hidden');
@@ -3071,7 +3756,7 @@
                 loadFriendsLeaderboardData();
             } catch (e) {
                 errDiv.innerText = "新增好友失敗：" + e.message;
-                errDiv.classList.remove('hidden');
+                errDiv.classList.add('hidden');
             } finally {
                 btnConfirm.disabled = false;
                 btnConfirm.innerText = "確認新增";
@@ -3134,8 +3819,7 @@
             calendarCurrentDate.setMonth(calendarCurrentDate.getMonth() + 1);
             renderStreakCalendar(calendarCurrentDate);
         };
-    </script>
-<script>
+
         let initialLevelSelect = document.getElementById('initial-level-select');
 
         function triggerLevelSelectionModal() {
@@ -3841,27 +4525,18 @@
 
             quizList.forEach((qObj, qIdx) => {
                 const qStr = qObj.question || "";
-                const matches = qStr.match(/_+/g) || [];
-                
-                let slotSubCount = 0;
                 const formattedHtml = qStr.replace(/_+/g, () => {
                     const currentId = globalSlotIdx;
-                    const slotHtml = `<span class="blank-slot ${currentId === activeBlankIndex ? 'active-slot' : ''}" id="blank-slot-${currentId}" onclick="setActiveBlank(${currentId})">___</span>`;
+                    const slotHtml = `<span class="blank-slot" id="blank-slot-${currentId}" onclick="setActiveBlank(${currentId})">___</span>`;
                     globalSlotIdx++;
-                    slotSubCount++;
                     return slotHtml;
                 });
 
                 const qElem = document.createElement('div');
                 qElem.className = 'grammar-q-item';
-                const isThisQuestionActive = (globalSlotIdx - slotSubCount <= activeBlankIndex && activeBlankIndex < globalSlotIdx);
-                if (isThisQuestionActive) {
-                    qElem.classList.add('active-current-q');
-                }
-
                 qElem.id = `grammar-q-item-${qIdx}`;
                 qElem.style.cssText = "margin-bottom: 12px; font-size: 1.1rem; line-height: 1.8; text-align: center;";
-                qElem.innerHTML = `<span style="color:var(--duo-blue); font-weight:800; margin-right:4px;">${qIdx + 1}.</span> ${isThisQuestionActive ? '<span style="font-size:0.75rem; background:var(--duo-blue); color:white; padding:2px 6px; border-radius:6px; margin-right:6px; vertical-align:middle;">📍 作答中</span>' : ''}${formattedHtml}`;
+                qElem.innerHTML = `<span style="color:var(--duo-blue); font-weight:800; margin-right:4px;">${qIdx + 1}.</span> ${formattedHtml}`;
                 qContainer.appendChild(qElem);
             });
 
@@ -3889,7 +4564,6 @@
         function setActiveBlank(index) { 
             if (isGrammarQuizSubmitted) return;
             activeBlankIndex = index; 
-            showGrammarQuizArea();
         }
 
         function fillGrammarAnswer(optionText) {
@@ -3898,701 +4572,104 @@
             const slot = document.getElementById(`blank-slot-${activeBlankIndex}`);
             if (slot) slot.innerText = optionText;
             const nextBlank = userGrammarAnswers.findIndex(a => a === '');
-            if (nextBlank !== -1) {
-                activeBlankIndex = nextBlank;
-            }
-            showGrammarQuizArea();
+            if (nextBlank !== -1) activeBlankIndex = nextBlank;
         }
 
-        function renderAllLessonsForLevel(level) {
-            const targetLevelNormalized = normalizeLevelStr(level);
-            document.getElementById('lbl-lesson-unit').innerText = `Level ${level} 冒險地圖`;
+        function checkGrammarQuiz() {
+            if (isGrammarQuizSubmitted) return;
+            const quizList = currentGrammarItem.expandedQuizzes || [];
+            if (!quizList.length) return;
+            if (userGrammarAnswers.includes('')) return alert('請填寫完所有空格後再送出答案！');
 
-            const combinedData = [...rawShadowData, ...rawBlocksData, ...globalGrammarData, ...rawDialogueData, ...rawWordData];
-            const filteredByLevel = combinedData.filter(i => normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized);
-
-            const units = [...new Set(filteredByLevel.map(i => getItemField(i, 'unit_id')))]
-                .filter(Boolean)
-                .sort((a, b) => Number(a) - Number(b));
-
-            if (units.length === 0) {
-                document.getElementById('roadmap-nodes-list').innerHTML = `<div style="color: #6b7280; padding: 40px 0;">目前 ${level} 尚未設定課程內容。</div>`;
-                return;
+            isGrammarQuizSubmitted = true;
+            const btnCheck = document.getElementById('btn-check-grammar');
+            if (btnCheck) {
+                btnCheck.disabled = true;
+                btnCheck.style.opacity = '0.5';
+                btnCheck.style.cursor = 'not-allowed';
             }
 
-            if (!units.includes(String(currentConfig.unit_id))) {
-                currentConfig.unit_id = units[0];
-            }
-
-            renderStagePills(units);
-            renderCandyRoadmap(currentConfig.unit_id, filteredByLevel, units);
-        }
-
-        function renderStagePills(units) {
-            const pillContainer = document.getElementById('container-stage-pills');
-            pillContainer.innerHTML = "";
-
-            units.forEach(u => {
-                const btn = document.createElement('button');
-                btn.className = `stage-pill-btn ${String(u) === String(currentConfig.unit_id) ? 'active' : ''}`;
-                btn.innerHTML = `<i class="fa-solid fa-flag"></i> 第 ${u} 階段`;
-                btn.onclick = () => {
-                    if (String(u) !== String(currentConfig.unit_id)) {
-                        triggerGateUnlockTransition(u);
-                    }
-                };
-                pillContainer.appendChild(btn);
-            });
-        }
-
-        function triggerGateUnlockTransition(nextUnitId) {
-            const modal = document.getElementById('gate-unlock-modal');
-            const wrapper = document.getElementById('doors-wrapper-anim');
-            const title = document.getElementById('gate-unlock-title');
-            const sub = document.getElementById('gate-unlock-sub');
-
-            title.innerText = `🏰 解鎖前往第 ${nextUnitId} 階段...`;
-            sub.innerText = "大門正在開啟，準備迎接全新挑戰！";
-
-            wrapper.classList.remove('doors-opened');
-            modal.classList.add('show');
-
-            setTimeout(() => {
-                wrapper.classList.add('doors-opened');
-            }, 400);
-
-            setTimeout(() => {
-                modal.classList.remove('show');
-                wrapper.classList.remove('doors-opened');
-                currentConfig.unit_id = String(nextUnitId);
-                renderAllLessonsForLevel(currentConfig.level);
-            }, 1900);
-        }
-
-        function renderCandyRoadmap(unitId, filteredByLevel, units) {
-            const nodesContainer = document.getElementById('roadmap-nodes-list');
-            const svgCanvas = document.getElementById('roadmap-svg-canvas');
-            nodesContainer.innerHTML = "";
-            svgCanvas.innerHTML = "";
-
-            const itemsInUnit = filteredByLevel.filter(i => String(getItemField(i, 'unit_id')) === String(unitId));
-            const lessons = [...new Set(itemsInUnit.map(i => getItemField(i, 'lesson')))]
-                .filter(Boolean)
-                .sort((a, b) => Number(a) - Number(b));
-
-            if (lessons.length === 0) {
-                nodesContainer.innerHTML = `<div style="color: #6b7280; padding: 40px 0;">此階段暫無關卡</div>`;
-                return;
-            }
-
-            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-            const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
-
-            let stageTasks = [];
-            let sideQuestMap = {};
-
-            lessons.forEach(les => {
-                const lesStr = String(les);
-
-                const matchFilter = (list) => list.some(item => 
-                    normalizeLevelStr(getItemField(item, 'level')) === targetLevelNormalized &&
-                    String(getItemField(item, 'unit_id')) === String(unitId) &&
-                    String(getItemField(item, 'lesson')) === lesStr
-                );
-
-                const hasGrammar = globalGrammarData.some(g => 
-                    normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
-                    String(getItemField(g, 'unit_id')) === String(unitId) &&
-                    String(getItemField(g, 'lesson')) === lesStr &&
-                    ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0))
-                );
-
-                const hasWord = matchFilter(rawWordData);
-                const hasShadow = matchFilter(rawShadowData);
-                const hasBlocks = matchFilter(rawBlocksData);
-                const hasDialogue = rawDialogueData.some(d => 
-                    normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
-                    String(getItemField(d, 'unit_id')) === String(unitId) &&
-                    String(getItemField(d, 'lesson')) === lesStr &&
-                    ((d.a1 && d.a1.trim()) || (d.b1 && d.b1.trim()))
-                );
-
-                if (hasWord) {
-                    sideQuestMap[lesStr] = { unitId, lesson: lesStr, mode: 'word_type', title: `${lesStr} 單字聽打`, label: '⌨ 聽打支線' };
-                }
-
-                if (hasGrammar) {
-                    stageTasks.push({ unitId, lesson: lesStr, mode: 'grammar', title: `${lesStr} 關卡任務`, label: '關卡任務' });
-                }
-                if (hasWord) {
-                    stageTasks.push({ unitId, lesson: lesStr, mode: 'word_shadow', title: `${lesStr} 單字跟讀`, label: '單字跟讀' });
-                    stageTasks.push({ unitId, lesson: lesStr, mode: 'word_choice', title: `${lesStr} 單字選擇`, label: '單字選擇' });
-                }
-                if (hasShadow) {
-                    stageTasks.push({ unitId, lesson: lesStr, mode: 'shadow', title: `${lesStr} 句子跟讀`, label: '句子跟讀' });
-                }
-                if (hasBlocks) {
-                    stageTasks.push({ unitId, lesson: lesStr, mode: 'blocks', title: `${lesStr} 字塊重組`, label: '字塊重組' });
-                }
-                if (hasDialogue) {
-                    stageTasks.push({ unitId, lesson: lesStr, mode: 'sentence_chat', title: `${lesStr} 對話挑戰`, label: '對話挑戰' });
-                }
+            document.querySelectorAll('#container-grammar-choices .block-chip').forEach(btn => {
+                btn.classList.add('locked-chip');
             });
 
-            if (stageTasks.length === 0) {
-                nodesContainer.innerHTML = `<div style="color: #6b7280; padding: 40px 0;">此階段暫無可挑戰內容</div>`;
-                return;
-            }
+            let globalSlotIdx = 0;
+            let isAllCorrect = true;
 
-            let currentTaskIndex = 0;
-            for (let i = 0; i < stageTasks.length; i++) {
-                const t = stageTasks[i];
-                const isPassed = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${t.lesson}_${t.mode}`);
-                if (isPassed) {
-                    currentTaskIndex = (i < stageTasks.length - 1) ? (i + 1) : i;
-                } else {
-                    currentTaskIndex = i;
-                    break;
-                }
-            }
-
-            const offsets = ['offset-center', 'offset-left-1', 'offset-left-2', 'offset-left-1', 'offset-center', 'offset-right-1', 'offset-right-2', 'offset-right-1'];
-
-            const currentUnitIndex = units.indexOf(String(unitId));
-            if (currentUnitIndex !== -1 && currentUnitIndex < units.length - 1) {
-                const nextUnitId = units[currentUnitIndex + 1];
-                const gateDiv = document.createElement('div');
-                gateDiv.className = "gate-portal-container";
-                gateDiv.innerHTML = `
-                    <button class="castle-gate-btn" onclick="triggerGateUnlockTransition('${nextUnitId}')">
-                        <i class="fa-solid fa-dungeon" style="font-size: 1.4rem;"></i>
-                        <span>通往第 ${nextUnitId} 階段大門</span>
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    </button>
-                `;
-                nodesContainer.appendChild(gateDiv);
-            }
-
-            stageTasks.forEach((task, idx) => {
-                const nodeNumber = idx + 1;
-                const offsetClass = offsets[idx % offsets.length];
-                const isCompleted = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${task.lesson}_${task.mode}`);
-                const isCurrent = (idx === currentTaskIndex);
-
-                let bestStar = 0;
-                ['practice', 'entry', 'timed'].forEach(t => {
-                    const rec = getStoredBestRecord(task.lesson, task.mode, t, unitId);
-                    if (rec && rec.stars > bestStar) bestStar = rec.stars;
-                });
-                let starIcons = bestStar > 0 ? '★'.repeat(bestStar) : '• • •';
-
-                const sideQuest = (task.mode === 'word_shadow' && sideQuestMap[task.lesson]) ? sideQuestMap[task.lesson] : null;
-                let sideQuestHtml = '';
-                if (sideQuest) {
-                    const isSideCompleted = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${sideQuest.lesson}_${sideQuest.mode}`);
-                    sideQuestHtml = `
-                        <div class="side-quest-badge ${isSideCompleted ? 'completed' : ''}" 
-                             onclick="promptSelectModeType('${sideQuest.unitId}', '${sideQuest.lesson}', '${sideQuest.mode}', '${sideQuest.title}')"
-                             title="支線任務：單字聽打">
-                            <i class="fa-solid fa-keyboard"></i>
-                            <span>聽打${isSideCompleted ? ' ✓' : ''}</span>
-                        </div>
-                    `;
-                }
-
-                const row = document.createElement('div');
-                row.className = `roadmap-node-row ${offsetClass}`;
-                row.innerHTML = `
-                    <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
-                        ${isCurrent ? `<img src="images/avatar.png" onerror="this.onerror=null; this.src='https://api.dicebear.com/7.x/bottts/svg?seed=Yoona';" class="node-avatar-badge" alt="Player">` : ''}
-                        <button class="candy-node-btn ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}" 
-                                onclick="promptSelectModeType('${task.unitId}', '${task.lesson}', '${task.mode}', '${task.title}')">
-                            <span class="candy-node-num">${nodeNumber}</span>
-                            <span class="candy-node-stars">${starIcons}</span>
-                        </button>
-                        <span class="candy-node-label">${task.label}</span>
-                        ${sideQuestHtml}
-                    </div>
-                `;
-                nodesContainer.appendChild(row);
-            });
-
-            setTimeout(() => {
-                drawRoadmapSvgPath();
-
-                const mainScrollView = document.getElementById('learning-content-view');
-                const currentNode = document.querySelector('.candy-node-btn.current') || document.querySelector('.candy-node-btn');
+            quizList.forEach((qObj, idx) => {
+                const expectedAnswer = (qObj.answer || '').replace(/\s+/g, '');
+                const matches = (qObj.question || '').match(/_+/g) || [];
                 
-                if (currentNode && mainScrollView) {
-                    currentNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                } else if (mainScrollView) {
-                    mainScrollView.scrollTop = mainScrollView.scrollHeight;
+                let thisQuestionAnswers = [];
+                for (let i = 0; i < matches.length; i++) {
+                    thisQuestionAnswers.push(userGrammarAnswers[globalSlotIdx] || '');
+                    globalSlotIdx++;
                 }
-            }, 120);
-        }
 
-        function drawRoadmapSvgPath() {
-            const svg = document.getElementById('roadmap-svg-canvas');
-            const container = document.getElementById('roadmap-main-area');
-            const btns = Array.from(document.querySelectorAll('.candy-node-btn'));
+                let subSlot = 0;
+                const fullUserSentence = (qObj.question || '').replace(/_+/g, () => {
+                    const ans = thisQuestionAnswers[subSlot] || '';
+                    subSlot++;
+                    return ans;
+                }).replace(/\s+/g, '');
 
-            if (!svg || !container || btns.length < 2) return;
+                const ansJoined = thisQuestionAnswers.join('').replace(/\s+/g, '');
+                const ansSlash = thisQuestionAnswers.join('/').replace(/\s+/g, '');
 
-            svg.setAttribute('width', container.offsetWidth);
-            svg.setAttribute('height', container.offsetHeight);
+                const isThisQCorrect = (fullUserSentence === expectedAnswer) || (ansJoined === expectedAnswer) || (ansSlash === expectedAnswer);
+                const qElem = document.getElementById(`grammar-q-item-${idx}`);
 
-            const containerRect = container.getBoundingClientRect();
-            const points = btns.map(b => {
-                const r = b.getBoundingClientRect();
-                return {
-                    x: r.left + r.width / 2 - containerRect.left,
-                    y: r.top + r.height / 2 - containerRect.top + container.scrollTop
-                };
-            });
+                if (!isThisQCorrect) {
+                    isAllCorrect = false;
+                    if (qElem) {
+                        qElem.style.color = '#dc2626';
+                        qElem.style.background = '#fee2e2';
+                        qElem.style.padding = '8px';
+                        qElem.style.borderRadius = '10px';
+                        qElem.style.border = '2px solid #ef4444';
 
-            let pathD = `M ${points[0].x} ${points[0].y}`;
-            for (let i = 0; i < points.length - 1; i++) {
-                const p1 = points[i];
-                const p2 = points[i + 1];
-                const cx1 = p1.x;
-                const cy1 = (p1.y + p2.y) / 2;
-                const cx2 = p2.x;
-                const cy2 = (p1.y + p2.y) / 2;
-                pathD += ` C ${cx1} ${cy1}, ${cx2} ${cy2}, ${p2.x} ${p2.y}`;
-            }
-
-            svg.innerHTML = `
-                <path d="${pathD}" fill="none" stroke="#bae6fd" stroke-width="18" stroke-linecap="round" />
-                <path d="${pathD}" fill="none" stroke="#0284c7" stroke-width="8" stroke-linecap="round" stroke-dasharray="14 10" />
-            `;
-        }
-
-        function resetIdleTimer() {
-            if (isIdlePaused) return;
-            if (idleTimer) clearTimeout(idleTimer);
-            if (challengeSessionStartTime) {
-                idleTimer = setTimeout(() => handleIdleTimeout(false), IDLE_LIMIT_MS);
-            }
-        }
-
-        function clearIdleTimer() {
-            if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
-        }
-
-        async function handleIdleTimeout(isFromPageHidden = false) {
-            isIdlePaused = true;
-            clearIdleTimer();
-            stopSpeechRecognition();
-            await recordSessionFocusTime();
-
-            if (challengeTimerInterval) {
-                clearInterval(challengeTimerInterval);
-                challengeTimerInterval = null;
-            }
-
-            const titleElem = document.getElementById('lbl-idle-modal-title');
-            const descElem = document.getElementById('lbl-idle-modal-desc');
-
-            if (isFromPageHidden) {
-                if (titleElem) titleElem.innerText = "學習已暫停";
-                if (descElem) descElem.innerText = "休息好了就繼續吧！";
-            } else {
-                if (titleElem) titleElem.innerText = "閒置過久囉！";
-                if (descElem) descElem.innerText = "準備好就點擊繼續！";
-            }
-            openModal('modal-idle-timeout');
-        }
-
-        function resumeFromIdle() {
-            closeModal('modal-idle-timeout');
-            isIdlePaused = false;
-            challengeSessionStartTime = Date.now();
-
-            if (activeChallengeType === 'timed') {
-                const targetKey = (currentConfig.mode === 'word_shadow') ? 'word-shadow' :
-                                  (currentConfig.mode === 'word_type') ? 'word-type' :
-                                  (currentConfig.mode === 'word_choice') ? 'word-choice' :
-                                  (currentConfig.mode === 'sentence_chat') ? 'chat' :
-                                  (currentConfig.mode === 'blocks') ? 'blocks' : 'shadow';
-                resumeChallengeTimer(targetKey);
-            }
-            resetIdleTimer();
-        }
-
-        async function exitFromIdle() {
-            closeModal('modal-idle-timeout');
-            isIdlePaused = false;
-            clearIdleTimer();
-            stopChallengeTimer();
-            goToStep('step-lesson');
-        }
-
-        function resumeChallengeTimer(targetModeKey) {
-            const badgeElem = document.getElementById(`lbl-timer-${targetModeKey}`);
-            const barElem = document.getElementById(`bar-progress-${targetModeKey}`);
-
-            function updateDisplay() {
-                const mins = Math.floor(challengeTimeRemaining / 60);
-                const secs = challengeTimeRemaining % 60;
-                if (badgeElem) badgeElem.innerText = `⏱ ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-                const pct = (challengeTimeRemaining / 300) * 100;
-                if (barElem) barElem.style.width = `${pct}%`;
-            }
-
-            challengeTimerInterval = setInterval(() => {
-                challengeTimeRemaining--;
-                if (challengeTimeRemaining <= 0) {
-                    stopChallengeTimer();
-                    updateDisplay();
-                    recordSessionFocusTime();
-                    alert("⏰ 時間到！300 秒挑戰已結束。再試一次吧！");
-                    goToStep('step-lesson');
+                        const hintSpan = document.createElement('div');
+                        hintSpan.style.cssText = "font-size: 0.92rem; color: #b91c1c; font-weight: bold; margin-top: 6px;";
+                        hintSpan.innerHTML = `❌ 正確答案：${qObj.answer}`;
+                        qElem.appendChild(hintSpan);
+                    }
                 } else {
-                    updateDisplay();
-                }
-            }, 1000);
-        }
-
-        function handleAppVisibilityLoss() {
-            stopSpeechRecognition();
-            if (challengeSessionStartTime && !isIdlePaused) {
-                handleIdleTimeout(true);
-            }
-        }
-
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) handleAppVisibilityLoss();
-        });
-        window.addEventListener('pagehide', () => {
-            handleAppVisibilityLoss();
-        });
-        window.addEventListener('blur', () => {
-            if (isRecording) stopSpeechRecognition();
-        });
-
-        function promptSelectModeType(unitId, lesson, mode, label) {
-            currentConfig.unit_id = String(unitId);
-            if (mode === 'grammar') {
-                activeChallengeType = 'practice';
-                selectLessonAndMode(lesson, mode);
-                return;
-            }
-
-            pendingLesson = lesson;
-            pendingMode = mode;
-            document.getElementById('lbl-mode-dialog-title').innerText = `${label} - 模式選擇`;
-
-            const btnPractice = document.getElementById('btn-mode-choice-practice');
-            const btnEntry = document.getElementById('btn-mode-choice-entry');
-            const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
-            
-            if (btnPractice) btnPractice.style.display = is0ALevel ? 'none' : 'flex';
-            if (btnEntry) btnEntry.style.display = 'flex';
-
-            ['practice', 'entry', 'timed'].forEach(t => {
-                const tagElem = document.getElementById(`tag-star-${t}`);
-                const timeElem = document.getElementById(`tag-time-${t}`);
-                const record = getStoredBestRecord(lesson, mode, t, unitId);
-
-                if (tagElem) {
-                    if (record && record.stars > 0) {
-                        tagElem.innerText = record.starLabel;
-                        tagElem.style.color = '#fef08a';
-                    } else {
-                        tagElem.innerText = '未達成';
-                        tagElem.style.color = '#94a3b8';
-                    }
-                }
-
-                if (timeElem) {
-                    if (record && record.bestTime && record.bestTime > 0) {
-                        timeElem.innerHTML = `<i class="fa-solid fa-stopwatch"></i> ${formatDurationMMSS(record.bestTime)}`;
-                        timeElem.style.opacity = '1';
-                    } else {
-                        timeElem.innerHTML = `<i class="fa-solid fa-stopwatch"></i> --:--`;
-                        timeElem.style.opacity = '0.7';
+                    if (qElem) {
+                        qElem.style.color = '#15803d';
+                        qElem.style.background = '#f0fdf4';
+                        qElem.style.padding = '8px';
+                        qElem.style.borderRadius = '10px';
+                        qElem.style.border = '2px solid #86efac';
                     }
                 }
             });
 
-            openModal('modal-select-mode-type');
-        }
+            const resultBox = document.getElementById('box-grammar-result');
+            const resultText = document.getElementById('lbl-grammar-result-text');
+            const actionBtn = document.getElementById('btn-grammar-action');
+            resultBox.style.display = 'block';
 
-        function confirmLaunchMode(type) {
-            closeModal('modal-select-mode-type');
-            const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
-            if (is0ALevel && type === 'entry') {
-                activeChallengeType = 'practice';
+            if (isAllCorrect) {
+                resultText.innerText = (quizList[0].correct) || "🎉 完全正確！太厲害了！";
+                resultText.style.color = "#58cc02";
+                actionBtn.innerHTML = `<i class="fa-solid fa-flag-checkered"></i> 完成任務`;
+                actionBtn.style.background = "#58cc02";
+                actionBtn.onclick = () => finishGrammarTask();
             } else {
-                activeChallengeType = type;
-            }
-            if (pendingLesson && pendingMode) {
-                selectLessonAndMode(pendingLesson, pendingMode);
-            }
-        }
-
-        async function saveChallengeScoreRecord(finalScore, elapsedSeconds = null) {
-            const starInfo = calculateStars(finalScore);
-            const key = getRecordKey(currentConfig.lesson, currentConfig.mode, activeChallengeType);
-            const existingRecord = getStoredBestRecord(currentConfig.lesson, currentConfig.mode, activeChallengeType);
-            const bestScore = existingRecord ? Math.max(existingRecord.score, finalScore) : finalScore;
-            const bestStars = existingRecord ? Math.max(existingRecord.stars, starInfo.stars) : starInfo.stars;
-            const bestStarLabel = calculateStars(bestScore).label;
-
-            let bestTime = existingRecord ? (existingRecord.bestTime || null) : null;
-            if (elapsedSeconds !== null && elapsedSeconds > 0) {
-                if (bestTime === null || elapsedSeconds < bestTime) bestTime = elapsedSeconds;
+                resultText.innerText = "❌ 部分答案不太對喔！請參考上方紅字訂正。";
+                resultText.style.color = "#ff4b4b";
+                actionBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> 再試一次`;
+                actionBtn.style.background = "#ff4b4b";
+                actionBtn.onclick = () => showGrammarQuizArea();
             }
 
-            const recordData = {
-                score: bestScore,
-                stars: bestStars,
-                starLabel: bestStarLabel,
-                lastScore: finalScore,
-                bestTime: bestTime,
-                lastTime: elapsedSeconds,
-                updatedAt: Date.now()
-            };
-
-            localStorage.setItem(`score_${key}`, JSON.stringify(recordData));
-
-            if (!window.currentUserData.modeScores) window.currentUserData.modeScores = {};
-            window.currentUserData.modeScores[key] = recordData;
-
-            if (currentUser) {
-                try {
-                    await db.collection("users").doc(currentUser.uid).set({
-                        modeScores: { [key]: recordData }
-                    }, { merge: true });
-                } catch (e) {
-                    console.error("儲存成績至雲端失敗:", e);
-                }
-            }
-
-            return { finalScore, starInfo, bestScore, bestStarLabel, bestTime, elapsedSeconds };
-        }
-
-        function triggerFireworks(durationMs = 3500) {
-            const canvas = document.getElementById('settlement-canvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-            if (fireworksAnimationId) {
-                cancelAnimationFrame(fireworksAnimationId);
-                fireworksAnimationId = null;
-            }
-
-            const particles = [];
-            const colors = ['#f59e0b', '#1cb0f6', '#58cc02', '#ff4b4b', '#ec4899', '#8b5cf6', '#eab308'];
-
-            function createFirework(x, y) {
-                for (let i = 0; i < 35; i++) {
-                    const angle = Math.random() * Math.PI * 2;
-                    const speed = Math.random() * 5 + 2;
-                    particles.push({
-                        x: x, y: y,
-                        vx: Math.cos(angle) * speed,
-                        vy: Math.sin(angle) * speed,
-                        size: Math.random() * 4 + 2,
-                        color: colors[Math.floor(Math.random() * colors.length)],
-                        alpha: 1, decay: Math.random() * 0.015 + 0.015
-                    });
-                }
-            }
-
-            const startTime = Date.now();
-            let lastBurst = 0;
-
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                const now = Date.now();
-
-                if (now - startTime < durationMs && now - lastBurst > 280) {
-                    createFirework(canvas.width * 0.2 + Math.random() * (canvas.width * 0.6), canvas.height * 0.15 + Math.random() * (canvas.height * 0.35));
-                    lastBurst = now;
-                }
-
-                for (let i = particles.length - 1; i >= 0; i--) {
-                    const p = particles[i];
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.vy += 0.06;
-                    p.alpha -= p.decay;
-
-                    if (p.alpha <= 0) particles.splice(i, 1);
-                    else {
-                        ctx.save();
-                        ctx.globalAlpha = p.alpha;
-                        ctx.fillStyle = p.color;
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.restore();
-                    }
-                }
-
-                if (particles.length > 0 || (now - startTime < durationMs)) {
-                    fireworksAnimationId = requestAnimationFrame(animate);
-                } else {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    fireworksAnimationId = null;
-                }
-            }
-            animate();
-        }
-
-        function launchSettlementModal(data) {
-            const { finalScore, starInfo, elapsedSeconds, bestTime } = data;
-            const starsCount = starInfo.stars;
-
-            document.getElementById('lbl-settlement-score').innerText = `${finalScore} 分`;
-            document.getElementById('lbl-settlement-time').innerText = formatDurationMMSS(elapsedSeconds);
-            document.getElementById('lbl-settlement-best-time').innerText = formatDurationMMSS(bestTime);
-
-            const titleElem = document.getElementById('lbl-settlement-title');
-            const subElem = document.getElementById('lbl-settlement-subtitle');
-
-            if (starsCount === 3) {
-                titleElem.innerText = "🏆 完美滿分！";
-                subElem.innerText = "太神啦！獲得三星榮譽 ⭐⭐⭐";
-            } else if (starsCount === 2) {
-                titleElem.innerText = "🎉 表現優異！";
-                subElem.innerText = "獲得二星榮譽 ⭐⭐";
-            } else if (starsCount === 1) {
-                titleElem.innerText = "👍 挑戰成功！";
-                subElem.innerText = "獲得一星榮譽 ⭐";
-            } else {
-                titleElem.innerText = "💪 挑戰完成！";
-                subElem.innerText = "再接再厲即可奪得星級！";
-            }
-
-            for (let i = 1; i <= 3; i++) {
-                const starElem = document.getElementById(`settlement-star-${i}`);
-                if (starElem) {
-                    starElem.className = 'fa-solid fa-star settlement-star';
-                    if (i <= starsCount) starElem.classList.add('active', `star-anim-${i}`);
-                    else starElem.classList.add('inactive');
-                }
-            }
-
-            openModal('modal-challenge-settlement');
-            if (starsCount > 0) triggerFireworks(3500);
-        }
-
-        function closeSettlementAndReturn() {
-            if (fireworksAnimationId) {
-                cancelAnimationFrame(fireworksAnimationId);
-                fireworksAnimationId = null;
-            }
-            const canvas = document.getElementById('settlement-canvas');
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            }
-            closeModal('modal-challenge-settlement');
-            renderAllLessonsForLevel(currentConfig.level);
-            goToStep('step-lesson');
-        }
-
-        function closeGrammarCompleteModal() {
-            closeModal('modal-grammar-complete');
-            renderAllLessonsForLevel(currentConfig.level);
-            goToStep('step-lesson');
-        }
-
-        async function isNicknameTaken(nickname, excludeUid = null) {
-            try {
-                const snap = await db.collection("users").where("displayName", "==", nickname).get();
-                if (snap.empty) return false;
-                if (excludeUid) {
-                    let hasOtherUser = false;
-                    snap.forEach(doc => { if (doc.id !== excludeUid) hasOtherUser = true; });
-                    return hasOtherUser;
-                }
-                return true;
-            } catch (err) {
-                console.error("檢查暱稱失敗:", err);
-                return false;
-            }
-        }
-
-        async function requestGAS(apiUrl, actionName = '', extraParams = '') {
-            let url = new URL(apiUrl);
-            if (actionName) url.searchParams.set('action', actionName);
-            url.searchParams.set('t', Date.now());
-
-            if (extraParams) {
-                const clean = extraParams.startsWith('&') ? extraParams.slice(1) : extraParams;
-                new URLSearchParams(clean).forEach((v, k) => url.searchParams.set(k, v));
-            }
-
-            try {
-                const res = await fetch(url.toString(), { method: 'GET', redirect: 'follow' });
-                if (res.ok) {
-                    const text = (await res.text()).trim();
-                    if (text.startsWith('{') || text.startsWith('[')) return JSON.parse(text);
-                    const match = text.match(/^[a-zA-Z0-9_]+\s*\(([\s\S]*)\)\s*;?$/);
-                    if (match && match[1]) return JSON.parse(match[1]);
-                }
-            } catch (e) {
-                console.warn("切換至 JSONP 模式:", e);
-            }
-
-            return new Promise((resolve, reject) => {
-                const callbackName = 'gas_cb_' + Date.now() + Math.floor(Math.random() * 1000);
-                const script = document.createElement('script');
-                window[callbackName] = function(data) {
-                    delete window[callbackName];
-                    if (document.body.contains(script)) document.body.removeChild(script);
-                    resolve(data);
-                };
-                script.onerror = function() {
-                    delete window[callbackName];
-                    if (document.body.contains(script)) document.body.removeChild(script);
-                    reject(new Error("API 連線失敗，請確認網路！"));
-                };
-                url.searchParams.set('prefix', callbackName);
-                script.src = url.toString();
-                document.body.appendChild(script);
-            });
-        }
-
-        function playAudioOrTTS(audioUrl, fallbackText, rate = 0.85) {
-            stopSpeechRecognition();
-            if (audioUrl && audioUrl.trim() !== '' && audioUrl.toLowerCase() !== 'yes') {
-                const audio = new Audio(audioUrl);
-                audio.playbackRate = rate;
-                audio.play().catch(() => { if (fallbackText) speakTTS(fallbackText, rate); });
-            } else if (fallbackText) {
-                speakTTS(fallbackText, rate);
-            }
-        }
-
-        function triggerBottomGrammarAction() {
-            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-            let matchGrammar = globalGrammarData.find(g => 
-                normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
-                String(getItemField(g, 'unit_id')) === String(currentConfig.unit_id) &&
-                String(getItemField(g, 'lesson')) === String(currentConfig.lesson) &&
-                ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0))
-            );
-
-            if (!matchGrammar) {
-                matchGrammar = globalGrammarData.find(g => 
-                    normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
-                    ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0))
-                );
-            }
-
-            if (matchGrammar) {
-                currentConfig.mode = 'grammar';
-                currentConfig.unit_id = getItemField(matchGrammar, 'unit_id') || currentConfig.unit_id;
-                currentConfig.lesson = getItemField(matchGrammar, 'lesson') || currentConfig.lesson;
-                startGrammarChallenge(matchGrammar);
-            } else {
-                alert(`Level ${currentConfig.level} 尚未設定語法說明喔！`);
+            renderGrammarHistoryList();
+            const historyContainer = document.getElementById('area-grammar-all-history');
+            if (historyContainer) {
+                historyContainer.style.display = 'block';
+                setTimeout(() => {
+                    historyContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
             }
         }
     </script>
@@ -4924,6 +5001,7 @@
             }
         }
 
+        // 🌟 選擇題答錯時，自動將正確答案按鈕圈出來（高亮外框）
         function checkWordChoiceAnswer(selectedText) {
             if (isCurrentQuestionAnswered) return;
             const choiceBtns = document.querySelectorAll('.btn-vocab-choice');
