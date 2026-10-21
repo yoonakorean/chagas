@@ -2406,6 +2406,83 @@
                 return null;
             }
         }
+
+        async function verifyAndSyncUser(user, isInteractive = false) {
+            try {
+                const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
+                if (!gasResult || gasResult.status !== "success") {
+                    if (isInteractive) hideIslandLoading();
+                    alert("您不在系統白名單內或帳號已被停權！\n請聯繫管理員開通。");
+                    await auth.signOut();
+                    return;
+                }
+
+                let rawLevels = gasResult.allowedLevels || [];
+                if (!Array.isArray(rawLevels)) rawLevels = [String(rawLevels)];
+                let unlockedLevels = rawLevels.map(l => String(l).trim().toUpperCase()).filter(Boolean);
+
+                if (gasResult.memberships && Array.isArray(gasResult.memberships)) {
+                    gasResult.memberships.forEach(m => {
+                        if (m.courseId && !unlockedLevels.includes(m.courseId.toUpperCase())) {
+                            unlockedLevels.push(m.courseId.toUpperCase());
+                        }
+                    });
+                }
+                if (unlockedLevels.length === 0) unlockedLevels = ['0A'];
+                localStorage.setItem('cached_unlocked_levels', JSON.stringify(unlockedLevels));
+
+                const memberships = unlockedLevels.map(lvl => ({
+                    courseId: lvl,
+                    expireDate: gasResult.expireAt || "2027-12-31",
+                    status: "active"
+                }));
+
+                const firestoreData = await ProgressModel.loadProgress(user.uid);
+                if (!firestoreData) {
+                    window.tempMemberInfo = {
+                        realName: gasResult.realName || "",
+                        nickname: gasResult.nickname || "",
+                        role: gasResult.role || "student",
+                        status: "active"
+                    };
+                    window.tempMemberships = memberships;
+                    window.tempUnlockedLevels = unlockedLevels;
+                    if (isInteractive) hideIslandLoading();
+                    closeModal('login-modal');
+                    openModal('modal-setup-nickname');
+                } else {
+                    window.currentUserData = firestoreData;
+                    window.currentUserData.realName = gasResult.realName || firestoreData.realName || "-";
+                    window.currentUserData.role = gasResult.role || firestoreData.role || "Student";
+                    window.currentUserData.status = "開通中";
+                    window.currentUserData.memberships = memberships;
+                    window.currentUserData.unlockedLevels = unlockedLevels;
+                    
+                    if (!Array.isArray(window.currentUserData.completedLessons)) window.currentUserData.completedLessons = [];
+                    if (!Array.isArray(window.currentUserData.friends)) window.currentUserData.friends = [];
+                    if (!window.currentUserData.modeScores) window.currentUserData.modeScores = {};
+
+                    if (window.currentUserData.learnCategory) setLearnCategory(window.currentUserData.learnCategory);
+                    if (window.currentUserData.nativeLanguage) setUserLang(window.currentUserData.nativeLanguage);
+                    if (!unlockedLevels.includes(currentConfig.level)) currentConfig.level = unlockedLevels[0];
+
+                    closeModal('login-modal');
+                    renderUserInfo();
+
+                    if (isInteractive) {
+                        updateIslandLoading("🏝️ 同步最新地圖中...", 75);
+                        await autoLoadCategoryData(currentConfig.category, true);
+                        hideIslandLoading();
+                        resumeLastPlayedProgress();
+                    }
+                }
+            } catch (err) {
+                if (isInteractive) hideIslandLoading();
+                console.error("驗證失敗:", err);
+                alert("伺服器連線驗證失敗：" + err.message);
+                await auth.signOut();
+            }
+        }
     </script>
 <script>
         function renderAllLessonsForLevel(level) {
@@ -2823,9 +2900,15 @@
             openModal('modal-select-mode-type');
         }
 
+        // 🌟 當 0A 選擇「入門模式」(entry) 時，實際內容規格對應到 practice (練習模式)
         function confirmLaunchMode(type) {
             closeModal('modal-select-mode-type');
-            activeChallengeType = type;
+            const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
+            if (is0ALevel && type === 'entry') {
+                activeChallengeType = 'practice';
+            } else {
+                activeChallengeType = type;
+            }
             if (pendingLesson && pendingMode) {
                 selectLessonAndMode(pendingLesson, pendingMode);
             }
@@ -3095,7 +3178,8 @@
                 alert(`Level ${currentConfig.level} 尚未設定語法說明喔！`);
             }
         }
-
+    </script>
+<script>
         let authMode = 'login';
         const tabLogin = document.getElementById('tab-login');
         const tabRegister = document.getElementById('tab-register');
@@ -3179,84 +3263,6 @@
             }
         });
 
-        async function verifyAndSyncUser(user, isInteractive = false) {
-            try {
-                const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
-                if (!gasResult || gasResult.status !== "success") {
-                    if (isInteractive) hideIslandLoading();
-                    alert("您不在系統白名單內或帳號已被停權！\n請聯繫管理員開通。");
-                    await auth.signOut();
-                    return;
-                }
-
-                let rawLevels = gasResult.allowedLevels || [];
-                if (!Array.isArray(rawLevels)) rawLevels = [String(rawLevels)];
-                let unlockedLevels = rawLevels.map(l => String(l).trim().toUpperCase()).filter(Boolean);
-
-                if (gasResult.memberships && Array.isArray(gasResult.memberships)) {
-                    gasResult.memberships.forEach(m => {
-                        if (m.courseId && !unlockedLevels.includes(m.courseId.toUpperCase())) {
-                            unlockedLevels.push(m.courseId.toUpperCase());
-                        }
-                    });
-                }
-                if (unlockedLevels.length === 0) unlockedLevels = ['0A'];
-                localStorage.setItem('cached_unlocked_levels', JSON.stringify(unlockedLevels));
-
-                const memberships = unlockedLevels.map(lvl => ({
-                    courseId: lvl,
-                    expireDate: gasResult.expireAt || "2027-12-31",
-                    status: "active"
-                }));
-
-                const firestoreData = await ProgressModel.loadProgress(user.uid);
-                if (!firestoreData) {
-                    window.tempMemberInfo = {
-                        realName: gasResult.realName || "",
-                        nickname: gasResult.nickname || "",
-                        role: gasResult.role || "student",
-                        status: "active"
-                    };
-                    window.tempMemberships = memberships;
-                    window.tempUnlockedLevels = unlockedLevels;
-                    if (isInteractive) hideIslandLoading();
-                    closeModal('login-modal');
-                    openModal('modal-setup-nickname');
-                } else {
-                    window.currentUserData = firestoreData;
-                    window.currentUserData.realName = gasResult.realName || firestoreData.realName || "-";
-                    window.currentUserData.role = gasResult.role || firestoreData.role || "Student";
-                    window.currentUserData.status = "開通中";
-                    window.currentUserData.memberships = memberships;
-                    window.currentUserData.unlockedLevels = unlockedLevels;
-                    
-                    if (!Array.isArray(window.currentUserData.completedLessons)) window.currentUserData.completedLessons = [];
-                    if (!Array.isArray(window.currentUserData.friends)) window.currentUserData.friends = [];
-                    if (!window.currentUserData.modeScores) window.currentUserData.modeScores = {};
-
-                    if (window.currentUserData.learnCategory) setLearnCategory(window.currentUserData.learnCategory);
-                    if (window.currentUserData.nativeLanguage) setUserLang(window.currentUserData.nativeLanguage);
-                    if (!unlockedLevels.includes(currentConfig.level)) currentConfig.level = unlockedLevels[0];
-
-                    closeModal('login-modal');
-                    renderUserInfo();
-
-                    if (isInteractive) {
-                        updateIslandLoading("🏝️ 同步最新地圖中...", 75);
-                        await autoLoadCategoryData(currentConfig.category, true);
-                        hideIslandLoading();
-                        resumeLastPlayedProgress();
-                    }
-                }
-            } catch (err) {
-                if (isInteractive) hideIslandLoading();
-                console.error("驗證失敗:", err);
-                alert("伺服器連線驗證失敗：" + err.message);
-                await auth.signOut();
-            }
-        }
-    </script>
-<script>
         document.getElementById('btn-save-initial-nickname').onclick = async () => {
             const nickname = document.getElementById('input-setup-nickname').value.trim();
             const learnCategory = document.getElementById('select-setup-learn-lang').value;
@@ -3801,7 +3807,8 @@
             calendarCurrentDate.setMonth(calendarCurrentDate.getMonth() + 1);
             renderStreakCalendar(calendarCurrentDate);
         };
-
+    </script>
+<script>
         const initialLevelSelect = document.getElementById('initial-level-select');
 
         function triggerLevelSelectionModal() {
@@ -4516,6 +4523,7 @@
 
                 const qElem = document.createElement('div');
                 qElem.className = 'grammar-q-item';
+                qElem.id = `grammar-q-item-${qIdx}`;
                 qElem.style.cssText = "margin-bottom: 12px; font-size: 1.1rem; line-height: 1.8; text-align: center;";
                 qElem.innerHTML = `<span style="color:var(--duo-blue); font-weight:800; margin-right:4px;">${qIdx + 1}.</span> ${formattedHtml}`;
                 qContainer.appendChild(qElem);
@@ -4556,6 +4564,7 @@
             if (nextBlank !== -1) activeBlankIndex = nextBlank;
         }
 
+        // 🌟 小試身手答題送出：錯誤的直接反紅，並在旁邊顯示正確答案
         function checkGrammarQuiz() {
             if (isGrammarQuizSubmitted) return;
             const quizList = currentGrammarItem.expandedQuizzes || [];
@@ -4576,11 +4585,9 @@
 
             let globalSlotIdx = 0;
             let isAllCorrect = true;
-            let correctAnswersList = [];
 
             quizList.forEach((qObj, idx) => {
                 const expectedAnswer = (qObj.answer || '').replace(/\s+/g, '');
-                correctAnswersList.push(`第 ${idx + 1} 題：【${qObj.answer}】`);
                 const matches = (qObj.question || '').match(/_+/g) || [];
                 
                 let thisQuestionAnswers = [];
@@ -4599,8 +4606,31 @@
                 const ansJoined = thisQuestionAnswers.join('').replace(/\s+/g, '');
                 const ansSlash = thisQuestionAnswers.join('/').replace(/\s+/g, '');
 
-                if ((fullUserSentence !== expectedAnswer) && (ansJoined !== expectedAnswer) && (ansSlash !== expectedAnswer)) {
+                const isThisQCorrect = (fullUserSentence === expectedAnswer) || (ansJoined === expectedAnswer) || (ansSlash === expectedAnswer);
+                const qElem = document.getElementById(`grammar-q-item-${idx}`);
+
+                if (!isThisQCorrect) {
                     isAllCorrect = false;
+                    if (qElem) {
+                        qElem.style.color = '#dc2626';
+                        qElem.style.background = '#fee2e2';
+                        qElem.style.padding = '8px';
+                        qElem.style.borderRadius = '10px';
+                        qElem.style.border = '2px solid #ef4444';
+
+                        const hintSpan = document.createElement('div');
+                        hintSpan.style.cssText = "font-size: 0.92rem; color: #b91c1c; font-weight: bold; margin-top: 6px;";
+                        hintSpan.innerHTML = `❌ 正確答案：${qObj.answer}`;
+                        qElem.appendChild(hintSpan);
+                    }
+                } else {
+                    if (qElem) {
+                        qElem.style.color = '#15803d';
+                        qElem.style.background = '#f0fdf4';
+                        qElem.style.padding = '8px';
+                        qElem.style.borderRadius = '10px';
+                        qElem.style.border = '2px solid #86efac';
+                    }
                 }
             });
 
@@ -4616,7 +4646,7 @@
                 actionBtn.style.background = "#58cc02";
                 actionBtn.onclick = () => finishGrammarTask();
             } else {
-                resultText.innerHTML = `❌ 答案不太對喔！<br><span style="font-size:0.95rem; color:#b91c1c;">正確答案是：<br>${correctAnswersList.join('<br>')}</span>`;
+                resultText.innerText = "❌ 部分答案不太對喔！請參考上方紅字訂正。";
                 resultText.style.color = "#ff4b4b";
                 actionBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> 再試一次`;
                 actionBtn.style.background = "#ff4b4b";
@@ -4960,7 +4990,7 @@
             }
         }
 
-        // 🌟 選擇題答錯時，自動將正確答案的按鈕圈出來（高亮外框與背景）
+        // 🌟 選擇題答錯時，自動將正確答案按鈕圈出來（高亮外框）
         function checkWordChoiceAnswer(selectedText) {
             if (isCurrentQuestionAnswered) return;
             const choiceBtns = document.querySelectorAll('.btn-vocab-choice');
@@ -4994,7 +5024,6 @@
                     targetTextElem.innerText = correctKorean;
                     targetTextElem.style.visibility = "visible";
 
-                    // 圈出正確答案按鈕
                     choiceBtns.forEach(btn => {
                         if (btn.innerText.trim() === correctKorean) {
                             btn.style.border = '3px solid #58cc02';
@@ -5035,7 +5064,6 @@
                     targetTextElem.innerText = item.text || "";
                     targetTextElem.style.visibility = "visible";
 
-                    // 圈出正確答案按鈕
                     choiceBtns.forEach(btn => {
                         if (btn.innerText.trim() === correctMeaning) {
                             btn.style.border = '3px solid #58cc02';
