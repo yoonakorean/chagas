@@ -2384,7 +2384,6 @@
             }
         };
 
-        // 🌟 更新後的評分條件
         function calculateStars(score) {
             if (score >= 90) return { stars: 3, label: '⭐⭐⭐' };
             if (score >= 71) return { stars: 2, label: '⭐⭐' };
@@ -2407,7 +2406,8 @@
                 return null;
             }
         }
-
+    </script>
+<script>
         function renderAllLessonsForLevel(level) {
             const targetLevelNormalized = normalizeLevelStr(level);
             document.getElementById('lbl-lesson-unit').innerText = `Level ${level} 冒險地圖`;
@@ -2786,9 +2786,13 @@
             pendingMode = mode;
             document.getElementById('lbl-mode-dialog-title').innerText = `${label} - 模式選擇`;
 
+            // 🌟 0A 程度與其他程度皆顯示 入門模式 (entry) 與 挑戰模式 (timed)，隱藏練習模式 (practice)
+            const btnPractice = document.getElementById('btn-mode-choice-practice');
             const btnEntry = document.getElementById('btn-mode-choice-entry');
             const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
-            if (btnEntry) btnEntry.style.display = is0ALevel ? 'none' : 'flex';
+            
+            if (btnPractice) btnPractice.style.display = is0ALevel ? 'none' : 'flex';
+            if (btnEntry) btnEntry.style.display = 'flex';
 
             ['practice', 'entry', 'timed'].forEach(t => {
                 const tagElem = document.getElementById(`tag-star-${t}`);
@@ -3251,7 +3255,8 @@
                 await auth.signOut();
             }
         }
-
+    </script>
+<script>
         document.getElementById('btn-save-initial-nickname').onclick = async () => {
             const nickname = document.getElementById('input-setup-nickname').value.trim();
             const learnCategory = document.getElementById('select-setup-learn-lang').value;
@@ -4161,7 +4166,6 @@
             const finalScore = Math.min(100, Math.round(passedSubQuestions.size * pointsPerQuestion));
             const result = await saveChallengeScoreRecord(finalScore, elapsedSeconds);
 
-            // 🌟 成功通關才執行每日簽到與累積！
             if (currentUser && window.currentUserData) {
                 await processDailyCheckIn(currentUser, window.currentUserData);
             }
@@ -4198,7 +4202,6 @@
             stopChallengeTimer();
             await recordSessionFocusTime();
 
-            // 🌟 語法任務通關也一併計入每日簽到
             if (currentUser && window.currentUserData) {
                 await processDailyCheckIn(currentUser, window.currentUserData);
             }
@@ -4957,6 +4960,7 @@
             }
         }
 
+        // 🌟 選擇題答錯時，自動將正確答案的按鈕圈出來（高亮外框與背景）
         function checkWordChoiceAnswer(selectedText) {
             if (isCurrentQuestionAnswered) return;
             const choiceBtns = document.querySelectorAll('.btn-vocab-choice');
@@ -4990,6 +4994,15 @@
                     targetTextElem.innerText = correctKorean;
                     targetTextElem.style.visibility = "visible";
 
+                    // 圈出正確答案按鈕
+                    choiceBtns.forEach(btn => {
+                        if (btn.innerText.trim() === correctKorean) {
+                            btn.style.border = '3px solid #58cc02';
+                            btn.style.backgroundColor = '#dcfce7';
+                            btn.style.boxShadow = '0 0 12px rgba(88, 204, 2, 0.6)';
+                        }
+                    });
+
                     playWordAudio();
                     isCurrentQuestionAnswered = true;
                     if (wordIndex < totalChallengeQuestions - 1) {
@@ -5021,6 +5034,15 @@
                     scoreBadge.style.color = "#ff4b4b";
                     targetTextElem.innerText = item.text || "";
                     targetTextElem.style.visibility = "visible";
+
+                    // 圈出正確答案按鈕
+                    choiceBtns.forEach(btn => {
+                        if (btn.innerText.trim() === correctMeaning) {
+                            btn.style.border = '3px solid #58cc02';
+                            btn.style.backgroundColor = '#dcfce7';
+                            btn.style.boxShadow = '0 0 12px rgba(88, 204, 2, 0.6)';
+                        }
+                    });
 
                     playWordAudio();
                     isCurrentQuestionAnswered = true;
