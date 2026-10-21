@@ -87,34 +87,48 @@
             text-align: center;
         }
 
+        /* 🌟 頂部狀態列自適應優化：緊湊排列、防止名稱過長撐爆 */
         .user-meta-bar {
             flex-shrink: 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 10px;
-            margin-bottom: 8px;
+            padding-bottom: 8px;
+            margin-bottom: 6px;
             border-bottom: 2px solid #e2e8f0;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 800;
-            gap: 4px;
+            gap: 2px;
             flex-wrap: nowrap;
             background: #ffffff;
             z-index: 20;
+            width: 100%;
         }
         .user-meta-item {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
             color: #374151;
             cursor: pointer;
-            padding: 5px 8px;
-            border-radius: 12px;
+            padding: 4px 5px;
+            border-radius: 10px;
             transition: all 0.15s ease;
             white-space: nowrap;
-            font-size: 0.88rem;
+            font-size: 0.82rem;
+            flex-shrink: 1;
+            min-width: 0;
         }
         .user-meta-item:hover { background: #f0f9ff; }
+
+        /* 🌟 名稱過長時自動顯示省略號 (...) */
+        #lbl-username {
+            max-width: 72px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: inline-block;
+            vertical-align: middle;
+        }
 
         .lbl-quiz-info {
             display: inline-block !important;
@@ -2863,7 +2877,6 @@
             pendingMode = mode;
             document.getElementById('lbl-mode-dialog-title').innerText = `${label} - 模式選擇`;
 
-            // 🌟 0A 程度與其他程度皆顯示 入門模式 (entry) 與 挑戰模式 (timed)，隱藏練習模式 (practice)
             const btnPractice = document.getElementById('btn-mode-choice-practice');
             const btnEntry = document.getElementById('btn-mode-choice-entry');
             const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
@@ -2900,7 +2913,6 @@
             openModal('modal-select-mode-type');
         }
 
-        // 🌟 當 0A 選擇「入門模式」(entry) 時，實際內容規格對應到 practice (練習模式)
         function confirmLaunchMode(type) {
             closeModal('modal-select-mode-type');
             const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
@@ -3744,7 +3756,7 @@
                 loadFriendsLeaderboardData();
             } catch (e) {
                 errDiv.innerText = "新增好友失敗：" + e.message;
-                errDiv.classList.remove('hidden');
+                errDiv.classList.add('hidden');
             } finally {
                 btnConfirm.disabled = false;
                 btnConfirm.innerText = "確認新增";
@@ -3807,9 +3819,8 @@
             calendarCurrentDate.setMonth(calendarCurrentDate.getMonth() + 1);
             renderStreakCalendar(calendarCurrentDate);
         };
-    </script>
-<script>
-        const initialLevelSelect = document.getElementById('initial-level-select');
+
+        let initialLevelSelect = document.getElementById('initial-level-select');
 
         function triggerLevelSelectionModal() {
             let cachedUnlocked = [];
@@ -4564,7 +4575,6 @@
             if (nextBlank !== -1) activeBlankIndex = nextBlank;
         }
 
-        // 🌟 小試身手答題送出：錯誤的直接反紅，並在旁邊顯示正確答案
         function checkGrammarQuiz() {
             if (isGrammarQuizSubmitted) return;
             const quizList = currentGrammarItem.expandedQuizzes || [];
@@ -4662,7 +4672,8 @@
                 }, 100);
             }
         }
-
+    </script>
+<script>
         function getWordTranslation(item) {
             if (!item) return "";
             return (currentConfig.lang === 'en') ? (item.en || item.zh_tw || "") :
