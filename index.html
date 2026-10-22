@@ -509,13 +509,15 @@
 
         .blank-slot {
             display: inline-block;
-            min-width: 50px;
+            min-width: 44px;
             border-bottom: 2px solid var(--duo-blue);
-            margin: 0 4px;
+            margin: 0 3px;
             padding: 0 4px;
             font-weight: 900;
             color: var(--duo-blue);
             cursor: pointer;
+            text-align: center;
+            vertical-align: baseline;
         }
         .roadmap-container {
             position: relative;
@@ -919,15 +921,24 @@
             font-weight: bold; cursor: pointer; margin-top: 12px; text-decoration: underline;
         }
 
+        /* 🌟 優化頂部導覽列：強制單行、不折行自適應 */
         .top-nav { 
             position: sticky; top: 0; background: #ffffff; z-index: 10;
-            padding: 4px 0 8px 0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; 
+            padding: 6px 0 8px 0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; 
+            gap: 6px; width: 100%; box-sizing: border-box; flex-wrap: nowrap;
         }
         .btn-back-step {
-            background: none; border: none; color: #6b7280; font-size: 0.9rem;
-            cursor: pointer; display: flex; align-items: center; gap: 5px; font-weight: bold;
+            background: none; border: none; color: #475569; font-size: 0.85rem;
+            cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-weight: 800;
+            white-space: nowrap; flex-shrink: 0; padding: 4px 0;
         }
         .btn-back-step:hover { color: var(--duo-blue); }
+
+        .top-nav-title-badge {
+            font-weight: 800; color: var(--duo-purple); font-size: 0.82rem;
+            text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            flex-shrink: 1; min-width: 0;
+        }
 
         .target-text,
         .translation-text,
@@ -1488,7 +1499,7 @@
             <div id="step-lesson" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
-                    <span id="lbl-lesson-unit" style="font-weight: 900; color: var(--duo-blue);">冒險地圖</span>
+                    <span id="lbl-lesson-unit" class="top-nav-title-badge" style="color: var(--duo-blue);">冒險地圖</span>
                 </div>
                 
                 <div class="stage-pill-selector" id="container-stage-pills"></div>
@@ -1503,7 +1514,7 @@
             <div id="step-grammar" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-lesson')"><i class="fa-solid fa-arrow-left"></i> 回闖關地圖</button>
-                    <span id="lbl-grammar-info" style="font-weight: bold; color: var(--duo-purple);">關卡任務</span>
+                    <span id="lbl-grammar-info" class="top-nav-title-badge">關卡任務</span>
                 </div>
 
                 <!-- 語法第一階段：觀念說明與例句導覽 -->
@@ -4475,6 +4486,27 @@ let authMode = 'login';
             }
         }
 
+        // 🌟 智能提取填空答案輔助函式：若 rawAnswer 包含整段題目，則剔除題目文字，只回傳純答案
+        function extractPureAnswer(questionText, rawAnswerText) {
+            if (!rawAnswerText) return "";
+            let q = (questionText || "").replace(/_+/g, "___").trim();
+            let a = String(rawAnswerText).trim();
+
+            if (q.includes("___")) {
+                const parts = q.split("___");
+                const prefix = parts[0] ? parts[0].trim() : "";
+                const suffix = parts[1] ? parts[1].trim() : "";
+
+                if (prefix && a.startsWith(prefix)) {
+                    a = a.substring(prefix.length).trim();
+                }
+                if (suffix && a.endsWith(suffix)) {
+                    a = a.substring(0, a.length - suffix.length).trim();
+                }
+            }
+            return a || rawAnswerText;
+        }
+
         function showGrammarQuizArea() {
             isGrammarQuizSubmitted = false;
 
@@ -4526,7 +4558,7 @@ let authMode = 'login';
                 const qElem = document.createElement('div');
                 qElem.className = 'grammar-q-item';
                 qElem.id = `grammar-q-item-${qIdx}`;
-                qElem.style.cssText = "margin-bottom: 8px; font-size: 1.05rem; line-height: 1.7; text-align: center; border: 2px solid transparent; border-radius: 12px; padding: 6px 8px; transition: all 0.2s;";
+                qElem.style.cssText = "margin-bottom: 8px; font-size: 1.05rem; line-height: 1.6; text-align: center; border: 2px solid transparent; border-radius: 12px; padding: 6px 8px; transition: all 0.2s; word-break: break-word;";
                 qElem.innerHTML = `<span style="color:var(--duo-blue); font-weight:800; margin-right:4px;">${qIdx + 1}.</span> <span class="q-body-content">${formattedHtml}</span>`;
                 qContainer.appendChild(qElem);
             });
@@ -4574,7 +4606,7 @@ let authMode = 'login';
 
             isGrammarQuizSubmitted = true;
 
-            // 🌟 送出答案後：隱藏選項與送出按鍵，省出大量手機螢幕空間
+            // 🌟 送出答案後：立即隱藏選項與送出按鍵，省出大量手機螢幕空間
             const choicesWrapper = document.getElementById('grammar-choices-wrapper');
             if (choicesWrapper) choicesWrapper.style.display = 'none';
 
@@ -4588,7 +4620,9 @@ let authMode = 'login';
             let isAllCorrect = true;
 
             quizList.forEach((qObj, idx) => {
+                const pureAnswer = extractPureAnswer(qObj.question, qObj.answer);
                 const expectedAnswer = (qObj.answer || '').replace(/\s+/g, '');
+                const expectedPure = (pureAnswer || '').replace(/\s+/g, '');
                 const matches = (qObj.question || '').match(/_+/g) || [];
                 
                 let thisQuestionAnswers = [];
@@ -4607,7 +4641,12 @@ let authMode = 'login';
                 const ansJoined = thisQuestionAnswers.join('').replace(/\s+/g, '');
                 const ansSlash = thisQuestionAnswers.join('/').replace(/\s+/g, '');
 
-                const isThisQCorrect = (fullUserSentence === expectedAnswer) || (ansJoined === expectedAnswer) || (ansSlash === expectedAnswer);
+                const isThisQCorrect = (fullUserSentence === expectedAnswer) || 
+                                       (ansJoined === expectedAnswer) || 
+                                       (ansSlash === expectedAnswer) ||
+                                       (ansJoined === expectedPure) ||
+                                       (ansSlash === expectedPure);
+
                 const qElem = document.getElementById(`grammar-q-item-${idx}`);
 
                 if (!isThisQCorrect) {
@@ -4617,10 +4656,10 @@ let authMode = 'login';
                         qElem.style.background = '#fee2e2';
                         qElem.style.borderColor = '#ef4444';
 
-                        // 🌟 右側緊湊單行顯示正確答案，不重複列印整句題目
+                        // 🌟 右側緊湊單行顯示，只單純顯示空格正確答案（如：❌ 正確 ㅡ）
                         const ansBadge = document.createElement('span');
-                        ansBadge.style.cssText = "font-size: 0.92rem; color: #b91c1c; font-weight: 900; margin-left: 6px; white-space: nowrap;";
-                        ansBadge.innerHTML = `❌ 正確：${qObj.answer}`;
+                        ansBadge.style.cssText = "font-size: 0.95rem; color: #b91c1c; font-weight: 900; margin-left: 6px; white-space: nowrap; display: inline-block;";
+                        ansBadge.innerHTML = `❌ 正確 ${pureAnswer}`;
                         qElem.appendChild(ansBadge);
                     }
                 } else {
