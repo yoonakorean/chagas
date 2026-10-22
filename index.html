@@ -87,7 +87,7 @@
             text-align: center;
         }
 
-        /* 🌟 頂部狀態列自適應優化：緊湊排列、防止名稱過長撐爆 */
+        /* 頂部狀態列自適應優化：緊湊排列、防止名稱過長撐爆 */
         .user-meta-bar {
             flex-shrink: 0;
             display: flex;
@@ -120,7 +120,7 @@
         }
         .user-meta-item:hover { background: #f0f9ff; }
 
-        /* 🌟 名稱過長時自動顯示省略號 (...) */
+        /* 名稱過長時自動顯示省略號 (...) */
         #lbl-username {
             max-width: 72px;
             overflow: hidden;
@@ -1160,7 +1160,8 @@
             <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 10px;" class="hidden"></div>
         </div>
     </div>
-<!-- 忘記密碼 Modal -->
+
+    <!-- 忘記密碼 Modal -->
     <div id="modal-forgot-password" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
@@ -1212,8 +1213,7 @@
             </div>
         </div>
     </div>
-
-    <!-- 學習成就統計 Dashboard Modal -->
+<!-- 學習成就統計 Dashboard Modal -->
     <div id="modal-streak-dashboard" class="custom-modal">
         <div class="custom-modal-card">
             <div class="close-icon-circle" id="btn-close-streak-modal" onclick="closeModal('modal-streak-dashboard')"><i class="fa-solid fa-xmark"></i></div>
@@ -1355,6 +1355,26 @@
         </div>
     </div>
 
+    <!-- 新增：小試身手再來一次選擇彈窗 -->
+    <div id="modal-grammar-retry-choice" class="custom-modal">
+        <div class="custom-modal-card" style="padding: 24px 18px;">
+            <div class="close-icon-circle" onclick="closeModal('modal-grammar-retry-choice')"><i class="fa-solid fa-xmark"></i></div>
+            <div style="font-size: 2.4rem; color: var(--duo-blue); margin-bottom: 8px;">
+                <i class="fa-solid fa-rotate"></i>
+            </div>
+            <h3 style="margin: 0 0 6px 0; font-size: 1.25rem; color: #1e293b;">請選擇學習方式</h3>
+            <p style="font-size: 0.88rem; color: #64748b; margin-bottom: 20px;">想直接重新測驗，還是重新複習觀念呢？</p>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="btn-3d btn-3d-primary" onclick="retryGrammarQuizOnly()" style="padding: 13px; font-size: 1.05rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i class="fa-solid fa-pen-to-square"></i> 在挑戰一次
+                </button>
+                <button class="btn-3d btn-3d-blue" onclick="restartGrammarLearningFromStart()" style="padding: 13px; font-size: 1.05rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i class="fa-solid fa-book-open"></i> 在學習一次
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- 一般題型通關結算彈窗（含星級與評分） -->
     <div id="modal-challenge-settlement" class="custom-modal" style="background: rgba(15, 23, 42, 0.75);">
         <canvas id="settlement-canvas"></canvas>
@@ -1402,7 +1422,8 @@
             </div>
         </div>
     </div>
-<!-- 主介面容器 -->
+
+    <!-- 主介面容器 -->
     <div class="shadowing-card">
         
         <!-- 上方狀態列 -->
@@ -1524,14 +1545,9 @@
                     </div>
                 </div>
 
-                <!-- 觀念總覽區塊（送出後顯示在最下方） -->
-                <div id="area-grammar-all-history" style="display: none; margin-top: 20px;">
-                    <h3 style="margin-top: 15px; margin-bottom: 10px; color: #4338ca; text-align: left; font-size: 1.1rem;"><i class="fa-solid fa-list-check"></i> 觀念總覽</h3>
-                    <div class="dialog-history-list" id="container-dialog-history"></div>
-                </div>
+                <!-- 觀念總覽區塊已依需求刪除 -->
             </div>
-
-            <!-- 步驟 6-A：Sentence 句子跟讀畫面 -->
+<!-- 步驟 6-A：Sentence 句子跟讀畫面 -->
             <div id="step-quiz-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-shadow-mode-title">句子跟讀</div>
@@ -1932,7 +1948,8 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-<!-- 核心邏輯腳本開始 -->
+
+    <!-- 核心邏輯腳本開始 -->
     <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -2028,7 +2045,7 @@
             'あかい': ['赤い', '紅い'],
             'あう': ['会う', '合う', '遭う'],
             'あさ': ['朝', '麻'],
-            'あし': ['足', '脚'],
+            'あし': ['足', '腳'],
             'あたま': ['頭'],
             'あめ': ['雨', '飴'],
             'いい': ['良い', 'いい'],
@@ -2048,7 +2065,7 @@
             'かいしゃ': ['会社'],
             'かう': ['買う', '飼う'],
             'かお': ['顔'],
-            'かく': ['書く', '描く', '画く', '掻く'],
+            'かく': ['書く', '描く', '畫く', '掻く'],
             'がくせい': ['學生', '学生'],
             'がっこう': ['學校', '学校'],
             'かわ': ['川', '皮'],
@@ -2293,8 +2310,7 @@
 
             return elapsedSeconds;
         }
-
-        function getModeTagText() {
+function getModeTagText() {
             if (activeChallengeType === 'entry') return '(入門)';
             if (activeChallengeType === 'timed') return '(挑戰)';
             return '(練習)';
@@ -2497,8 +2513,7 @@
                 await auth.signOut();
             }
         }
-    </script>
-<script>
+
         function renderAllLessonsForLevel(level) {
             const targetLevelNormalized = normalizeLevelStr(level);
             document.getElementById('lbl-lesson-unit').innerText = `Level ${level} 冒險地圖`;
@@ -3190,9 +3205,7 @@
                 alert(`Level ${currentConfig.level} 尚未設定語法說明喔！`);
             }
         }
-    </script>
-<script>
-        let authMode = 'login';
+let authMode = 'login';
         const tabLogin = document.getElementById('tab-login');
         const tabRegister = document.getElementById('tab-register');
         const btnAuthSubmit = document.getElementById('btn-auth-submit');
@@ -4292,7 +4305,6 @@
             isGrammarQuizSubmitted = false;
             
             document.getElementById('lbl-grammar-info').innerText = `關卡任務 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Lesson ${currentConfig.lesson}`;
-            document.getElementById('area-grammar-all-history').style.display = 'none';
             document.getElementById('area-grammar-quiz').style.display = 'none';
 
             let expandedQuizzes = [];
@@ -4338,7 +4350,6 @@
             const areaDialog = document.getElementById('area-grammar-dialog');
             if (areaDialog) areaDialog.style.display = 'flex';
             document.getElementById('area-grammar-quiz').style.display = 'none';
-            document.getElementById('area-grammar-all-history').style.display = 'none';
 
             document.getElementById('lbl-dialog-counter').innerText = `${currentDialogIndex + 1} / ${total}`;
             document.getElementById('btn-prev-dialog').disabled = currentDialogIndex === 0;
@@ -4462,41 +4473,11 @@
             }
         }
 
-        function renderGrammarHistoryList() {
-            const container = document.getElementById('container-dialog-history');
-            if (!container) return;
-            container.innerHTML = "";
-            const list = currentGrammarItem ? currentGrammarItem.dialogs : [];
-            if (list && list.length > 0) {
-                list.forEach((itemObj, idx) => {
-                    const item = document.createElement('div');
-                    item.className = 'dialog-history-item';
-                    let exHtml = '';
-                    if (itemObj.example) {
-                        const splitted = itemObj.example.split('/').map(s => s.trim()).filter(Boolean);
-                        if (splitted.length > 0) {
-                            exHtml = `<div style="margin-top:6px; font-size:0.92rem; color:#4338ca; font-weight:bold;">
-                                例句：<br>${splitted.map((s, i) => `${i + 1}.${s}`).join('<br>')}
-                            </div>`;
-                        }
-                    }
-                    item.innerHTML = `
-                        <span class="num-title">${idx + 1}.</span>
-                        <div class="text-body">${cleanInitialWhitespace(itemObj.text)}${exHtml}</div>
-                    `;
-                    container.appendChild(item);
-                });
-            }
-        }
-
         function showGrammarQuizArea() {
             isGrammarQuizSubmitted = false;
 
             const areaDialog = document.getElementById('area-grammar-dialog');
             if (areaDialog) areaDialog.style.display = 'none';
-
-            const areaHistory = document.getElementById('area-grammar-all-history');
-            if (areaHistory) areaHistory.style.display = 'none';
 
             document.getElementById('area-grammar-quiz').style.display = 'block';
             document.getElementById('box-grammar-result').style.display = 'none';
@@ -4658,23 +4639,34 @@
             } else {
                 resultText.innerText = "❌ 部分答案不太對喔！請參考上方紅字訂正。";
                 resultText.style.color = "#ff4b4b";
-                actionBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> 再試一次`;
+                actionBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> 再來一次`;
                 actionBtn.style.background = "#ff4b4b";
-                actionBtn.onclick = () => showGrammarQuizArea();
-            }
-
-            renderGrammarHistoryList();
-            const historyContainer = document.getElementById('area-grammar-all-history');
-            if (historyContainer) {
-                historyContainer.style.display = 'block';
-                setTimeout(() => {
-                    historyContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }, 100);
+                actionBtn.onclick = () => promptGrammarRetryChoice();
             }
         }
-    </script>
-<script>
-        function getWordTranslation(item) {
+
+        // 🌟 點擊「再來一次」後跳出選擇彈窗
+        function promptGrammarRetryChoice() {
+            openModal('modal-grammar-retry-choice');
+        }
+
+        // 🌟 點擊「在挑戰一次」：直接重新過一次小試身手
+        function retryGrammarQuizOnly() {
+            closeModal('modal-grammar-retry-choice');
+            showGrammarQuizArea();
+        }
+
+        // 🌟 點擊「在學習一次」：跳回去從語法介紹第一句開始重新觀看
+        function restartGrammarLearningFromStart() {
+            closeModal('modal-grammar-retry-choice');
+            currentDialogIndex = 0;
+            if (currentGrammarItem && currentGrammarItem.dialogs && currentGrammarItem.dialogs.length > 0) {
+                showCurrentGrammarDialog();
+            } else {
+                showGrammarQuizArea();
+            }
+        }
+function getWordTranslation(item) {
             if (!item) return "";
             return (currentConfig.lang === 'en') ? (item.en || item.zh_tw || "") :
                    (currentConfig.lang === 'ja') ? (item.ja || item.zh_tw || "") : (item.zh_tw || "");
@@ -5001,7 +4993,7 @@
             }
         }
 
-        // 🌟 選擇題答錯時，自動將正確答案按鈕圈出來（高亮外框）
+        // 選擇題答錯時，自動將正確答案按鈕圈出來（高亮外框）
         function checkWordChoiceAnswer(selectedText) {
             if (isCurrentQuestionAnswered) return;
             const choiceBtns = document.querySelectorAll('.btn-vocab-choice');
