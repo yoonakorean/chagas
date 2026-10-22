@@ -394,8 +394,9 @@
             color: #14532d;
             display: block;
             margin-bottom: 10px;
-            height: 200px;
-            max-height: 200px;
+            /* 🌟 改為自適應高度：最小 80px，最大佔畫面的 38%，不再寫死 200px */
+            min-height: 70px;
+            max-height: 38vh;
             overflow-y: auto;
             line-height: 1.6;
             position: relative;
@@ -423,7 +424,8 @@
             margin-bottom: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             text-align: left;
-            max-height: 200px;
+            /* 🌟 核心：移除 max-height: 200px，改用 flex: 1 自動填滿下方所有剩餘空白 */
+            flex: 1;
             overflow-y: auto;
             box-sizing: border-box;
             width: 100%;
@@ -4545,7 +4547,11 @@ async function saveChallengeScoreRecord(finalScore, elapsedSeconds = null) {
         }
 
         function cleanInitialWhitespace(str) {
-            return (str || '').replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
+            if (!str) return '';
+            // 🌟 徹底剔除開頭所有的換行、空格、全形空格與隱形定位字元
+            return String(str)
+                .replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '')
+                .trimEnd();
         }
 
         function startGrammarChallenge(grammarGroup) {
