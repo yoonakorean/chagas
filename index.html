@@ -183,7 +183,7 @@
             display: flex;
             justify-content: center;
             z-index: 100;
-            padding: 0 12px calc(10px + env(safe-area-inset-bottom)) 12px;
+            padding: 0 8px calc(8px + env(safe-area-inset-bottom)) 8px;
             pointer-events: none;
             background: linear-gradient(to top, rgba(255,255,255,1) 75%, rgba(255,255,255,0) 100%);
         }
@@ -193,14 +193,14 @@
             backdrop-filter: blur(12px);
             border: 2px solid #bae6fd;
             border-radius: 20px;
-            padding: 8px 14px;
+            padding: 6px 8px;
             width: 100%;
             max-width: 480px;
             box-shadow: 0 8px 24px rgba(28, 176, 246, 0.15);
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             pointer-events: auto;
             box-sizing: border-box;
         }
@@ -210,15 +210,16 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            padding: 8px 10px;
+            gap: 5px;
+            padding: 7px 4px;
             border-radius: 14px;
-            font-size: 0.9rem;
+            font-size: 0.82rem;
             font-weight: 800;
             cursor: pointer;
             border: 1.5px solid transparent;
             transition: all 0.15s ease;
             text-align: center;
+            white-space: nowrap;
         }
         .bottom-nav-item.grammar-btn {
             background: #eef2ff;
@@ -228,6 +229,15 @@
         .bottom-nav-item.grammar-btn:active {
             transform: translateY(2px);
             background: #e0e7ff;
+        }
+        .bottom-nav-item.guide-btn {
+            background: #fefce8;
+            color: #b45309;
+            border-color: #fef08a;
+        }
+        .bottom-nav-item.guide-btn:active {
+            transform: translateY(2px);
+            background: #fef9c3;
         }
         .bottom-nav-item.map-btn {
             background: #f0f9ff;
@@ -507,6 +517,7 @@
         }
         .btn-grammar-sub:active { transform: translateY(2px); border-bottom-width: 1px !important; }
 
+        /* 🌟 小試身手空格與選中高亮樣式 */
         .blank-slot {
             display: inline-block;
             min-width: 44px;
@@ -518,7 +529,36 @@
             cursor: pointer;
             text-align: center;
             vertical-align: baseline;
+            transition: all 0.15s ease;
         }
+        .blank-slot.active-slot {
+            border-bottom: 3px solid #0284c7;
+            background: #e0f2fe;
+            border-radius: 6px 6px 0 0;
+            color: #0369a1;
+        }
+
+        /* 🌟 當前聚焦題目的卡片外框高亮樣式 */
+        .grammar-q-item {
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 8px 10px;
+            transition: all 0.2s ease;
+            word-break: break-word;
+            cursor: pointer;
+        }
+        .grammar-q-item.focused-q {
+            border-color: var(--duo-blue) !important;
+            background: #f0f9ff !important;
+            box-shadow: 0 0 12px rgba(28, 176, 246, 0.35) !important;
+            transform: scale(1.01);
+        }
+
         .roadmap-container {
             position: relative;
             width: 100%;
@@ -921,7 +961,7 @@
             font-weight: bold; cursor: pointer; margin-top: 12px; text-decoration: underline;
         }
 
-        /* 🌟 優化頂部導覽列：強制單行、不折行自適應 */
+        /* 頂部導覽列：強制單行、不折行自適應 */
         .top-nav { 
             position: sticky; top: 0; background: #ffffff; z-index: 10;
             padding: 6px 0 8px 0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; 
@@ -952,8 +992,7 @@
         #lbl-word-type-translation,
         #lbl-word-type-hint,
         #lbl-word-choice-text,
-        #container-grammar-questions,
-        .grammar-q-item {
+        #container-grammar-questions {
             text-align: center !important;
         }
 
@@ -1113,6 +1152,33 @@
         @keyframes islandFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
         .island-progress-track { width: 100%; max-width: 280px; height: 14px; background: #e0f2fe; border-radius: 20px; overflow: hidden; border: 2px solid #bae6fd; position: relative; }
         .island-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #38bdf8, #0284c7); border-radius: 20px; transition: width 0.35s ease; position: relative; }
+
+        /* 玩法介紹按鈕列表專用樣式 */
+        .guide-mode-item-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-bottom: 3.5px solid #cbd5e1;
+            border-radius: 14px;
+            padding: 12px 14px;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .guide-mode-item-btn:hover {
+            border-color: var(--duo-blue);
+            background: #f0f9ff;
+            color: var(--duo-blue);
+        }
+        .guide-mode-item-btn:active {
+            transform: translateY(2px);
+            border-bottom-width: 1.5px;
+        }
     </style>
 </head>
 <body>
@@ -1386,7 +1452,72 @@
         </div>
     </div>
 
-    <!-- 一般題型通關結算彈窗（含星級與評分） -->
+    <!-- 🌟 新增：挑戰介紹選單彈窗（第一層） -->
+    <div id="modal-guide-modes" class="custom-modal">
+        <div class="custom-modal-card" style="padding: 22px 18px; max-height: 85vh;">
+            <div class="close-icon-circle" onclick="closeModal('modal-guide-modes')"><i class="fa-solid fa-xmark"></i></div>
+            <div style="font-size: 2.2rem; color: var(--duo-gold); margin-bottom: 6px;">
+                <i class="fa-solid fa-compass"></i>
+            </div>
+            <h3 style="margin: 0 0 6px 0; font-size: 1.25rem; color: #1e293b;">挑戰玩法指南</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 16px;">點選以下挑戰查看完整玩法規則與步驟：</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 8px; max-height: 52vh; overflow-y: auto; padding-right: 2px;">
+                <button class="guide-mode-item-btn" onclick="openGuideDetail('grammar', '關卡任務 (語法介紹)')">
+                    <span><i class="fa-solid fa-book-open-reader" style="color:#6366f1; width:22px;"></i> 關卡任務</span>
+                    <i class="fa-solid fa-chevron-right" style="color:#94a3b8; font-size:0.85rem;"></i>
+                </button>
+                <button class="guide-mode-item-btn" onclick="openGuideDetail('word_shadow', '單字跟讀')">
+                    <span><i class="fa-solid fa-microphone-lines" style="color:#10b981; width:22px;"></i> 單字跟讀</span>
+                    <i class="fa-solid fa-chevron-right" style="color:#94a3b8; font-size:0.85rem;"></i>
+                </button>
+                <button class="guide-mode-item-btn" onclick="openGuideDetail('word_type', '單字聽打')">
+                    <span><i class="fa-solid fa-keyboard" style="color:#0284c7; width:22px;"></i> 單字聽打</span>
+                    <i class="fa-solid fa-chevron-right" style="color:#94a3b8; font-size:0.85rem;"></i>
+                </button>
+                <button class="guide-mode-item-btn" onclick="openGuideDetail('word_choice', '單字選擇')">
+                    <span><i class="fa-solid fa-list-check" style="color:#f59e0b; width:22px;"></i> 單字選擇</span>
+                    <i class="fa-solid fa-chevron-right" style="color:#94a3b8; font-size:0.85rem;"></i>
+                </button>
+                <button class="guide-mode-item-btn" onclick="openGuideDetail('shadow', '句子跟讀')">
+                    <span><i class="fa-solid fa-headphones" style="color:#3b82f6; width:22px;"></i> 句子跟讀</span>
+                    <i class="fa-solid fa-chevron-right" style="color:#94a3b8; font-size:0.85rem;"></i>
+                </button>
+                <button class="guide-mode-item-btn" onclick="openGuideDetail('blocks', '字塊重組')">
+                    <span><i class="fa-solid fa-cubes-stacked" style="color:#ec4899; width:22px;"></i> 字塊重組</span>
+                    <i class="fa-solid fa-chevron-right" style="color:#94a3b8; font-size:0.85rem;"></i>
+                </button>
+                <button class="guide-mode-item-btn" onclick="openGuideDetail('sentence_chat', '對話挑戰')">
+                    <span><i class="fa-solid fa-comments" style="color:#8b5cf6; width:22px;"></i> 對話挑戰</span>
+                    <i class="fa-solid fa-chevron-right" style="color:#94a3b8; font-size:0.85rem;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🌟 新增：挑戰玩法詳細說明彈窗（第二層，顯示 1.2.3.4.5.6. 內容） -->
+    <div id="modal-guide-detail" class="custom-modal">
+        <div class="custom-modal-card" style="padding: 22px 18px; max-height: 85vh; display:flex; flex-direction:column;">
+            <div class="close-icon-circle" onclick="closeModal('modal-guide-detail')"><i class="fa-solid fa-xmark"></i></div>
+            <h3 id="lbl-guide-detail-title" style="margin: 4px 0 6px 0; font-size: 1.2rem; color: #1e293b;">挑戰玩法</h3>
+            <p style="font-size: 0.82rem; color: #64748b; margin: 0 0 14px 0;">跟著步驟進行練習即可輕鬆通關：</p>
+
+            <div id="guide-detail-content-box" style="flex:1; overflow-y:auto; text-align:left; background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:14px; padding:12px 14px; font-size:0.92rem; line-height:1.75; color:#334155; margin-bottom:14px;">
+                <!-- 動態注入 1. 2. 3. 4. 5. 6. -->
+            </div>
+
+            <div style="display:flex; gap:8px;">
+                <button class="btn-3d btn-3d-secondary" onclick="backToGuideModes()" style="flex:1; padding:10px; font-size:0.92rem;">
+                    <i class="fa-solid fa-arrow-left"></i> 回模式選單
+                </button>
+                <button class="btn-3d btn-3d-primary" onclick="closeModal('modal-guide-detail')" style="flex:1; padding:10px; font-size:0.92rem;">
+                    知道了
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 一般題型通關結算彈窗（含星級與耗時，已隱藏本次得分） -->
     <div id="modal-challenge-settlement" class="custom-modal" style="background: rgba(15, 23, 42, 0.75);">
         <canvas id="settlement-canvas"></canvas>
         <div class="custom-modal-card" style="padding: 24px 20px; z-index: 101;">
@@ -1400,7 +1531,8 @@
             </div>
 
             <div class="settlement-stat-card">
-                <div class="settlement-stat-row">
+                <!-- 🌟 本次得分已依需求隱藏 -->
+                <div class="settlement-stat-row" style="display: none;">
                     <span><i class="fa-solid fa-bullseye" style="color: var(--duo-green);"></i> 本次得分</span>
                     <span class="settlement-stat-val" id="lbl-settlement-score" style="color: var(--duo-green);">100 分</span>
                 </div>
@@ -1946,12 +2078,16 @@
             </div>
         </div>
 
-        <!-- 下方固定區塊：Bottom Bar -->
+        <!-- 🌟 下方固定區塊：新增「挑戰介紹」按鈕 -->
         <div class="bottom-fixed-bar-wrapper" id="app-bottom-bar" style="display: none;">
             <div class="bottom-fixed-bar">
                 <div class="bottom-nav-item grammar-btn" id="btn-bottom-grammar" onclick="triggerBottomGrammarAction()">
                     <i class="fa-solid fa-book-open-reader"></i>
                     <span id="lbl-bottom-grammar">關卡任務</span>
+                </div>
+                <div class="bottom-nav-item guide-btn" onclick="openGuideModesModal()">
+                    <i class="fa-solid fa-circle-question"></i>
+                    <span>挑戰介紹</span>
                 </div>
                 <div class="bottom-nav-item map-btn" onclick="goToStep('step-level')">
                     <i class="fa-solid fa-map-location-dot" style="color: var(--duo-blue);"></i>
@@ -2044,6 +2180,117 @@
         let idleTimer = null;
         const IDLE_LIMIT_MS = 90 * 1000;
         let isIdlePaused = false;
+
+        // 🌟 玩法指南各模式預設說明（1.2.3.4.5.6. 結構，後續可自行修改文字）
+        const GUIDE_DETAILS_MAP = {
+            'grammar': {
+                title: '📘 關卡任務玩法說明',
+                content: `
+                    <strong>1. 觀念導讀：</strong> 進入關卡後會先播放語法說明與對話情境，點擊對話框可立即完成文字打字機。<br>
+                    <strong>2. 例句聆聽：</strong> 觀念下方附有發音例句，點擊喇叭圖示可重複聆聽標準語音示範。<br>
+                    <strong>3. 進入測驗：</strong> 觀念讀完後點擊「進入隨堂測驗」展開「小試身手」實戰造句填空。<br>
+                    <strong>4. 填入答案：</strong> 系統會將當前正在作答的題目加上亮藍色外框，點擊下方字塊即可填入空格。<br>
+                    <strong>5. 檢查訂正：</strong> 送出答案後，若答錯會在填空右側單行提示正確答案，並可隨時點擊「再來一次」。<br>
+                    <strong>6. 自由重練：</strong> 點擊再來一次可自由選擇「在挑戰一次」重新做題，或「在學習一次」從頭複習觀念！
+                `
+            },
+            'word_shadow': {
+                title: '🎙️ 單字跟讀玩法說明',
+                content: `
+                    <strong>1. 聆聽示範：</strong> 點擊喇叭按鈕聆聽單字正確發音與音調。<br>
+                    <strong>2. 開始錄音：</strong> 點擊紅色麥克風圖示後，對準手機清晰念出畫面中的單字。<br>
+                    <strong>3. 停止辨識：</strong> 再次點擊麥克風完成錄音，系統將即時比對語音文字。<br>
+                    <strong>4. 聽自己的聲音：</strong> 錄音完畢後可點擊綠色耳機播放剛才錄下的原音。<br>
+                    <strong>5. 評分判定：</strong> 系統判定發音合格後將自動解鎖並點亮通關下一題。<br>
+                    <strong>6. 挑戰結算：</strong> 全數單字完成後將統計耗時並結算星級榮譽！
+                `
+            },
+            'word_type': {
+                title: '⌨️ 單字聽打玩法說明',
+                content: `
+                    <strong>1. 播放語音：</strong> 進入題目後系統會自動播放單字發音，也可手動點擊喇叭重複聆聽。<br>
+                    <strong>2. 輸入單字：</strong> 在輸入框中依據聽到的發音打出完整正確的外語拼字。<br>
+                    <strong>3. 參考提示：</strong> 若卡關可參考畫面上方顯示的母語意涵提示。<br>
+                    <strong>4. 送出檢查：</strong> 輸入完成後點擊綠色「檢查答案」按鈕進行比對。<br>
+                    <strong>5. 正確提示：</strong> 若拼錯系統會即時顯示正確單字並再次播放語音加深印象。<br>
+                    <strong>6. 連續闖關：</strong> 答對後點擊「下一題」繼續往前挑戰其他單字！
+                `
+            },
+            'word_choice': {
+                title: '📝 單字選擇玩法說明',
+                content: `
+                    <strong>1. 查看題目：</strong> 觀察畫面中央出現的單字題目與語音發音。<br>
+                    <strong>2. 聽音辨義：</strong> 點擊喇叭按鈕多聽幾次外語標準聲調示範。<br>
+                    <strong>3. 挑選選項：</strong> 從下方選項卡片中點選正確的翻譯或相對應拼字。<br>
+                    <strong>4. 即時反饋：</strong> 點選後系統會立刻判定對錯，答對會出現鼓勵讚賞。<br>
+                    <strong>5. 錯題標記：</strong> 若選錯系統會自動以綠色高亮外框把正確答案標註出來。<br>
+                    <strong>6. 累積分數：</strong> 連續答對題目即可提高本次挑戰總星級！
+                `
+            },
+            'shadow': {
+                title: '🎧 句子跟讀玩法說明',
+                content: `
+                    <strong>1. 整句聆聽：</strong> 點擊藍色喇叭聆聽整句完整語調與斷句。<br>
+                    <strong>2. 練習開口：</strong> 點擊紅色錄音按鈕，模仿母語人士的語速念出整句。<br>
+                    <strong>3. 語音比對：</strong> 系統會將錄音轉換為文字並比對核心句子結構。<br>
+                    <strong>4. 提示切換：</strong> 入門模式下可參考關鍵字提示，挑戰模式下則全憑聽力發音。<br>
+                    <strong>5. 答題進度：</strong> 畫面即時顯示當前題號與總進度。<br>
+                    <strong>6. 星級通關：</strong> 完成全數句子後結算成績並獲取豐富經驗值 (XP)！
+                `
+            },
+            'blocks': {
+                title: '🧩 字塊重組玩法說明',
+                content: `
+                    <strong>1. 理解語意：</strong> 閱讀題目的中文翻譯並聆聽題目語音示範。<br>
+                    <strong>2. 點選字塊：</strong> 點擊下方打散的單字字塊，將其依語法順序排入上方框內。<br>
+                    <strong>3. 調整順序：</strong> 點擊上方已選字塊即可退回下方重新選擇。<br>
+                    <strong>4. 檢查答案：</strong> 組出完整句子後點擊綠色「檢查答案」按鈕。<br>
+                    <strong>5. 語音複習：</strong> 答對後系統會自動朗讀完整句子並標註發音音標。<br>
+                    <strong>6. 步步推進：</strong> 完成當前句子後點擊下一題，挑戰全對三星！
+                `
+            },
+            'sentence_chat': {
+                title: '💬 對話挑戰玩法說明',
+                content: `
+                    <strong>1. 選擇角色：</strong> 可在上方自由切換飾演角色 A 或角色 B。<br>
+                    <strong>2. 聽取對話：</strong> 聆聽對話夥伴的上一句發言與情境指引。<br>
+                    <strong>3. 開口回覆：</strong> 點擊錄音鍵念出正確的回應句子。<br>
+                    <strong>4. 智能接話：</strong> 發音通過後，系統會自動撥放對方的下一句回覆，體驗沉浸式對話。<br>
+                    <strong>5. 模式切換：</strong> 挑戰模式下會隱藏完整文字，考驗即時反應力。<br>
+                    <strong>6. 對話通關：</strong> 順利走完完整會話情境即可取得挑戰星級！
+                `
+            }
+        };
+
+        function openGuideModesModal() {
+            openModal('modal-guide-modes');
+        }
+
+        function openGuideDetail(modeKey, modeTitle) {
+            closeModal('modal-guide-modes');
+            const detail = GUIDE_DETAILS_MAP[modeKey] || {
+                title: `${modeTitle} 玩法說明`,
+                content: `
+                    <strong>1. 步驟一：</strong> 點選關卡進入挑戰。<br>
+                    <strong>2. 步驟二：</strong> 依照畫面指引作答。<br>
+                    <strong>3. 步驟三：</strong> 確認答案正確無誤。<br>
+                    <strong>4. 步驟四：</strong> 點擊送出進行核對。<br>
+                    <strong>5. 步驟五：</strong> 修正錯誤並加深印象。<br>
+                    <strong>6. 步驟六：</strong> 通關並累積經驗值！
+                `
+            };
+
+            const titleElem = document.getElementById('lbl-guide-detail-title');
+            const boxElem = document.getElementById('guide-detail-content-box');
+            if (titleElem) titleElem.innerHTML = detail.title;
+            if (boxElem) boxElem.innerHTML = detail.content;
+            openModal('modal-guide-detail');
+        }
+
+        function backToGuideModes() {
+            closeModal('modal-guide-detail');
+            openModal('modal-guide-modes');
+        }
 
         function katakanaToHiragana(str) {
             return (str || '').replace(/[\u30A1-\u30F6]/g, function(match) {
@@ -4507,6 +4754,25 @@ let authMode = 'login';
             return a || rawAnswerText;
         }
 
+        // 🌟 標註當前正在作答的題目卡片與底線空格
+        function updateActiveGrammarSlotHighlight() {
+            if (isGrammarQuizSubmitted) return;
+            
+            // 移除舊的空格 active 狀態
+            document.querySelectorAll('.blank-slot').forEach(el => el.classList.remove('active-slot'));
+            // 移除舊的題目卡片聚焦狀態
+            document.querySelectorAll('.grammar-q-item').forEach(el => el.classList.remove('focused-q'));
+
+            const currentSlot = document.getElementById(`blank-slot-${activeBlankIndex}`);
+            if (currentSlot) {
+                currentSlot.classList.add('active-slot');
+                const parentQ = currentSlot.closest('.grammar-q-item');
+                if (parentQ) {
+                    parentQ.classList.add('focused-q');
+                }
+            }
+        }
+
         function showGrammarQuizArea() {
             isGrammarQuizSubmitted = false;
 
@@ -4516,7 +4782,7 @@ let authMode = 'login';
             document.getElementById('area-grammar-quiz').style.display = 'block';
             document.getElementById('box-grammar-result').style.display = 'none';
 
-            // 🌟 恢復選項標題與選項按鈕容器的顯示
+            // 恢復選項標題與選項按鈕容器的顯示
             const choicesWrapper = document.getElementById('grammar-choices-wrapper');
             if (choicesWrapper) choicesWrapper.style.display = 'block';
 
@@ -4548,9 +4814,11 @@ let authMode = 'login';
 
             quizList.forEach((qObj, qIdx) => {
                 const qStr = qObj.question || "";
+                const firstSlotOfThisQ = globalSlotIdx;
+
                 const formattedHtml = qStr.replace(/_+/g, () => {
                     const currentId = globalSlotIdx;
-                    const slotHtml = `<span class="blank-slot" id="blank-slot-${currentId}" onclick="setActiveBlank(${currentId})">___</span>`;
+                    const slotHtml = `<span class="blank-slot" id="blank-slot-${currentId}" onclick="setActiveBlank(${currentId}, event)">___</span>`;
                     globalSlotIdx++;
                     return slotHtml;
                 });
@@ -4558,7 +4826,13 @@ let authMode = 'login';
                 const qElem = document.createElement('div');
                 qElem.className = 'grammar-q-item';
                 qElem.id = `grammar-q-item-${qIdx}`;
-                qElem.style.cssText = "margin-bottom: 8px; font-size: 1.05rem; line-height: 1.6; text-align: center; border: 2px solid transparent; border-radius: 12px; padding: 6px 8px; transition: all 0.2s; word-break: break-word;";
+                // 點擊卡片任何空白處亦可直接聚焦該題第一個空格
+                qElem.onclick = () => {
+                    if (!isGrammarQuizSubmitted) {
+                        setActiveBlank(firstSlotOfThisQ);
+                    }
+                };
+
                 qElem.innerHTML = `<span style="color:var(--duo-blue); font-weight:800; margin-right:4px;">${qIdx + 1}.</span> <span class="q-body-content">${formattedHtml}</span>`;
                 qContainer.appendChild(qElem);
             });
@@ -4582,11 +4856,16 @@ let authMode = 'login';
                 };
                 cContainer.appendChild(btn);
             });
+
+            // 初始化標註第 1 題
+            setTimeout(updateActiveGrammarSlotHighlight, 50);
         }
 
-        function setActiveBlank(index) { 
+        function setActiveBlank(index, evt = null) { 
             if (isGrammarQuizSubmitted) return;
+            if (evt) evt.stopPropagation();
             activeBlankIndex = index; 
+            updateActiveGrammarSlotHighlight();
         }
 
         function fillGrammarAnswer(optionText) {
@@ -4594,8 +4873,13 @@ let authMode = 'login';
             userGrammarAnswers[activeBlankIndex] = optionText;
             const slot = document.getElementById(`blank-slot-${activeBlankIndex}`);
             if (slot) slot.innerText = optionText;
+            
+            // 自動尋找下一個未填的空格並高亮跳轉
             const nextBlank = userGrammarAnswers.findIndex(a => a === '');
-            if (nextBlank !== -1) activeBlankIndex = nextBlank;
+            if (nextBlank !== -1) {
+                activeBlankIndex = nextBlank;
+            }
+            updateActiveGrammarSlotHighlight();
         }
 
         function checkGrammarQuiz() {
@@ -4606,7 +4890,7 @@ let authMode = 'login';
 
             isGrammarQuizSubmitted = true;
 
-            // 🌟 送出答案後：立即隱藏選項與送出按鍵，省出大量手機螢幕空間
+            // 送出答案後：隱藏選項與送出按鍵，省出大量手機螢幕空間
             const choicesWrapper = document.getElementById('grammar-choices-wrapper');
             if (choicesWrapper) choicesWrapper.style.display = 'none';
 
@@ -4615,6 +4899,10 @@ let authMode = 'login';
 
             const btnCheck = document.getElementById('btn-check-grammar');
             if (btnCheck) btnCheck.style.display = 'none';
+
+            // 移除作答時的高亮邊框
+            document.querySelectorAll('.blank-slot').forEach(el => el.classList.remove('active-slot'));
+            document.querySelectorAll('.grammar-q-item').forEach(el => el.classList.remove('focused-q'));
 
             let globalSlotIdx = 0;
             let isAllCorrect = true;
@@ -4696,18 +4984,18 @@ let authMode = 'login';
             }
         }
 
-        // 🌟 點擊「再來一次」後跳出選擇彈窗
+        // 點擊「再來一次」後跳出選擇彈窗
         function promptGrammarRetryChoice() {
             openModal('modal-grammar-retry-choice');
         }
 
-        // 🌟 點擊「在挑戰一次」：直接重新過一次小試身手
+        // 點擊「在挑戰一次」：直接重新過一次小試身手
         function retryGrammarQuizOnly() {
             closeModal('modal-grammar-retry-choice');
             showGrammarQuizArea();
         }
 
-        // 🌟 點擊「在學習一次」：跳回去從語法介紹第一句開始重新觀看
+        // 點擊「在學習一次」：跳回去從語法介紹第一句開始重新觀看
         function restartGrammarLearningFromStart() {
             closeModal('modal-grammar-retry-choice');
             currentDialogIndex = 0;
