@@ -387,12 +387,11 @@
             flex-shrink: 0;
         }
 
-        /* 🌟 語法介紹綠色框框：上下內距改為 6px */
         .grammar-dialog-box {
             background: #f0fdf4;
             border: 2px solid #86efac;
             border-radius: 16px;
-            padding: 6px 14px !important;
+            padding: 14px 14px;
             font-size: 1.02rem;
             color: #14532d;
             display: block;
@@ -417,7 +416,6 @@
             white-space: pre-wrap !important;
         }
 
-        /* 🌟 例句框框：最大高度改為 200px */
         .grammar-example-box {
             display: none;
             background: #ffffff;
@@ -427,7 +425,7 @@
             margin-bottom: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             text-align: left;
-            max-height: 200px !important;
+            max-height: 140px;
             overflow-y: auto;
             box-sizing: border-box;
             width: 100%;
@@ -519,12 +517,12 @@
         }
         .btn-grammar-sub:active { transform: translateY(2px); border-bottom-width: 1px !important; }
 
-        /* 🌟 小試身手空格緊湊樣式 */
+        /* 🌟 小試身手空格與選中高亮樣式 */
         .blank-slot {
             display: inline-block;
-            min-width: 34px;
+            min-width: 44px;
             border-bottom: 2px solid var(--duo-blue);
-            margin: 0 2px;
+            margin: 0 3px;
             padding: 0 4px;
             font-weight: 900;
             color: var(--duo-blue);
@@ -540,12 +538,12 @@
             color: #0369a1;
         }
 
-        /* 🌟 小試身手卡片：一律靠左排版、防止折行、防螢幕溢出 */
+        /* 🌟 題目卡片自適應：防止任何超出螢幕邊界 (嚴禁使用 scale 放大) */
         .grammar-q-item {
             margin-bottom: 8px;
-            font-size: 0.98rem;
-            line-height: 1.55;
-            text-align: left !important;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            text-align: center;
             border: 2px solid #e2e8f0;
             background: #ffffff;
             border-radius: 14px;
@@ -555,10 +553,6 @@
             cursor: pointer;
             width: 100%;
             box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 2px;
         }
         .grammar-q-item.focused-q {
             border-color: var(--duo-blue) !important;
@@ -998,7 +992,8 @@
         #lbl-word-type-text,
         #lbl-word-type-translation,
         #lbl-word-type-hint,
-        #lbl-word-choice-text {
+        #lbl-word-choice-text,
+        #container-grammar-questions {
             text-align: center !important;
         }
 
@@ -1680,11 +1675,11 @@
                     </div>
                 </div>
 
-                <!-- 語法第二階段：小試身手單獨視圖（加裝安全左右 padding 徹底防止邊框外擴溢出） -->
-                <div id="area-grammar-quiz" style="display: none; margin-top: 15px; padding: 0 4px; box-sizing: border-box; width: 100%;">
+                <!-- 語法第二階段：小試身手單獨視圖（加裝左右安全 padding 徹底防止邊框外擴溢出） -->
+                <div id="area-grammar-quiz" style="display: none; margin-top: 15px; padding: 0 6px; box-sizing: border-box; width: 100%;">
                     <h3 style="margin-top: 0; color: var(--duo-dark); text-align: center; font-size: 1.15rem;"><i class="fa-solid fa-pen-to-square"></i> 小試身手</h3>
                     <p id="lbl-grammar-instruction" style="font-size: 0.9rem; color: #6b7280; text-align: center; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
-                    <div id="container-grammar-questions" style="width: 100%; box-sizing: border-box; text-align: left !important;"></div>
+                    <div id="container-grammar-questions" style="width: 100%; box-sizing: border-box;"></div>
                     <div id="grammar-choices-wrapper">
                         <p style="font-size: 0.9rem; color: #6b7280; text-align: center; margin: 15px 0 5px 0;">選項：</p>
                         <div id="container-grammar-choices" style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;"></div>
@@ -2637,31 +2632,17 @@ function getModeTagText() {
 
             if (Array.isArray(item)) {
                 if (f === 'id') return item[0] !== undefined ? String(item[0]) : '';
-                if (f === 'level' || f === 'lvl') return String(item[1] || '0A');
-                if (f === 'unitid' || f === 'unit') return String(item[2] || '1');
-                if (f === 'lesson' || f === 'stage') return String(item[3] || '1');
-                if (f === 'text' || f === 'fulltext' || f === 'word') return String(item[4] || '');
+                if (f === 'level' || f === 'lvl') return String(item[1] || '');
+                if (f === 'unitid' || f === 'unit') return String(item[2] || '');
+                if (f === 'lesson' || f === 'stage') return String(item[3] || '');
+                if (f === 'text' || f === 'fulltext') return String(item[4] || '');
                 if (f === 'voice') return String(item[10] || '');
                 return '';
             }
 
-            if (f === 'lesson' || f === 'stage') {
-                const val = item.lesson !== undefined ? item.lesson : (item.stage !== undefined ? item.stage : (item.Lesson || item.Stage || ''));
-                return String(val !== '' && val !== null && val !== undefined ? val : '1').trim();
-            }
-            if (f === 'unitid' || f === 'unit') {
-                const val = item.unit_id !== undefined ? item.unit_id : (item.unitid !== undefined ? item.unitid : (item.unit !== undefined ? item.unit : (item.Unit || '')));
-                return String(val !== '' && val !== null && val !== undefined ? val : '1').trim();
-            }
-            if (f === 'level' || f === 'lvl') {
-                const val = item.level !== undefined ? item.level : (item.lvl !== undefined ? item.lvl : (item.Level || ''));
-                return String(val !== '' && val !== null && val !== undefined ? val : '0A').trim();
-            }
-            if (f === 'text' || f === 'word') {
-                const val = item.text !== undefined ? item.text : (item.word !== undefined ? item.word : (item.Words || item.Text || ''));
-                return String(val || '').trim();
-            }
-
+            if (f === 'lesson' || f === 'stage') return String(item.lesson || item.stage || '');
+            if (f === 'unitid' || f === 'unit') return String(item.unit_id || item.unitid || item.unit || '');
+            if (f === 'level' || f === 'lvl') return String(item.level || item.lvl || '');
             return item[fieldName] !== undefined ? String(item[fieldName]) : (item[f] !== undefined ? String(item[f]) : '');
         }
 
@@ -2884,15 +2865,13 @@ function getModeTagText() {
             lessons.forEach(les => {
                 const lesStr = String(les);
 
-                const matchFilter = (list) => {
-                    if (!Array.isArray(list) || list.length === 0) return false;
-                    return list.some(item => {
-                        const lMatch = normalizeLevelStr(getItemField(item, 'level')) === targetLevelNormalized;
-                        const uMatch = String(getItemField(item, 'unit_id')).trim() === String(unitId).trim();
-                        const sMatch = String(getItemField(item, 'lesson')).trim() === lesStr.trim();
-                        return lMatch && uMatch && sMatch;
-                    });
-                };
+                // 🌟 相容字串與數字，並確保欄位匹配更穩健
+                const matchFilter = (list) => list.some(item => {
+                    const lMatch = normalizeLevelStr(getItemField(item, 'level')) === targetLevelNormalized;
+                    const uMatch = String(getItemField(item, 'unit_id')).trim() === String(unitId).trim();
+                    const sMatch = String(getItemField(item, 'lesson')).trim() === lesStr.trim();
+                    return lMatch && uMatch && sMatch;
+                });
 
                 const hasGrammar = globalGrammarData.some(g => {
                     const lMatch = normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized;
@@ -2901,6 +2880,7 @@ function getModeTagText() {
                     return lMatch && uMatch && sMatch && ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0));
                 });
 
+                // 🌟 強化檢測：單字、句子、字塊、對話
                 const hasWord = matchFilter(rawWordData);
                 const hasShadow = matchFilter(rawShadowData);
                 const hasBlocks = matchFilter(rawBlocksData);
@@ -2911,10 +2891,12 @@ function getModeTagText() {
                     return lMatch && uMatch && sMatch && ((d.a1 && d.a1.trim()) || (d.b1 && d.b1.trim()));
                 });
 
+                // 🌟 當前關卡有單字時，生成聽打支線任務
                 if (hasWord) {
                     sideQuestMap[lesStr] = { unitId, lesson: lesStr, mode: 'word_type', title: `${lesStr} 單字聽打`, label: '⌨ 聽打支線' };
                 }
 
+                // 🌟 主線任務排列（關卡任務 -> 單字跟讀 -> 單字選擇 -> 句子跟讀 -> 字塊重組 -> 對話挑戰）
                 if (hasGrammar) {
                     stageTasks.push({ unitId, lesson: lesStr, mode: 'grammar', title: `${lesStr} 關卡任務`, label: '關卡任務' });
                 }
@@ -4557,8 +4539,8 @@ let authMode = 'login';
                 const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
                 const matchGrammar = globalGrammarData.find(g => 
                     normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
-                    String(getItemField(g, 'unit_id')).trim() === String(currentConfig.unit_id).trim() &&
-                    String(getItemField(g, 'lesson')).trim() === String(lesson).trim()
+                    String(getItemField(g, 'unit_id')) === String(currentConfig.unit_id) &&
+                    String(getItemField(g, 'lesson')) === String(lesson)
                 );
 
                 if (matchGrammar && ((matchGrammar.dialogs && matchGrammar.dialogs.length) || (matchGrammar.quizzes && matchGrammar.quizzes.length))) {
@@ -4782,7 +4764,9 @@ let authMode = 'login';
         function updateActiveGrammarSlotHighlight() {
             if (isGrammarQuizSubmitted) return;
             
+            // 移除舊的空格 active 狀態
             document.querySelectorAll('.blank-slot').forEach(el => el.classList.remove('active-slot'));
+            // 移除舊的題目卡片聚焦狀態
             document.querySelectorAll('.grammar-q-item').forEach(el => el.classList.remove('focused-q'));
 
             const currentSlot = document.getElementById(`blank-slot-${activeBlankIndex}`);
@@ -4804,6 +4788,7 @@ let authMode = 'login';
             document.getElementById('area-grammar-quiz').style.display = 'block';
             document.getElementById('box-grammar-result').style.display = 'none';
 
+            // 恢復選項標題與選項按鈕容器的顯示
             const choicesWrapper = document.getElementById('grammar-choices-wrapper');
             if (choicesWrapper) choicesWrapper.style.display = 'block';
 
@@ -4847,14 +4832,14 @@ let authMode = 'login';
                 const qElem = document.createElement('div');
                 qElem.className = 'grammar-q-item';
                 qElem.id = `grammar-q-item-${qIdx}`;
+                // 點擊卡片任何空白處亦可直接聚焦該題第一個空格
                 qElem.onclick = () => {
                     if (!isGrammarQuizSubmitted) {
                         setActiveBlank(firstSlotOfThisQ);
                     }
                 };
 
-                // 🌟 嚴格向左靠齊，題號與題目文字自然接續
-                qElem.innerHTML = `<span style="color:var(--duo-blue); font-weight:800; margin-right:4px; flex-shrink:0;">${qIdx + 1}.</span> <span class="q-body-content" style="text-align:left;">${formattedHtml}</span>`;
+                qElem.innerHTML = `<span style="color:var(--duo-blue); font-weight:800; margin-right:4px;">${qIdx + 1}.</span> <span class="q-body-content">${formattedHtml}</span>`;
                 qContainer.appendChild(qElem);
             });
 
@@ -4878,6 +4863,7 @@ let authMode = 'login';
                 cContainer.appendChild(btn);
             });
 
+            // 初始化標註第 1 題
             setTimeout(updateActiveGrammarSlotHighlight, 50);
         }
 
@@ -4894,6 +4880,7 @@ let authMode = 'login';
             const slot = document.getElementById(`blank-slot-${activeBlankIndex}`);
             if (slot) slot.innerText = optionText;
             
+            // 自動尋找下一個未填的空格並高亮跳轉
             const nextBlank = userGrammarAnswers.findIndex(a => a === '');
             if (nextBlank !== -1) {
                 activeBlankIndex = nextBlank;
@@ -4901,7 +4888,6 @@ let authMode = 'login';
             updateActiveGrammarSlotHighlight();
         }
 
-        // 🌟 檢查答案：徹底避免提示折成第二行
         function checkGrammarQuiz() {
             if (isGrammarQuizSubmitted) return;
             const quizList = currentGrammarItem.expandedQuizzes || [];
@@ -4910,6 +4896,7 @@ let authMode = 'login';
 
             isGrammarQuizSubmitted = true;
 
+            // 送出答案後：隱藏選項與送出按鍵，省出大量手機螢幕空間
             const choicesWrapper = document.getElementById('grammar-choices-wrapper');
             if (choicesWrapper) choicesWrapper.style.display = 'none';
 
@@ -4919,6 +4906,7 @@ let authMode = 'login';
             const btnCheck = document.getElementById('btn-check-grammar');
             if (btnCheck) btnCheck.style.display = 'none';
 
+            // 移除作答時的高亮邊框
             document.querySelectorAll('.blank-slot').forEach(el => el.classList.remove('active-slot'));
             document.querySelectorAll('.grammar-q-item').forEach(el => el.classList.remove('focused-q'));
 
@@ -4962,19 +4950,10 @@ let authMode = 'login';
                         qElem.style.background = '#fee2e2';
                         qElem.style.borderColor = '#ef4444';
 
-                        // 標註題幹內填錯的空格
-                        const bodyContent = qElem.querySelector('.q-body-content');
-                        if (bodyContent) {
-                            bodyContent.querySelectorAll('.blank-slot').forEach(s => {
-                                s.style.borderBottom = '2px solid #ef4444';
-                                s.style.color = '#dc2626';
-                            });
-                        }
-
-                        // 🌟 右側緊湊單行標籤：緊跟在題目結尾，防止折行
+                        // 🌟 右側緊湊單行顯示，只單純顯示空格正確答案（如：❌ 正確 ㅡ）
                         const ansBadge = document.createElement('span');
-                        ansBadge.style.cssText = "font-size: 0.95rem; color: #b91c1c; font-weight: 900; margin-left: 6px; white-space: nowrap; display: inline-flex; align-items: center; gap: 2px;";
-                        ansBadge.innerHTML = `❌ 正確 <strong>${pureAnswer}</strong>`;
+                        ansBadge.style.cssText = "font-size: 0.95rem; color: #b91c1c; font-weight: 900; margin-left: 6px; white-space: nowrap; display: inline-block;";
+                        ansBadge.innerHTML = `❌ 正確 ${pureAnswer}`;
                         qElem.appendChild(ansBadge);
                     }
                 } else {
@@ -4984,7 +4963,7 @@ let authMode = 'login';
                         qElem.style.borderColor = '#86efac';
 
                         const correctBadge = document.createElement('span');
-                        correctBadge.style.cssText = "font-size: 1.05rem; color: #16a34a; font-weight: 900; margin-left: 6px; white-space: nowrap; display: inline-flex; align-items: center;";
+                        correctBadge.style.cssText = "font-size: 0.95rem; color: #16a34a; font-weight: 900; margin-left: 6px;";
                         correctBadge.innerHTML = ` ✔`;
                         qElem.appendChild(correctBadge);
                     }
@@ -5011,15 +4990,18 @@ let authMode = 'login';
             }
         }
 
+        // 點擊「再來一次」後跳出選擇彈窗
         function promptGrammarRetryChoice() {
             openModal('modal-grammar-retry-choice');
         }
 
+        // 點擊「在挑戰一次」：直接重新過一次小試身手
         function retryGrammarQuizOnly() {
             closeModal('modal-grammar-retry-choice');
             showGrammarQuizArea();
         }
 
+        // 點擊「在學習一次」：跳回去從語法介紹第一句開始重新觀看
         function restartGrammarLearningFromStart() {
             closeModal('modal-grammar-retry-choice');
             currentDialogIndex = 0;
@@ -5356,6 +5338,7 @@ function getWordTranslation(item) {
             }
         }
 
+        // 選擇題答錯時，自動將正確答案按鈕圈出來（高亮外框）
         function checkWordChoiceAnswer(selectedText) {
             if (isCurrentQuestionAnswered) return;
             const choiceBtns = document.querySelectorAll('.btn-vocab-choice');
