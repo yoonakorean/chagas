@@ -509,7 +509,7 @@
 
         .blank-slot {
             display: inline-block;
-            min-width: 60px;
+            min-width: 50px;
             border-bottom: 2px solid var(--duo-blue);
             margin: 0 4px;
             padding: 0 4px;
@@ -1355,7 +1355,7 @@
         </div>
     </div>
 
-    <!-- 新增：小試身手再來一次選擇彈窗 -->
+    <!-- 小試身手再來一次選擇彈窗 -->
     <div id="modal-grammar-retry-choice" class="custom-modal">
         <div class="custom-modal-card" style="padding: 24px 18px;">
             <div class="close-icon-circle" onclick="closeModal('modal-grammar-retry-choice')"><i class="fa-solid fa-xmark"></i></div>
@@ -1534,10 +1534,12 @@
                 <!-- 語法第二階段：小試身手單獨視圖 -->
                 <div id="area-grammar-quiz" style="display: none; margin-top: 15px;">
                     <h3 style="margin-top: 0; color: var(--duo-dark); text-align: center; font-size: 1.15rem;"><i class="fa-solid fa-pen-to-square"></i> 小試身手</h3>
-                    <p style="font-size: 0.9rem; color: #6b7280; text-align: center; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
+                    <p id="lbl-grammar-instruction" style="font-size: 0.9rem; color: #6b7280; text-align: center; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
                     <div id="container-grammar-questions"></div>
-                    <p style="font-size: 0.9rem; color: #6b7280; text-align: center; margin: 15px 0 5px 0;">選項：</p>
-                    <div id="container-grammar-choices" style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;"></div>
+                    <div id="grammar-choices-wrapper">
+                        <p style="font-size: 0.9rem; color: #6b7280; text-align: center; margin: 15px 0 5px 0;">選項：</p>
+                        <div id="container-grammar-choices" style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;"></div>
+                    </div>
                     <button class="btn-confirm btn-grammar-action-narrow" id="btn-check-grammar" onclick="checkGrammarQuiz()"><i class="fa-solid fa-check"></i> 送出答案</button>
                     <div class="result-box" id="box-grammar-result" style="display: none; margin-top: 15px;">
                         <div id="lbl-grammar-result-text" style="font-size: 1.05rem; font-weight: bold;"></div>
@@ -1545,7 +1547,7 @@
                     </div>
                 </div>
 
-                <!-- 觀念總覽區塊已依需求刪除 -->
+                <!-- 觀念總覽區塊已完整刪除 -->
             </div>
 <!-- 步驟 6-A：Sentence 句子跟讀畫面 -->
             <div id="step-quiz-shadow" class="step-page">
@@ -4482,8 +4484,16 @@ let authMode = 'login';
             document.getElementById('area-grammar-quiz').style.display = 'block';
             document.getElementById('box-grammar-result').style.display = 'none';
 
+            // 🌟 恢復選項標題與選項按鈕容器的顯示
+            const choicesWrapper = document.getElementById('grammar-choices-wrapper');
+            if (choicesWrapper) choicesWrapper.style.display = 'block';
+
+            const instrElem = document.getElementById('lbl-grammar-instruction');
+            if (instrElem) instrElem.style.display = 'block';
+
             const btnCheck = document.getElementById('btn-check-grammar');
             if (btnCheck) {
+                btnCheck.style.display = 'block';
                 btnCheck.disabled = false;
                 btnCheck.style.opacity = '1';
                 btnCheck.style.cursor = 'pointer';
@@ -4516,8 +4526,8 @@ let authMode = 'login';
                 const qElem = document.createElement('div');
                 qElem.className = 'grammar-q-item';
                 qElem.id = `grammar-q-item-${qIdx}`;
-                qElem.style.cssText = "margin-bottom: 12px; font-size: 1.1rem; line-height: 1.8; text-align: center;";
-                qElem.innerHTML = `<span style="color:var(--duo-blue); font-weight:800; margin-right:4px;">${qIdx + 1}.</span> ${formattedHtml}`;
+                qElem.style.cssText = "margin-bottom: 8px; font-size: 1.05rem; line-height: 1.7; text-align: center; border: 2px solid transparent; border-radius: 12px; padding: 6px 8px; transition: all 0.2s;";
+                qElem.innerHTML = `<span style="color:var(--duo-blue); font-weight:800; margin-right:4px;">${qIdx + 1}.</span> <span class="q-body-content">${formattedHtml}</span>`;
                 qContainer.appendChild(qElem);
             });
 
@@ -4563,16 +4573,16 @@ let authMode = 'login';
             if (userGrammarAnswers.includes('')) return alert('請填寫完所有空格後再送出答案！');
 
             isGrammarQuizSubmitted = true;
-            const btnCheck = document.getElementById('btn-check-grammar');
-            if (btnCheck) {
-                btnCheck.disabled = true;
-                btnCheck.style.opacity = '0.5';
-                btnCheck.style.cursor = 'not-allowed';
-            }
 
-            document.querySelectorAll('#container-grammar-choices .block-chip').forEach(btn => {
-                btn.classList.add('locked-chip');
-            });
+            // 🌟 送出答案後：隱藏選項與送出按鍵，省出大量手機螢幕空間
+            const choicesWrapper = document.getElementById('grammar-choices-wrapper');
+            if (choicesWrapper) choicesWrapper.style.display = 'none';
+
+            const instrElem = document.getElementById('lbl-grammar-instruction');
+            if (instrElem) instrElem.style.display = 'none';
+
+            const btnCheck = document.getElementById('btn-check-grammar');
+            if (btnCheck) btnCheck.style.display = 'none';
 
             let globalSlotIdx = 0;
             let isAllCorrect = true;
@@ -4605,22 +4615,24 @@ let authMode = 'login';
                     if (qElem) {
                         qElem.style.color = '#dc2626';
                         qElem.style.background = '#fee2e2';
-                        qElem.style.padding = '8px';
-                        qElem.style.borderRadius = '10px';
-                        qElem.style.border = '2px solid #ef4444';
+                        qElem.style.borderColor = '#ef4444';
 
-                        const hintSpan = document.createElement('div');
-                        hintSpan.style.cssText = "font-size: 0.92rem; color: #b91c1c; font-weight: bold; margin-top: 6px;";
-                        hintSpan.innerHTML = `❌ 正確答案：${qObj.answer}`;
-                        qElem.appendChild(hintSpan);
+                        // 🌟 右側緊湊單行顯示正確答案，不重複列印整句題目
+                        const ansBadge = document.createElement('span');
+                        ansBadge.style.cssText = "font-size: 0.92rem; color: #b91c1c; font-weight: 900; margin-left: 6px; white-space: nowrap;";
+                        ansBadge.innerHTML = `❌ 正確：${qObj.answer}`;
+                        qElem.appendChild(ansBadge);
                     }
                 } else {
                     if (qElem) {
                         qElem.style.color = '#15803d';
                         qElem.style.background = '#f0fdf4';
-                        qElem.style.padding = '8px';
-                        qElem.style.borderRadius = '10px';
-                        qElem.style.border = '2px solid #86efac';
+                        qElem.style.borderColor = '#86efac';
+
+                        const correctBadge = document.createElement('span');
+                        correctBadge.style.cssText = "font-size: 0.95rem; color: #16a34a; font-weight: 900; margin-left: 6px;";
+                        correctBadge.innerHTML = ` ✔`;
+                        qElem.appendChild(correctBadge);
                     }
                 }
             });
