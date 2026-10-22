@@ -538,7 +538,7 @@
             color: #0369a1;
         }
 
-        /* 🌟 當前聚焦題目的卡片外框高亮樣式 */
+        /* 🌟 題目卡片自適應：防止任何超出螢幕邊界 (嚴禁使用 scale 放大) */
         .grammar-q-item {
             margin-bottom: 8px;
             font-size: 1.05rem;
@@ -548,15 +548,16 @@
             background: #ffffff;
             border-radius: 14px;
             padding: 8px 10px;
-            transition: all 0.2s ease;
+            transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
             word-break: break-word;
             cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
         }
         .grammar-q-item.focused-q {
             border-color: var(--duo-blue) !important;
             background: #f0f9ff !important;
-            box-shadow: 0 0 12px rgba(28, 176, 246, 0.35) !important;
-            transform: scale(1.01);
+            box-shadow: 0 0 0 2px rgba(28, 176, 246, 0.25) !important;
         }
 
         .roadmap-container {
@@ -1452,7 +1453,7 @@
         </div>
     </div>
 
-    <!-- 🌟 新增：挑戰介紹選單彈窗（第一層） -->
+    <!-- 挑戰介紹選單彈窗（第一層） -->
     <div id="modal-guide-modes" class="custom-modal">
         <div class="custom-modal-card" style="padding: 22px 18px; max-height: 85vh;">
             <div class="close-icon-circle" onclick="closeModal('modal-guide-modes')"><i class="fa-solid fa-xmark"></i></div>
@@ -1495,7 +1496,7 @@
         </div>
     </div>
 
-    <!-- 🌟 新增：挑戰玩法詳細說明彈窗（第二層，顯示 1.2.3.4.5.6. 內容） -->
+    <!-- 挑戰玩法詳細說明彈窗（第二層，顯示 1.2.3.4.5.6. 內容） -->
     <div id="modal-guide-detail" class="custom-modal">
         <div class="custom-modal-card" style="padding: 22px 18px; max-height: 85vh; display:flex; flex-direction:column;">
             <div class="close-icon-circle" onclick="closeModal('modal-guide-detail')"><i class="fa-solid fa-xmark"></i></div>
@@ -1531,7 +1532,7 @@
             </div>
 
             <div class="settlement-stat-card">
-                <!-- 🌟 本次得分已依需求隱藏 -->
+                <!-- 本次得分已依需求隱藏 -->
                 <div class="settlement-stat-row" style="display: none;">
                     <span><i class="fa-solid fa-bullseye" style="color: var(--duo-green);"></i> 本次得分</span>
                     <span class="settlement-stat-val" id="lbl-settlement-score" style="color: var(--duo-green);">100 分</span>
@@ -1674,11 +1675,11 @@
                     </div>
                 </div>
 
-                <!-- 語法第二階段：小試身手單獨視圖 -->
-                <div id="area-grammar-quiz" style="display: none; margin-top: 15px;">
+                <!-- 語法第二階段：小試身手單獨視圖（加裝左右安全 padding 徹底防止邊框外擴溢出） -->
+                <div id="area-grammar-quiz" style="display: none; margin-top: 15px; padding: 0 6px; box-sizing: border-box; width: 100%;">
                     <h3 style="margin-top: 0; color: var(--duo-dark); text-align: center; font-size: 1.15rem;"><i class="fa-solid fa-pen-to-square"></i> 小試身手</h3>
                     <p id="lbl-grammar-instruction" style="font-size: 0.9rem; color: #6b7280; text-align: center; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
-                    <div id="container-grammar-questions"></div>
+                    <div id="container-grammar-questions" style="width: 100%; box-sizing: border-box;"></div>
                     <div id="grammar-choices-wrapper">
                         <p style="font-size: 0.9rem; color: #6b7280; text-align: center; margin: 15px 0 5px 0;">選項：</p>
                         <div id="container-grammar-choices" style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;"></div>
@@ -2864,33 +2865,38 @@ function getModeTagText() {
             lessons.forEach(les => {
                 const lesStr = String(les);
 
-                const matchFilter = (list) => list.some(item => 
-                    normalizeLevelStr(getItemField(item, 'level')) === targetLevelNormalized &&
-                    String(getItemField(item, 'unit_id')) === String(unitId) &&
-                    String(getItemField(item, 'lesson')) === lesStr
-                );
+                // 🌟 相容字串與數字，並確保欄位匹配更穩健
+                const matchFilter = (list) => list.some(item => {
+                    const lMatch = normalizeLevelStr(getItemField(item, 'level')) === targetLevelNormalized;
+                    const uMatch = String(getItemField(item, 'unit_id')).trim() === String(unitId).trim();
+                    const sMatch = String(getItemField(item, 'lesson')).trim() === lesStr.trim();
+                    return lMatch && uMatch && sMatch;
+                });
 
-                const hasGrammar = globalGrammarData.some(g => 
-                    normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
-                    String(getItemField(g, 'unit_id')) === String(unitId) &&
-                    String(getItemField(g, 'lesson')) === lesStr &&
-                    ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0))
-                );
+                const hasGrammar = globalGrammarData.some(g => {
+                    const lMatch = normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized;
+                    const uMatch = String(getItemField(g, 'unit_id')).trim() === String(unitId).trim();
+                    const sMatch = String(getItemField(g, 'lesson')).trim() === lesStr.trim();
+                    return lMatch && uMatch && sMatch && ((g.dialogs && g.dialogs.length > 0) || (g.quizzes && g.quizzes.length > 0));
+                });
 
+                // 🌟 強化檢測：單字、句子、字塊、對話
                 const hasWord = matchFilter(rawWordData);
                 const hasShadow = matchFilter(rawShadowData);
                 const hasBlocks = matchFilter(rawBlocksData);
-                const hasDialogue = rawDialogueData.some(d => 
-                    normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
-                    String(getItemField(d, 'unit_id')) === String(unitId) &&
-                    String(getItemField(d, 'lesson')) === lesStr &&
-                    ((d.a1 && d.a1.trim()) || (d.b1 && d.b1.trim()))
-                );
+                const hasDialogue = rawDialogueData.some(d => {
+                    const lMatch = normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized;
+                    const uMatch = String(getItemField(d, 'unit_id')).trim() === String(unitId).trim();
+                    const sMatch = String(getItemField(d, 'lesson')).trim() === lesStr.trim();
+                    return lMatch && uMatch && sMatch && ((d.a1 && d.a1.trim()) || (d.b1 && d.b1.trim()));
+                });
 
+                // 🌟 當前關卡有單字時，生成聽打支線任務
                 if (hasWord) {
                     sideQuestMap[lesStr] = { unitId, lesson: lesStr, mode: 'word_type', title: `${lesStr} 單字聽打`, label: '⌨ 聽打支線' };
                 }
 
+                // 🌟 主線任務排列（關卡任務 -> 單字跟讀 -> 單字選擇 -> 句子跟讀 -> 字塊重組 -> 對話挑戰）
                 if (hasGrammar) {
                     stageTasks.push({ unitId, lesson: lesStr, mode: 'grammar', title: `${lesStr} 關卡任務`, label: '關卡任務' });
                 }
@@ -4754,7 +4760,7 @@ let authMode = 'login';
             return a || rawAnswerText;
         }
 
-        // 🌟 標註當前正在作答的題目卡片與底線空格
+        // 🌟 標註當前正在作答的題目卡片與底線空格（完全防溢出）
         function updateActiveGrammarSlotHighlight() {
             if (isGrammarQuizSubmitted) return;
             
@@ -5052,8 +5058,8 @@ function getWordTranslation(item) {
 
             const filteredWords = rawWordData.filter(v => 
                 normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
-                String(getItemField(v, 'unit_id')) === String(currentConfig.unit_id) &&
-                String(getItemField(v, 'lesson')) === String(currentConfig.lesson)
+                String(getItemField(v, 'unit_id')).trim() === String(currentConfig.unit_id).trim() &&
+                String(getItemField(v, 'lesson')).trim() === String(currentConfig.lesson).trim()
             );
 
             if (filteredWords.length === 0) return alert("此關卡尚無單字題目資料！");
@@ -5450,8 +5456,8 @@ function getWordTranslation(item) {
 
                 const rawList = rawShadowData.filter(i => 
                     normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized &&
-                    String(getItemField(i, 'unit_id')) === String(currentConfig.unit_id) &&
-                    String(getItemField(i, 'lesson')) === String(currentConfig.lesson)
+                    String(getItemField(i, 'unit_id')).trim() === String(currentConfig.unit_id).trim() &&
+                    String(getItemField(i, 'lesson')).trim() === String(currentConfig.lesson).trim()
                 ).map((i, idx) => {
                     let trans = '';
                     if (Array.isArray(i)) {
@@ -5483,8 +5489,8 @@ function getWordTranslation(item) {
 
                 const rawList = rawBlocksData.filter(i => 
                     normalizeLevelStr(getItemField(i, 'level')) === targetLevelNormalized &&
-                    String(getItemField(i, 'unit_id')) === String(currentConfig.unit_id) &&
-                    String(getItemField(i, 'lesson')) === String(currentConfig.lesson)
+                    String(getItemField(i, 'unit_id')).trim() === String(currentConfig.unit_id).trim() &&
+                    String(getItemField(i, 'lesson')).trim() === String(currentConfig.lesson).trim()
                 ).map((i, idx) => {
                     let trans = '';
                     if (Array.isArray(i)) {
@@ -5774,8 +5780,8 @@ function getWordTranslation(item) {
 
             const rows = rawDialogueData.filter(d => 
                 normalizeLevelStr(getItemField(d, 'level')) === targetLevelNormalized &&
-                String(getItemField(d, 'unit_id')) === String(currentConfig.unit_id) &&
-                String(getItemField(d, 'lesson')) === String(currentConfig.lesson)
+                String(getItemField(d, 'unit_id')).trim() === String(currentConfig.unit_id).trim() &&
+                String(getItemField(d, 'lesson')).trim() === String(currentConfig.lesson).trim()
             );
 
             rows.forEach((d, idx) => {
