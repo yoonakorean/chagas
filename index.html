@@ -391,7 +391,7 @@
             background: #f0fdf4;
             border: 2px solid #86efac;
             border-radius: 16px;
-            padding: 14px 14px;
+            padding: 4px 14px;
             font-size: 1.02rem;
             color: #14532d;
             display: block;
@@ -425,7 +425,7 @@
             margin-bottom: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             text-align: left;
-            max-height: 140px;
+            max-height: 200px;
             overflow-y: auto;
             box-sizing: border-box;
             width: 100%;
@@ -541,9 +541,9 @@
         /* 🌟 題目卡片自適應：防止任何超出螢幕邊界 (嚴禁使用 scale 放大) */
         .grammar-q-item {
             margin-bottom: 8px;
-            font-size: 1.05rem;
-            line-height: 1.6;
-            text-align: center;
+            font-size: 0.98rem;
+            line-height: 1.55;
+            text-align: left !important;
             border: 2px solid #e2e8f0;
             background: #ffffff;
             border-radius: 14px;
@@ -553,6 +553,10 @@
             cursor: pointer;
             width: 100%;
             box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2px;
         }
         .grammar-q-item.focused-q {
             border-color: var(--duo-blue) !important;
