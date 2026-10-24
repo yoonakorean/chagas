@@ -1181,7 +1181,7 @@
     </style>
 </head>
 <body>
-<!-- 全螢幕「小船航行中...」遮罩 -->
+    <!-- 全螢幕「小船航行中...」遮罩 -->
     <div id="game-loading-overlay">
         <div class="loading-island-icon"><i class="fa-solid fa-sailboat"></i></div>
         <div class="loading-island-title" id="lbl-island-loading-title" style="font-size: 1.4rem; font-weight: 900; color: #1e293b; margin-bottom: 8px;">🏝️ 冒險地圖載入中...</div>
@@ -1236,8 +1236,7 @@
             <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 10px;" class="hidden"></div>
         </div>
     </div>
-
-    <!-- 忘記密碼 Modal -->
+<!-- 忘記密碼 Modal -->
     <div id="modal-forgot-password" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
@@ -1562,7 +1561,8 @@
             </div>
         </div>
     </div>
-<!-- 主介面容器 -->
+
+    <!-- 主介面容器 -->
     <div class="shadowing-card">
         
         <!-- 上方狀態列 -->
@@ -1734,8 +1734,7 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-
-            <!-- 步驟 6-G：句子問答畫面 -->
+<!-- 步驟 6-G：句子問答畫面 -->
             <div id="step-quiz-sentence-chat" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-chat-mode-title">對話挑戰</div>
@@ -2092,7 +2091,8 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-<!-- 核心邏輯腳本開始 -->
+
+    <!-- 核心邏輯腳本開始 -->
     <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -2290,6 +2290,40 @@
                 return String.fromCharCode(match.charCodeAt(0) - 0x60);
             });
         }
+// 🌟 判斷是否包含韓文字元 (Hangul Syllables, Jamo)
+        function containsKorean(str) {
+            return /[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/.test(str || '');
+        }
+
+        // 🌟 判斷是否包含日文字元 (平假名、片假名、漢字)
+        function containsJapanese(str) {
+            return /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(str || '');
+        }
+
+        // 🌟 英文羅馬音轉平假名對照表 (解決日文辨識誤被當作英文音譯問題)
+        const ROMAJI_TO_HIRAGANA_MAP = {
+            'kya':'きゃ','kyu':'きゅ','kyo':'きょ','sha':'しゃ','shu':'しゅ','sho':'しょ',
+            'cha':'ちゃ','chu':'ちゅ','cho':'ちょ','nya':'にゃ','nyu':'にゅ','nyo':'にょ',
+            'hya':'ひゃ','hyu':'ひゅ','hyo':'ひょ','mya':'みゃ','myu':'みゅ','myo':'みょ',
+            'rya':'りゃ','ryu':'りゅ','ryo':'りょ','gya':'ぎゃ','gyu':'ぎゅ','gyo':'ぎょ',
+            'ja':'じゃ','ju':'じゅ','jo':'じょ','bya':'びゃ','byu':'びゅ','byo':'びょ',
+            'pya':'ぴゃ','pyu':'ぴゅ','pyo':'ぴょ','ka':'か','ki':'き','ku':'く','ke':'け','ko':'こ',
+            'sa':'さ','shi':'し','su':'す','se':'せ','so':'そ','ta':'た','chi':'ち','tsu':'つ','te':'て','to':'と',
+            'na':'な','ni':'に','nu':'ぬ','ne':'ね','no':'の','ha':'は','hi':'ひ','fu':'ふ','he':'へ','ho':'ほ',
+            'ma':'ま','mi':'み','mu':'む','me':'め','mo':'も','ya':'や','yu':'ゆ','yo':'よ',
+            'ra':'ら','ri':'り','ru':'る','re':'れ','ro':'ろ','wa':'わ','wo':'を','nn':'ん',
+            'ga':'が','gi':'ぎ','gu':'ぐ','ge':'げ','go':'ご','za':'ざ','ji':'じ','zu':'ず','ze':'ぜ','zo':'ぞ',
+            'da':'だ','di':'ぢ','du':'づ','de':'де','do':'ど','ba':'ば','bi':'び','bu':'ぶ','be':'べ','bo':'ぼ',
+            'pa':'ぱ','pi':'ぴ','pu':'ぷ','pe':'ぺ','po':'ぽ','a':'あ','i':'い','u':'う','e':'え','o':'お'
+        };
+
+        function romajiToHiragana(text) {
+            let s = (text || '').toLowerCase().replace(/[^a-z]/g, '');
+            for (const [rom, hira] of Object.entries(ROMAJI_TO_HIRAGANA_MAP)) {
+                s = s.replaceAll(rom, hira);
+            }
+            return s;
+        }
 
         const JP_CORE_KANA_MAP = {
             'あお': ['青', '蒼'],
@@ -2359,6 +2393,19 @@
         const JP_CORE_KANJI_LOOKUP = {};
         for (const [kana, list] of Object.entries(JP_CORE_KANA_MAP)) {
             list.forEach(k => { JP_CORE_KANJI_LOOKUP[k] = kana; });
+        }
+
+        // 🌟 將日語輸入全面轉為純平假名 (支援片假名、漢字字典與英文誤判音譯)
+        function normalizeToHiragana(text) {
+            if (!text) return '';
+            let res = katakanaToHiragana(text);
+            for (const [kanji, kana] of Object.entries(JP_CORE_KANJI_LOOKUP)) {
+                res = res.replaceAll(kanji, kana);
+            }
+            if (/[a-zA-Z]/.test(res)) {
+                res = romajiToHiragana(res);
+            }
+            return res;
         }
 
         function buildJapaneseMatchCandidates(text, currentItem = null) {
@@ -3135,7 +3182,6 @@
             if (isRecording) stopSpeechRecognition();
         });
 
-        // 🌟 模式選擇彈窗：0A 隱藏練習按鈕，保留入門模式與挑戰模式[cite: 1]
         function promptSelectModeType(unitId, lesson, mode, label) {
             currentConfig.unit_id = String(unitId);
             if (mode === 'grammar') {
@@ -3152,7 +3198,6 @@
             const btnEntry = document.getElementById('btn-mode-choice-entry');
             const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
             
-            // 0A 隱藏練習模式按鈕，僅顯示入門與挑戰[cite: 1]
             if (btnPractice) btnPractice.style.display = is0ALevel ? 'none' : 'flex';
             if (btnEntry) btnEntry.style.display = 'flex';
 
@@ -3185,10 +3230,9 @@
             openModal('modal-select-mode-type');
         }
 
-        // 🌟 正確確認啟動模式：保留入門模式為 entry，保證計時與結算正常！[cite: 1]
         function confirmLaunchMode(type) {
             closeModal('modal-select-mode-type');
-            activeChallengeType = type; // 保留原汁原味的 entry 或 timed[cite: 1]
+            activeChallengeType = type;
             if (pendingLesson && pendingMode) {
                 selectLessonAndMode(pendingLesson, pendingMode);
             }
@@ -4761,8 +4805,7 @@ async function saveChallengeScoreRecord(finalScore, elapsedSeconds = null) {
                 }
             }
         }
-
-        function showGrammarQuizArea() {
+function showGrammarQuizArea() {
             isGrammarQuizSubmitted = false;
 
             const areaDialog = document.getElementById('area-grammar-dialog');
@@ -4984,7 +5027,8 @@ async function saveChallengeScoreRecord(finalScore, elapsedSeconds = null) {
                 showGrammarQuizArea();
             }
         }
-function getWordTranslation(item) {
+
+        function getWordTranslation(item) {
             if (!item) return "";
             return (currentConfig.lang === 'en') ? (item.en || item.zh_tw || "") :
                    (currentConfig.lang === 'ja') ? (item.ja || item.zh_tw || "") : (item.zh_tw || "");
@@ -5005,7 +5049,6 @@ function getWordTranslation(item) {
             if (!subElem) return;
 
             const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
-            // 🌟 0A 程度的入門模式比照練習模式開放音標提示
             const isHard = (activeChallengeType === 'timed' || (activeChallengeType === 'entry' && !is0ALevel));
             if (isHard) {
                 subElem.innerText = "音標佔位";
@@ -5046,7 +5089,6 @@ function getWordTranslation(item) {
             pointsPerQuestion = 100 / totalChallengeQuestions;
             currentWordPronMode = 'kr_pron';
 
-            // 🌟 0A 入門模式視同練習模式，保留拼音切換
             const isHard = (activeChallengeType === 'timed' || (activeChallengeType === 'entry' && !is0ALevel));
             const btnTogglePron = document.getElementById('btn-toggle-word-pron');
             if (btnTogglePron) btnTogglePron.style.display = isHard ? 'none' : 'flex';
@@ -5100,7 +5142,6 @@ function getWordTranslation(item) {
                 const nativeTrans = getWordTranslation(item);
                 transElem.innerText = nativeTrans || "";
 
-                // 🌟 0A 程度的入門模式完全套用練習模式規則：文字直接顯示且提供語音播放
                 if (activeChallengeType === 'practice' || (is0ALevel && activeChallengeType === 'entry')) {
                     targetTextElem.innerText = item.text || "";
                     targetTextElem.style.visibility = "visible";
@@ -5133,7 +5174,6 @@ function getWordTranslation(item) {
                 const hintElem = document.getElementById('lbl-word-type-hint');
                 const trans = getWordTranslation(item);
 
-                // 🌟 0A 程度聽打若為入門模式，套用練習模式提供中文與提示
                 if (activeChallengeType === 'practice' || (is0ALevel && activeChallengeType === 'entry')) {
                     if (playBtn) { playBtn.style.visibility = 'visible'; playBtn.style.pointerEvents = 'auto'; }
                     if (hintElem) { hintElem.innerText = trans ? `提示：${trans}` : "提示佔位"; hintElem.style.visibility = trans ? "visible" : "hidden"; }
@@ -5187,7 +5227,6 @@ function getWordTranslation(item) {
                 const nativeTrans = getTranslationText(item);
 
                 if (is0ALevel) {
-                    // 🌟 0A 入門模式比照練習模式規則：有語音示範與中文輔助提示
                     if (activeChallengeType === 'practice' || activeChallengeType === 'entry') {
                         if (audioPlayerBtn) { audioPlayerBtn.style.visibility = 'visible'; audioPlayerBtn.style.pointerEvents = 'auto'; }
                         targetTextElem.innerText = item.text || "題目";
@@ -5425,7 +5464,6 @@ function getWordTranslation(item) {
                 if (titleElem) titleElem.innerText = `句子跟讀 ${tag}`;
                 goToStep('step-quiz-shadow');
 
-                // 🌟 0A 程度的入門模式不採用關鍵字遮蔽，完全開放照原本練習模式顯示
                 isSentenceKeywordMode = (activeChallengeType === 'entry' && !is0ALevel);
                 isSentenceChallengeMode = (activeChallengeType === 'timed');
 
@@ -5497,8 +5535,7 @@ function getWordTranslation(item) {
             currentIndex = 0;
             if (questions.length > 0) displayQuestion(); else alert("該關卡尚無練習題目！");
         }
-
-        function displayQuestion() {
+function displayQuestion() {
             stopSpeechRecognition();
             resetSpeechEvalButtons();
             isCurrentQuestionAnswered = false;
@@ -5553,7 +5590,6 @@ function getWordTranslation(item) {
                 const checkBlockBtn = document.getElementById('btn-check-block');
                 if (checkBlockBtn) checkBlockBtn.disabled = false;
 
-                // 🌟 0A 程度字塊入門模式比照練習模式：提供中文翻譯與示範發音
                 if (activeChallengeType === 'practice' || (is0ALevel && activeChallengeType === 'entry')) {
                     transElem.innerText = q.translation || "";
                     if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
@@ -5788,7 +5824,6 @@ function getWordTranslation(item) {
             totalChallengeQuestions = chatRounds.length;
             pointsPerQuestion = totalChallengeQuestions > 0 ? (100 / totalChallengeQuestions) : 10;
             chatRole = 'A';
-            // 🌟 0A 入門模式不啟用遮蔽挑戰
             isChatChallengeMode = (activeChallengeType === 'timed' || (activeChallengeType === 'entry' && !is0ALevel));
 
             switchChatRole('A');
@@ -6090,7 +6125,35 @@ function getWordTranslation(item) {
                     return;
                 }
 
-                const userSpeech = event.results[0][0].transcript;
+                let userSpeech = event.results[0][0].transcript.trim();
+
+                // 🌟 1. 韓語跟讀攔截：若辨識結果皆為英文字母且不含韓文，阻擋並提示重新發音
+                if (currentConfig.category === 'korean') {
+                    const hasKorean = containsKorean(userSpeech);
+                    const isPureEnglish = /^[a-zA-Z0-9\s.,?!']+$/.test(userSpeech);
+                    if (!hasKorean && isPureEnglish) {
+                        const targetLbl = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-recognized-text' :
+                                          (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-recognized-text' : 'lbl-recognized-text';
+                        const scoreLbl = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-score' :
+                                         (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-score' : 'lbl-score';
+                        
+                        document.getElementById(targetLbl).innerText = `${userSpeech} (未檢測到韓文)`;
+                        const scoreElem = document.getElementById(scoreLbl);
+                        scoreElem.innerText = "⚠ 辨識成英文囉！請對準麥克風清晰念出韓文";
+                        scoreElem.style.color = "var(--duo-orange)";
+                        stopSpeechRecognition();
+                        return;
+                    }
+                }
+
+                // 🌟 2. 日語跟讀轉換：自動將漢字、片假名、英文轉寫為標準平假名
+                if (currentConfig.category === 'japanese') {
+                    const convertedHira = normalizeToHiragana(userSpeech);
+                    if (convertedHira && convertedHira !== userSpeech) {
+                        userSpeech = convertedHira;
+                    }
+                }
+
                 lastRecognizedSpeechText = userSpeech;
 
                 if (currentConfig.mode === 'sentence_chat') {
