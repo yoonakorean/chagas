@@ -2295,9 +2295,32 @@
             return /[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/.test(str || '');
         }
 
-        // 🌟 判斷是否包含日文字元 (平假名、片假名、漢字)
+        // 🌟 判斷是否包含日文字元 (平假名、片假名、常用漢字)
         function containsJapanese(str) {
             return /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(str || '');
+        }
+
+        // 🌟 韓語常見英文誤辨識自動校正表 (解決 이유 容易被語音引擎誤聽為 EU/IU 的問題)
+        const KO_COMMON_ENG_MISHEAR_MAP = {
+            'eu': '이유',
+            'iu': '이유',
+            'iyou': '이유',
+            'e u': '이유',
+            'e.u.': '이유',
+            'e.u': '이유',
+            'eyou': '이유',
+            'an': '안',
+            'ne': '네',
+            'ye': '예',
+            'no': '노'
+        };
+
+        function correctKoreanEnglishMishear(text) {
+            let clean = (text || '').toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+            if (KO_COMMON_ENG_MISHEAR_MAP[clean]) {
+                return KO_COMMON_ENG_MISHEAR_MAP[clean];
+            }
+            return text;
         }
 
         // 🌟 英文羅馬音轉平假名對照表 (解決日文辨識誤被當作英文音譯問題)
@@ -2313,7 +2336,7 @@
             'ma':'ま','mi':'み','mu':'む','me':'め','mo':'も','ya':'や','yu':'ゆ','yo':'よ',
             'ra':'ら','ri':'り','ru':'る','re':'れ','ro':'ろ','wa':'わ','wo':'を','nn':'ん',
             'ga':'が','gi':'ぎ','gu':'ぐ','ge':'げ','go':'ご','za':'ざ','ji':'じ','zu':'ず','ze':'ぜ','zo':'ぞ',
-            'da':'だ','di':'ぢ','du':'づ','de':'де','do':'ど','ba':'ば','bi':'び','bu':'ぶ','be':'べ','bo':'ぼ',
+            'da':'だ','di':'ぢ','du':'づ','de':'で','do':'ど','ba':'ば','bi':'び','bu':'ぶ','be':'べ','bo':'ぼ',
             'pa':'ぱ','pi':'ぴ','pu':'ぷ','pe':'ぺ','po':'ぽ','a':'あ','i':'い','u':'う','e':'え','o':'お'
         };
 
@@ -2340,7 +2363,8 @@
             'いく': ['行く'],
             'いぬ': ['犬'],
             'いま': ['今'],
-            'うえ': ['上'],
+            'うえ': ['上', '大江'],
+            'おおえ': ['大江'],
             'うみ': ['海'],
             'えき': ['駅'],
             'おいしい': ['美味しい'],
@@ -2395,7 +2419,7 @@
             list.forEach(k => { JP_CORE_KANJI_LOOKUP[k] = kana; });
         }
 
-        // 🌟 將日語輸入全面轉為純平假名 (支援片假名、漢字字典與英文誤判音譯)
+        // 🌟 將日語辨識結果全面強制轉為純平假名 (支援片假名、漢字查詢表與英文誤判音譯)
         function normalizeToHiragana(text) {
             if (!text) return '';
             let res = katakanaToHiragana(text);
@@ -5535,7 +5559,8 @@ function showGrammarQuizArea() {
             currentIndex = 0;
             if (questions.length > 0) displayQuestion(); else alert("該關卡尚無練習題目！");
         }
-function displayQuestion() {
+
+        function displayQuestion() {
             stopSpeechRecognition();
             resetSpeechEvalButtons();
             isCurrentQuestionAnswered = false;
@@ -6127,26 +6152,31 @@ function displayQuestion() {
 
                 let userSpeech = event.results[0][0].transcript.trim();
 
-                // 🌟 1. 韓語跟讀攔截：若辨識結果皆為英文字母且不含韓文，阻擋並提示重新發音
+                // 🌟 1. 韓語：先校正 EU / IU 等常見英文誤辨識為 이유[cite: 3]
                 if (currentConfig.category === 'korean') {
-                    const hasKorean = containsKorean(userSpeech);
-                    const isPureEnglish = /^[a-zA-Z0-9\s.,?!']+$/.test(userSpeech);
-                    if (!hasKorean && isPureEnglish) {
-                        const targetLbl = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-recognized-text' :
-                                          (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-recognized-text' : 'lbl-recognized-text';
-                        const scoreLbl = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-score' :
-                                         (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-score' : 'lbl-score';
-                        
-                        document.getElementById(targetLbl).innerText = `${userSpeech} (未檢測到韓文)`;
-                        const scoreElem = document.getElementById(scoreLbl);
-                        scoreElem.innerText = "⚠ 辨識成英文囉！請對準麥克風清晰念出韓文";
-                        scoreElem.style.color = "var(--duo-orange)";
-                        stopSpeechRecognition();
-                        return;
+                    const correctedKo = correctKoreanEnglishMishear(userSpeech);
+                    if (correctedKo !== userSpeech) {
+                        userSpeech = correctedKo;
+                    } else {
+                        const hasKorean = containsKorean(userSpeech);
+                        const isPureEnglish = /^[a-zA-Z0-9\s.,?!']+$/.test(userSpeech);
+                        if (!hasKorean && isPureEnglish) {
+                            const targetLbl = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-recognized-text' :
+                                              (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-recognized-text' : 'lbl-recognized-text';
+                            const scoreLbl = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-score' :
+                                             (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-score' : 'lbl-score';
+                            
+                            document.getElementById(targetLbl).innerText = `${userSpeech} (未檢測到韓文)`;
+                            const scoreElem = document.getElementById(scoreLbl);
+                            scoreElem.innerText = "⚠ 辨識成英文囉！請對準麥克風清晰念出韓文";
+                            scoreElem.style.color = "var(--duo-orange)";
+                            stopSpeechRecognition();
+                            return;
+                        }
                     }
                 }
 
-                // 🌟 2. 日語跟讀轉換：自動將漢字、片假名、英文轉寫為標準平假名
+                // 🌟 2. 日語：將漢字、片假名、英文全面轉寫為純平假名 (包含大江等同音漢字)[cite: 2]
                 if (currentConfig.category === 'japanese') {
                     const convertedHira = normalizeToHiragana(userSpeech);
                     if (convertedHira && convertedHira !== userSpeech) {
@@ -6207,7 +6237,8 @@ function displayQuestion() {
                 setTimeout(() => { isToggling = false; }, 200);
             } else {
                 try {
-                    stopMediaRecording();
+                    // 🌟 啟動 MediaRecorder 錄製發音檔案，確保綠色耳機播放按鈕正常顯示[cite: 1]
+                    startMediaRecording();
                     initSpeechRecognition();
                     recognition.start();
                 } catch(err) {
