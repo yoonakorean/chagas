@@ -1281,7 +1281,7 @@
         <div class="gate-unlock-sub" id="gate-unlock-sub">前往全新領域！</div>
     </div>
 
-    <!-- 1. 登入 / 註冊彈窗 -->
+    <!-- 🌟 登入 / 註冊完整彈窗（已被完整保留） -->
     <div class="custom-modal" id="login-modal">
         <div class="custom-modal-card">
             <div style="font-size: 2.2rem; color: var(--duo-blue); margin-bottom: 8px;"><i class="fa-solid fa-graduation-cap"></i></div>
@@ -1327,26 +1327,27 @@
         </div>
     </div>
 
-    <!-- 首次登入設定暱稱、學習語言與母語 -->
+    <!-- 首次登入設定暱稱、學習語言與母語（支援雙向動態互斥過濾） -->
     <div id="modal-setup-nickname" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-user-gear" style="color:var(--duo-blue);"></i> 設定學習資訊</h3>
             <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 8px;">請設定排行榜上顯示的名稱 (2~12字，不可與他人重複)</p>
             <input type="text" id="input-setup-nickname" placeholder="例如：語言小霸王" maxlength="12" />
             
+            <p style="font-size: 0.85rem; color: #6b7280; margin: 12px 0 4px; text-align:left;">選擇母語（題意翻譯將以此呈現）</p>
+            <select id="select-native-language" onchange="syncMutualExclusiveLangs('setup')">
+                <option value="zh">繁體中文</option>
+                <option value="en">English</option>
+                <option value="ja">日本語</option>
+            </select>
+
             <p style="font-size: 0.85rem; color: #6b7280; margin: 12px 0 4px; text-align:left;">想要學習的語言</p>
-            <select id="select-setup-learn-lang">
+            <select id="select-setup-learn-lang" onchange="syncMutualExclusiveLangs('setup')">
                 <option value="korean">🇰🇷 韓文</option>
                 <option value="japanese">🇯🇵 日文</option>
                 <option value="english">🇺🇸 英文</option>
             </select>
 
-            <p style="font-size: 0.85rem; color: #6b7280; margin: 12px 0 4px; text-align:left;">選擇母語（題意翻譯將以此呈現）</p>
-            <select id="select-native-language">
-                <option value="zh">繁體中文</option>
-                <option value="en">English</option>
-                <option value="ja">日本語</option>
-            </select>
             <div id="setup-nickname-error" style="color: var(--duo-red); font-size: 0.8rem; margin-top: 6px;" class="hidden"></div>
             <button id="btn-save-initial-nickname" class="btn-3d btn-3d-primary" style="width:100%; padding:10px; margin-top:12px;">完成設定並開始學習</button>
         </div>
@@ -1449,6 +1450,32 @@
                         <span class="mode-time-tag" id="tag-time-timed"><i class="fa-solid fa-stopwatch"></i> --:--</span>
                         <span class="mode-star-tag" id="tag-star-timed">未達成</span>
                     </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🌟 依關卡挑選單字卡彈窗 -->
+    <div id="modal-select-flashcard-stage" class="custom-modal">
+        <div class="custom-modal-card" style="padding: 22px 18px;">
+            <div class="close-icon-circle" onclick="closeModal('modal-select-flashcard-stage')"><i class="fa-solid fa-xmark"></i></div>
+            <div style="font-size: 2.2rem; color: #10b981; margin-bottom: 6px;"><i class="fa-solid fa-clone"></i></div>
+            <h3 style="margin: 0 0 6px 0; font-size: 1.25rem; color: #1e293b;">挑選單字卡關卡</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 16px;">選擇要獨立複習的階段與關卡：</p>
+            
+            <div style="text-align: left; margin-bottom: 12px;">
+                <label style="font-size:0.82rem; font-weight:800; color:#475569;">選擇階段：</label>
+                <select id="select-flashcard-unit" onchange="renderFlashcardLessonOptions()" style="margin-top:4px;"></select>
+            </div>
+
+            <div style="text-align: left; margin-bottom: 18px;">
+                <label style="font-size:0.82rem; font-weight:800; color:#475569;">選擇關卡 (Lesson)：</label>
+                <select id="select-flashcard-lesson" style="margin-top:4px;"></select>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-3d btn-3d-primary" onclick="confirmLaunchFlashcardStage()" style="flex: 1; padding: 11px;">
+                    <i class="fa-solid fa-play"></i> 開始翻牌學習
                 </button>
             </div>
         </div>
@@ -1640,7 +1667,7 @@
         </div>
     </div>
 
-    <!-- 🌟 全螢幕獨立單字卡學習視圖（純學習用，支援 3D 翻轉與滑動） -->
+    <!-- 🌟 全螢幕獨立單字卡學習視圖（支援 3D 翻轉與左右手勢滑動） -->
     <div class="fullscreen-stage" id="stage-vocab-flashcard">
         <div class="stage-topbar">
             <button class="stage-return" onclick="closeFlashcardStage()"><i class="fa-solid fa-chevron-left"></i> 返回地圖</button>
@@ -1681,8 +1708,7 @@
             <button class="ctrl-btn" id="btn-flashcard-next" onclick="stepFlashcard(1)" aria-label="下一個"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
     </div>
-
-    <!-- 主介面容器 -->
+<!-- 主介面容器 -->
     <div class="shadowing-card">
         
         <!-- 上方狀態列 -->
@@ -1854,7 +1880,8 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-<!-- 步驟 6-G：句子問答畫面 -->
+
+            <!-- 步驟 6-G：句子問答畫面 -->
             <div id="step-quiz-sentence-chat" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-chat-mode-title">對話挑戰</div>
@@ -2047,7 +2074,7 @@
 
                 <div class="nav-controls">
                     <span class="lbl-progress" id="lbl-word-type-progress">0 / 0</span>
-                    <button class="btn-nav-next" id="btn-word-type-next" onclick="nextWordQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
+                    <button class="btn-word-type-next" id="btn-word-type-next" onclick="nextWordQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-word-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
@@ -2085,7 +2112,7 @@
                 
                 <div class="nav-controls">
                     <span class="lbl-progress" id="lbl-word-choice-progress">0 / 0</span>
-                    <button class="btn-nav-next" id="btn-word-choice-next" onclick="nextWordQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
+                    <button class="btn-word-choice-next" id="btn-word-choice-next" onclick="nextWordQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-word-choice" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
@@ -2138,17 +2165,6 @@
 
                 <div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 14px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 10px;">
                     <div>
-                        <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: align-items: center; gap: 6px;">
-                            <i class="fa-solid fa-language" style="color: var(--duo-blue);"></i> 當前學習語言
-                        </div>
-                        <select id="select-account-learn-language" onchange="updateAccountLearnCategory(this.value)" style="margin: 0;">
-                            <option value="korean">🇰🇷 韓文</option>
-                            <option value="japanese">🇯🇵 日文</option>
-                            <option value="english">🇺🇸 英文</option>
-                        </select>
-                    </div>
-
-                    <div>
                         <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
                             <i class="fa-solid fa-earth-americas" style="color: var(--duo-green);"></i> 顯示母語設定
                         </div>
@@ -2156,6 +2172,17 @@
                             <option value="zh">繁體中文</option>
                             <option value="en">English</option>
                             <option value="ja">日本語</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-language" style="color: var(--duo-blue);"></i> 當前學習語言
+                        </div>
+                        <select id="select-account-learn-language" onchange="updateAccountLearnCategory(this.value)" style="margin: 0;">
+                            <option value="korean">🇰🇷 韓文</option>
+                            <option value="japanese">🇯🇵 日文</option>
+                            <option value="english">🇺🇸 英文</option>
                         </select>
                     </div>
                 </div>
@@ -2192,10 +2219,10 @@
             </div>
         </div>
 
-        <!-- 下方固定區塊 (新增獨立單字卡功能按鈕) -->
+        <!-- 下方固定區塊 (新增依關卡獨立挑選的單字卡按鈕) -->
         <div class="bottom-fixed-bar-wrapper" id="app-bottom-bar" style="display: none;">
             <div class="bottom-fixed-bar">
-                <div class="bottom-nav-item flashcard-btn" onclick="openFlashcardStage()">
+                <div class="bottom-nav-item flashcard-btn" onclick="openFlashcardStagePicker()">
                     <i class="fa-solid fa-clone"></i>
                     <span>單字卡</span>
                 </div>
@@ -2244,7 +2271,7 @@
         let rawDialogueData = []; 
         let rawWordData = [];
 
-        // 🌟 3D 單字卡專屬變數
+        // 🌟 3D 單字卡專屬變數（支援指定關卡）
         let flashcardList = [];
         let flashcardIndex = 0;
         let flashcardPronMode = 'kr'; // 'kr' 或 'roman'
@@ -2440,7 +2467,7 @@ const GUIDE_DETAILS_MAP = {
             'ma':'ま','mi':'み','mu':'む','me':'め','mo':'モ','ya':'や','yu':'ゆ','yo':'よ',
             'ra':'ら','ri':'り','ru':'る','re':'れ','ro':'ろ','wa':'わ','wo':'を','nn':'ん',
             'ga':'が','gi':'ぎ','gu':'ぐ','ge':'げ','go':'ご','za':'ざ','ji':'じ','zu':'ず','ze':'ぜ','zo':'ぞ',
-            'da':'だ','di':'ぢ','du':'づ','de':'で','do':'ど','ba':'ば','bi':'び','bu':'ぶ','be':'べ','bo':'ぼ',
+            'da':'だ','di':'ぢ','du':'づ','de':'де','do':'ど','ba':'ば','bi':'び','bu':'ぶ','be':'べ','bo':'ぼ',
             'pa':'ぱ','pi':'ぴ','pu':'ぷ','pe':'ぺ','po':'ぽ','a':'あ','i':'い','u':'う','e':'え','o':'お'
         };
 
@@ -2531,6 +2558,65 @@ const GUIDE_DETAILS_MAP = {
             return Array.from(candidates);
         }
 
+        /* ================= 🌟 母語與學習語言雙向動態互斥過濾 ================= */
+        const LANG_MUTUAL_MAP = {
+            'zh': 'chinese',
+            'en': 'english',
+            'ja': 'japanese',
+            'ko': 'korean'
+        };
+        const LEARN_TO_NATIVE_MAP = {
+            'english': 'en',
+            'japanese': 'ja',
+            'korean': 'ko'
+        };
+
+        function syncMutualExclusiveLangs(scope = 'setup') {
+            const nativeSelect = (scope === 'setup') ? document.getElementById('select-native-language') : document.getElementById('select-account-language');
+            const learnSelect = (scope === 'setup') ? document.getElementById('select-setup-learn-lang') : document.getElementById('select-account-learn-language');
+
+            if (!nativeSelect || !learnSelect) return;
+
+            const selectedNative = nativeSelect.value;
+            const conflictLearnCategory = LANG_MUTUAL_MAP[selectedNative] || '';
+
+            // 過濾學習語言選單
+            Array.from(learnSelect.options).forEach(opt => {
+                if (opt.value === conflictLearnCategory) {
+                    opt.disabled = true;
+                    opt.style.display = 'none';
+                } else {
+                    opt.disabled = false;
+                    opt.style.display = 'block';
+                }
+            });
+
+            // 若當前所選學習語言被停用，自動切換至下一個可選項目
+            if (learnSelect.value === conflictLearnCategory) {
+                const availableOpt = Array.from(learnSelect.options).find(o => !o.disabled);
+                if (availableOpt) learnSelect.value = availableOpt.value;
+            }
+
+            // 反向過濾母語選項（避免用日文選日語）
+            const selectedLearn = learnSelect.value;
+            const conflictNativeLang = LEARN_TO_NATIVE_MAP[selectedLearn] || '';
+
+            Array.from(nativeSelect.options).forEach(opt => {
+                if (opt.value === conflictNativeLang) {
+                    opt.disabled = true;
+                    opt.style.display = 'none';
+                } else {
+                    opt.disabled = false;
+                    opt.style.display = 'block';
+                }
+            });
+
+            if (nativeSelect.value === conflictNativeLang) {
+                const availableNative = Array.from(nativeSelect.options).find(o => !o.disabled);
+                if (availableNative) nativeSelect.value = availableNative.value;
+            }
+        }
+
         /* ================= 🌟 字元級 LCS diff 演算法 (聽打比對) ================= */
         function computeLcsLength(a, b) {
             const n = a.length, m = b.length;
@@ -2577,21 +2663,68 @@ const GUIDE_DETAILS_MAP = {
             return { level, diffHtml: diffHighlightHtml(tc, ti) };
         }
 
-        /* ================= 🌟 3D 翻轉單字卡模組 (支援左右手勢) ================= */
-        function openFlashcardStage() {
+        /* ================= 🌟 依關卡挑選單字卡彈窗邏輯 ================= */
+        function openFlashcardStagePicker() {
+            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+            const wordsOfLevel = rawWordData.filter(v => normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized);
+
+            if (!wordsOfLevel.length) {
+                alert(`Level ${currentConfig.level} 目前尚無單字資料！`);
+                return;
+            }
+
+            const units = [...new Set(wordsOfLevel.map(w => getItemField(w, 'unit_id')))].filter(Boolean).sort((a,b) => Number(a)-Number(b));
+            const unitSelect = document.getElementById('select-flashcard-unit');
+            unitSelect.innerHTML = '';
+            units.forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u;
+                opt.innerText = `第 ${u} 階段`;
+                if (String(u) === String(currentConfig.unit_id)) opt.selected = true;
+                unitSelect.appendChild(opt);
+            });
+
+            renderFlashcardLessonOptions();
+            openModal('modal-select-flashcard-stage');
+        }
+
+        function renderFlashcardLessonOptions() {
+            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+            const selectedUnit = document.getElementById('select-flashcard-unit').value;
+            const wordsOfUnit = rawWordData.filter(v => 
+                normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
+                String(getItemField(v, 'unit_id')).trim() === String(selectedUnit).trim()
+            );
+
+            const lessons = [...new Set(wordsOfUnit.map(w => getItemField(w, 'lesson')))].filter(Boolean).sort((a,b) => Number(a)-Number(b));
+            const lessonSelect = document.getElementById('select-flashcard-lesson');
+            lessonSelect.innerHTML = '';
+            lessons.forEach(l => {
+                const opt = document.createElement('option');
+                opt.value = l;
+                opt.innerText = `第 ${l} 關單字`;
+                if (String(l) === String(currentConfig.lesson)) opt.selected = true;
+                lessonSelect.appendChild(opt);
+            });
+        }
+
+        function confirmLaunchFlashcardStage() {
+            const selectedUnit = document.getElementById('select-flashcard-unit').value;
+            const selectedLesson = document.getElementById('select-flashcard-lesson').value;
+            closeModal('modal-select-flashcard-stage');
+            launchFlashcardForStage(selectedUnit, selectedLesson);
+        }
+
+        function launchFlashcardForStage(unitId, lessonId) {
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
             flashcardList = rawWordData.filter(v => 
                 normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
-                String(getItemField(v, 'unit_id')).trim() === String(currentConfig.unit_id).trim() &&
-                String(getItemField(v, 'lesson')).trim() === String(currentConfig.lesson).trim()
+                String(getItemField(v, 'unit_id')).trim() === String(unitId).trim() &&
+                String(getItemField(v, 'lesson')).trim() === String(lessonId).trim()
             );
 
             if (!flashcardList.length) {
-                flashcardList = rawWordData.filter(v => normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized);
-            }
-
-            if (!flashcardList.length) {
-                alert("目前此級別尚無單字卡資料喔！");
+                alert(`第 ${unitId} 階段 - 第 ${lessonId} 關暫無單字卡資料！`);
                 return;
             }
 
@@ -2686,7 +2819,6 @@ const GUIDE_DETAILS_MAP = {
             playAudioOrTTS(item.audio_url, item.text, 0.85);
         }
 
-        // 手勢左右滑動支援
         (function initFlashcardSwipe() {
             const zone = document.getElementById('flashcard-swipe-zone');
             if (!zone) return;
@@ -2706,8 +2838,7 @@ const GUIDE_DETAILS_MAP = {
                 }
             }, { passive: true });
         })();
-
-        function forceResetMicrophoneSession() {
+function forceResetMicrophoneSession() {
             if (recognition) {
                 try {
                     recognition.onstart = null;
@@ -2829,7 +2960,8 @@ const GUIDE_DETAILS_MAP = {
             const flagMap = { 'korean': '🇰🇷', 'japanese': '🇯🇵', 'english': '🇺🇸' };
             flagElem.innerText = flagMap[currentConfig.category] || '🌐';
         }
-async function recordSessionFocusTime() {
+
+        async function recordSessionFocusTime() {
             if (!challengeSessionStartTime) return 0;
             const now = Date.now();
             const elapsedSeconds = Math.max(0, Math.round((now - challengeSessionStartTime) / 1000));
@@ -3034,6 +3166,7 @@ async function recordSessionFocusTime() {
                     if (isInteractive) hideIslandLoading();
                     closeModal('login-modal');
                     openModal('modal-setup-nickname');
+                    syncMutualExclusiveLangs('setup');
                 } else {
                     window.currentUserData = firestoreData;
                     window.currentUserData.realName = gasResult.realName || firestoreData.realName || "-";
@@ -3132,8 +3265,7 @@ async function recordSessionFocusTime() {
                 renderAllLessonsForLevel(currentConfig.level);
             }, 1900);
         }
-
-        function renderCandyRoadmap(unitId, filteredByLevel, units) {
+function renderCandyRoadmap(unitId, filteredByLevel, units) {
             const nodesContainer = document.getElementById('roadmap-nodes-list');
             const svgCanvas = document.getElementById('roadmap-svg-canvas');
             nodesContainer.innerHTML = "";
@@ -3331,7 +3463,8 @@ async function recordSessionFocusTime() {
                 <path d="${pathD}" fill="none" stroke="#0284c7" stroke-width="8" stroke-linecap="round" stroke-dasharray="14 10" />
             `;
         }
-function resetIdleTimer() {
+
+        function resetIdleTimer() {
             if (isIdlePaused) return;
             if (idleTimer) clearTimeout(idleTimer);
             if (challengeSessionStartTime) {
@@ -3921,6 +4054,7 @@ document.getElementById('btn-save-initial-nickname').onclick = async () => {
                 } catch (e) { console.error("更新學習語言偏好失敗:", e); }
             }
 
+            syncMutualExclusiveLangs('account');
             closeProfileView();
             showIslandLoading(`🏝️ 島嶼生成中，正在同步最新地圖...`, 35);
             try {
@@ -3943,6 +4077,7 @@ document.getElementById('btn-save-initial-nickname').onclick = async () => {
                     if (window.currentUserData) window.currentUserData.nativeLanguage = lang;
                 } catch (e) { console.error("更新母語偏好失敗:", e); }
             }
+            syncMutualExclusiveLangs('account');
         }
 
         function renderUserInfo() {
@@ -3963,6 +4098,7 @@ document.getElementById('btn-save-initial-nickname').onclick = async () => {
             const accountLearnLangSelect = document.getElementById('select-account-learn-language');
             if (accountLearnLangSelect) accountLearnLangSelect.value = savedCategory;
 
+            syncMutualExclusiveLangs('account');
             updateUserFlagIcon();
             document.getElementById('lbl-username').innerText = displayName;
             document.getElementById('lbl-streak-days').innerText = streakDays;
@@ -5057,7 +5193,230 @@ document.getElementById('btn-save-initial-nickname').onclick = async () => {
                 }
             }
         }
-function getWordTranslation(item) {
+function showGrammarQuizArea() {
+            isGrammarQuizSubmitted = false;
+
+            const areaDialog = document.getElementById('area-grammar-dialog');
+            if (areaDialog) areaDialog.style.display = 'none';
+
+            document.getElementById('area-grammar-quiz').style.display = 'block';
+            document.getElementById('box-grammar-result').style.display = 'none';
+
+            const choicesWrapper = document.getElementById('grammar-choices-wrapper');
+            if (choicesWrapper) choicesWrapper.style.display = 'block';
+
+            const instrElem = document.getElementById('lbl-grammar-instruction');
+            if (instrElem) instrElem.style.display = 'block';
+
+            const btnCheck = document.getElementById('btn-check-grammar');
+            if (btnCheck) {
+                btnCheck.style.display = 'block';
+                btnCheck.disabled = false;
+                btnCheck.style.opacity = '1';
+                btnCheck.style.cursor = 'pointer';
+            }
+
+            const quizList = currentGrammarItem.expandedQuizzes || [];
+            if (!quizList.length) { finishGrammarTask(); return; }
+
+            const qContainer = document.getElementById('container-grammar-questions');
+            qContainer.innerHTML = '';
+            let totalSlots = 0;
+            quizList.forEach(q => {
+                const matches = (q.question || '').match(/_+/g) || [];
+                totalSlots += matches.length;
+            });
+
+            userGrammarAnswers = new Array(totalSlots).fill('');
+            activeBlankIndex = 0;
+            let globalSlotIdx = 0;
+
+            quizList.forEach((qObj, qIdx) => {
+                const qStr = qObj.question || "";
+                const firstSlotOfThisQ = globalSlotIdx;
+
+                const formattedHtml = qStr.replace(/_+/g, () => {
+                    const currentId = globalSlotIdx;
+                    const slotHtml = `<span class="blank-slot" id="blank-slot-${currentId}" onclick="setActiveBlank(${currentId}, event)">___</span>`;
+                    globalSlotIdx++;
+                    return slotHtml;
+                });
+
+                const qElem = document.createElement('div');
+                qElem.className = 'grammar-q-item';
+                qElem.id = `grammar-q-item-${qIdx}`;
+                qElem.onclick = () => {
+                    if (!isGrammarQuizSubmitted) {
+                        setActiveBlank(firstSlotOfThisQ);
+                    }
+                };
+
+                qElem.innerHTML = `<span style="color:var(--duo-blue); font-weight:800; margin-right:4px;">${qIdx + 1}.</span> <span class="q-body-content">${formattedHtml}</span>`;
+                qContainer.appendChild(qElem);
+            });
+
+            const cContainer = document.getElementById('container-grammar-choices');
+            cContainer.innerHTML = '';
+            let allChoices = [];
+            quizList.forEach(q => {
+                const cArr = (q.choice || '').split(/[\/,]/).map(s => s.trim()).filter(Boolean);
+                allChoices.push(...cArr);
+            });
+
+            const uniqueChoices = [...new Set(allChoices)];
+            shuffleArray(uniqueChoices).forEach(opt => {
+                const btn = document.createElement('div');
+                btn.className = 'block-chip';
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    if (isGrammarQuizSubmitted) return;
+                    fillGrammarAnswer(opt);
+                };
+                cContainer.appendChild(btn);
+            });
+
+            setTimeout(updateActiveGrammarSlotHighlight, 50);
+        }
+
+        function setActiveBlank(index, evt = null) { 
+            if (isGrammarQuizSubmitted) return;
+            if (evt) evt.stopPropagation();
+            activeBlankIndex = index; 
+            updateActiveGrammarSlotHighlight();
+        }
+
+        function fillGrammarAnswer(optionText) {
+            if (isGrammarQuizSubmitted) return;
+            userGrammarAnswers[activeBlankIndex] = optionText;
+            const slot = document.getElementById(`blank-slot-${activeBlankIndex}`);
+            if (slot) slot.innerText = optionText;
+            
+            const nextBlank = userGrammarAnswers.findIndex(a => a === '');
+            if (nextBlank !== -1) {
+                activeBlankIndex = nextBlank;
+            }
+            updateActiveGrammarSlotHighlight();
+        }
+
+        function checkGrammarQuiz() {
+            if (isGrammarQuizSubmitted) return;
+            const quizList = currentGrammarItem.expandedQuizzes || [];
+            if (!quizList.length) return;
+            if (userGrammarAnswers.includes('')) return alert('請填寫完所有空格後再送出答案！');
+
+            isGrammarQuizSubmitted = true;
+
+            const choicesWrapper = document.getElementById('grammar-choices-wrapper');
+            if (choicesWrapper) choicesWrapper.style.display = 'none';
+
+            const instrElem = document.getElementById('lbl-grammar-instruction');
+            if (instrElem) instrElem.style.display = 'none';
+
+            const btnCheck = document.getElementById('btn-check-grammar');
+            if (btnCheck) btnCheck.style.display = 'none';
+
+            document.querySelectorAll('.blank-slot').forEach(el => el.classList.remove('active-slot'));
+            document.querySelectorAll('.grammar-q-item').forEach(el => el.classList.remove('focused-q'));
+
+            let globalSlotIdx = 0;
+            let isAllCorrect = true;
+
+            quizList.forEach((qObj, idx) => {
+                const pureAnswer = extractPureAnswer(qObj.question, qObj.answer);
+                const expectedAnswer = (qObj.answer || '').replace(/\s+/g, '');
+                const expectedPure = (pureAnswer || '').replace(/\s+/g, '');
+                const matches = (qObj.question || '').match(/_+/g) || [];
+                
+                let thisQuestionAnswers = [];
+                for (let i = 0; i < matches.length; i++) {
+                    thisQuestionAnswers.push(userGrammarAnswers[globalSlotIdx] || '');
+                    globalSlotIdx++;
+                }
+
+                let subSlot = 0;
+                const fullUserSentence = (qObj.question || '').replace(/_+/g, () => {
+                    const ans = thisQuestionAnswers[subSlot] || '';
+                    subSlot++;
+                    return ans;
+                }).replace(/\s+/g, '');
+
+                const ansJoined = thisQuestionAnswers.join('').replace(/\s+/g, '');
+                const ansSlash = thisQuestionAnswers.join('/').replace(/\s+/g, '');
+
+                const isThisQCorrect = (fullUserSentence === expectedAnswer) || 
+                                       (ansJoined === expectedAnswer) || 
+                                       (ansSlash === expectedAnswer) ||
+                                       (ansJoined === expectedPure) ||
+                                       (ansSlash === expectedPure);
+
+                const qElem = document.getElementById(`grammar-q-item-${idx}`);
+
+                if (!isThisQCorrect) {
+                    isAllCorrect = false;
+                    if (qElem) {
+                        qElem.style.color = '#dc2626';
+                        qElem.style.background = '#fee2e2';
+                        qElem.style.borderColor = '#ef4444';
+
+                        const ansBadge = document.createElement('span');
+                        ansBadge.style.cssText = "font-size: 0.95rem; color: #b91c1c; font-weight: 900; margin-left: 6px; white-space: nowrap; display: inline-block;";
+                        ansBadge.innerHTML = `❌ 正確 ${pureAnswer}`;
+                        qElem.appendChild(ansBadge);
+                    }
+                } else {
+                    if (qElem) {
+                        qElem.style.color = '#15803d';
+                        qElem.style.background = '#f0fdf4';
+                        qElem.style.borderColor = '#86efac';
+
+                        const correctBadge = document.createElement('span');
+                        correctBadge.style.cssText = "font-size: 0.95rem; color: #16a34a; font-weight: 900; margin-left: 6px;";
+                        correctBadge.innerHTML = ` ✔`;
+                        qElem.appendChild(correctBadge);
+                    }
+                }
+            });
+
+            const resultBox = document.getElementById('box-grammar-result');
+            const resultText = document.getElementById('lbl-grammar-result-text');
+            const actionBtn = document.getElementById('btn-grammar-action');
+            resultBox.style.display = 'block';
+
+            if (isAllCorrect) {
+                resultText.innerText = (quizList[0].correct) || "🎉 完全正確！太厲害了！";
+                resultText.style.color = "#58cc02";
+                actionBtn.innerHTML = `<i class="fa-solid fa-flag-checkered"></i> 完成任務`;
+                actionBtn.style.background = "#58cc02";
+                actionBtn.onclick = () => finishGrammarTask();
+            } else {
+                resultText.innerText = "再接再厲！ 依照紅字提示微調，你一定行！";
+                resultText.style.color = "#ff4b4b";
+                actionBtn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> 再來一次`;
+                actionBtn.style.background = "#ff4b4b";
+                actionBtn.onclick = () => promptGrammarRetryChoice();
+            }
+        }
+
+        function promptGrammarRetryChoice() {
+            openModal('modal-grammar-retry-choice');
+        }
+
+        function retryGrammarQuizOnly() {
+            closeModal('modal-grammar-retry-choice');
+            showGrammarQuizArea();
+        }
+
+        function restartGrammarLearningFromStart() {
+            closeModal('modal-grammar-retry-choice');
+            currentDialogIndex = 0;
+            if (currentGrammarItem && currentGrammarItem.dialogs && currentGrammarItem.dialogs.length > 0) {
+                showCurrentGrammarDialog();
+            } else {
+                showGrammarQuizArea();
+            }
+        }
+
+        function getWordTranslation(item) {
             if (!item) return "";
             return (currentConfig.lang === 'en') ? (item.en || item.zh_tw || "") :
                    (currentConfig.lang === 'ja') ? (item.ja || item.zh_tw || "") : (item.zh_tw || "");
@@ -5352,7 +5711,6 @@ function getWordTranslation(item) {
             const playBtn = document.getElementById('btn-word-type-play');
             if (playBtn) { playBtn.style.visibility = 'visible'; playBtn.style.pointerEvents = 'auto'; }
 
-            // 採用 LCS 最長公共子序列演算法判定
             const judged = judgeTypingAdvanced(userVal, item.text || '');
 
             if (judged.level === 'perfect' || judged.level === 'space') {
@@ -6176,7 +6534,6 @@ function getWordTranslation(item) {
 
                 let userSpeech = event.results[0][0].transcript.trim();
 
-                // 🌟 1. 韓語：校正 EU / IU 等常見誤識為 이유[cite: 3]
                 if (currentConfig.category === 'korean') {
                     const correctedKo = correctKoreanEnglishMishear(userSpeech);
                     if (correctedKo !== userSpeech) {
@@ -6200,7 +6557,6 @@ function getWordTranslation(item) {
                     }
                 }
 
-                // 🌟 2. 日語：將漢字、片假名、英文全面轉寫為純平假名 (包含大江等同音漢字)[cite: 2]
                 if (currentConfig.category === 'japanese') {
                     const convertedHira = normalizeToHiragana(userSpeech);
                     if (convertedHira && convertedHira !== userSpeech) {
@@ -6261,7 +6617,6 @@ function getWordTranslation(item) {
                 setTimeout(() => { isToggling = false; }, 200);
             } else {
                 try {
-                    // 🌟 啟動錄音備份，確保錄音完成後綠色耳機播放按鈕正常亮起[cite: 1]
                     startMediaRecording();
                     initSpeechRecognition();
                     recognition.start();
@@ -6278,6 +6633,7 @@ function getWordTranslation(item) {
             setUserLang(localStorage.getItem('preferred_user_lang') || 'zh');
             setLearnCategory(localStorage.getItem('preferred_learn_category') || 'korean');
             updateUserFlagIcon();
+            syncMutualExclusiveLangs('account');
             goToStep('step-welcome');
 
             window.addEventListener('resize', () => {
