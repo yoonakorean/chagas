@@ -372,8 +372,7 @@
             transform: translateY(2px);
             border-bottom-width: 2px !important;
         }
-
-        #step-grammar.active {
+#step-grammar.active {
             display: flex !important;
             flex-direction: column !important;
             width: 100%;
@@ -717,7 +716,7 @@
 
         .side-quest-badge {
             position: absolute;
-            right: -72px;
+            right: -78px;
             top: 50%;
             transform: translateY(-50%);
             background: #ffffff;
@@ -730,7 +729,7 @@
             box-shadow: 0 4px 10px rgba(28, 176, 246, 0.2);
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             cursor: pointer;
             transition: all 0.15s ease;
             white-space: nowrap;
@@ -948,8 +947,7 @@
             justify-content: center; gap: 10px; width: 100%; padding: 12px;
             font-size: 0.95rem; font-weight: bold; border-radius: 14px; cursor: pointer;
         }
-
-        .calendar-header-ctrl {
+.calendar-header-ctrl {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 10px; font-weight: bold; color: #374151; font-size: 0.9rem;
         }
@@ -1281,7 +1279,7 @@
         <div class="gate-unlock-sub" id="gate-unlock-sub">前往全新領域！</div>
     </div>
 
-    <!-- 🌟 登入 / 註冊完整彈窗（已被完整保留） -->
+    <!-- 🌟 登入 / 註冊完整彈窗 -->
     <div class="custom-modal" id="login-modal">
         <div class="custom-modal-card">
             <div style="font-size: 2.2rem; color: var(--duo-blue); margin-bottom: 8px;"><i class="fa-solid fa-graduation-cap"></i></div>
@@ -1455,7 +1453,7 @@
         </div>
     </div>
 
-    <!-- 🌟 依關卡挑選單字卡彈窗 -->
+    <!-- 依關卡挑選單字卡彈窗 -->
     <div id="modal-select-flashcard-stage" class="custom-modal">
         <div class="custom-modal-card" style="padding: 22px 18px;">
             <div class="close-icon-circle" onclick="closeModal('modal-select-flashcard-stage')"><i class="fa-solid fa-xmark"></i></div>
@@ -1667,7 +1665,7 @@
         </div>
     </div>
 
-    <!-- 🌟 全螢幕獨立單字卡學習視圖（支援 3D 翻轉與左右手勢滑動） -->
+    <!-- 全螢幕獨立單字卡學習視圖 -->
     <div class="fullscreen-stage" id="stage-vocab-flashcard">
         <div class="stage-topbar">
             <button class="stage-return" onclick="closeFlashcardStage()"><i class="fa-solid fa-chevron-left"></i> 返回地圖</button>
@@ -1708,7 +1706,8 @@
             <button class="ctrl-btn" id="btn-flashcard-next" onclick="stepFlashcard(1)" aria-label="下一個"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
     </div>
-<!-- 主介面容器 -->
+
+    <!-- 主介面容器 -->
     <div class="shadowing-card">
         
         <!-- 上方狀態列 -->
@@ -1941,7 +1940,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 步驟 6-B：字塊重組畫面 -->
+            <!-- 步驟 6-B：字塊重組畫面（新增標題提示：請將聽到的字母音依序找出來） -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-blocks-mode-title">字塊重組</div>
@@ -1957,6 +1956,11 @@
                 <div class="timer-text-badge" id="lbl-timer-blocks">⏱ 05:00</div>
                 <div class="timer-progress-wrapper" id="bar-wrapper-blocks">
                     <div class="timer-progress-bar" id="bar-progress-blocks"></div>
+                </div>
+
+                <!-- 🌟 題目說明標題（入門與挑戰模式專屬） -->
+                <div id="lbl-blocks-instruction-title" class="instruction-badge-bar" style="display: none;">
+                    請將聽到的字母音依序找出來
                 </div>
 
                 <div style="margin: 12px 0;">
@@ -1982,8 +1986,7 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-
-            <!-- 步驟 6-D：通用單字跟讀畫面 -->
+<!-- 步驟 6-D：通用單字跟讀畫面 -->
             <div id="step-quiz-word-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-word-shadow-title">單字跟讀</div>
@@ -2330,7 +2333,8 @@
         let idleTimer = null;
         const IDLE_LIMIT_MS = 90 * 1000;
         let isIdlePaused = false;
-const GUIDE_DETAILS_MAP = {
+
+        const GUIDE_DETAILS_MAP = {
             'grammar': {
                 title: '📘 關卡任務玩法說明',
                 content: `
@@ -2557,8 +2561,7 @@ const GUIDE_DETAILS_MAP = {
             }
             return Array.from(candidates);
         }
-
-        /* ================= 🌟 母語與學習語言雙向動態互斥過濾 ================= */
+/* ================= 🌟 母語與學習語言雙向動態互斥過濾 ================= */
         const LANG_MUTUAL_MAP = {
             'zh': 'chinese',
             'en': 'english',
@@ -2580,7 +2583,6 @@ const GUIDE_DETAILS_MAP = {
             const selectedNative = nativeSelect.value;
             const conflictLearnCategory = LANG_MUTUAL_MAP[selectedNative] || '';
 
-            // 過濾學習語言選單
             Array.from(learnSelect.options).forEach(opt => {
                 if (opt.value === conflictLearnCategory) {
                     opt.disabled = true;
@@ -2591,13 +2593,11 @@ const GUIDE_DETAILS_MAP = {
                 }
             });
 
-            // 若當前所選學習語言被停用，自動切換至下一個可選項目
             if (learnSelect.value === conflictLearnCategory) {
                 const availableOpt = Array.from(learnSelect.options).find(o => !o.disabled);
                 if (availableOpt) learnSelect.value = availableOpt.value;
             }
 
-            // 反向過濾母語選項（避免用日文選日語）
             const selectedLearn = learnSelect.value;
             const conflictNativeLang = LEARN_TO_NATIVE_MAP[selectedLearn] || '';
 
@@ -2838,7 +2838,8 @@ const GUIDE_DETAILS_MAP = {
                 }
             }, { passive: true });
         })();
-function forceResetMicrophoneSession() {
+
+        function forceResetMicrophoneSession() {
             if (recognition) {
                 try {
                     recognition.onstart = null;
@@ -3265,7 +3266,9 @@ function forceResetMicrophoneSession() {
                 renderAllLessonsForLevel(currentConfig.level);
             }, 1900);
         }
-function renderCandyRoadmap(unitId, filteredByLevel, units) {
+
+        /* ================= 🌟 闖關大地圖渲染（聽打圖案換為小島嶼，並改置於「單字選擇」旁） ================= */
+        function renderCandyRoadmap(unitId, filteredByLevel, units) {
             const nodesContainer = document.getElementById('roadmap-nodes-list');
             const svgCanvas = document.getElementById('roadmap-svg-canvas');
             nodesContainer.innerHTML = "";
@@ -3315,7 +3318,7 @@ function renderCandyRoadmap(unitId, filteredByLevel, units) {
                 });
 
                 if (hasWord) {
-                    sideQuestMap[lesStr] = { unitId, lesson: lesStr, mode: 'word_type', title: `${lesStr} 單字聽打`, label: '⌨ 聽打支線' };
+                    sideQuestMap[lesStr] = { unitId, lesson: lesStr, mode: 'word_type', title: `${lesStr} 單字聽打`, label: '🏝 聽打島嶼' };
                 }
 
                 if (hasGrammar) {
@@ -3383,16 +3386,18 @@ function renderCandyRoadmap(unitId, filteredByLevel, units) {
                 });
                 let starIcons = bestStar > 0 ? '★'.repeat(bestStar) : '• • •';
 
-                const sideQuest = (task.mode === 'word_shadow' && sideQuestMap[task.lesson]) ? sideQuestMap[task.lesson] : null;
+                // 🌟 關鍵改動：將聽打挑戰改掛在「單字選擇」旁邊
+                const sideQuest = (task.mode === 'word_choice' && sideQuestMap[task.lesson]) ? sideQuestMap[task.lesson] : null;
                 let sideQuestHtml = '';
                 if (sideQuest) {
                     const isSideCompleted = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${sideQuest.lesson}_${sideQuest.mode}`);
+                    // 🌟 聽打圖示更換為小島嶼圖案
                     sideQuestHtml = `
                         <div class="side-quest-badge ${isSideCompleted ? 'completed' : ''}" 
                              onclick="promptSelectModeType('${sideQuest.unitId}', '${sideQuest.lesson}', '${sideQuest.mode}', '${sideQuest.title}')"
-                             title="支線任務：單字聽打">
-                            <i class="fa-solid fa-keyboard"></i>
-                            <span>聽打${isSideCompleted ? ' ✓' : ''}</span>
+                             title="支線任務：單字聽打島嶼">
+                            <i class="fa-solid fa-mountain-sun" style="color: #0284c7;"></i>
+                            <span>聽打島${isSideCompleted ? ' ✓' : ''}</span>
                         </div>
                     `;
                 }
@@ -3566,8 +3571,7 @@ function renderCandyRoadmap(unitId, filteredByLevel, units) {
         window.addEventListener('blur', () => {
             if (isRecording) stopSpeechRecognition();
         });
-
-        function promptSelectModeType(unitId, lesson, mode, label) {
+function promptSelectModeType(unitId, lesson, mode, label) {
             currentConfig.unit_id = String(unitId);
             if (mode === 'grammar') {
                 activeChallengeType = 'practice';
@@ -3970,7 +3974,8 @@ function renderCandyRoadmap(unitId, filteredByLevel, units) {
                 document.getElementById('lbl-xp').innerText = "0";
             }
         });
-document.getElementById('btn-save-initial-nickname').onclick = async () => {
+
+        document.getElementById('btn-save-initial-nickname').onclick = async () => {
             const nickname = document.getElementById('input-setup-nickname').value.trim();
             const learnCategory = document.getElementById('select-setup-learn-lang').value;
             const nativeLang = document.getElementById('select-native-language').value;
@@ -4341,8 +4346,7 @@ document.getElementById('btn-save-initial-nickname').onclick = async () => {
                 container.innerHTML = "<div style='text-align:color:#ef4444; padding:20px 0;'>載入失敗，請確認網路！</div>";
             }
         }
-
-        async function loadFriendsLeaderboardData() {
+async function loadFriendsLeaderboardData() {
             const container = document.getElementById('leaderboard-list-container');
             container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>載入好友排行中...</div>";
             if (!currentUser || !window.currentUserData) {
@@ -5193,7 +5197,8 @@ document.getElementById('btn-save-initial-nickname').onclick = async () => {
                 }
             }
         }
-function showGrammarQuizArea() {
+
+        function showGrammarQuizArea() {
             isGrammarQuizSubmitted = false;
 
             const areaDialog = document.getElementById('area-grammar-dialog');
@@ -5942,6 +5947,7 @@ function showGrammarQuizArea() {
             if (questions.length > 0) displayQuestion(); else alert("該關卡尚無練習題目！");
         }
 
+        /* ================= 🌟 題目呈現（在字塊重組入門與挑戰模式動態顯示題目標題） ================= */
         function displayQuestion() {
             stopSpeechRecognition();
             resetSpeechEvalButtons();
@@ -5996,6 +6002,16 @@ function showGrammarQuizArea() {
                 const playAudioBtn = document.getElementById('btn-play-block-audio');
                 const checkBlockBtn = document.getElementById('btn-check-block');
                 if (checkBlockBtn) checkBlockBtn.disabled = false;
+
+                // 🌟 動態顯示/隱藏題目標題：僅在入門 (entry) 與挑戰 (timed) 模式顯示
+                const blocksInstrTitle = document.getElementById('lbl-blocks-instruction-title');
+                if (blocksInstrTitle) {
+                    if (activeChallengeType === 'entry' || activeChallengeType === 'timed') {
+                        blocksInstrTitle.style.display = 'inline-block';
+                    } else {
+                        blocksInstrTitle.style.display = 'none';
+                    }
+                }
 
                 if (activeChallengeType === 'practice' || (is0ALevel && activeChallengeType === 'entry')) {
                     transElem.innerText = q.translation || "";
