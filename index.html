@@ -714,19 +714,21 @@
             letter-spacing: 0.3px;
         }
 
+        /* 🌟 聽打專屬：小島嶼按鈕外觀造型與浮動動畫 */
         .side-quest-badge {
             position: absolute;
-            right: -78px;
+            right: -88px;
             top: 50%;
             transform: translateY(-50%);
-            background: #ffffff;
-            border: 2px solid var(--duo-blue);
-            color: var(--duo-blue);
-            border-radius: 14px;
-            padding: 6px 10px;
-            font-size: 0.76rem;
+            background: linear-gradient(145deg, #e0f2fe, #bae6fd);
+            border: 2px solid #38bdf8;
+            border-bottom: 4px solid #0284c7;
+            color: #0369a1;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 0.78rem;
             font-weight: 900;
-            box-shadow: 0 4px 10px rgba(28, 176, 246, 0.2);
+            box-shadow: 0 6px 14px rgba(2, 132, 199, 0.25);
             display: inline-flex;
             align-items: center;
             gap: 5px;
@@ -734,14 +736,18 @@
             transition: all 0.15s ease;
             white-space: nowrap;
             z-index: 10;
+            animation: islandFloat 3s ease-in-out infinite;
         }
         .side-quest-badge:active {
-            transform: translateY(-46%) scale(0.95);
+            transform: translateY(-44%) scale(0.96);
+            border-bottom-width: 2px;
         }
         .side-quest-badge.completed {
-            border-color: #86efac;
-            background: #f0fdf4;
+            background: linear-gradient(145deg, #dcfce7, #bbf7d0);
+            border-color: #4ade80;
+            border-bottom-color: #16a34a;
             color: #15803d;
+            box-shadow: 0 6px 14px rgba(22, 163, 74, 0.25);
         }
 
         .node-avatar-badge {
@@ -831,7 +837,7 @@
         }
         .fullscreen-stage.active { display: flex; animation: modalPopIn .2s ease both; }
         .stage-topbar {
-            display: flex; align-items: center; justify-content: space-between;
+            display: flex align-items: center; justify-content: space-between;
             padding: 16px 18px 8px; flex-shrink: 0;
         }
         .stage-return {
@@ -1940,7 +1946,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 步驟 6-B：字塊重組畫面（新增標題提示：請將聽到的字母音依序找出來） -->
+            <!-- 步驟 6-B：字塊重組畫面（新增題目標題：請將聽到的字母音依序找出來） -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-blocks-mode-title">字塊重組</div>
@@ -2333,8 +2339,7 @@
         let idleTimer = null;
         const IDLE_LIMIT_MS = 90 * 1000;
         let isIdlePaused = false;
-
-        const GUIDE_DETAILS_MAP = {
+const GUIDE_DETAILS_MAP = {
             'grammar': {
                 title: '📘 關卡任務玩法說明',
                 content: `
@@ -2561,7 +2566,8 @@
             }
             return Array.from(candidates);
         }
-/* ================= 🌟 母語與學習語言雙向動態互斥過濾 ================= */
+
+        /* ================= 🌟 母語與學習語言雙向動態互斥過濾 ================= */
         const LANG_MUTUAL_MAP = {
             'zh': 'chinese',
             'en': 'english',
@@ -3123,8 +3129,7 @@
                 return null;
             }
         }
-
-        async function verifyAndSyncUser(user, isInteractive = false) {
+async function verifyAndSyncUser(user, isInteractive = false) {
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
                 if (!gasResult || gasResult.status !== "success") {
@@ -3267,7 +3272,7 @@
             }, 1900);
         }
 
-        /* ================= 🌟 闖關大地圖渲染（聽打圖案換為小島嶼，並改置於「單字選擇」旁） ================= */
+        /* ================= 🌟 闖關大地圖渲染（聽打維持名稱「單字聽打」，並改為小島嶼圖示掛在「單字選擇」旁） ================= */
         function renderCandyRoadmap(unitId, filteredByLevel, units) {
             const nodesContainer = document.getElementById('roadmap-nodes-list');
             const svgCanvas = document.getElementById('roadmap-svg-canvas');
@@ -3318,7 +3323,7 @@
                 });
 
                 if (hasWord) {
-                    sideQuestMap[lesStr] = { unitId, lesson: lesStr, mode: 'word_type', title: `${lesStr} 單字聽打`, label: '🏝 聽打島嶼' };
+                    sideQuestMap[lesStr] = { unitId, lesson: lesStr, mode: 'word_type', title: `${lesStr} 單字聽打`, label: '單字聽打' };
                 }
 
                 if (hasGrammar) {
@@ -3386,18 +3391,17 @@
                 });
                 let starIcons = bestStar > 0 ? '★'.repeat(bestStar) : '• • •';
 
-                // 🌟 關鍵改動：將聽打挑戰改掛在「單字選擇」旁邊
+                // 🌟 關鍵改動：名稱維持「單字聽打」，位置改掛在「單字選擇」旁邊，圖案更換為小島嶼
                 const sideQuest = (task.mode === 'word_choice' && sideQuestMap[task.lesson]) ? sideQuestMap[task.lesson] : null;
                 let sideQuestHtml = '';
                 if (sideQuest) {
                     const isSideCompleted = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${sideQuest.lesson}_${sideQuest.mode}`);
-                    // 🌟 聽打圖示更換為小島嶼圖案
                     sideQuestHtml = `
                         <div class="side-quest-badge ${isSideCompleted ? 'completed' : ''}" 
                              onclick="promptSelectModeType('${sideQuest.unitId}', '${sideQuest.lesson}', '${sideQuest.mode}', '${sideQuest.title}')"
-                             title="支線任務：單字聽打島嶼">
-                            <i class="fa-solid fa-mountain-sun" style="color: #0284c7;"></i>
-                            <span>聽打島${isSideCompleted ? ' ✓' : ''}</span>
+                             title="支線任務：單字聽打">
+                            <i class="fa-solid fa-mountain-sun"></i>
+                            <span>單字聽打${isSideCompleted ? ' ✓' : ''}</span>
                         </div>
                     `;
                 }
@@ -3571,7 +3575,8 @@
         window.addEventListener('blur', () => {
             if (isRecording) stopSpeechRecognition();
         });
-function promptSelectModeType(unitId, lesson, mode, label) {
+
+        function promptSelectModeType(unitId, lesson, mode, label) {
             currentConfig.unit_id = String(unitId);
             if (mode === 'grammar') {
                 activeChallengeType = 'practice';
