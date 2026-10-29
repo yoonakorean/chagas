@@ -837,7 +837,7 @@
         }
         .fullscreen-stage.active { display: flex; animation: modalPopIn .2s ease both; }
         .stage-topbar {
-            display: flex align-items: center; justify-content: space-between;
+            display: flex; align-items: center; justify-content: space-between;
             padding: 16px 18px 8px; flex-shrink: 0;
         }
         .stage-return {
@@ -953,7 +953,7 @@
             justify-content: center; gap: 10px; width: 100%; padding: 12px;
             font-size: 0.95rem; font-weight: bold; border-radius: 14px; cursor: pointer;
         }
-.calendar-header-ctrl {
+        .calendar-header-ctrl {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 10px; font-weight: bold; color: #374151; font-size: 0.9rem;
         }
@@ -1134,7 +1134,7 @@
         .nav-controls .btn-nav-next {
             position: absolute; right: 0; top: 50%; transform: translateY(-50%); background: var(--duo-blue); 
             color: white; border: none; border-bottom: 3.5px solid var(--duo-blue-shadow); padding: 8px 16px; border-radius: 12px; 
-            cursor: pointer; font-weight: 800; font-size: 0.92rem; display: none; animation: nextBtnPopIn 0.18s ease-out forwards;
+            cursor: font-weight: 800; font-size: 0.92rem; display: none; animation: nextBtnPopIn 0.18s ease-out forwards;
         }
         @keyframes nextBtnPopIn {
             from { transform: translateY(-50%) scale(0.88); opacity: 0; }
@@ -1712,8 +1712,7 @@
             <button class="ctrl-btn" id="btn-flashcard-next" onclick="stepFlashcard(1)" aria-label="下一個"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
     </div>
-
-    <!-- 主介面容器 -->
+<!-- 主介面容器 -->
     <div class="shadowing-card">
         
         <!-- 上方狀態列 -->
@@ -1992,7 +1991,8 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-<!-- 步驟 6-D：通用單字跟讀畫面 -->
+
+            <!-- 步驟 6-D：通用單字跟讀畫面 -->
             <div id="step-quiz-word-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-word-shadow-title">單字跟讀</div>
@@ -2339,7 +2339,8 @@
         let idleTimer = null;
         const IDLE_LIMIT_MS = 90 * 1000;
         let isIdlePaused = false;
-const GUIDE_DETAILS_MAP = {
+
+        const GUIDE_DETAILS_MAP = {
             'grammar': {
                 title: '📘 關卡任務玩法說明',
                 content: `
@@ -2566,8 +2567,7 @@ const GUIDE_DETAILS_MAP = {
             }
             return Array.from(candidates);
         }
-
-        /* ================= 🌟 母語與學習語言雙向動態互斥過濾 ================= */
+/* ================= 🌟 母語與學習語言雙向動態互斥過濾 ================= */
         const LANG_MUTUAL_MAP = {
             'zh': 'chinese',
             'en': 'english',
@@ -3129,7 +3129,8 @@ const GUIDE_DETAILS_MAP = {
                 return null;
             }
         }
-async function verifyAndSyncUser(user, isInteractive = false) {
+
+        async function verifyAndSyncUser(user, isInteractive = false) {
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
                 if (!gasResult || gasResult.status !== "success") {
@@ -3272,7 +3273,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             }, 1900);
         }
 
-        /* ================= 🌟 闖關大地圖渲染（聽打維持名稱「單字聽打」，並改為小島嶼圖示掛在「單字選擇」旁） ================= */
+        /* ================= 🌟 闖關大地圖渲染（0a 聽打改於字塊重組完成後出現；1a 維持單字選擇旁） ================= */
         function renderCandyRoadmap(unitId, filteredByLevel, units) {
             const nodesContainer = document.getElementById('roadmap-nodes-list');
             const svgCanvas = document.getElementById('roadmap-svg-canvas');
@@ -3290,6 +3291,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             }
 
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+            const is0ALevel = (targetLevelNormalized === '0A');
             const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
 
             let stageTasks = [];
@@ -3391,8 +3393,21 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 });
                 let starIcons = bestStar > 0 ? '★'.repeat(bestStar) : '• • •';
 
-                // 🌟 關鍵改動：名稱維持「單字聽打」，位置改掛在「單字選擇」旁邊，圖案更換為小島嶼
-                const sideQuest = (task.mode === 'word_choice' && sideQuestMap[task.lesson]) ? sideQuestMap[task.lesson] : null;
+                // 🌟 關鍵邏輯修改：
+                // 0a 程度：聽打島嶼改掛在「字塊重組 (blocks)」旁，且必須「字塊重組」已通關完成 (isCompleted) 才會出現！
+                // 1a 程度：聽打島嶼維持原樣，依然掛在「單字選擇 (word_choice)」旁。
+                let shouldShowSideQuest = false;
+                if (is0ALevel) {
+                    if (task.mode === 'blocks' && isCompleted && sideQuestMap[task.lesson]) {
+                        shouldShowSideQuest = true;
+                    }
+                } else {
+                    if (task.mode === 'word_choice' && sideQuestMap[task.lesson]) {
+                        shouldShowSideQuest = true;
+                    }
+                }
+
+                const sideQuest = shouldShowSideQuest ? sideQuestMap[task.lesson] : null;
                 let sideQuestHtml = '';
                 if (sideQuest) {
                     const isSideCompleted = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${sideQuest.lesson}_${sideQuest.mode}`);
@@ -3472,8 +3487,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 <path d="${pathD}" fill="none" stroke="#0284c7" stroke-width="8" stroke-linecap="round" stroke-dasharray="14 10" />
             `;
         }
-
-        function resetIdleTimer() {
+function resetIdleTimer() {
             if (isIdlePaused) return;
             if (idleTimer) clearTimeout(idleTimer);
             if (challengeSessionStartTime) {
@@ -5101,8 +5115,7 @@ async function loadFriendsLeaderboardData() {
                 boxExample.style.display = 'none';
             }
         }
-
-        function startTypewriter(text) {
+function startTypewriter(text) {
             if (typewriterTimer) clearInterval(typewriterTimer);
             const box = document.getElementById('lbl-grammar-dialog');
             const container = document.getElementById('box-grammar-dialog-main');
