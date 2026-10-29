@@ -15,9 +15,6 @@
     <!-- Firebase 設定檔 -->
     <script src="js/firebase-config.js"></script>
 
-    <!-- 🌟 字母臨摹靜態資料檔（加版本號防快取） -->
-    <script src="js/alphabet-trace-data.js?v=1.0.2"></script>
-
     <style>
         :root {
             --duo-green: #58cc02;
@@ -236,15 +233,6 @@
         .bottom-nav-item.flashcard-btn:active {
             transform: translateY(2px);
             background: #d1fae5;
-        }
-        .bottom-nav-item.trace-nav-btn {
-            background: #f0fdfa;
-            color: #0d9488;
-            border-color: #99f6e4;
-        }
-        .bottom-nav-item.trace-nav-btn:active {
-            transform: translateY(2px);
-            background: #ccfbf1;
         }
         .bottom-nav-item.grammar-btn {
             background: #eef2ff;
@@ -781,19 +769,6 @@
             50% { transform: translateY(-62%) scale(1.05); }
         }
 
-        /* 🌟 臨摹挑戰手寫板樣式 */
-        .trace-box-wrapper {
-            position: relative;
-            display: inline-block;
-            border: 3px solid #bae6fd;
-            border-radius: 20px;
-            background: #ffffff;
-            box-shadow: 0 6px 16px rgba(28, 176, 246, 0.15);
-            margin: 10px auto;
-            touch-action: none;
-            overflow: hidden;
-        }
-
         .gate-portal-container {
             width: 100%;
             display: flex;
@@ -862,7 +837,7 @@
         }
         .fullscreen-stage.active { display: flex; animation: modalPopIn .2s ease both; }
         .stage-topbar {
-            display: flex; align-items: center; justify-content: space-between;
+            display: flex align-items: center; justify-content: space-between;
             padding: 16px 18px 8px; flex-shrink: 0;
         }
         .stage-return {
@@ -978,7 +953,7 @@
             justify-content: center; gap: 10px; width: 100%; padding: 12px;
             font-size: 0.95rem; font-weight: bold; border-radius: 14px; cursor: pointer;
         }
-        .calendar-header-ctrl {
+.calendar-header-ctrl {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 10px; font-weight: bold; color: #374151; font-size: 0.9rem;
         }
@@ -1343,8 +1318,7 @@
             <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 10px;" class="hidden"></div>
         </div>
     </div>
-
-    <!-- 忘記密碼 Modal -->
+<!-- 忘記密碼 Modal -->
     <div id="modal-forgot-password" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
@@ -1598,10 +1572,6 @@
             <div style="display: flex; flex-direction: column; gap: 8px; max-height: 52vh; overflow-y: auto; padding-right: 2px;">
                 <button class="guide-mode-item-btn" onclick="openGuideDetail('grammar', '關卡任務 (語法介紹)')">
                     <span><i class="fa-solid fa-book-open-reader" style="color:#6366f1; width:22px;"></i> 關卡任務</span>
-                    <i class="fa-solid fa-chevron-right" style="color:#94a3b8; font-size:0.85rem;"></i>
-                </button>
-                <button class="guide-mode-item-btn" onclick="openGuideDetail('trace', '字母臨摹')">
-                    <span><i class="fa-solid fa-pen-nib" style="color:#0d9488; width:22px;"></i> 字母臨摹</span>
                     <i class="fa-solid fa-chevron-right" style="color:#94a3b8; font-size:0.85rem;"></i>
                 </button>
                 <button class="guide-mode-item-btn" onclick="openGuideDetail('word_shadow', '單字跟讀')">
@@ -2021,49 +1991,6 @@
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 🌟 步驟 6-H：字母臨摹畫面（全螢幕練習板） -->
-            <div id="step-quiz-trace" class="step-page">
-                <div class="challenge-top-bar">
-                    <div class="lbl-quiz-info" id="lbl-trace-title">字母臨摹</div>
-                    <div class="gear-menu-container">
-                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-trace')"><i class="fa-solid fa-gear"></i></button>
-                        <div class="gear-dropdown" id="gear-dropdown-trace">
-                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-trace')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
-                            <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="instruction-badge-bar">請依底字筆順臨摹書寫字母：</div>
-
-                <!-- 字母提示與發音 -->
-                <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin: 8px 0;">
-                    <span id="lbl-trace-char-title" style="font-size:2.2rem; font-weight:900; color:#1e293b;">あ</span>
-                    <button class="btn-circle btn-listen" onclick="playTraceAudio()"><i class="fa-solid fa-volume-high"></i></button>
-                </div>
-
-                <!-- 畫布區塊 -->
-                <div style="display:flex; justify-content:center; margin: 8px 0;">
-                    <div id="trace-canvas-container" class="trace-box-wrapper"></div>
-                </div>
-
-                <!-- 操作按鈕 -->
-                <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
-                    <button class="btn-3d btn-3d-secondary" onclick="traceUndo()" style="padding:7px 16px; font-size:0.88rem;"><i class="fa-solid fa-rotate-left"></i> 上一筆</button>
-                    <button class="btn-3d btn-3d-secondary" onclick="traceReset()" style="padding:7px 16px; font-size:0.88rem;"><i class="fa-solid fa-trash-can"></i> 重寫</button>
-                </div>
-
-                <button class="btn-confirm" id="btn-submit-trace" onclick="submitTraceAnswer()">
-                    <i class="fa-solid fa-check"></i> 完成臨摹
-                </button>
-
-                <div class="nav-controls">
-                    <span class="lbl-progress" id="lbl-trace-progress">0 / 0</span>
-                    <button class="btn-nav-next" id="btn-trace-next" onclick="nextTraceQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
-                </div>
-                <button class="btn-finish-challenge" id="btn-finish-trace" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
-            </div>
-
             <!-- 步驟 6-D：通用單字跟讀畫面 -->
             <div id="step-quiz-word-shadow" class="step-page">
                 <div class="challenge-top-bar">
@@ -2300,16 +2227,12 @@
             </div>
         </div>
 
-        <!-- 🌟 下方固定區塊（新增字母臨摹按鈕，預設隱藏，僅 0A 程度顯示） -->
+        <!-- 下方固定區塊 -->
         <div class="bottom-fixed-bar-wrapper" id="app-bottom-bar" style="display: none;">
             <div class="bottom-fixed-bar">
                 <div class="bottom-nav-item flashcard-btn" onclick="openFlashcardStagePicker()">
                     <i class="fa-solid fa-clone"></i>
                     <span>單字卡</span>
-                </div>
-                <div class="bottom-nav-item trace-nav-btn" id="btn-bottom-trace" onclick="triggerBottomTraceAction()" style="display: none;">
-                    <i class="fa-solid fa-pen-nib"></i>
-                    <span>字母臨摹</span>
                 </div>
                 <div class="bottom-nav-item grammar-btn" id="btn-bottom-grammar" onclick="triggerBottomGrammarAction()">
                     <i class="fa-solid fa-book-open-reader"></i>
@@ -2387,14 +2310,6 @@
         let wordIndex = 0;
         let currentWordPronMode = 'kr_pron';
 
-        // 🌟 字母臨摹專屬變數
-        let traceQuestions = [];
-        let traceIndex = 0;
-        let currentTraceCanvas = null;
-        let currentTraceCtx = null;
-        let traceStrokes = [];
-        let isDrawingTrace = false;
-
         let isCurrentQuestionAnswered = false;
         let currentChallengeScore = 0;
         let pointsPerQuestion = 10;
@@ -2433,16 +2348,6 @@ const GUIDE_DETAILS_MAP = {
                     <strong>4. 填入答案：</strong> 系統會將當前正在作答的題目加上亮藍色外框，點擊下方字塊即可填入空格。<br>
                     <strong>5. 檢查訂正：</strong> 送出答案後，若答錯會在填空右側單行提示正確答案，並可隨時點擊「再來一次」。<br>
                     <strong>6. 自由重練：</strong> 點擊再來一次可自由選擇「在挑戰一次」重新做題，或「在學習一次」從頭複習觀念！
-                `
-            },
-            'trace': {
-                title: '✍️ 字母臨摹玩法說明',
-                content: `
-                    <strong>1. 觀察字母：</strong> 畫面中會呈現標準虛線米字格與半透明示範字母底字。<br>
-                    <strong>2. 聆聽發音：</strong> 點擊喇叭按鈕可重複聆聽字母的標準發音。<br>
-                    <strong>3. 手寫臨摹：</strong> 直接用手指或觸控筆依筆順在格子內進行臨摹書寫。<br>
-                    <strong>4. 筆畫修改：</strong> 寫錯時可點選「上一筆」復原，或點「重寫」清空畫布重新練習。<br>
-                    <strong>5. 完成檢查：</strong> 書寫完畢後點擊「完成臨摹」，系統將確認筆畫並推進下一題！
                 `
             },
             'word_shadow': {
@@ -2594,7 +2499,7 @@ const GUIDE_DETAILS_MAP = {
             'くち': ['口'], 'さかな': ['魚'], 'した': ['下', '舌'], 'じかん': ['時間'], 'しろ': ['白'],
             'しろい': ['白い'], 'せんせい': ['先生'], 'そら': ['空'], 'たべる': ['食べる'], 'ちいさい': ['小さい'],
             'て': ['手'], 'ともだち': ['友達'], 'なまえ': ['名前'], 'にほん': ['日本'], 'にほんじん': ['日本人'],
-            'ねこ': ['猫'], 'のむ': ['飲む'], 'はな': ['花', '鼻'], 'は那す': ['話す'], 'ひと': ['人'],
+            'ねこ': ['猫'], 'のむ': ['飲む'], 'はな': ['花', '鼻'], 'はなす': ['話す'], 'ひと': ['人'],
             'ほん': ['本'], 'みず': ['水'], 'みみ': ['耳'], 'みる': ['見る', '觀る', '観る'], 'め': ['目'],
             'やま': ['山'], 'よむ': ['読む'], 'わたし': ['私'], 'ぼく': ['僕']
         };
@@ -3223,8 +3128,7 @@ const GUIDE_DETAILS_MAP = {
                 return null;
             }
         }
-
-        async function verifyAndSyncUser(user, isInteractive = false) {
+async function verifyAndSyncUser(user, isInteractive = false) {
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
                 if (!gasResult || gasResult.status !== "success") {
@@ -3367,7 +3271,7 @@ const GUIDE_DETAILS_MAP = {
             }, 1900);
         }
 
-        /* ================= 🌟 闖關大地圖渲染（0A 聽打改掛在「字塊重組」旁，1A 聽打維持在「單字選擇」旁） ================= */
+        /* ================= 🌟 闖關大地圖渲染（0A 級別聽打掛在「字塊重組」旁，1A 級別維持掛在「單字選擇」旁） ================= */
         function renderCandyRoadmap(unitId, filteredByLevel, units) {
             const nodesContainer = document.getElementById('roadmap-nodes-list');
             const svgCanvas = document.getElementById('roadmap-svg-canvas');
@@ -3487,7 +3391,7 @@ const GUIDE_DETAILS_MAP = {
                 });
                 let starIcons = bestStar > 0 ? '★'.repeat(bestStar) : '• • •';
 
-                // 🌟 0A 掛在 blocks (字塊重組) 旁；1A 維持掛在 word_choice (單字選擇) 旁
+                // 🌟 關鍵邏輯：0A 級別掛在 blocks (字塊重組) 旁邊；1A 等其他級別維持掛在 word_choice (單字選擇) 旁邊
                 const targetSideQuestMode = is0ALevel ? 'blocks' : 'word_choice';
                 const sideQuest = (task.mode === targetSideQuestMode && sideQuestMap[task.lesson]) ? sideQuestMap[task.lesson] : null;
                 let sideQuestHtml = '';
@@ -3674,7 +3578,7 @@ function drawRoadmapSvgPath() {
 
         function promptSelectModeType(unitId, lesson, mode, label) {
             currentConfig.unit_id = String(unitId);
-            if (mode === 'grammar' || mode === 'trace') {
+            if (mode === 'grammar') {
                 activeChallengeType = 'practice';
                 selectLessonAndMode(lesson, mode);
                 return;
@@ -3989,31 +3893,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                 startGrammarChallenge(matchGrammar);
             } else {
                 alert(`Level ${currentConfig.level} 尚未設定語法說明喔！`);
-            }
-        }
-
-        /* 🌟 點擊下方固定列「字母臨摹」觸發函式 */
-        function triggerBottomTraceAction() {
-            const alphabetList = (window.ALPHABET_TRACE_DATA && ALPHABET_TRACE_DATA[currentConfig.category]) || [];
-            let matchTrace = alphabetList.filter(item => 
-                String(item.unit_id) === String(currentConfig.unit_id) &&
-                String(item.lesson) === String(currentConfig.lesson)
-            );
-
-            if (!matchTrace.length) {
-                matchTrace = alphabetList.filter(item => String(item.unit_id) === String(currentConfig.unit_id));
-            }
-            if (!matchTrace.length) {
-                matchTrace = alphabetList;
-            }
-
-            if (matchTrace.length > 0) {
-                currentConfig.mode = 'trace';
-                currentConfig.unit_id = matchTrace[0].unit_id || currentConfig.unit_id;
-                currentConfig.lesson = matchTrace[0].lesson || currentConfig.lesson;
-                startTraceChallenge();
-            } else {
-                alert("目前此語言尚未設定字母臨摹資料！");
             }
         }
 
@@ -4776,19 +4655,9 @@ async function loadFriendsLeaderboardData() {
                 updateUserFlagIcon();
             }
 
-            // 🌟 進入地圖時，根據當前是否為 0A 動態顯示或隱藏下方「字母臨摹」按鈕
             const bottomBar = document.getElementById('app-bottom-bar');
             if (bottomBar) {
-                const isLessonStep = (stepId === 'step-lesson');
-                bottomBar.style.display = isLessonStep ? 'flex' : 'none';
-                
-                if (isLessonStep) {
-                    const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
-                    const btnTrace = document.getElementById('btn-bottom-trace');
-                    if (btnTrace) {
-                        btnTrace.style.display = is0ALevel ? 'inline-flex' : 'none';
-                    }
-                }
+                bottomBar.style.display = (stepId === 'step-lesson') ? 'flex' : 'none';
             }
 
             if (stepId === 'step-level') renderLevelMenu();
@@ -5005,7 +4874,6 @@ async function loadFriendsLeaderboardData() {
                 const nextBtnId = (currentConfig.mode === 'shadow') ? 'btn-next' :
                                   (currentConfig.mode === 'blocks') ? 'btn-block-next' :
                                   (currentConfig.mode === 'sentence_chat') ? 'btn-chat-next' :
-                                  (currentConfig.mode === 'trace') ? 'btn-trace-next' :
                                   (currentConfig.mode === 'word_shadow') ? 'btn-word-shadow-next' :
                                   (currentConfig.mode === 'word_type') ? 'btn-word-type-next' : 'btn-word-choice-next';
                 const nextBtn = document.getElementById(nextBtnId);
@@ -5107,8 +4975,6 @@ async function loadFriendsLeaderboardData() {
                 } else {
                     alert("此關卡目前沒有設定獨立語法觀念喔！");
                 }
-            } else if (mode === 'trace') {
-                startTraceChallenge();
             } else if (mode === 'sentence_chat') {
                 startSentenceChatChallenge();
             } else if (mode.startsWith('word_')) {
@@ -5558,190 +5424,7 @@ async function loadFriendsLeaderboardData() {
                 showGrammarQuizArea();
             }
         }
-/* ================= 🌟 字母臨摹 Canvas 控制核心 ================= */
-        function initTraceCanvas(char) {
-            const container = document.getElementById('trace-canvas-container');
-            const size = Math.min(270, window.innerWidth - 70);
-            container.innerHTML = `
-                <canvas id="trace-bg-canvas" width="${size}" height="${size}" style="position:absolute; top:0; left:0; pointer-events:none;"></canvas>
-                <canvas id="trace-draw-canvas" width="${size}" height="${size}" style="position:relative; touch-action:none; display:block;"></canvas>
-            `;
-
-            const bgCanvas = document.getElementById('trace-bg-canvas');
-            const bgCtx = bgCanvas.getContext('2d');
-            
-            // 繪製米字格虛線輔助線
-            bgCtx.strokeStyle = '#e2e8f0';
-            bgCtx.lineWidth = 1.5;
-            bgCtx.setLineDash([5, 5]);
-            bgCtx.beginPath();
-            bgCtx.moveTo(size / 2, 0); bgCtx.lineTo(size / 2, size);
-            bgCtx.moveTo(0, size / 2); bgCtx.lineTo(size, size / 2);
-            bgCtx.moveTo(0, 0); bgCtx.lineTo(size, size);
-            bgCtx.moveTo(size, 0); bgCtx.lineTo(0, size);
-            bgCtx.stroke();
-
-            // 繪製半透明示範字母底字
-            bgCtx.setLineDash([]);
-            bgCtx.font = `bold ${size * 0.62}px "Noto Sans KR", "Noto Sans JP", sans-serif`;
-            bgCtx.fillStyle = '#cbd5e1';
-            bgCtx.textAlign = 'center';
-            bgCtx.textBaseline = 'middle';
-            bgCtx.fillText(char, size / 2, size / 2 + size * 0.04);
-
-            currentTraceCanvas = document.getElementById('trace-draw-canvas');
-            currentTraceCtx = currentTraceCanvas.getContext('2d');
-            traceStrokes = [];
-
-            const getPos = (e) => {
-                const rect = currentTraceCanvas.getBoundingClientRect();
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                return { x: clientX - rect.left, y: clientY - rect.top };
-            };
-
-            const startDraw = (e) => {
-                if (isCurrentQuestionAnswered) return;
-                e.preventDefault();
-                isDrawingTrace = true;
-                const pos = getPos(e);
-                traceStrokes.push([pos]);
-                redrawTrace();
-            };
-
-            const drawMove = (e) => {
-                if (!isDrawingTrace || isCurrentQuestionAnswered) return;
-                e.preventDefault();
-                const pos = getPos(e);
-                traceStrokes[traceStrokes.length - 1].push(pos);
-                redrawTrace();
-            };
-
-            const endDraw = () => { isDrawingTrace = false; };
-
-            currentTraceCanvas.onmousedown = startDraw;
-            currentTraceCanvas.onmousemove = drawMove;
-            window.onmouseup = endDraw;
-
-            currentTraceCanvas.ontouchstart = startDraw;
-            currentTraceCanvas.ontouchmove = drawMove;
-            currentTraceCanvas.ontouchend = endDraw;
-        }
-
-        function redrawTrace() {
-            if (!currentTraceCtx || !currentTraceCanvas) return;
-            currentTraceCtx.clearRect(0, 0, currentTraceCanvas.width, currentTraceCanvas.height);
-            currentTraceCtx.lineWidth = 14;
-            currentTraceCtx.lineCap = 'round';
-            currentTraceCtx.lineJoin = 'round';
-            currentTraceCtx.strokeStyle = '#0284c7';
-
-            traceStrokes.forEach(stroke => {
-                if (stroke.length < 2) return;
-                currentTraceCtx.beginPath();
-                currentTraceCtx.moveTo(stroke[0].x, stroke[0].y);
-                for (let i = 1; i < stroke.length; i++) {
-                    currentTraceCtx.lineTo(stroke[i].x, stroke[i].y);
-                }
-                currentTraceCtx.stroke();
-            });
-        }
-
-        function traceUndo() {
-            if (isCurrentQuestionAnswered) return;
-            traceStrokes.pop();
-            redrawTrace();
-        }
-
-        function traceReset() {
-            if (isCurrentQuestionAnswered) return;
-            traceStrokes = [];
-            redrawTrace();
-        }
-
-        function startTraceChallenge() {
-            stopSpeechRecognition();
-            stopChallengeTimer();
-            revokeUserAudioUrl();
-
-            const alphabetList = (window.ALPHABET_TRACE_DATA && ALPHABET_TRACE_DATA[currentConfig.category]) || [];
-            traceQuestions = alphabetList.filter(item => 
-                String(item.unit_id) === String(currentConfig.unit_id) && 
-                String(item.lesson) === String(currentConfig.lesson)
-            );
-
-            if (traceQuestions.length === 0) {
-                // 若當前關卡無專屬資料，預設載入該階段或全部字母
-                traceQuestions = alphabetList.filter(item => String(item.unit_id) === String(currentConfig.unit_id));
-            }
-            if (traceQuestions.length === 0) {
-                traceQuestions = alphabetList;
-            }
-
-            if (traceQuestions.length === 0) {
-                alert("此關卡暫無字母臨摹資料！");
-                goToStep('step-lesson');
-                return;
-            }
-
-            traceIndex = 0;
-            totalChallengeQuestions = traceQuestions.length;
-            pointsPerQuestion = 100 / totalChallengeQuestions;
-
-            goToStep('step-quiz-trace');
-            displayTraceQuestion();
-        }
-
-        function displayTraceQuestion() {
-            isCurrentQuestionAnswered = false;
-            const cur = traceQuestions[traceIndex];
-            
-            document.getElementById('lbl-trace-progress').innerText = `${traceIndex + 1} / ${traceQuestions.length}`;
-            document.getElementById('lbl-trace-char-title').innerText = cur.name || cur.char;
-            document.getElementById('btn-trace-next').style.display = 'none';
-
-            const submitBtn = document.getElementById('btn-submit-trace');
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-            }
-
-            initTraceCanvas(cur.char);
-            playTraceAudio();
-        }
-
-        function playTraceAudio() {
-            const cur = traceQuestions[traceIndex];
-            if (cur) {
-                speakTTS(cur.audio_text || cur.char, 0.85);
-            }
-        }
-
-        function submitTraceAnswer() {
-            if (isCurrentQuestionAnswered) return;
-            if (traceStrokes.length === 0) {
-                alert("請先在格子內臨摹寫寫看喔！");
-                return;
-            }
-
-            const submitBtn = document.getElementById('btn-submit-trace');
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.style.opacity = '0.6';
-            }
-
-            playTraceAudio();
-            markQuestionAnswered(traceIndex);
-        }
-
-        function nextTraceQuestion() {
-            if (traceIndex < traceQuestions.length - 1) {
-                traceIndex++;
-                displayTraceQuestion();
-            }
-        }
-
-        function getWordTranslation(item) {
+function getWordTranslation(item) {
             if (!item) return "";
             return (currentConfig.lang === 'en') ? (item.en || item.zh_tw || "") :
                    (currentConfig.lang === 'ja') ? (item.ja || item.zh_tw || "") : (item.zh_tw || "");
