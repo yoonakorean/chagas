@@ -237,6 +237,15 @@
             transform: translateY(2px);
             background: #d1fae5;
         }
+        .bottom-nav-item.trace-nav-btn {
+            background: #f0fdfa;
+            color: #0d9488;
+            border-color: #99f6e4;
+        }
+        .bottom-nav-item.trace-nav-btn:active {
+            transform: translateY(2px);
+            background: #ccfbf1;
+        }
         .bottom-nav-item.grammar-btn {
             background: #eef2ff;
             color: #4338ca;
@@ -819,7 +828,7 @@
         }
         #gate-unlock-modal.show { display: flex !important; }
         .gate-doors-wrapper {
-            position: relative width: 260px; height: 320px; perspective: 1000px;
+            position: relative; width: 260px; height: 320px; perspective: 1000px;
             display: flex; justify-content: center; align-items: center; margin-bottom: 24px;
         }
         .gate-door {
@@ -1592,7 +1601,7 @@
                     <i class="fa-solid fa-chevron-right" style="color:#94a3b8; font-size:0.85rem;"></i>
                 </button>
                 <button class="guide-mode-item-btn" onclick="openGuideDetail('trace', '字母臨摹')">
-                    <span><i class="fa-solid fa-pen-nib" style="color:#0284c7; width:22px;"></i> 字母臨摹</span>
+                    <span><i class="fa-solid fa-pen-nib" style="color:#0d9488; width:22px;"></i> 字母臨摹</span>
                     <i class="fa-solid fa-chevron-right" style="color:#94a3b8; font-size:0.85rem;"></i>
                 </button>
                 <button class="guide-mode-item-btn" onclick="openGuideDetail('word_shadow', '單字跟讀')">
@@ -2012,7 +2021,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 🌟 步驟 6-H：0A 字母臨摹畫面 -->
+            <!-- 🌟 步驟 6-H：字母臨摹畫面（全螢幕練習板） -->
             <div id="step-quiz-trace" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-trace-title">字母臨摹</div>
@@ -2291,12 +2300,16 @@
             </div>
         </div>
 
-        <!-- 下方固定區塊 -->
+        <!-- 🌟 下方固定區塊（新增字母臨摹按鈕，預設隱藏，僅 0A 程度顯示） -->
         <div class="bottom-fixed-bar-wrapper" id="app-bottom-bar" style="display: none;">
             <div class="bottom-fixed-bar">
                 <div class="bottom-nav-item flashcard-btn" onclick="openFlashcardStagePicker()">
                     <i class="fa-solid fa-clone"></i>
                     <span>單字卡</span>
+                </div>
+                <div class="bottom-nav-item trace-nav-btn" id="btn-bottom-trace" onclick="triggerBottomTraceAction()" style="display: none;">
+                    <i class="fa-solid fa-pen-nib"></i>
+                    <span>字母臨摹</span>
                 </div>
                 <div class="bottom-nav-item grammar-btn" id="btn-bottom-grammar" onclick="triggerBottomGrammarAction()">
                     <i class="fa-solid fa-book-open-reader"></i>
@@ -3299,16 +3312,6 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 .filter(Boolean)
                 .sort((a, b) => Number(a) - Number(b));
 
-            // 🌟 0A 額外比對靜態臨摹資料庫
-            const is0ALevel = (targetLevelNormalized === '0A');
-            if (is0ALevel && window.ALPHABET_TRACE_DATA && ALPHABET_TRACE_DATA[currentConfig.category]) {
-                ALPHABET_TRACE_DATA[currentConfig.category].forEach(item => {
-                    const u = String(item.unit_id);
-                    if (u && !units.includes(u)) units.push(u);
-                });
-                units.sort((a, b) => Number(a) - Number(b));
-            }
-
             if (units.length === 0) {
                 document.getElementById('roadmap-nodes-list').innerHTML = `<div style="color: #6b7280; padding: 40px 0;">目前 ${level} 尚未設定課程內容。</div>`;
                 return;
@@ -3363,7 +3366,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             }, 1900);
         }
 
-        /* ================= 🌟 闖關大地圖渲染（0A 字母臨摹、0A 聽打改至字塊重組旁、1A 聽打維持在單字選擇旁） ================= */
+        /* ================= 🌟 闖關大地圖渲染（0A 聽打改掛在「字塊重組」旁，1A 聽打維持在「單字選擇」旁） ================= */
         function renderCandyRoadmap(unitId, filteredByLevel, units) {
             const nodesContainer = document.getElementById('roadmap-nodes-list');
             const svgCanvas = document.getElementById('roadmap-svg-canvas');
@@ -3371,30 +3374,18 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             svgCanvas.innerHTML = "";
 
             const itemsInUnit = filteredByLevel.filter(i => String(getItemField(i, 'unit_id')) === String(unitId));
-            let lessons = [...new Set(itemsInUnit.map(i => getItemField(i, 'lesson')))]
+            const lessons = [...new Set(itemsInUnit.map(i => getItemField(i, 'lesson')))]
                 .filter(Boolean)
                 .sort((a, b) => Number(a) - Number(b));
-
-            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-            const is0ALevel = (targetLevelNormalized === '0A');
-            const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
-
-            // 🌟 0A 讀取靜態臨摹資料庫補充關卡 Lesson
-            const alphabetList = (window.ALPHABET_TRACE_DATA && ALPHABET_TRACE_DATA[currentConfig.category]) || [];
-            if (is0ALevel) {
-                alphabetList.forEach(item => {
-                    if (String(item.unit_id) === String(unitId)) {
-                        const l = String(item.lesson);
-                        if (!lessons.includes(l)) lessons.push(l);
-                    }
-                });
-                lessons.sort((a, b) => Number(a) - Number(b));
-            }
 
             if (lessons.length === 0) {
                 nodesContainer.innerHTML = `<div style="color: #6b7280; padding: 40px 0;">此階段暫無關卡</div>`;
                 return;
             }
+
+            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+            const is0ALevel = (targetLevelNormalized === '0A');
+            const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
 
             let stageTasks = [];
             let sideQuestMap = {};
@@ -3426,11 +3417,6 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                     return lMatch && uMatch && sMatch && ((d.a1 && d.a1.trim()) || (d.b1 && d.b1.trim()));
                 });
 
-                // 🌟 檢查本關是否有臨摹字母資料
-                const hasTrace = is0ALevel && alphabetList.some(item => 
-                    String(item.unit_id) === String(unitId) && String(item.lesson) === lesStr
-                );
-
                 if (hasWord) {
                     sideQuestMap[lesStr] = { unitId, lesson: lesStr, mode: 'word_type', title: `${lesStr} 單字聽打`, label: '單字聽打' };
                 }
@@ -3438,12 +3424,6 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 if (hasGrammar) {
                     stageTasks.push({ unitId, lesson: lesStr, mode: 'grammar', title: `${lesStr} 關卡任務`, label: '關卡任務' });
                 }
-
-                // 🌟 0A 優先加入「字母臨摹」任務
-                if (hasTrace) {
-                    stageTasks.push({ unitId, lesson: lesStr, mode: 'trace', title: `${lesStr} 字母臨摹`, label: '字母臨摹' });
-                }
-
                 if (hasWord) {
                     stageTasks.push({ unitId, lesson: lesStr, mode: 'word_shadow', title: `${lesStr} 單字跟讀`, label: '單字跟讀' });
                     stageTasks.push({ unitId, lesson: lesStr, mode: 'word_choice', title: `${lesStr} 單字選擇`, label: '單字選擇' });
@@ -3506,7 +3486,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 });
                 let starIcons = bestStar > 0 ? '★'.repeat(bestStar) : '• • •';
 
-                // 🌟 關鍵邏輯：0A 級別掛在 blocks (字塊重組) 旁邊；1A 等其他級別維持掛在 word_choice (單字選擇) 旁邊
+                // 🌟 0A 掛在 blocks (字塊重組) 旁；1A 維持掛在 word_choice (單字選擇) 旁
                 const targetSideQuestMode = is0ALevel ? 'blocks' : 'word_choice';
                 const sideQuest = (task.mode === targetSideQuestMode && sideQuestMap[task.lesson]) ? sideQuestMap[task.lesson] : null;
                 let sideQuestHtml = '';
@@ -4008,6 +3988,31 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                 startGrammarChallenge(matchGrammar);
             } else {
                 alert(`Level ${currentConfig.level} 尚未設定語法說明喔！`);
+            }
+        }
+
+        /* 🌟 點擊下方固定列「字母臨摹」觸發函式 */
+        function triggerBottomTraceAction() {
+            const alphabetList = (window.ALPHABET_TRACE_DATA && ALPHABET_TRACE_DATA[currentConfig.category]) || [];
+            let matchTrace = alphabetList.filter(item => 
+                String(item.unit_id) === String(currentConfig.unit_id) &&
+                String(item.lesson) === String(currentConfig.lesson)
+            );
+
+            if (!matchTrace.length) {
+                matchTrace = alphabetList.filter(item => String(item.unit_id) === String(currentConfig.unit_id));
+            }
+            if (!matchTrace.length) {
+                matchTrace = alphabetList;
+            }
+
+            if (matchTrace.length > 0) {
+                currentConfig.mode = 'trace';
+                currentConfig.unit_id = matchTrace[0].unit_id || currentConfig.unit_id;
+                currentConfig.lesson = matchTrace[0].lesson || currentConfig.lesson;
+                startTraceChallenge();
+            } else {
+                alert("目前此語言尚未設定字母臨摹資料！");
             }
         }
 
@@ -4770,9 +4775,19 @@ async function loadFriendsLeaderboardData() {
                 updateUserFlagIcon();
             }
 
+            // 🌟 進入地圖時，根據當前是否為 0A 動態顯示或隱藏下方「字母臨摹」按鈕
             const bottomBar = document.getElementById('app-bottom-bar');
             if (bottomBar) {
-                bottomBar.style.display = (stepId === 'step-lesson') ? 'flex' : 'none';
+                const isLessonStep = (stepId === 'step-lesson');
+                bottomBar.style.display = isLessonStep ? 'flex' : 'none';
+                
+                if (isLessonStep) {
+                    const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
+                    const btnTrace = document.getElementById('btn-bottom-trace');
+                    if (btnTrace) {
+                        btnTrace.style.display = is0ALevel ? 'inline-flex' : 'none';
+                    }
+                }
             }
 
             if (stepId === 'step-level') renderLevelMenu();
@@ -5653,6 +5668,14 @@ async function loadFriendsLeaderboardData() {
                 String(item.unit_id) === String(currentConfig.unit_id) && 
                 String(item.lesson) === String(currentConfig.lesson)
             );
+
+            if (traceQuestions.length === 0) {
+                // 若當前關卡無專屬資料，預設載入該階段或全部字母
+                traceQuestions = alphabetList.filter(item => String(item.unit_id) === String(currentConfig.unit_id));
+            }
+            if (traceQuestions.length === 0) {
+                traceQuestions = alphabetList;
+            }
 
             if (traceQuestions.length === 0) {
                 alert("此關卡暫無字母臨摹資料！");
