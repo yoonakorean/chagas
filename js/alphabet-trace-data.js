@@ -1,6 +1,6 @@
 // js/alphabet-trace-data.js
 
-const ALPHABET_TRACE_DATA = {
+window.ALPHABET_TRACE_DATA = {
     // ----------------- 🇰🇷 韓文字母 (0A) -----------------
     korean: [
         // 第 1 階段：基本母音
