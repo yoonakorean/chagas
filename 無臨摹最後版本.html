@@ -1413,8 +1413,7 @@
             </div>
         </div>
     </div>
-
-    <!-- 選擇課程程度 Modal -->
+<!-- 選擇課程程度 Modal -->
     <div id="modal-select-initial-level" class="custom-modal">
         <div class="custom-modal-card">
             <div class="close-icon-circle" id="btn-close-level-modal" onclick="closeModal('modal-select-initial-level')"><i class="fa-solid fa-xmark"></i></div>
@@ -1837,8 +1836,7 @@
                     </div>
                 </div>
             </div>
-
-            <!-- 步驟 6-A：Sentence 句子跟讀畫面 -->
+<!-- 步驟 6-A：Sentence 句子跟讀畫面 -->
             <div id="step-quiz-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-shadow-mode-title">句子跟讀</div>
@@ -1946,7 +1944,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 步驟 6-B：字塊重組畫面（新增題目標題：請將聽到的字母音依序找出來） -->
+            <!-- 步驟 6-B：字塊重組畫面 -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-blocks-mode-title">字塊重組</div>
@@ -1992,7 +1990,8 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-<!-- 步驟 6-D：通用單字跟讀畫面 -->
+
+            <!-- 步驟 6-D：通用單字跟讀畫面 -->
             <div id="step-quiz-word-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-word-shadow-title">單字跟讀</div>
@@ -2228,7 +2227,7 @@
             </div>
         </div>
 
-        <!-- 下方固定區塊 (新增依關卡獨立挑選的單字卡按鈕) -->
+        <!-- 下方固定區塊 -->
         <div class="bottom-fixed-bar-wrapper" id="app-bottom-bar" style="display: none;">
             <div class="bottom-fixed-bar">
                 <div class="bottom-nav-item flashcard-btn" onclick="openFlashcardStagePicker()">
@@ -3272,7 +3271,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             }, 1900);
         }
 
-        /* ================= 🌟 闖關大地圖渲染（聽打維持名稱「單字聽打」，並改為小島嶼圖示掛在「單字選擇」旁） ================= */
+        /* ================= 🌟 闖關大地圖渲染（0A 級別聽打掛在「字塊重組」旁，1A 級別維持掛在「單字選擇」旁） ================= */
         function renderCandyRoadmap(unitId, filteredByLevel, units) {
             const nodesContainer = document.getElementById('roadmap-nodes-list');
             const svgCanvas = document.getElementById('roadmap-svg-canvas');
@@ -3290,6 +3289,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             }
 
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+            const is0ALevel = (targetLevelNormalized === '0A');
             const completedList = (window.currentUserData && window.currentUserData.completedLessons) || [];
 
             let stageTasks = [];
@@ -3391,8 +3391,9 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 });
                 let starIcons = bestStar > 0 ? '★'.repeat(bestStar) : '• • •';
 
-                // 🌟 關鍵改動：名稱維持「單字聽打」，位置改掛在「單字選擇」旁邊，圖案更換為小島嶼
-                const sideQuest = (task.mode === 'word_choice' && sideQuestMap[task.lesson]) ? sideQuestMap[task.lesson] : null;
+                // 🌟 關鍵邏輯：0A 級別掛在 blocks (字塊重組) 旁邊；1A 等其他級別維持掛在 word_choice (單字選擇) 旁邊
+                const targetSideQuestMode = is0ALevel ? 'blocks' : 'word_choice';
+                const sideQuest = (task.mode === targetSideQuestMode && sideQuestMap[task.lesson]) ? sideQuestMap[task.lesson] : null;
                 let sideQuestHtml = '';
                 if (sideQuest) {
                     const isSideCompleted = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${sideQuest.lesson}_${sideQuest.mode}`);
@@ -3436,8 +3437,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 }
             }, 120);
         }
-
-        function drawRoadmapSvgPath() {
+function drawRoadmapSvgPath() {
             const svg = document.getElementById('roadmap-svg-canvas');
             const container = document.getElementById('roadmap-main-area');
             const btns = Array.from(document.querySelectorAll('.candy-node-btn'));
@@ -3802,8 +3802,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             renderAllLessonsForLevel(currentConfig.level);
             goToStep('step-lesson');
         }
-
-        async function isNicknameTaken(nickname, excludeUid = null) {
+async function isNicknameTaken(nickname, excludeUid = null) {
             try {
                 const snap = await db.collection("users").where("displayName", "==", nickname).get();
                 if (snap.empty) return false;
@@ -5425,8 +5424,7 @@ async function loadFriendsLeaderboardData() {
                 showGrammarQuizArea();
             }
         }
-
-        function getWordTranslation(item) {
+function getWordTranslation(item) {
             if (!item) return "";
             return (currentConfig.lang === 'en') ? (item.en || item.zh_tw || "") :
                    (currentConfig.lang === 'ja') ? (item.ja || item.zh_tw || "") : (item.zh_tw || "");
@@ -5952,7 +5950,7 @@ async function loadFriendsLeaderboardData() {
             if (questions.length > 0) displayQuestion(); else alert("該關卡尚無練習題目！");
         }
 
-        /* ================= 🌟 題目呈現（在字塊重組入門與挑戰模式動態顯示題目標題） ================= */
+        /* ================= 🌟 題目呈現（字塊重組入門與挑戰模式動態顯示題目標題） ================= */
         function displayQuestion() {
             stopSpeechRecognition();
             resetSpeechEvalButtons();
