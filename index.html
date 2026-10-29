@@ -15,8 +15,8 @@
     <!-- Firebase 設定檔 -->
     <script src="js/firebase-config.js"></script>
 
-    <!-- 🌟 字母臨摹靜態資料檔 -->
-    <script src="js/alphabet-trace-data.js"></script>
+    <!-- 🌟 字母臨摹靜態資料檔（加版本號防快取） -->
+    <script src="js/alphabet-trace-data.js?v=1.0.2"></script>
 
     <style>
         :root {
@@ -2594,7 +2594,7 @@ const GUIDE_DETAILS_MAP = {
             'くち': ['口'], 'さかな': ['魚'], 'した': ['下', '舌'], 'じかん': ['時間'], 'しろ': ['白'],
             'しろい': ['白い'], 'せんせい': ['先生'], 'そら': ['空'], 'たべる': ['食べる'], 'ちいさい': ['小さい'],
             'て': ['手'], 'ともだち': ['友達'], 'なまえ': ['名前'], 'にほん': ['日本'], 'にほんじん': ['日本人'],
-            'ねこ': ['猫'], 'のむ': ['飲む'], 'はな': ['花', '鼻'], 'はなす': ['話す'], 'ひと': ['人'],
+            'ねこ': ['猫'], 'のむ': ['飲む'], 'はな': ['花', '鼻'], 'は那す': ['話す'], 'ひと': ['人'],
             'ほん': ['本'], 'みず': ['水'], 'みみ': ['耳'], 'みる': ['見る', '觀る', '観る'], 'め': ['目'],
             'やま': ['山'], 'よむ': ['読む'], 'わたし': ['私'], 'ぼく': ['僕']
         };
@@ -3223,7 +3223,8 @@ const GUIDE_DETAILS_MAP = {
                 return null;
             }
         }
-async function verifyAndSyncUser(user, isInteractive = false) {
+
+        async function verifyAndSyncUser(user, isInteractive = false) {
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
                 if (!gasResult || gasResult.status !== "success") {
