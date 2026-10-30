@@ -15,7 +15,7 @@
     <!-- Firebase 設定檔 -->
     <script src="js/firebase-config.js"></script>
 
-    <!-- 🌟 字母臨摹靜態資料檔 -->
+    <!-- 🌟 字母臨摹靜態資料檔 (含筆劃座標資訊) -->
     <script src="js/alphabet-trace-data.js"></script>
 
     <style>
@@ -282,8 +282,7 @@
             text-align: center;
         }
         .step-page.active { display: block; }
-
-        #step-welcome.active {
+#step-welcome.active {
             display: flex !important;
             flex-direction: column;
             align-items: center;
@@ -735,7 +734,7 @@
             50% { transform: translateY(-62%) scale(1.05); }
         }
 
-        /* 🌟 臨摹挑戰手寫板樣式 */
+        /* 🌟 臨摹挑戰手寫板與筆劃評判樣式 */
         .trace-box-wrapper {
             position: relative;
             display: inline-block;
@@ -747,7 +746,39 @@
             touch-action: none;
             overflow: hidden;
         }
-.gate-portal-container {
+
+        .trace-guide-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.88rem;
+            font-weight: 900;
+            color: #0369a1;
+            background: #e0f2fe;
+            border: 1.5px solid #bae6fd;
+            border-radius: 12px;
+            padding: 4px 12px;
+            margin-bottom: 6px;
+        }
+
+        .trace-stroke-step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            display: inline-block;
+            transition: all 0.2s ease;
+        }
+        .trace-stroke-step-dot.active {
+            background: var(--duo-blue);
+            transform: scale(1.25);
+            box-shadow: 0 0 6px rgba(28, 176, 246, 0.6);
+        }
+        .trace-stroke-step-dot.done {
+            background: var(--duo-green);
+        }
+
+        .gate-portal-container {
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -807,8 +838,7 @@
         .doors-opened .gate-unlock-shine { opacity: 1; transform: scale(2.2); }
         .gate-unlock-title { color: #ffffff; font-size: 1.6rem; font-weight: 900; letter-spacing: 1px; margin-bottom: 6px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .gate-unlock-sub { color: #cbd5e1; font-size: 0.95rem; font-weight: bold; margin-bottom: 24px; }
-
-        /* ================= 3D 單字翻轉卡專屬樣式 ================= */
+/* ================= 3D 單字翻轉卡專屬樣式 ================= */
         .fullscreen-stage {
             position: fixed; inset: 0; background: #fbfbfa; z-index: 999999;
             display: none; flex-direction: column; overflow: hidden;
@@ -1108,7 +1138,7 @@
         .nav-controls .btn-nav-next {
             position: absolute; right: 0; top: 50%; transform: translateY(-50%); background: var(--duo-blue); 
             color: white; border: none; border-bottom: 3.5px solid var(--duo-blue-shadow); padding: 8px 16px; border-radius: 12px; 
-            cursor: pointer; font-weight: 800; font-size: 0.92rem; display: none; animation: nextBtnPopIn 0.18s ease-out forwards;
+            cursor: font-weight: 800; font-size: 0.92rem; display: none; animation: nextBtnPopIn 0.18s ease-out forwards;
         }
         @keyframes nextBtnPopIn {
             from { transform: translateY(-50%) scale(0.88); opacity: 0; }
@@ -1167,7 +1197,7 @@
             opacity: 0.45;
         }
 
-        /* 🌟 字塊重組作答模式切換鈕（單一開關切換風格） */
+        /* 🌟 字塊重組作答模式切換鈕 */
         .block-mode-toggle-wrap {
             display: flex;
             justify-content: center;
@@ -1329,7 +1359,8 @@
             <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 10px;" class="hidden"></div>
         </div>
     </div>
-<!-- 忘記密碼 Modal -->
+
+    <!-- 忘記密碼 Modal -->
     <div id="modal-forgot-password" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
@@ -1435,8 +1466,7 @@
             <button id="btn-confirm-initial-level" class="btn-3d btn-3d-primary" style="width: 100%; padding: 10px; margin-top: 4px;">確定切換</button>
         </div>
     </div>
-
-    <!-- 模式選擇彈窗 -->
+<!-- 模式選擇彈窗 -->
     <div id="modal-select-mode-type" class="custom-modal">
         <div class="custom-modal-card" style="padding: 24px 18px;">
             <div class="close-icon-circle" onclick="closeModal('modal-select-mode-type')"><i class="fa-solid fa-xmark"></i></div>
@@ -1571,7 +1601,7 @@
         </div>
     </div>
 
-    <!-- 挑戰介紹選單彈窗 (已完全移除單字聽打) -->
+    <!-- 挑戰介紹選單彈窗 -->
     <div id="modal-guide-modes" class="custom-modal">
         <div class="custom-modal-card" style="padding: 22px 18px; max-height: 85vh;">
             <div class="close-icon-circle" onclick="closeModal('modal-guide-modes')"><i class="fa-solid fa-xmark"></i></div>
@@ -1723,7 +1753,8 @@
             <button class="ctrl-btn" id="btn-flashcard-next" onclick="stepFlashcard(1)" aria-label="下一個"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
     </div>
-<!-- 主介面容器 -->
+
+    <!-- 主介面容器 -->
     <div class="shadowing-card">
         
         <!-- 上方狀態列 -->
@@ -1806,7 +1837,6 @@
                     <span id="lbl-grammar-info" class="top-nav-title-badge">關卡任務</span>
                 </div>
 
-                <!-- 語法第一階段：觀念說明與例句導覽 -->
                 <div id="area-grammar-dialog">
                     <div class="grammar-dialog-header">
                         <h3 style="margin: 0; color: #4338ca; font-size: 1.15rem;"><i class="fa-solid fa-book-open"></i> 關卡任務</h3>
@@ -1831,7 +1861,6 @@
                     </div>
                 </div>
 
-                <!-- 語法第二階段：小試身手單獨視圖 -->
                 <div id="area-grammar-quiz" style="display: none; margin-top: 15px; padding: 0 2px; box-sizing: border-box; width: 100%;">
                     <h3 style="margin-top: 0; color: var(--duo-dark); text-align: center; font-size: 1.15rem;"><i class="fa-solid fa-pen-to-square"></i> 小試身手</h3>
                     <p id="lbl-grammar-instruction" style="font-size: 0.9rem; color: #6b7280; text-align: center; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
@@ -1956,7 +1985,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 步驟 6-B：字塊重組畫面（🌟 單一按鈕切換 + 排列區支援拖曳換位 + 切換時自動清空） -->
+            <!-- 步驟 6-B：字塊重組畫面 -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-blocks-mode-title">字塊重組</div>
@@ -1974,12 +2003,10 @@
                     <div class="timer-progress-bar" id="bar-progress-blocks"></div>
                 </div>
 
-                <!-- 🌟 題目說明標題 -->
                 <div id="lbl-blocks-instruction-title" class="instruction-badge-bar" style="display: none;">
                     請將聽到的字母音依序找出來
                 </div>
 
-                <!-- 🌟 單一按鈕切換模式：點選字塊 ⇄ 鍵盤打字 -->
                 <div class="block-mode-toggle-wrap">
                     <button class="btn-block-mode-toggle" id="btn-block-mode-toggle" onclick="toggleBlockInputMode()">
                         <i class="fa-solid fa-keyboard"></i>
@@ -1992,7 +2019,6 @@
                 </div>
                 <div class="translation-text" id="lbl-block-translation">...</div>
 
-                <!-- 點選字塊專屬區域（支援點擊退回與拖曳換位） -->
                 <div id="area-block-click-mode">
                     <p style="font-size: 0.85rem; color: #9ca3af; text-align: center; margin: 0;">排列結果 (可拖拉更換位置)：</p>
                     <div id="zone-answer" class="block-zone"></div>
@@ -2000,11 +2026,9 @@
                     <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
                 </div>
 
-                <!-- 鍵盤打字專屬區域（已隱藏原字塊提示） -->
                 <div id="area-block-type-mode" style="display: none;">
                     <p style="font-size: 0.85rem; color: #9ca3af; text-align: center; margin: 0 0 4px 0;">請用鍵盤輸入完整的正確句子：</p>
                     <input type="text" id="input-block-typed" class="vocab-input" placeholder="直接在此輸入外語答案..." autocomplete="off" autocorrect="off" autocapitalize="none">
-                    <!-- 隱藏字塊提示 -->
                     <div id="zone-options-type-hint" class="block-zone" style="display: none !important;"></div>
                 </div>
                 
@@ -2023,7 +2047,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 🌟 步驟 6-H：0A 字母臨摹畫面 -->
+            <!-- 🌟 步驟 6-H：0A 字母臨摹畫面（加入筆劃狀態徽章與動態指示） -->
             <div id="step-quiz-trace" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-trace-title">字母臨摹</div>
@@ -2036,7 +2060,7 @@
                     </div>
                 </div>
 
-                <div class="instruction-badge-bar">請依底字筆順臨摹書寫字母：</div>
+                <div class="instruction-badge-bar">請依標準筆順臨摹，系統將驗證每筆軌跡：</div>
 
                 <!-- 字母提示與發音 -->
                 <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin: 8px 0;">
@@ -2044,19 +2068,32 @@
                     <button class="btn-circle btn-listen" onclick="playTraceAudio()"><i class="fa-solid fa-volume-high"></i></button>
                 </div>
 
+                <!-- 🌟 筆劃進度指示徽章 -->
+                <div style="display:flex; justify-content:center; align-items:center; gap:8px;">
+                    <div class="trace-guide-badge" id="lbl-trace-stroke-step">
+                        <i class="fa-solid fa-pen"></i> 請寫第 <span id="lbl-trace-current-stroke-num">1</span> 筆 / 共 <span id="lbl-trace-total-strokes">1</span> 筆
+                    </div>
+                    <div id="trace-stroke-dots-container" style="display:flex; gap:4px; align-items:center;"></div>
+                </div>
+
                 <!-- 畫布區塊 -->
-                <div style="display:flex; justify-content:center; margin: 8px 0;">
+                <div style="display:flex; justify-content:center; margin: 4px 0 8px 0;">
                     <div id="trace-canvas-container" class="trace-box-wrapper"></div>
                 </div>
 
                 <!-- 操作按鈕 -->
-                <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
+                <div style="display:flex; justify-content:center; gap:10px; margin-bottom:10px;">
                     <button class="btn-3d btn-3d-secondary" onclick="traceUndo()" style="padding:7px 16px; font-size:0.88rem;"><i class="fa-solid fa-rotate-left"></i> 上一筆</button>
                     <button class="btn-3d btn-3d-secondary" onclick="traceReset()" style="padding:7px 16px; font-size:0.88rem;"><i class="fa-solid fa-trash-can"></i> 重寫</button>
                 </div>
 
+                <!-- 評判結果反饋提示框 -->
+                <div class="result-box" style="margin: 0 auto 10px auto; width: 92%; min-height: 54px;">
+                    <div class="score-badge" id="lbl-trace-feedback" style="font-size: 0.95rem;">請依指示由起點開始書寫</div>
+                </div>
+
                 <button class="btn-confirm" id="btn-submit-trace" onclick="submitTraceAnswer()">
-                    <i class="fa-solid fa-check"></i> 完成臨摹
+                    <i class="fa-solid fa-check"></i> 驗證筆劃並完成
                 </button>
 
                 <div class="nav-controls">
@@ -2065,8 +2102,7 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-trace" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-
-            <!-- 步驟 6-D：通用單字跟讀畫面 -->
+<!-- 步驟 6-D：通用單字跟讀畫面 -->
             <div id="step-quiz-word-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-word-shadow-title">單字跟讀</div>
@@ -2280,7 +2316,8 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-<!-- 核心邏輯腳本開始 -->
+
+    <!-- 核心邏輯腳本開始 -->
     <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -2319,9 +2356,7 @@
         let isRecording = false;
         let isToggling = false; 
         let selectedBlockIndices = [];
-        // 🌟 字塊重組專屬作答模式：'click' (點選) 或 'type' (鍵盤打字)
         let blockInputMode = 'click';
-        // 🌟 拖曳換位暫存變數
         let draggedBlockOrderIndex = null;
 
         let isSentenceKeywordMode = false;
@@ -2343,13 +2378,16 @@
         let wordIndex = 0;
         let currentWordPronMode = 'kr_pron';
 
-        // 🌟 字母臨摹專屬變數
+        // 🌟 字母臨摹專屬變數（含筆劃評判與比對器）
         let traceQuestions = [];
         let traceIndex = 0;
         let currentTraceCanvas = null;
         let currentTraceCtx = null;
+        let traceGuideCanvas = null;
+        let traceGuideCtx = null;
         let traceStrokes = [];
         let isDrawingTrace = false;
+        let currentTraceStrokeIndex = 0;
 
         let isCurrentQuestionAnswered = false;
         let currentChallengeScore = 0;
@@ -2379,8 +2417,7 @@
         let idleTimer = null;
         const IDLE_LIMIT_MS = 90 * 1000;
         let isIdlePaused = false;
-
-        const GUIDE_DETAILS_MAP = {
+const GUIDE_DETAILS_MAP = {
             'grammar': {
                 title: '📘 關卡任務玩法說明',
                 content: `
@@ -2395,11 +2432,11 @@
             'trace': {
                 title: '✍️ 字母臨摹玩法說明',
                 content: `
-                    <strong>1. 觀察字母：</strong> 畫面中會呈現標準虛線米字格與半透明示範字母底字。<br>
-                    <strong>2. 聆聽發音：</strong> 點擊喇叭按鈕可重複聆聽字母的標準發音。<br>
-                    <strong>3. 手寫臨摹：</strong> 直接用手指或觸控筆依筆順在格子內進行臨摹書寫。<br>
-                    <strong>4. 筆畫修改：</strong> 寫錯時可點選「上一筆」復原，或點「重寫」清空畫布重新練習。<br>
-                    <strong>5. 完成檢查：</strong> 書寫完畢後點擊「完成臨摹」，系統將確認筆畫並推進下一題！
+                    <strong>1. 筆劃驗證：</strong> 畫面標示目前筆劃與總筆劃數，並以青色光圈指示該筆起點。<br>
+                    <strong>2. 依序書寫：</strong> 必須依照標準筆順與方向落筆，劃一橫或亂劃將無法通過評判。<br>
+                    <strong>3. 聆聽發音：</strong> 點擊喇叭按鈕可重複聆聽字母的標準發音。<br>
+                    <strong>4. 筆劃修改：</strong> 寫錯時可點選「上一筆」復原，或點「重寫」清空畫布重新練習。<br>
+                    <strong>5. 驗證完成：</strong> 每筆皆正確且完成全部筆劃後，系統將自動評判合格並推進下一題！
                 `
             },
             'word_shadow': {
@@ -2838,8 +2875,7 @@
                 }
             }, { passive: true });
         })();
-
-        function forceResetMicrophoneSession() {
+function forceResetMicrophoneSession() {
             if (recognition) {
                 try {
                     recognition.onstart = null;
@@ -3123,7 +3159,8 @@
                 return null;
             }
         }
-async function verifyAndSyncUser(user, isInteractive = false) {
+
+        async function verifyAndSyncUser(user, isInteractive = false) {
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
                 if (!gasResult || gasResult.status !== "success") {
@@ -3274,8 +3311,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 renderAllLessonsForLevel(currentConfig.level);
             }, 1900);
         }
-
-        function renderCandyRoadmap(unitId, filteredByLevel, units) {
+function renderCandyRoadmap(unitId, filteredByLevel, units) {
             const nodesContainer = document.getElementById('roadmap-nodes-list');
             const svgCanvas = document.getElementById('roadmap-svg-canvas');
             nodesContainer.innerHTML = "";
@@ -5427,13 +5463,13 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                 showGrammarQuizArea();
             }
         }
-
-        /* ================= 🌟 字母臨摹 Canvas 控制核心 ================= */
-        function initTraceCanvas(char) {
+/* ================= 🌟 字母臨摹 Canvas 控制與筆劃評判核心 ================= */
+        function initTraceCanvas(curItem) {
             const container = document.getElementById('trace-canvas-container');
             const size = Math.min(270, window.innerWidth - 70);
             container.innerHTML = `
                 <canvas id="trace-bg-canvas" width="${size}" height="${size}" style="position:absolute; top:0; left:0; pointer-events:none;"></canvas>
+                <canvas id="trace-guide-canvas" width="${size}" height="${size}" style="position:absolute; top:0; left:0; pointer-events:none;"></canvas>
                 <canvas id="trace-draw-canvas" width="${size}" height="${size}" style="position:relative; touch-action:none; display:block;"></canvas>
             `;
 
@@ -5454,20 +5490,32 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             // 繪製半透明示範字母底字
             bgCtx.setLineDash([]);
             bgCtx.font = `bold ${size * 0.62}px "Noto Sans KR", "Noto Sans JP", sans-serif`;
-            bgCtx.fillStyle = '#cbd5e1';
+            bgCtx.fillStyle = '#e2e8f0';
             bgCtx.textAlign = 'center';
             bgCtx.textBaseline = 'middle';
-            bgCtx.fillText(char, size / 2, size / 2 + size * 0.04);
+            bgCtx.fillText(curItem.char, size / 2, size / 2 + size * 0.04);
+
+            traceGuideCanvas = document.getElementById('trace-guide-canvas');
+            traceGuideCtx = traceGuideCanvas.getContext('2d');
 
             currentTraceCanvas = document.getElementById('trace-draw-canvas');
             currentTraceCtx = currentTraceCanvas.getContext('2d');
             traceStrokes = [];
+            currentTraceStrokeIndex = 0;
+
+            updateTraceStrokeGuideUI(curItem);
+            drawCurrentStrokeGuide(curItem);
 
             const getPos = (e) => {
                 const rect = currentTraceCanvas.getBoundingClientRect();
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                 const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                return { x: clientX - rect.left, y: clientY - rect.top };
+                return { 
+                    x: (clientX - rect.left) / rect.width, 
+                    y: (clientY - rect.top) / rect.height,
+                    px: clientX - rect.left,
+                    py: clientY - rect.top
+                };
             };
 
             const startDraw = (e) => {
@@ -5487,7 +5535,11 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                 redrawTrace();
             };
 
-            const endDraw = () => { isDrawingTrace = false; };
+            const endDraw = () => {
+                if (!isDrawingTrace) return;
+                isDrawingTrace = false;
+                onStrokeFinished(curItem);
+            };
 
             currentTraceCanvas.onmousedown = startDraw;
             currentTraceCanvas.onmousemove = drawMove;
@@ -5496,6 +5548,62 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             currentTraceCanvas.ontouchstart = startDraw;
             currentTraceCanvas.ontouchmove = drawMove;
             currentTraceCanvas.ontouchend = endDraw;
+        }
+
+        function updateTraceStrokeGuideUI(curItem) {
+            const expectedCount = (curItem.strokes && curItem.strokes.length) ? curItem.strokes.length : 1;
+            const currentStrokeNumElem = document.getElementById('lbl-trace-current-stroke-num');
+            const totalStrokesElem = document.getElementById('lbl-trace-total-strokes');
+            const dotsContainer = document.getElementById('trace-stroke-dots-container');
+
+            if (currentStrokeNumElem) currentStrokeNumElem.innerText = Math.min(currentTraceStrokeIndex + 1, expectedCount);
+            if (totalStrokesElem) totalStrokesElem.innerText = expectedCount;
+
+            if (dotsContainer) {
+                dotsContainer.innerHTML = '';
+                for (let i = 0; i < expectedCount; i++) {
+                    const dot = document.createElement('span');
+                    dot.className = 'trace-stroke-step-dot';
+                    if (i < currentTraceStrokeIndex) dot.classList.add('done');
+                    else if (i === currentTraceStrokeIndex) dot.classList.add('active');
+                    dotsContainer.appendChild(dot);
+                }
+            }
+        }
+
+        function drawCurrentStrokeGuide(curItem) {
+            if (!traceGuideCtx || !traceGuideCanvas) return;
+            traceGuideCtx.clearRect(0, 0, traceGuideCanvas.width, traceGuideCanvas.height);
+
+            const strokes = curItem.strokes;
+            if (!strokes || !strokes[currentTraceStrokeIndex]) return;
+
+            const strokeDef = strokes[currentTraceStrokeIndex];
+            const size = traceGuideCanvas.width;
+            const startPt = strokeDef.points[0];
+
+            if (startPt) {
+                const sx = startPt.x * size;
+                const sy = startPt.y * size;
+
+                // 繪製起點光圈
+                traceGuideCtx.beginPath();
+                traceGuideCtx.arc(sx, sy, 12, 0, Math.PI * 2);
+                traceGuideCtx.fillStyle = 'rgba(2, 132, 199, 0.25)';
+                traceGuideCtx.fill();
+
+                traceGuideCtx.beginPath();
+                traceGuideCtx.arc(sx, sy, 6, 0, Math.PI * 2);
+                traceGuideCtx.fillStyle = '#0284c7';
+                traceGuideCtx.fill();
+
+                // 繪製筆劃序號標籤
+                traceGuideCtx.fillStyle = '#ffffff';
+                traceGuideCtx.font = 'bold 9px sans-serif';
+                traceGuideCtx.textAlign = 'center';
+                traceGuideCtx.textBaseline = 'middle';
+                traceGuideCtx.fillText(String(currentTraceStrokeIndex + 1), sx, sy);
+            }
         }
 
         function redrawTrace() {
@@ -5509,24 +5617,119 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             traceStrokes.forEach(stroke => {
                 if (stroke.length < 2) return;
                 currentTraceCtx.beginPath();
-                currentTraceCtx.moveTo(stroke[0].x, stroke[0].y);
+                currentTraceCtx.moveTo(stroke[0].px, stroke[0].py);
                 for (let i = 1; i < stroke.length; i++) {
-                    currentTraceCtx.lineTo(stroke[i].x, stroke[i].y);
+                    currentTraceCtx.lineTo(stroke[i].px, stroke[i].py);
                 }
                 currentTraceCtx.stroke();
             });
         }
 
+        /* 🌟 單筆結束時的幾何比對評判演算法 */
+        function onStrokeFinished(curItem) {
+            const strokesDef = curItem.strokes;
+            const feedbackElem = document.getElementById('lbl-trace-feedback');
+
+            if (!strokesDef || strokesDef.length === 0) {
+                // 若該字元尚未配置詳細筆劃定義，僅做基礎筆劃長度判定
+                feedbackElem.innerText = "已收錄筆劃，請繼續書寫或點擊完成！";
+                feedbackElem.style.color = "#0284c7";
+                return;
+            }
+
+            const currentDrawnStroke = traceStrokes[traceStrokes.length - 1];
+            if (!currentDrawnStroke || currentDrawnStroke.length < 3) {
+                traceStrokes.pop();
+                redrawTrace();
+                feedbackElem.innerText = "❌ 劃痕太短囉，請照著軌跡書寫！";
+                feedbackElem.style.color = "#ff4b4b";
+                return;
+            }
+
+            const expectedStroke = strokesDef[currentTraceStrokeIndex];
+            if (!expectedStroke) {
+                feedbackElem.innerText = `⚠ 筆劃數已超過標準 (${strokesDef.length} 筆)，可點擊「重寫」重新作答！`;
+                feedbackElem.style.color = "#f59e0b";
+                return;
+            }
+
+            // 評判規則 1：起點距離比對 (公差 0.28)
+            const expectedStart = expectedStroke.points[0];
+            const drawnStart = currentDrawnStroke[0];
+            const startDist = Math.hypot(drawnStart.x - expectedStart.x, drawnStart.y - expectedStart.y);
+
+            // 評判規則 2：終點距離比對 (公差 0.32)
+            const expectedEnd = expectedStroke.points[expectedStroke.points.length - 1];
+            const drawnEnd = currentDrawnStroke[currentDrawnStroke.length - 1];
+            const endDist = Math.hypot(drawnEnd.x - expectedEnd.x, drawnEnd.y - expectedEnd.y);
+
+            // 評判規則 3：整體方向比對（避免方向反向劃一橫）
+            const expectedAngle = Math.atan2(expectedEnd.y - expectedStart.y, expectedEnd.x - expectedStart.x);
+            const drawnAngle = Math.atan2(drawnEnd.y - drawnStart.y, drawnEnd.x - drawnStart.x);
+            let angleDiff = Math.abs(expectedAngle - drawnAngle);
+            if (angleDiff > Math.PI) angleDiff = 2 * Math.PI - angleDiff;
+
+            const isStartClose = startDist <= 0.28;
+            const isEndClose = endDist <= 0.32;
+            const isDirectionOk = (expectedStroke.type === 'circle') ? true : (angleDiff < Math.PI / 2.2);
+
+            if (isStartClose && isEndClose && isDirectionOk) {
+                currentTraceStrokeIndex++;
+                updateTraceStrokeGuideUI(curItem);
+
+                if (currentTraceStrokeIndex >= strokesDef.length) {
+                    feedbackElem.innerText = "🎉 筆順與形狀完全正確！太棒了！";
+                    feedbackElem.style.color = "#58cc02";
+                    if (traceGuideCtx && traceGuideCanvas) {
+                        traceGuideCtx.clearRect(0, 0, traceGuideCanvas.width, traceGuideCanvas.height);
+                    }
+                } else {
+                    feedbackElem.innerText = `✔ 第 ${currentTraceStrokeIndex} 筆正確！請接著寫第 ${currentTraceStrokeIndex + 1} 筆。`;
+                    feedbackElem.style.color = "#0284c7";
+                    drawCurrentStrokeGuide(curItem);
+                }
+            } else {
+                traceStrokes.pop();
+                redrawTrace();
+
+                if (!isStartClose) {
+                    feedbackElem.innerText = `❌ 第 ${currentTraceStrokeIndex + 1} 筆起點位置有偏差，請由圓圈處起筆！`;
+                } else if (!isDirectionOk) {
+                    feedbackElem.innerText = `❌ 第 ${currentTraceStrokeIndex + 1} 筆書寫方向反了喔，請依筆順方向臨摹！`;
+                } else {
+                    feedbackElem.innerText = `❌ 第 ${currentTraceStrokeIndex + 1} 筆軌跡不太對，再對齊底字試一次！`;
+                }
+                feedbackElem.style.color = "#ff4b4b";
+                drawCurrentStrokeGuide(curItem);
+            }
+        }
+
         function traceUndo() {
             if (isCurrentQuestionAnswered) return;
-            traceStrokes.pop();
-            redrawTrace();
+            if (traceStrokes.length > 0) {
+                traceStrokes.pop();
+                currentTraceStrokeIndex = Math.max(0, currentTraceStrokeIndex - 1);
+                redrawTrace();
+                const cur = traceQuestions[traceIndex];
+                updateTraceStrokeGuideUI(cur);
+                drawCurrentStrokeGuide(cur);
+                const feedbackElem = document.getElementById('lbl-trace-feedback');
+                feedbackElem.innerText = `已回復上一筆，請寫第 ${currentTraceStrokeIndex + 1} 筆。`;
+                feedbackElem.style.color = "#0284c7";
+            }
         }
 
         function traceReset() {
             if (isCurrentQuestionAnswered) return;
             traceStrokes = [];
+            currentTraceStrokeIndex = 0;
             redrawTrace();
+            const cur = traceQuestions[traceIndex];
+            updateTraceStrokeGuideUI(cur);
+            drawCurrentStrokeGuide(cur);
+            const feedbackElem = document.getElementById('lbl-trace-feedback');
+            feedbackElem.innerText = "畫布已重置，請由第 1 筆圓圈處開始書寫。";
+            feedbackElem.style.color = "#0284c7";
         }
 
         function startTraceChallenge() {
@@ -5562,13 +5765,17 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             document.getElementById('lbl-trace-char-title').innerText = cur.name || cur.char;
             document.getElementById('btn-trace-next').style.display = 'none';
 
+            const feedbackElem = document.getElementById('lbl-trace-feedback');
+            feedbackElem.innerText = "請依光圈引導，按筆順由起點開始臨摹：";
+            feedbackElem.style.color = "#0284c7";
+
             const submitBtn = document.getElementById('btn-submit-trace');
             if (submitBtn) {
                 submitBtn.disabled = false;
                 submitBtn.style.opacity = '1';
             }
 
-            initTraceCanvas(cur.char);
+            initTraceCanvas(cur);
             playTraceAudio();
         }
 
@@ -5579,11 +5786,25 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             }
         }
 
+        /* 🌟 送出驗證：必須通過所有筆劃順序方可過關，防止隨意一橫過關 */
         function submitTraceAnswer() {
             if (isCurrentQuestionAnswered) return;
-            if (traceStrokes.length === 0) {
-                alert("請先在格子內臨摹寫寫看喔！");
-                return;
+            const cur = traceQuestions[traceIndex];
+            const strokesDef = cur.strokes;
+            const feedbackElem = document.getElementById('lbl-trace-feedback');
+
+            if (strokesDef && strokesDef.length > 0) {
+                if (currentTraceStrokeIndex < strokesDef.length) {
+                    feedbackElem.innerText = `❌ 尚未完成全部筆劃！目前才完成 ${currentTraceStrokeIndex} / ${strokesDef.length} 筆，請寫完整喔！`;
+                    feedbackElem.style.color = "#ff4b4b";
+                    return;
+                }
+            } else {
+                if (traceStrokes.length === 0) {
+                    feedbackElem.innerText = "❌ 請先在格子內照著筆順寫寫看喔！";
+                    feedbackElem.style.color = "#ff4b4b";
+                    return;
+                }
             }
 
             const submitBtn = document.getElementById('btn-submit-trace');
@@ -5591,6 +5812,9 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                 submitBtn.disabled = true;
                 submitBtn.style.opacity = '0.6';
             }
+
+            feedbackElem.innerText = "🎉 臨摹判定完全正確！恭喜通關！";
+            feedbackElem.style.color = "#58cc02";
 
             playTraceAudio();
             markQuestionAnswered(traceIndex);
@@ -5986,7 +6210,7 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             if (questions.length > 0) displayQuestion(); else alert("該關卡尚無練習題目！");
         }
 
-        /* ================= 🌟 字塊重組作答模式單一按鈕切換邏輯 (切換時自動清空已選/已輸入內容) ================= */
+        /* ================= 🌟 字塊重組作答模式切換邏輯 ================= */
         function toggleBlockInputMode() {
             const newMode = (blockInputMode === 'click') ? 'type' : 'click';
             switchBlockInputMode(newMode);
@@ -6000,7 +6224,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             const typedInput = document.getElementById('input-block-typed');
             const zoneTypeHint = document.getElementById('zone-options-type-hint');
 
-            // 🌟 切換模式時徹底清空字塊選擇與鍵盤輸入內容，避免混亂與程式錯誤
             selectedBlockIndices = [];
             renderBlocks();
             if (typedInput) {
@@ -6016,7 +6239,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                 if (areaClick) areaClick.style.display = 'none';
                 if (areaType) areaType.style.display = 'block';
                 
-                // 🌟 打字模式下隱藏字塊提示區域
                 if (zoneTypeHint) zoneTypeHint.style.display = 'none';
 
                 if (typedInput) {
@@ -6080,7 +6302,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                 const checkBlockBtn = document.getElementById('btn-check-block');
                 if (checkBlockBtn) checkBlockBtn.disabled = false;
 
-                // 重設打字輸入框
                 const typedInput = document.getElementById('input-block-typed');
                 if (typedInput) {
                     typedInput.value = "";
@@ -6139,7 +6360,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
 
             if (!q || !q.options) return;
 
-            // 下方字塊選項區
             q.options.forEach((optText, optIdx) => {
                 const isUsed = selectedBlockIndices.includes(optIdx);
                 const btn = document.createElement('div');
@@ -6159,7 +6379,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                 if (zoneOptions) zoneOptions.appendChild(btn);
             });
 
-            // 上方已排列字塊區：支援 HTML5 拖曳換位與手機 touch 拖曳支援
             selectedBlockIndices.forEach((optIdx, orderIdx) => {
                 const btn = document.createElement('div');
                 btn.className = 'block-chip draggable-chip' + (isCurrentQuestionAnswered ? ' locked-chip' : '');
@@ -6167,7 +6386,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                 btn.setAttribute('draggable', isCurrentQuestionAnswered ? 'false' : 'true');
                 btn.dataset.orderIndex = orderIdx;
 
-                // 點擊退回
                 btn.onclick = (e) => {
                     if (isCurrentQuestionAnswered || btn.dataset.wasDragged === 'true') {
                         btn.dataset.wasDragged = 'false';
@@ -6182,7 +6400,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                     }
                 };
 
-                // HTML5 Drag & Drop 事件
                 btn.ondragstart = (e) => {
                     if (isCurrentQuestionAnswered) return;
                     draggedBlockOrderIndex = orderIdx;
@@ -6206,7 +6423,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                     btn.classList.remove('drag-over');
                     if (draggedBlockOrderIndex === null || draggedBlockOrderIndex === orderIdx) return;
                     
-                    // 重新排列順序
                     const movedItem = selectedBlockIndices.splice(draggedBlockOrderIndex, 1)[0];
                     selectedBlockIndices.splice(orderIdx, 0, movedItem);
                     draggedBlockOrderIndex = null;
@@ -6224,7 +6440,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                     setTimeout(() => { btn.dataset.wasDragged = 'false'; }, 100);
                 };
 
-                // 手機 Touch 拖曳支援
                 btn.ontouchstart = (e) => {
                     if (isCurrentQuestionAnswered) return;
                     draggedBlockOrderIndex = orderIdx;
@@ -6273,7 +6488,7 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             });
         }
 
-        /* ================= 🌟 字塊重組檢查答案：voice 欄位納入辨識條件 ================= */
+        /* ================= 🌟 字塊重組檢查答案 ================= */
         function checkBlockAnswer() {
             if (isCurrentQuestionAnswered) return;
             const q = questions[currentIndex];
@@ -6313,7 +6528,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             const cleanFull = cleanStringForCompare(q.fullText);
             const cleanVoice = q.voice ? cleanStringForCompare(q.voice) : "";
 
-            // 🌟 voice 欄位同時作為成功判定條件之一
             const isMatchFull = (cleanUser === cleanFull);
             const isMatchVoice = Boolean(cleanVoice && (cleanUser === cleanVoice));
 
