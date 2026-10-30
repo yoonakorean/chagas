@@ -393,7 +393,7 @@
             padding-bottom: 70px;
             box-sizing: border-box;
         }
-.grammar-dialog-header {
+        .grammar-dialog-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -531,8 +531,7 @@
             white-space: nowrap;
         }
         .btn-grammar-sub:active { transform: translateY(2px); border-bottom-width: 1px !important; }
-
-        .blank-slot {
+.blank-slot {
             display: inline-block;
             min-width: 34px;
             border-bottom: 2px solid var(--duo-blue);
@@ -1191,6 +1190,30 @@
         .block-chip:active { transform: translateY(2px); border-bottom-width: 2px; }
         .block-chip.used { opacity: 0.3; pointer-events: none; background: #f3f4f6; }
         .block-chip.locked-chip { pointer-events: none !important; opacity: 0.65; cursor: not-allowed; }
+
+        /* 🌟 字塊重組作答模式切換鈕樣式 */
+        .block-mode-toggle-wrap {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .btn-block-mode-toggle {
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: #64748b;
+            transition: all 0.15s ease;
+        }
+        .btn-block-mode-toggle.active {
+            border-color: var(--duo-blue);
+            background: #ddf4ff;
+            color: var(--duo-blue);
+        }
 
         .vocab-input {
             width: 88%; max-width: 320px; padding: 10px; font-size: 1.15rem; border: 2px solid #cbd5e1; border-radius: 12px; text-align: center; outline: none; margin: 10px auto; font-weight: bold; display: block;
@@ -1857,7 +1880,8 @@
                     </div>
                 </div>
             </div>
-<!-- 步驟 6-A：Sentence 句子跟讀畫面 -->
+
+            <!-- 步驟 6-A：Sentence 句子跟讀畫面 -->
             <div id="step-quiz-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-shadow-mode-title">句子跟讀</div>
@@ -1965,7 +1989,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 步驟 6-B：字塊重組畫面 -->
+            <!-- 步驟 6-B：字塊重組畫面（🌟 已整合鍵盤打字 / 字塊點選雙作答模式） -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-blocks-mode-title">字塊重組</div>
@@ -1988,17 +2012,39 @@
                     請將聽到的字母音依序找出來
                 </div>
 
-                <div style="margin: 12px 0;">
+                <!-- 🌟 作答模式切換按鈕（字塊點選 vs 鍵盤打字） -->
+                <div class="block-mode-toggle-wrap">
+                    <button class="btn-block-mode-toggle active" id="btn-mode-block-click" onclick="switchBlockInputMode('click')">
+                        <i class="fa-solid fa-cubes"></i> 點選字塊
+                    </button>
+                    <button class="btn-block-mode-toggle" id="btn-mode-block-type" onclick="switchBlockInputMode('type')">
+                        <i class="fa-solid fa-keyboard"></i> 鍵盤打字
+                    </button>
+                </div>
+
+                <div style="margin: 8px 0;">
                     <button class="btn-circle btn-listen" id="btn-play-block-audio" onclick="playBlockAudio()" style="margin: 0 auto;"><i class="fa-solid fa-volume-high"></i></button>
                 </div>
                 <div class="translation-text" id="lbl-block-translation">...</div>
-                <p style="font-size: 0.85rem; color: #9ca3af; text-align: center; margin: 0;">排列結果：</p>
-                <div id="zone-answer" class="block-zone"></div>
-                <p style="font-size: 0.85rem; color: #9ca3af; text-align: center; margin: 0;">點擊字塊組句：</p>
-                <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
+
+                <!-- 點選字塊專屬區域 -->
+                <div id="area-block-click-mode">
+                    <p style="font-size: 0.85rem; color: #9ca3af; text-align: center; margin: 0;">排列結果：</p>
+                    <div id="zone-answer" class="block-zone"></div>
+                    <p style="font-size: 0.85rem; color: #9ca3af; text-align: center; margin: 0;">點擊字塊組句：</p>
+                    <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
+                </div>
+
+                <!-- 鍵盤打字專屬區域 -->
+                <div id="area-block-type-mode" style="display: none;">
+                    <p style="font-size: 0.85rem; color: #9ca3af; text-align: center; margin: 0 0 4px 0;">請用鍵盤輸入完整的正確句子：</p>
+                    <input type="text" id="input-block-typed" class="vocab-input" placeholder="直接在此輸入外語答案..." autocomplete="off" autocorrect="off" autocapitalize="none">
+                    <p style="font-size: 0.82rem; color: #94a3b8; text-align: center; margin: 4px 0 8px 0;">字塊提示參考：</p>
+                    <div id="zone-options-type-hint" class="block-zone" style="border-bottom: none; background: #f8fafc; border-radius: 12px; min-height: 48px; padding: 6px;"></div>
+                </div>
                 
                 <div class="result-box" style="margin-top: 10px;">
-                    <div class="score-badge" id="lbl-block-score">請選取字塊組合句子</div>
+                    <div class="score-badge" id="lbl-block-score">請選取字塊或鍵盤輸入作答</div>
                 </div>
 
                 <button class="btn-confirm" id="btn-check-block" onclick="checkBlockAnswer()" style="margin-top: 10px;">
@@ -2106,7 +2152,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-word-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 步驟 6-E：通用單字聽打畫面 (支援 LCS 紅字容錯高亮顯示) -->
+            <!-- 步驟 6-E：通用單字聽打畫面 (🌟 已修復下一題按鈕 class 跑版問題) -->
             <div id="step-quiz-word-type" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-word-type-title">單字聽打</div>
@@ -2146,12 +2192,13 @@
 
                 <div class="nav-controls">
                     <span class="lbl-progress" id="lbl-word-type-progress">0 / 0</span>
-                    <button class="btn-word-type-next" id="btn-word-type-next" onclick="nextWordQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
+                    <!-- 🌟 修正：補上 btn-nav-next 類別修復位置與外觀跑版 -->
+                    <button class="btn-nav-next btn-word-type-next" id="btn-word-type-next" onclick="nextWordQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-word-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 步驟 6-F：通用單字選擇題畫面 -->
+            <!-- 步驟 6-F：通用單字選擇題畫面 (🌟 已修復下一題按鈕 class 跑版問題) -->
             <div id="step-quiz-word-choice" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-word-choice-title" id="lbl-word-choice-title">單字選擇</div>
@@ -2184,13 +2231,13 @@
                 
                 <div class="nav-controls">
                     <span class="lbl-progress" id="lbl-word-choice-progress">0 / 0</span>
-                    <button class="btn-word-choice-next" id="btn-word-choice-next" onclick="nextWordQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
+                    <!-- 🌟 修正：補上 btn-nav-next 類別修復位置與外觀跑版 -->
+                    <button class="btn-nav-next btn-word-choice-next" id="btn-word-choice-next" onclick="nextWordQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-word-choice" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
         </div>
-
-        <!-- 視圖 B：會員中心與排行榜大視圖 -->
+<!-- 視圖 B：會員中心與排行榜大視圖 -->
         <div id="profile-view" class="hidden" style="text-align: left; flex: 1; overflow-y: auto; padding-bottom: 80px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px;">
                 <button class="btn-3d btn-3d-secondary" onclick="closeProfileView()" style="padding: 7px 12px; font-size: 0.85rem;">
@@ -2354,6 +2401,8 @@
         let isRecording = false;
         let isToggling = false; 
         let selectedBlockIndices = [];
+        // 🌟 字塊重組專屬作答模式：'click' (點選) 或 'type' (鍵盤打字)
+        let blockInputMode = 'click';
 
         let isSentenceKeywordMode = false;
         let isSentenceChallengeMode = false;
@@ -2410,7 +2459,8 @@
         let idleTimer = null;
         const IDLE_LIMIT_MS = 90 * 1000;
         let isIdlePaused = false;
-const GUIDE_DETAILS_MAP = {
+
+        const GUIDE_DETAILS_MAP = {
             'grammar': {
                 title: '📘 關卡任務玩法說明',
                 content: `
@@ -2480,11 +2530,11 @@ const GUIDE_DETAILS_MAP = {
                 title: '🧩 字塊重組玩法說明',
                 content: `
                     <strong>1. 理解語意：</strong> 閱讀題目的中文翻譯並聆聽題目語音示範。<br>
-                    <strong>2. 點選字塊：</strong> 點擊下方打散的單字字塊，將其依語法順序排入上方框內。<br>
-                    <strong>3. 調整順序：</strong> 點擊上方已選字塊即可退回下方重新選擇。<br>
-                    <strong>4. 檢查答案：</strong> 組出完整句子後點擊綠色「檢查答案」按鈕。<br>
-                    <strong>5. 語音複習：</strong> 答對後系統會自動朗讀完整句子並標註發音音標。<br>
-                    <strong>6. 步步推進：</strong> 完成當前句子後點擊下一題，挑戰全對三星！
+                    <strong>2. 多元作答：</strong> 可自由切換「點選字塊」或「鍵盤打字」兩種模式。<br>
+                    <strong>3. 鍵盤輸入：</strong> 切換到打字模式可直接在鍵盤上敲入外語答案，並支援 Enter 鍵快速送出。<br>
+                    <strong>4. 調整順序：</strong> 點選模式下，點擊上方已選字塊即可退回下方重新選擇。<br>
+                    <strong>5. 檢查答案：</strong> 組出或打出完整句子後點擊綠色「檢查答案」按鈕。<br>
+                    <strong>6. 語音複習：</strong> 答對後系統會自動朗讀完整句子並標註發音音標，完成後邁向三星！
                 `
             },
             'sentence_chat': {
@@ -2647,8 +2697,7 @@ const GUIDE_DETAILS_MAP = {
             }
             return Array.from(candidates);
         }
-
-        /* ================= 🌟 母語與學習語言雙向動態互斥過濾 ================= */
+/* ================= 🌟 母語與學習語言雙向動態互斥過濾 ================= */
         const LANG_MUTUAL_MAP = {
             'zh': 'chinese',
             'en': 'english',
@@ -3555,7 +3604,8 @@ const GUIDE_DETAILS_MAP = {
                 }
             }, 120);
         }
-function drawRoadmapSvgPath() {
+
+        function drawRoadmapSvgPath() {
             const svg = document.getElementById('roadmap-svg-canvas');
             const container = document.getElementById('roadmap-main-area');
             const btns = Array.from(document.querySelectorAll('.candy-node-btn'));
@@ -4469,7 +4519,8 @@ function drawRoadmapSvgPath() {
                 container.innerHTML = "<div style='text-align:color:#ef4444; padding:20px 0;'>載入失敗，請確認網路！</div>";
             }
         }
-async function loadFriendsLeaderboardData() {
+
+        async function loadFriendsLeaderboardData() {
             const container = document.getElementById('leaderboard-list-container');
             container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>載入好友排行中...</div>";
             if (!currentUser || !window.currentUserData) {
@@ -6161,7 +6212,8 @@ async function loadFriendsLeaderboardData() {
                 displayWordQuestion(); 
             } 
         }
-function startMainQuiz() {
+
+        function startMainQuiz() {
             stopSpeechRecognition();
             stopChallengeTimer();
             resetSpeechEvalButtons();
@@ -6246,6 +6298,37 @@ function startMainQuiz() {
             if (questions.length > 0) displayQuestion(); else alert("該關卡尚無練習題目！");
         }
 
+        /* ================= 🌟 字塊重組作答模式切換邏輯 (點選 vs 打字) ================= */
+        function switchBlockInputMode(mode) {
+            blockInputMode = mode;
+            const btnClick = document.getElementById('btn-mode-block-click');
+            const btnType = document.getElementById('btn-mode-block-type');
+            const areaClick = document.getElementById('area-block-click-mode');
+            const areaType = document.getElementById('area-block-type-mode');
+            const typedInput = document.getElementById('input-block-typed');
+
+            if (mode === 'click') {
+                if (btnClick) btnClick.classList.add('active');
+                if (btnType) btnType.classList.remove('active');
+                if (areaClick) areaClick.style.display = 'block';
+                if (areaType) areaType.style.display = 'none';
+            } else {
+                if (btnType) btnType.classList.add('active');
+                if (btnClick) btnClick.classList.remove('active');
+                if (areaClick) areaClick.style.display = 'none';
+                if (areaType) areaType.style.display = 'block';
+                if (typedInput) {
+                    if (!typedInput.value.trim() && selectedBlockIndices.length > 0) {
+                        const q = questions[currentIndex];
+                        if (q && q.options) {
+                            typedInput.value = selectedBlockIndices.map(i => q.options[i]).join('');
+                        }
+                    }
+                    setTimeout(() => typedInput.focus(), 80);
+                }
+            }
+        }
+
         /* ================= 🌟 題目呈現（字塊重組入門與挑戰模式動態顯示題目標題） ================= */
         function displayQuestion() {
             stopSpeechRecognition();
@@ -6302,6 +6385,19 @@ function startMainQuiz() {
                 const checkBlockBtn = document.getElementById('btn-check-block');
                 if (checkBlockBtn) checkBlockBtn.disabled = false;
 
+                // 重設打字輸入框
+                const typedInput = document.getElementById('input-block-typed');
+                if (typedInput) {
+                    typedInput.value = "";
+                    typedInput.disabled = false;
+                    typedInput.onkeydown = (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            checkBlockAnswer();
+                        }
+                    };
+                }
+
                 // 🌟 動態顯示/隱藏題目標題：僅在入門 (entry) 與挑戰 (timed) 模式顯示
                 const blocksInstrTitle = document.getElementById('lbl-blocks-instruction-title');
                 if (blocksInstrTitle) {
@@ -6323,11 +6419,12 @@ function startMainQuiz() {
                     if (playAudioBtn) playAudioBtn.style.display = 'none';
                 }
 
-                document.getElementById('lbl-block-score').innerText = "請選取字塊組合句子";
+                document.getElementById('lbl-block-score').innerText = "請選取字塊或鍵盤輸入作答";
                 document.getElementById('lbl-block-score').style.color = "#58cc02";
 
                 selectedBlockIndices = [];
                 renderBlocks();
+                switchBlockInputMode(blockInputMode);
                 if (activeChallengeType !== 'timed') playBlockAudio();
             }
         }
@@ -6336,8 +6433,13 @@ function startMainQuiz() {
             const q = questions[currentIndex];
             const zoneOptions = document.getElementById('zone-options');
             const zoneAnswer = document.getElementById('zone-answer');
-            zoneOptions.innerHTML = "";
-            zoneAnswer.innerHTML = "";
+            const zoneTypeHint = document.getElementById('zone-options-type-hint');
+            
+            if (zoneOptions) zoneOptions.innerHTML = "";
+            if (zoneAnswer) zoneAnswer.innerHTML = "";
+            if (zoneTypeHint) zoneTypeHint.innerHTML = "";
+
+            if (!q || !q.options) return;
 
             q.options.forEach((optText, optIdx) => {
                 const isUsed = selectedBlockIndices.includes(optIdx);
@@ -6349,8 +6451,31 @@ function startMainQuiz() {
                     if (isCurrentQuestionAnswered) return;
                     selectedBlockIndices.push(optIdx);
                     renderBlocks();
+                    
+                    const typedInput = document.getElementById('input-block-typed');
+                    if (typedInput) {
+                        typedInput.value = selectedBlockIndices.map(i => q.options[i]).join('');
+                    }
                 };
-                zoneOptions.appendChild(btn);
+                if (zoneOptions) zoneOptions.appendChild(btn);
+
+                // 在打字模式下方提供字塊快速點擊輔助
+                if (zoneTypeHint) {
+                    const hintBtn = document.createElement('div');
+                    hintBtn.className = 'block-chip';
+                    hintBtn.style.padding = '5px 10px';
+                    hintBtn.style.fontSize = '0.92rem';
+                    hintBtn.innerText = optText;
+                    hintBtn.onclick = () => {
+                        if (isCurrentQuestionAnswered) return;
+                        const typedInput = document.getElementById('input-block-typed');
+                        if (typedInput) {
+                            typedInput.value = (typedInput.value || '') + optText;
+                            typedInput.focus();
+                        }
+                    };
+                    zoneTypeHint.appendChild(hintBtn);
+                }
             });
 
             selectedBlockIndices.forEach(idx => {
@@ -6361,18 +6486,45 @@ function startMainQuiz() {
                     if (isCurrentQuestionAnswered) return;
                     selectedBlockIndices = selectedBlockIndices.filter(i => i !== idx);
                     renderBlocks();
+                    
+                    const typedInput = document.getElementById('input-block-typed');
+                    if (typedInput) {
+                        typedInput.value = selectedBlockIndices.map(i => q.options[i]).join('');
+                    }
                 };
-                zoneAnswer.appendChild(btn);
+                if (zoneAnswer) zoneAnswer.appendChild(btn);
             });
         }
 
+        /* ================= 🌟 字塊重組檢查答案（支援字塊排列與鍵盤打字雙重判定） ================= */
         function checkBlockAnswer() {
             if (isCurrentQuestionAnswered) return;
+            const q = questions[currentIndex];
+            if (!q) return;
+
             const checkBlockBtn = document.getElementById('btn-check-block');
             if (checkBlockBtn) checkBlockBtn.disabled = true;
 
-            const q = questions[currentIndex];
-            const userSentence = selectedBlockIndices.map(i => q.options[i]).join('');
+            const typedInput = document.getElementById('input-block-typed');
+            if (typedInput) typedInput.disabled = true;
+
+            // 判斷作答來源：若在打字模式且打字框有內容則以打字為主，否則以已選字塊為主
+            const typedVal = typedInput ? typedInput.value.trim() : "";
+            let userSentence = "";
+            if (blockInputMode === 'type' && typedVal) {
+                userSentence = typedVal;
+            } else {
+                userSentence = selectedBlockIndices.map(i => q.options[i]).join('');
+                if (!userSentence && typedVal) userSentence = typedVal;
+            }
+
+            if (!userSentence) {
+                alert("請點選字塊或於輸入框內鍵入句子！");
+                if (checkBlockBtn) checkBlockBtn.disabled = false;
+                if (typedInput) typedInput.disabled = false;
+                return;
+            }
+
             const scoreBadge = document.getElementById('lbl-block-score');
 
             if (activeChallengeType === 'timed') {
