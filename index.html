@@ -576,7 +576,7 @@
             background: #f0f9ff !important;
             box-shadow: 0 0 0 2px rgba(28, 176, 246, 0.25) !important;
         }
-.roadmap-container {
+        .roadmap-container {
             position: relative;
             width: 100%;
             min-height: 100%;
@@ -716,42 +716,6 @@
             letter-spacing: 0.3px;
         }
 
-        /* 🌟 聽打專屬：小島嶼按鈕外觀造型與浮動動畫 */
-        .side-quest-badge {
-            position: absolute;
-            right: -88px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: linear-gradient(145deg, #e0f2fe, #bae6fd);
-            border: 2px solid #38bdf8;
-            border-bottom: 4px solid #0284c7;
-            color: #0369a1;
-            border-radius: 20px;
-            padding: 6px 12px;
-            font-size: 0.78rem;
-            font-weight: 900;
-            box-shadow: 0 6px 14px rgba(2, 132, 199, 0.25);
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            white-space: nowrap;
-            z-index: 10;
-            animation: islandFloat 3s ease-in-out infinite;
-        }
-        .side-quest-badge:active {
-            transform: translateY(-44%) scale(0.96);
-            border-bottom-width: 2px;
-        }
-        .side-quest-badge.completed {
-            background: linear-gradient(145deg, #dcfce7, #bbf7d0);
-            border-color: #4ade80;
-            border-bottom-color: #16a34a;
-            color: #15803d;
-            box-shadow: 0 6px 14px rgba(22, 163, 74, 0.25);
-        }
-
         .node-avatar-badge {
             position: absolute;
             left: -48px;
@@ -783,8 +747,7 @@
             touch-action: none;
             overflow: hidden;
         }
-
-        .gate-portal-container {
+.gate-portal-container {
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -1085,9 +1048,6 @@
         #lbl-chat-translation,
         #lbl-word-shadow-target-text,
         #lbl-word-shadow-translation,
-        #lbl-word-type-text,
-        #lbl-word-type-translation,
-        #lbl-word-type-hint,
         #lbl-word-choice-text,
         #container-grammar-questions {
             text-align: center !important;
@@ -1106,8 +1066,7 @@
         }
 
         #lbl-word-shadow-subtext,
-        #lbl-word-choice-sub,
-        #lbl-word-type-hint {
+        #lbl-word-choice-sub {
             font-size: 1.15rem; color: #475569; font-weight: bold; margin-bottom: 8px; min-height: 1.6rem; line-height: 1.6rem; display: block;
         }
 
@@ -1258,11 +1217,6 @@
         .btn-role { padding: 5px 12px; border-radius: 20px; border: 2px solid #e5e7eb; background: white; font-weight: bold; cursor: pointer; font-size: 0.8rem; }
         .btn-role.active { border-color: var(--duo-blue); background: #ddf4ff; color: var(--duo-blue); }
 
-        .dialog-history-list {
-            text-align: left !important; max-height: 220px; overflow-y: auto; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; margin-bottom: 12px;
-        }
-        .dialog-history-item { padding: 6px 8px; border-bottom: 1px solid #f3f4f6; font-size: 0.95rem; color: #374151; line-height: 1.5; text-align: left !important; white-space: pre-wrap; word-break: break-word; }
-
         .profile-avatar-large { width: 72px; height: 72px; border-radius: 50%; border: 3px solid var(--duo-blue); margin: 0 auto 8px auto; object-fit: cover; display: block; }
         .quit-modal-img { width: 120px; height: 120px; object-fit: contain; margin: 0 auto 12px auto; display: block; }
 
@@ -1375,8 +1329,7 @@
             <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 10px;" class="hidden"></div>
         </div>
     </div>
-
-    <!-- 忘記密碼 Modal -->
+<!-- 忘記密碼 Modal -->
     <div id="modal-forgot-password" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
@@ -1429,7 +1382,8 @@
             </div>
         </div>
     </div>
-<!-- 學習成就統計 Dashboard Modal -->
+
+    <!-- 學習成就統計 Dashboard Modal -->
     <div id="modal-streak-dashboard" class="custom-modal">
         <div class="custom-modal-card">
             <div class="close-icon-circle" id="btn-close-streak-modal" onclick="closeModal('modal-streak-dashboard')"><i class="fa-solid fa-xmark"></i></div>
@@ -1617,7 +1571,7 @@
         </div>
     </div>
 
-    <!-- 挑戰介紹選單彈窗 -->
+    <!-- 挑戰介紹選單彈窗 (已完全移除單字聽打) -->
     <div id="modal-guide-modes" class="custom-modal">
         <div class="custom-modal-card" style="padding: 22px 18px; max-height: 85vh;">
             <div class="close-icon-circle" onclick="closeModal('modal-guide-modes')"><i class="fa-solid fa-xmark"></i></div>
@@ -1638,10 +1592,6 @@
                 </button>
                 <button class="guide-mode-item-btn" onclick="openGuideDetail('word_shadow', '單字跟讀')">
                     <span><i class="fa-solid fa-microphone-lines" style="color:#10b981; width:22px;"></i> 單字跟讀</span>
-                    <i class="fa-solid fa-chevron-right" style="color:#94a3b8; font-size:0.85rem;"></i>
-                </button>
-                <button class="guide-mode-item-btn" onclick="openGuideDetail('word_type', '單字聽打')">
-                    <span><i class="fa-solid fa-keyboard" style="color:#0284c7; width:22px;"></i> 單字聽打</span>
                     <i class="fa-solid fa-chevron-right" style="color:#94a3b8; font-size:0.85rem;"></i>
                 </button>
                 <button class="guide-mode-item-btn" onclick="openGuideDetail('word_choice', '單字選擇')">
@@ -1773,8 +1723,7 @@
             <button class="ctrl-btn" id="btn-flashcard-next" onclick="stepFlashcard(1)" aria-label="下一個"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
     </div>
-
-    <!-- 主介面容器 -->
+<!-- 主介面容器 -->
     <div class="shadowing-card">
         
         <!-- 上方狀態列 -->
@@ -2007,7 +1956,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 步驟 6-B：字塊重組畫面（🌟 單一按鈕切換 + 排列區支援拖曳換位 + 打字時隱藏字塊提示） -->
+            <!-- 步驟 6-B：字塊重組畫面（🌟 單一按鈕切換 + 排列區支援拖曳換位 + 切換時自動清空） -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-blocks-mode-title">字塊重組</div>
@@ -2068,12 +2017,13 @@
                 </button>
 
                 <div class="nav-controls">
-                    <span class="lbl-progress" id="lbl-blocks-progress">0 / 0</span>
+                    <span class="lbl-blocks-progress" id="lbl-blocks-progress">0 / 0</span>
                     <button class="btn-nav-next" id="btn-block-next" onclick="nextQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-<!-- 🌟 步驟 6-H：0A 字母臨摹畫面 -->
+
+            <!-- 🌟 步驟 6-H：0A 字母臨摹畫面 -->
             <div id="step-quiz-trace" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-trace-title">字母臨摹</div>
@@ -2165,51 +2115,6 @@
                     <button class="btn-nav-next" id="btn-word-shadow-next" onclick="nextWordQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-word-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
-            </div>
-
-            <!-- 步驟 6-E：通用單字聽打畫面 -->
-            <div id="step-quiz-word-type" class="step-page">
-                <div class="challenge-top-bar">
-                    <div class="lbl-quiz-info" id="lbl-word-type-title">單字聽打</div>
-                    <div class="gear-menu-container">
-                        <button class="btn-gear" onclick="toggleGearDropdown('gear-dropdown-word-type')"><i class="fa-solid fa-gear"></i></button>
-                        <div class="gear-dropdown" id="gear-dropdown-word-type">
-                            <button class="gear-dropdown-item" onclick="toggleGearDropdown('gear-dropdown-word-type')"><i class="fa-solid fa-play"></i> 繼續挑戰</button>
-                            <button class="gear-dropdown-item quit-item" onclick="promptQuitChallenge()"><i class="fa-solid fa-right-from-bracket"></i> 離開挑戰</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="timer-text-badge" id="lbl-timer-word-type">⏱ 05:00</div>
-                <div class="timer-progress-wrapper" id="bar-wrapper-word-type">
-                    <div class="timer-progress-bar" id="bar-progress-word-type"></div>
-                </div>
-
-                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 12px 0 10px 0; min-height: 44px;">
-                    <div class="target-text" id="lbl-word-type-text" style="margin: 0; min-height: auto; display: none;">...</div>
-                    <button class="btn-circle btn-listen" id="btn-word-type-play" onclick="playWordAudio()" style="width: 44px; height: 44px; font-size: 1rem; flex-shrink: 0;"><i class="fa-solid fa-volume-high"></i></button>
-                </div>
-
-                <div class="translation-text" id="lbl-word-type-hint"></div>
-                <div id="lbl-word-type-subtext" style="font-size: 1.05rem; color: #475569; font-weight: bold; margin-bottom: 6px; display: none;"></div>
-                
-                <input type="text" id="input-word-type" class="vocab-input" placeholder="請輸入聽到的單字" autocomplete="off" autocorrect="off" autocapitalize="none">
-                
-                <div class="result-box" style="margin-top: 8px;">
-                    <div class="score-badge" id="lbl-word-type-score">等待輸入...</div>
-                </div>
-
-                <button class="btn-confirm" id="btn-submit-word-type" onclick="checkWordTypeAnswer()" style="margin-top: 10px;">
-                    <i class="fa-solid fa-check"></i> 檢查答案
-                </button>
-
-                <div class="translation-text" id="lbl-word-type-translation" style="margin-top: 12px; font-size: 1.2rem; font-weight: bold;"></div>
-
-                <div class="nav-controls">
-                    <span class="lbl-progress" id="lbl-word-type-progress">0 / 0</span>
-                    <button class="btn-nav-next btn-word-type-next" id="btn-word-type-next" onclick="nextWordQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
-                </div>
-                <button class="btn-finish-challenge" id="btn-finish-word-type" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
             <!-- 步驟 6-F：通用單字選擇題畫面 -->
@@ -2375,8 +2280,7 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-
-    <!-- 核心邏輯腳本開始 -->
+<!-- 核心邏輯腳本開始 -->
     <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -2475,7 +2379,8 @@
         let idleTimer = null;
         const IDLE_LIMIT_MS = 90 * 1000;
         let isIdlePaused = false;
-const GUIDE_DETAILS_MAP = {
+
+        const GUIDE_DETAILS_MAP = {
             'grammar': {
                 title: '📘 關卡任務玩法說明',
                 content: `
@@ -2506,17 +2411,6 @@ const GUIDE_DETAILS_MAP = {
                     <strong>4. 聽自己的聲音：</strong> 錄音完畢後可點擊綠色耳機播放剛才錄下的原音。<br>
                     <strong>5. 評分判定：</strong> 系統判定發音合格後將自動解鎖並點亮通關下一題。<br>
                     <strong>6. 挑戰結算：</strong> 全數單字完成後將統計耗時並結算星級榮譽！
-                `
-            },
-            'word_type': {
-                title: '⌨️ 單字聽打玩法說明',
-                content: `
-                    <strong>1. 播放語音：</strong> 進入題目後系統會自動播放單字發音，也可手動點擊喇叭重複聆聽。<br>
-                    <strong>2. 輸入單字：</strong> 在輸入框中依據聽到的發音打出完整正確的外語拼字。<br>
-                    <strong>3. 智慧提示：</strong> 若拼寫只差一點點，系統會貼心標出紅字提示，降低挫折感！<br>
-                    <strong>4. 送出檢查：</strong> 輸入完成後點擊綠色「檢查答案」按鈕進行比對。<br>
-                    <strong>5. 正確提示：</strong> 若拼錯系統會即時顯示正確單字並再次播放語音加深印象。<br>
-                    <strong>6. 連續闖關：</strong> 答對後點擊「下一題」繼續往前挑戰其他單字！
                 `
             },
             'word_choice': {
@@ -2767,52 +2661,6 @@ const GUIDE_DETAILS_MAP = {
                 const availableNative = Array.from(nativeSelect.options).find(o => !o.disabled);
                 if (availableNative) nativeSelect.value = availableNative.value;
             }
-        }
-
-        /* ================= 🌟 字元級 LCS diff 演算法 (聽打比對) ================= */
-        function computeLcsLength(a, b) {
-            const n = a.length, m = b.length;
-            const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
-            for (let i = 1; i <= n; i++) {
-                for (let j = 1; j <= m; j++) {
-                    dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] + 1 : Math.max(dp[i - 1][j], dp[i][j - 1]);
-                }
-            }
-            return dp[n][m];
-        }
-
-        function diffHighlightHtml(correct, input) {
-            const a = Array.from(correct), b = Array.from(input);
-            const n = a.length, m = b.length;
-            const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
-            for (let i = 1; i <= n; i++) {
-                for (let j = 1; j <= m; j++) {
-                    dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] + 1 : Math.max(dp[i - 1][j], dp[i][j - 1]);
-                }
-            }
-            let i = n, j = m;
-            const matched = new Set();
-            while (i > 0 && j > 0) {
-                if (a[i - 1] === b[j - 1]) { matched.add(i - 1); i--; j--; }
-                else if (dp[i - 1][j] >= dp[i][j - 1]) i--;
-                else j--;
-            }
-            return a.map((ch, idx) => matched.has(idx) ? ch : `<span style="color:#ef4444; font-weight:900;">${ch}</span>`).join('');
-        }
-
-        function judgeTypingAdvanced(input, correct) {
-            const ti = (input || '').trim();
-            const tc = (correct || '').trim();
-            if (ti === tc) return { level: 'perfect' };
-
-            const ni = ti.replace(/\s+/g, '');
-            const nc = tc.replace(/\s+/g, '');
-            if (ni === nc) return { level: 'space' };
-
-            const diffCount = nc.length - computeLcsLength(nc, ni);
-            const ratio = nc.length ? diffCount / nc.length : 1;
-            const level = (diffCount <= 3 && ratio <= 0.5) ? 'close' : 'far';
-            return { level, diffHtml: diffHighlightHtml(tc, ti) };
         }
 
         /* ================= 🌟 依關卡挑選單字卡彈窗邏輯 ================= */
@@ -3275,8 +3123,7 @@ const GUIDE_DETAILS_MAP = {
                 return null;
             }
         }
-
-        async function verifyAndSyncUser(user, isInteractive = false) {
+async function verifyAndSyncUser(user, isInteractive = false) {
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
                 if (!gasResult || gasResult.status !== "success") {
@@ -3460,7 +3307,6 @@ const GUIDE_DETAILS_MAP = {
             }
 
             let stageTasks = [];
-            let sideQuestMap = {};
 
             lessons.forEach(les => {
                 const lesStr = String(les);
@@ -3492,10 +3338,6 @@ const GUIDE_DETAILS_MAP = {
                 const hasTrace = is0ALevel && alphabetList.some(item => 
                     String(item.unit_id) === String(unitId) && String(item.lesson) === lesStr
                 );
-
-                if (hasWord) {
-                    sideQuestMap[lesStr] = { unitId, lesson: lesStr, mode: 'word_type', title: `${lesStr} 單字聽打`, label: '單字聽打' };
-                }
 
                 if (hasGrammar) {
                     stageTasks.push({ unitId, lesson: lesStr, mode: 'grammar', title: `${lesStr} 關卡任務`, label: '關卡任務' });
@@ -3567,21 +3409,6 @@ const GUIDE_DETAILS_MAP = {
                 });
                 let starIcons = bestStar > 0 ? '★'.repeat(bestStar) : '• • •';
 
-                const targetSideQuestMode = is0ALevel ? 'blocks' : 'word_choice';
-                const sideQuest = (task.mode === targetSideQuestMode && sideQuestMap[task.lesson]) ? sideQuestMap[task.lesson] : null;
-                let sideQuestHtml = '';
-                if (sideQuest) {
-                    const isSideCompleted = completedList.includes(`${currentConfig.category}_${currentConfig.level}_${unitId}_${sideQuest.lesson}_${sideQuest.mode}`);
-                    sideQuestHtml = `
-                        <div class="side-quest-badge ${isSideCompleted ? 'completed' : ''}" 
-                             onclick="promptSelectModeType('${sideQuest.unitId}', '${sideQuest.lesson}', '${sideQuest.mode}', '${sideQuest.title}')"
-                             title="支線任務：單字聽打">
-                            <i class="fa-solid fa-mountain-sun"></i>
-                            <span>單字聽打${isSideCompleted ? ' ✓' : ''}</span>
-                        </div>
-                    `;
-                }
-
                 const row = document.createElement('div');
                 row.className = `roadmap-node-row ${offsetClass}`;
                 row.innerHTML = `
@@ -3593,7 +3420,6 @@ const GUIDE_DETAILS_MAP = {
                             <span class="candy-node-stars">${starIcons}</span>
                         </button>
                         <span class="candy-node-label">${task.label}</span>
-                        ${sideQuestHtml}
                     </div>
                 `;
                 nodesContainer.appendChild(row);
@@ -3612,7 +3438,8 @@ const GUIDE_DETAILS_MAP = {
                 }
             }, 120);
         }
-function drawRoadmapSvgPath() {
+
+        function drawRoadmapSvgPath() {
             const svg = document.getElementById('roadmap-svg-canvas');
             const container = document.getElementById('roadmap-main-area');
             const btns = Array.from(document.querySelectorAll('.candy-node-btn'));
@@ -3691,7 +3518,6 @@ function drawRoadmapSvgPath() {
 
             if (activeChallengeType === 'timed') {
                 const targetKey = (currentConfig.mode === 'word_shadow') ? 'word-shadow' :
-                                  (currentConfig.mode === 'word_type') ? 'word-type' :
                                   (currentConfig.mode === 'word_choice') ? 'word-choice' :
                                   (currentConfig.mode === 'sentence_chat') ? 'chat' :
                                   (currentConfig.mode === 'blocks') ? 'blocks' : 'shadow';
@@ -3977,8 +3803,7 @@ function drawRoadmapSvgPath() {
             renderAllLessonsForLevel(currentConfig.level);
             goToStep('step-lesson');
         }
-
-        async function isNicknameTaken(nickname, excludeUid = null) {
+async function isNicknameTaken(nickname, excludeUid = null) {
             try {
                 const snap = await db.collection("users").where("displayName", "==", nickname).get();
                 if (snap.empty) return false;
@@ -4756,7 +4581,8 @@ function drawRoadmapSvgPath() {
             await recordSessionFocusTime();
             goToStep('step-lesson');
         }
-async function addXP(amount) {
+
+        async function addXP(amount) {
             if (!currentUser || !window.currentUserData) return;
             window.currentUserData.xp = (window.currentUserData.xp || 0) + amount;
             renderUserInfo();
@@ -5020,7 +4846,7 @@ async function addXP(amount) {
                 clearInterval(challengeTimerInterval);
                 challengeTimerInterval = null;
             }
-            ['shadow', 'chat', 'blocks', 'word-shadow', 'word-type', 'word-choice'].forEach(k => {
+            ['shadow', 'chat', 'blocks', 'word-shadow', 'word-choice'].forEach(k => {
                 const badge = document.getElementById(`lbl-timer-${k}`);
                 const wrapper = document.getElementById(`bar-wrapper-${k}`);
                 if (badge) badge.style.display = 'none';
@@ -5050,8 +4876,7 @@ async function addXP(amount) {
                                   (currentConfig.mode === 'blocks') ? 'btn-block-next' :
                                   (currentConfig.mode === 'sentence_chat') ? 'btn-chat-next' :
                                   (currentConfig.mode === 'trace') ? 'btn-trace-next' :
-                                  (currentConfig.mode === 'word_shadow') ? 'btn-word-shadow-next' :
-                                  (currentConfig.mode === 'word_type') ? 'btn-word-type-next' : 'btn-word-choice-next';
+                                  (currentConfig.mode === 'word_shadow') ? 'btn-word-shadow-next' : 'btn-word-choice-next';
                 const nextBtn = document.getElementById(nextBtnId);
                 if (nextBtn) nextBtn.style.display = 'inline-block';
             }
@@ -5852,11 +5677,6 @@ async function addXP(amount) {
                 if (titleElem) titleElem.innerText = `單字跟讀 ${tag}`;
                 goToStep('step-quiz-word-shadow');
                 if (activeChallengeType === 'timed') startChallengeTimer('word-shadow');
-            } else if (wordMode === 'word_type') {
-                const titleElem = document.getElementById('lbl-word-type-title');
-                if (titleElem) titleElem.innerText = `單字聽打 ${tag}`;
-                goToStep('step-quiz-word-type');
-                if (activeChallengeType === 'timed') startChallengeTimer('word-type');
             } else {
                 const titleElem = document.getElementById('lbl-word-choice-title');
                 if (titleElem) titleElem.innerText = `單字選擇 ${tag}`;
@@ -5865,72 +5685,119 @@ async function addXP(amount) {
             }
             displayWordQuestion();
         }
-function playWordAudio() {
+
+        function playWordAudio() {
             const item = wordQuestions[wordIndex];
             if (!item) return;
             playAudioOrTTS(item.audio_url, item.text, 0.85);
         }
 
-        /* ================= 🌟 單字聽打：整合 LCS 紅字容錯提示 ================= */
-        function checkWordTypeAnswer() {
-            if (isCurrentQuestionAnswered) return;
+        function displayWordQuestion() {
+            stopSpeechRecognition();
+            resetSpeechEvalButtons();
+            isCurrentQuestionAnswered = false;
+            if (!wordQuestions.length) return;
+
             const item = wordQuestions[wordIndex];
-            const userVal = document.getElementById('input-word-type').value;
-            const scoreBadge = document.getElementById('lbl-word-type-score');
-            const typeTextElem = document.getElementById('lbl-word-type-text');
-            const subTextElem = document.getElementById('lbl-word-type-subtext');
-            const transElem = document.getElementById('lbl-word-type-translation');
+            const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
+            const isHard = (activeChallengeType === 'timed' || (activeChallengeType === 'entry' && !is0ALevel));
 
-            document.getElementById('input-word-type').disabled = true;
-            const checkBtn = document.getElementById('btn-submit-word-type');
-            if (checkBtn) checkBtn.disabled = true;
+            if (currentConfig.mode === 'word_shadow') {
+                document.getElementById('lbl-word-shadow-progress').innerText = `${wordIndex + 1} / ${wordQuestions.length}`;
+                const targetTextElem = document.getElementById('lbl-word-shadow-target-text');
+                const transElem = document.getElementById('lbl-word-shadow-translation');
+                const playAudioBtn = document.getElementById('btn-word-shadow-play-audio');
+                const recordBtn = document.getElementById('btn-word-shadow-start-record');
+                const nextBtn = document.getElementById('btn-word-shadow-next');
 
-            const playBtn = document.getElementById('btn-word-type-play');
-            if (playBtn) { playBtn.style.visibility = 'visible'; playBtn.style.pointerEvents = 'auto'; }
+                if (nextBtn) nextBtn.style.display = 'none';
+                if (recordBtn) recordBtn.disabled = false;
 
-            const judged = judgeTypingAdvanced(userVal, item.text || '');
-
-            if (judged.level === 'perfect' || judged.level === 'space') {
-                scoreBadge.innerText = (judged.level === 'perfect') ? "🎉 完全正確！" : "🎉 太棒了！空格位置稍有不同，仍判定正確！";
-                scoreBadge.style.color = "#58cc02";
-                if (typeTextElem) typeTextElem.style.display = 'none';
-                if (subTextElem) subTextElem.style.display = 'none';
-
-                const nativeTrans = getWordTranslation(item);
-                const correctKorean = item.text || "";
-                transElem.innerText = `${correctKorean} ${nativeTrans}`.trim();
-                playWordAudio();
-                markQuestionAnswered(wordIndex);
-            } else if (judged.level === 'close') {
-                scoreBadge.innerHTML = `很接近了！只差一點點：<br><span style="font-size:1.15rem; letter-spacing:1px;">【${judged.diffHtml}】</span>`;
-                scoreBadge.style.color = "var(--duo-blue)";
-                const nativeTrans = getWordTranslation(item);
-                const correctKorean = item.text || "";
-                transElem.innerText = `${correctKorean} ${nativeTrans}`.trim();
-                playWordAudio();
-
-                isCurrentQuestionAnswered = true;
-                if (wordIndex < totalChallengeQuestions - 1) {
-                    const nextBtn = document.getElementById('btn-word-type-next');
-                    if (nextBtn) nextBtn.style.display = 'inline-block';
+                if (isHard) {
+                    targetTextElem.innerText = item.text || "";
+                    targetTextElem.style.visibility = "hidden";
+                    transElem.innerText = "";
+                    if (playAudioBtn) playAudioBtn.style.display = (activeChallengeType === 'timed') ? 'none' : 'flex';
                 } else {
-                    document.getElementById('btn-finish-word-type').style.display = 'block';
+                    targetTextElem.innerText = item.text || "";
+                    targetTextElem.style.visibility = "visible";
+                    const trans = getWordTranslation(item);
+                    transElem.innerText = trans ? `${trans}` : "";
+                    if (playAudioBtn) playAudioBtn.style.display = 'flex';
                 }
+
+                renderWordShadowSubtext();
+                document.getElementById('lbl-word-shadow-recognized-text').innerText = "-";
+                document.getElementById('lbl-word-shadow-score').innerText = "判定結果：--";
+                document.getElementById('lbl-word-shadow-score').style.color = "#58cc02";
+                if (activeChallengeType !== 'timed') playWordAudio();
+
             } else {
-                scoreBadge.innerHTML = `太可惜了 繼續加油！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${item.text || ''}】</span>`;
-                scoreBadge.style.color = "#ff4b4b";
-                const nativeTrans = getWordTranslation(item);
-                const correctKorean = item.text || "";
-                transElem.innerText = `${correctKorean} ${nativeTrans}`.trim();
-                playWordAudio();
+                document.getElementById('lbl-word-choice-progress').innerText = `${wordIndex + 1} / ${wordQuestions.length}`;
+                const targetTextElem = document.getElementById('lbl-word-choice-text');
+                const choiceSubElem = document.getElementById('lbl-word-choice-sub');
+                const choicesContainer = document.getElementById('container-word-choices');
+                const nextBtn = document.getElementById('btn-word-choice-next');
+                const audioPlayerBtn = document.getElementById('btn-word-choice-play');
 
-                isCurrentQuestionAnswered = true;
-                if (wordIndex < totalChallengeQuestions - 1) {
-                    const nextBtn = document.getElementById('btn-word-type-next');
-                    if (nextBtn) nextBtn.style.display = 'inline-block';
-                } else {
-                    document.getElementById('btn-finish-word-type').style.display = 'block';
+                if (nextBtn) nextBtn.style.display = 'none';
+                if (audioPlayerBtn) {
+                    audioPlayerBtn.style.visibility = 'visible';
+                    audioPlayerBtn.style.pointerEvents = 'auto';
                 }
+                choicesContainer.innerHTML = "";
+                document.getElementById('lbl-word-choice-score').innerText = "請選出正確的選項：";
+                document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
+
+                let pool = [];
+                let correctOpt = "";
+
+                if (is0ALevel) {
+                    targetTextElem.innerText = "";
+                    targetTextElem.style.visibility = "hidden";
+                    choiceSubElem.innerText = "";
+                    choiceSubElem.style.visibility = "hidden";
+
+                    correctOpt = (item.text || '').trim();
+                    const wrongOpts = rawWordData
+                        .filter(v => (v.text || '').trim() !== correctOpt)
+                        .map(v => (v.text || '').trim())
+                        .filter(Boolean);
+
+                    const shuffledWrongs = shuffleArray([...new Set(wrongOpts)]).slice(0, 3);
+                    pool = shuffleArray([correctOpt, ...shuffledWrongs]);
+                } else {
+                    const userLang = currentConfig.lang;
+                    const correctMeaning = (userLang === 'en') ? (item.en || item.zh_tw || item.zh || '').trim() :
+                                           (userLang === 'ja') ? (item.ja || item.jp || item.zh_tw || item.zh || '').trim() :
+                                           (item.zh_tw || item.zh || '').trim();
+
+                    correctOpt = correctMeaning;
+                    targetTextElem.innerText = item.text || "";
+                    targetTextElem.style.visibility = isHard ? "hidden" : "visible";
+
+                    choiceSubElem.innerText = "";
+                    choiceSubElem.style.visibility = "hidden";
+
+                    const wrongOpts = rawWordData
+                        .map(v => (userLang === 'en') ? (v.en || v.zh_tw || v.zh || '').trim() :
+                                  (userLang === 'ja') ? (v.ja || v.jp || v.zh_tw || v.zh || '').trim() :
+                                  (v.zh_tw || v.zh || '').trim())
+                        .filter(v => v && v !== correctMeaning);
+
+                    const shuffledWrongs = shuffleArray([...new Set(wrongOpts)]).slice(0, 3);
+                    pool = shuffleArray([correctMeaning, ...shuffledWrongs]);
+                }
+
+                pool.forEach(optVal => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-vocab-choice';
+                    btn.innerText = optVal;
+                    btn.onclick = () => checkWordChoiceAnswer(optVal);
+                    choicesContainer.appendChild(btn);
+                });
+
+                playWordAudio();
             }
         }
 
@@ -6119,7 +5986,7 @@ function playWordAudio() {
             if (questions.length > 0) displayQuestion(); else alert("該關卡尚無練習題目！");
         }
 
-        /* ================= 🌟 字塊重組作答模式單一按鈕切換邏輯 (點選字塊 ⇄ 鍵盤打字) ================= */
+        /* ================= 🌟 字塊重組作答模式單一按鈕切換邏輯 (切換時自動清空已選/已輸入內容) ================= */
         function toggleBlockInputMode() {
             const newMode = (blockInputMode === 'click') ? 'type' : 'click';
             switchBlockInputMode(newMode);
@@ -6128,11 +5995,17 @@ function playWordAudio() {
         function switchBlockInputMode(mode) {
             blockInputMode = mode;
             const toggleBtn = document.getElementById('btn-block-mode-toggle');
-            const toggleText = document.getElementById('lbl-block-mode-text');
             const areaClick = document.getElementById('area-block-click-mode');
             const areaType = document.getElementById('area-block-type-mode');
             const typedInput = document.getElementById('input-block-typed');
             const zoneTypeHint = document.getElementById('zone-options-type-hint');
+
+            // 🌟 切換模式時徹底清空字塊選擇與鍵盤輸入內容，避免混亂與程式錯誤
+            selectedBlockIndices = [];
+            renderBlocks();
+            if (typedInput) {
+                typedInput.value = "";
+            }
 
             if (mode === 'click') {
                 if (toggleBtn) toggleBtn.innerHTML = '<i class="fa-solid fa-keyboard"></i><span id="lbl-block-mode-text">切換為鍵盤打字</span>';
@@ -6147,12 +6020,6 @@ function playWordAudio() {
                 if (zoneTypeHint) zoneTypeHint.style.display = 'none';
 
                 if (typedInput) {
-                    if (!typedInput.value.trim() && selectedBlockIndices.length > 0) {
-                        const q = questions[currentIndex];
-                        if (q && q.options) {
-                            typedInput.value = selectedBlockIndices.map(i => q.options[i]).join('');
-                        }
-                    }
                     setTimeout(() => typedInput.focus(), 80);
                 }
             }
