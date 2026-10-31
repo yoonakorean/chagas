@@ -1138,7 +1138,7 @@
         .nav-controls .btn-nav-next {
             position: absolute; right: 0; top: 50%; transform: translateY(-50%); background: var(--duo-blue); 
             color: white; border: none; border-bottom: 3.5px solid var(--duo-blue-shadow); padding: 8px 16px; border-radius: 12px; 
-            cursor: font-weight: 800; font-size: 0.92rem; display: none; animation: nextBtnPopIn 0.18s ease-out forwards;
+            cursor: pointer; font-weight: 800; font-size: 0.92rem; display: none; animation: nextBtnPopIn 0.18s ease-out forwards;
         }
         @keyframes nextBtnPopIn {
             from { transform: translateY(-50%) scale(0.88); opacity: 0; }
@@ -1244,8 +1244,8 @@
         .btn-vocab-choice:active { transform: translateY(2px); border-bottom-width: 1.5px; }
 
         .role-switch-box { display: flex; justify-content: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-        .btn-role { padding: 5px 12px; border-radius: 20px; border: 2px solid #e5e7eb; background: white; font-weight: bold; cursor: pointer; font-size: 0.8rem; }
-        .btn-role.active { border-color: var(--duo-blue); background: #ddf4ff; color: var(--duo-blue); }
+        .btn-role { padding: 5px 12px; border-radius: 20px; border: 2px solid #e5e7eb; background: white; font-weight: bold; cursor: default; font-size: 0.85rem; }
+        .btn-role.active { border-color: var(--duo-blue); background: #ddf4ff; color: var(--duo-blue); font-weight: 800; }
 
         .profile-avatar-large { width: 72px; height: 72px; border-radius: 50%; border: 3px solid var(--duo-blue); margin: 0 auto 8px auto; object-fit: cover; display: block; }
         .quit-modal-img { width: 120px; height: 120px; object-fit: contain; margin: 0 auto 12px auto; display: block; }
@@ -1359,8 +1359,7 @@
             <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 10px;" class="hidden"></div>
         </div>
     </div>
-
-    <!-- 忘記密碼 Modal -->
+<!-- 忘記密碼 Modal -->
     <div id="modal-forgot-password" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
@@ -1466,7 +1465,8 @@
             <button id="btn-confirm-initial-level" class="btn-3d btn-3d-primary" style="width: 100%; padding: 10px; margin-top: 4px;">確定切換</button>
         </div>
     </div>
-<!-- 模式選擇彈窗 -->
+
+    <!-- 模式選擇彈窗 -->
     <div id="modal-select-mode-type" class="custom-modal">
         <div class="custom-modal-card" style="padding: 24px 18px;">
             <div class="close-icon-circle" onclick="closeModal('modal-select-mode-type')"><i class="fa-solid fa-xmark"></i></div>
@@ -1924,8 +1924,7 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-
-            <!-- 步驟 6-G：句子問答畫面 -->
+<!-- 步驟 6-G：句子問答畫面 (對話挑戰) -->
             <div id="step-quiz-sentence-chat" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-chat-mode-title">對話挑戰</div>
@@ -1943,27 +1942,31 @@
                     <div class="timer-progress-bar" id="bar-progress-chat"></div>
                 </div>
 
+                <!-- 角色狀態指示標籤 (依規則先 B 後 A，不提供手動點擊切換) -->
                 <div class="role-switch-box" style="margin-top: 4px;">
-                    <button class="btn-role active" id="btn-chat-role-a" onclick="switchChatRole('A')">角色 A (我念 A 聽 B)</button>
-                    <button class="btn-role" id="btn-chat-role-b" onclick="switchChatRole('B')">角色 B (聽 A 我念 B)</button>
+                    <div class="btn-role" id="btn-chat-role-b">第一階段：角色 B (聽 A 我念 B)</div>
+                    <div class="btn-role" id="btn-chat-role-a">第二階段：角色 A (我念 A 聽 B)</div>
                 </div>
 
                 <div>
                     <div class="instruction-badge-bar" id="lbl-chat-instruction-top">請依指引念出句子：</div>
                 </div>
 
+                <!-- 角色 A 的關鍵字提示氣泡 (上方) -->
                 <div id="chat-a-hint-bubble" style="display: none; background: #fef3c7; border: 1.5px solid #fde68a; border-radius: 14px; padding: 10px; margin-bottom: 10px; text-align: left;">
                     <div style="font-size: 0.85rem; color: #b45309; font-weight: 800; margin-bottom: 2px;" id="lbl-chat-a-hint-title">提示：</div>
                     <div style="font-size: 1.15rem; font-weight: bold; color: #92400e;" id="lbl-chat-a-hint-text">...</div>
                 </div>
 
-                <div id="chat-partner-bubble" style="display: none; background: #e0f2fe; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 10px; margin-bottom: 10px; text-align: left;">
+                <!-- 本題主要文字 (角色 A 時為提問句子；角色 B 時為對方先講的語音/題目提示) -->
+                <div class="target-text" id="lbl-chat-target-text">載入中...</div>
+                <div class="translation-text" id="lbl-chat-translation">...</div>
+
+                <!-- 🌟 調整位置：對方回覆氣泡框移至提問文字下方，呈現一問一答排列 -->
+                <div id="chat-partner-bubble" style="display: none; background: #e0f2fe; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 10px; margin: 10px 0; text-align: left;">
                     <div style="font-size: 0.85rem; color: #0284c7; font-weight: 800; margin-bottom: 2px;" id="lbl-partner-title">對方回覆：</div>
                     <div style="font-size: 1.25rem; font-weight: bold; color: #0f172a;" id="lbl-partner-text">...</div>
                 </div>
-
-                <div class="target-text" id="lbl-chat-target-text">載入中...</div>
-                <div class="translation-text" id="lbl-chat-translation">...</div>
                 
                 <div class="controls">
                     <button class="btn-circle btn-listen" id="btn-chat-play-audio" onclick="playChatTargetAudio()"><i class="fa-solid fa-volume-high"></i></button>
@@ -2047,7 +2050,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 🌟 步驟 6-H：0A 字母臨摹畫面（加入筆劃狀態徽章與動態指示） -->
+            <!-- 🌟 步驟 6-H：0A 字母臨摹畫面（含筆劃狀態徽章與動態指示） -->
             <div id="step-quiz-trace" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-trace-title">字母臨摹</div>
@@ -2102,7 +2105,8 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-trace" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-<!-- 步驟 6-D：通用單字跟讀畫面 -->
+
+            <!-- 步驟 6-D：通用單字跟讀畫面 -->
             <div id="step-quiz-word-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-word-shadow-title">單字跟讀</div>
@@ -2191,8 +2195,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-word-choice" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
         </div>
-
-        <!-- 視圖 B：會員中心與排行榜大視圖 -->
+<!-- 視圖 B：會員中心與排行榜大視圖 -->
         <div id="profile-view" class="hidden" style="text-align: left; flex: 1; overflow-y: auto; padding-bottom: 80px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px;">
                 <button class="btn-3d btn-3d-secondary" onclick="closeProfileView()" style="padding: 7px 12px; font-size: 0.85rem;">
@@ -2368,9 +2371,10 @@
         let userRecordedAudioUrl = null;
         let lastRecognizedSpeechText = "";
 
+        // 🌟 對話挑戰變數：預設先跑角色 B，再接角色 A
         let chatRounds = [];
         let chatRoundIndex = 0;
-        let chatRole = 'A';
+        let chatRole = 'B';
         let isChatChallengeMode = false;
         let chatRoundPassed = false;
 
@@ -2486,12 +2490,9 @@ const GUIDE_DETAILS_MAP = {
             'sentence_chat': {
                 title: '💬 對話挑戰玩法說明',
                 content: `
-                    <strong>1. 選擇角色：</strong> 可在上方自由切換飾演角色 A 或角色 B。<br>
-                    <strong>2. 聽取對話：</strong> 聆聽對話夥伴的上一句發言與情境指引。<br>
-                    <strong>3. 開口回覆：</strong> 點擊錄音鍵念出正確的回應句子。<br>
-                    <strong>4. 智能接話：</strong> 發音通過後，系統會自動撥放對方的下一句回覆，體驗沉浸式對話。<br>
-                    <strong>5. 模式切換：</strong> 挑戰模式下會隱藏完整文字，考驗即時反應力。<br>
-                    <strong>6. 對話通關：</strong> 順利走完完整會話情境即可取得挑戰星級！
+                    <strong>1. 雙向訓練：</strong> 挑戰全程一律先由【角色 B】開始（聽 Speaker A 念出回答），全部完成後自動進入【角色 A】（發起提問聆聽回覆）。<br>
+                    <strong>2. 一問一答：</strong> 當輪到角色 A 提問完畢且發音合格後，對方的回覆框會自然出現在下方。<br>
+                    <strong>3. 依序通關：</strong> 需連續完成角色 B 與角色 A 兩輪練習，才能完成整組對話挑戰！
                 `
             }
         };
@@ -2644,7 +2645,6 @@ const GUIDE_DETAILS_MAP = {
             return Array.from(candidates);
         }
 
-        /* ================= 🌟 母語與學習語言雙向動態互斥過濾 ================= */
         const LANG_MUTUAL_MAP = {
             'zh': 'chinese',
             'en': 'english',
@@ -2700,7 +2700,6 @@ const GUIDE_DETAILS_MAP = {
             }
         }
 
-        /* ================= 🌟 依關卡挑選單字卡彈窗邏輯 ================= */
         function openFlashcardStagePicker() {
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
             const wordsOfLevel = rawWordData.filter(v => normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized);
@@ -2875,7 +2874,8 @@ const GUIDE_DETAILS_MAP = {
                 }
             }, { passive: true });
         })();
-function forceResetMicrophoneSession() {
+
+        function forceResetMicrophoneSession() {
             if (recognition) {
                 try {
                     recognition.onstart = null;
@@ -3159,8 +3159,7 @@ function forceResetMicrophoneSession() {
                 return null;
             }
         }
-
-        async function verifyAndSyncUser(user, isInteractive = false) {
+async function verifyAndSyncUser(user, isInteractive = false) {
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
                 if (!gasResult || gasResult.status !== "success") {
@@ -3311,7 +3310,8 @@ function forceResetMicrophoneSession() {
                 renderAllLessonsForLevel(currentConfig.level);
             }, 1900);
         }
-function renderCandyRoadmap(unitId, filteredByLevel, units) {
+
+        function renderCandyRoadmap(unitId, filteredByLevel, units) {
             const nodesContainer = document.getElementById('roadmap-nodes-list');
             const svgCanvas = document.getElementById('roadmap-svg-canvas');
             nodesContainer.innerHTML = "";
@@ -4711,8 +4711,7 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                 }, 100);
             }
         }
-
-        function setUserLang(lang) {
+function setUserLang(lang) {
             currentConfig.lang = lang;
             localStorage.setItem('preferred_user_lang', lang);
         }
@@ -5463,7 +5462,8 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                 showGrammarQuizArea();
             }
         }
-/* ================= 🌟 字母臨摹 Canvas 控制與筆劃評判核心 ================= */
+
+        /* ================= 🌟 字母臨摹 Canvas 控制與筆劃評判核心 ================= */
         function initTraceCanvas(curItem) {
             const container = document.getElementById('trace-canvas-container');
             const size = Math.min(270, window.innerWidth - 70);
@@ -5476,7 +5476,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             const bgCanvas = document.getElementById('trace-bg-canvas');
             const bgCtx = bgCanvas.getContext('2d');
             
-            // 繪製米字格虛線輔助線
             bgCtx.strokeStyle = '#e2e8f0';
             bgCtx.lineWidth = 1.5;
             bgCtx.setLineDash([5, 5]);
@@ -5487,7 +5486,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             bgCtx.moveTo(size, 0); bgCtx.lineTo(0, size);
             bgCtx.stroke();
 
-            // 繪製半透明示範字母底字
             bgCtx.setLineDash([]);
             bgCtx.font = `bold ${size * 0.62}px "Noto Sans KR", "Noto Sans JP", sans-serif`;
             bgCtx.fillStyle = '#e2e8f0';
@@ -5586,7 +5584,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                 const sx = startPt.x * size;
                 const sy = startPt.y * size;
 
-                // 繪製起點光圈
                 traceGuideCtx.beginPath();
                 traceGuideCtx.arc(sx, sy, 12, 0, Math.PI * 2);
                 traceGuideCtx.fillStyle = 'rgba(2, 132, 199, 0.25)';
@@ -5597,7 +5594,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                 traceGuideCtx.fillStyle = '#0284c7';
                 traceGuideCtx.fill();
 
-                // 繪製筆劃序號標籤
                 traceGuideCtx.fillStyle = '#ffffff';
                 traceGuideCtx.font = 'bold 9px sans-serif';
                 traceGuideCtx.textAlign = 'center';
@@ -5625,13 +5621,11 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             });
         }
 
-        /* 🌟 單筆結束時的幾何比對評判演算法 */
         function onStrokeFinished(curItem) {
             const strokesDef = curItem.strokes;
             const feedbackElem = document.getElementById('lbl-trace-feedback');
 
             if (!strokesDef || strokesDef.length === 0) {
-                // 若該字元尚未配置詳細筆劃定義，僅做基礎筆劃長度判定
                 feedbackElem.innerText = "已收錄筆劃，請繼續書寫或點擊完成！";
                 feedbackElem.style.color = "#0284c7";
                 return;
@@ -5653,17 +5647,14 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                 return;
             }
 
-            // 評判規則 1：起點距離比對 (公差 0.28)
             const expectedStart = expectedStroke.points[0];
             const drawnStart = currentDrawnStroke[0];
             const startDist = Math.hypot(drawnStart.x - expectedStart.x, drawnStart.y - expectedStart.y);
 
-            // 評判規則 2：終點距離比對 (公差 0.32)
             const expectedEnd = expectedStroke.points[expectedStroke.points.length - 1];
             const drawnEnd = currentDrawnStroke[currentDrawnStroke.length - 1];
             const endDist = Math.hypot(drawnEnd.x - expectedEnd.x, drawnEnd.y - expectedEnd.y);
 
-            // 評判規則 3：整體方向比對（避免方向反向劃一橫）
             const expectedAngle = Math.atan2(expectedEnd.y - expectedStart.y, expectedEnd.x - expectedStart.x);
             const drawnAngle = Math.atan2(drawnEnd.y - drawnStart.y, drawnEnd.x - drawnStart.x);
             let angleDiff = Math.abs(expectedAngle - drawnAngle);
@@ -5786,7 +5777,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             }
         }
 
-        /* 🌟 送出驗證：必須通過所有筆劃順序方可過關，防止隨意一橫過關 */
         function submitTraceAnswer() {
             if (isCurrentQuestionAnswered) return;
             const cur = traceQuestions[traceIndex];
@@ -6210,7 +6200,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             if (questions.length > 0) displayQuestion(); else alert("該關卡尚無練習題目！");
         }
 
-        /* ================= 🌟 字塊重組作答模式切換邏輯 ================= */
         function toggleBlockInputMode() {
             const newMode = (blockInputMode === 'click') ? 'type' : 'click';
             switchBlockInputMode(newMode);
@@ -6344,7 +6333,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             }
         }
 
-        /* ================= 🌟 字塊渲染：支援拖曳換位置 + 點擊退回 ================= */
         function renderBlocks() {
             const q = questions[currentIndex];
             const zoneOptions = document.getElementById('zone-options');
@@ -6488,7 +6476,6 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             });
         }
 
-        /* ================= 🌟 字塊重組檢查答案 ================= */
         function checkBlockAnswer() {
             if (isCurrentQuestionAnswered) return;
             const q = questions[currentIndex];
@@ -6652,6 +6639,7 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             return false;
         }
 
+        /* ================= 🌟 對話挑戰：先 B 後 A 全流程與一問一答排列核心 ================= */
         function startSentenceChatChallenge() {
             stopSpeechRecognition();
             stopChallengeTimer();
@@ -6693,24 +6681,30 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             if (chatRounds.length === 0) return alert("此關卡 dialogue 分頁無題目資料！");
 
             chatRoundIndex = 0;
-            totalChallengeQuestions = chatRounds.length;
+            // 🌟 總題數為 B 輪題數 + A 輪題數 (兩輪皆完成才算通關)
+            totalChallengeQuestions = chatRounds.length * 2;
             pointsPerQuestion = totalChallengeQuestions > 0 ? (100 / totalChallengeQuestions) : 10;
-            chatRole = 'A';
+            
+            // 🌟 一律先擔任角色 B
+            chatRole = 'B';
             isChatChallengeMode = (activeChallengeType === 'timed' || (activeChallengeType === 'entry' && !is0ALevel));
 
-            switchChatRole('A');
+            updateChatRoleBadge();
             goToStep('step-quiz-sentence-chat');
+            displayChatRound();
             if (activeChallengeType === 'timed') startChallengeTimer('chat');
         }
 
-        function switchChatRole(role) {
-            stopSpeechRecognition();
-            revokeUserAudioUrl();
-            chatRole = role;
-            ['a', 'b'].forEach(r => document.getElementById(`btn-chat-role-${r}`).classList.remove('active'));
-            document.getElementById(`btn-chat-role-${role.toLowerCase()}`).classList.add('active');
-            chatRoundIndex = 0;
-            displayChatRound();
+        function updateChatRoleBadge() {
+            const roleAElem = document.getElementById('btn-chat-role-a');
+            const roleBElem = document.getElementById('btn-chat-role-b');
+            if (chatRole === 'B') {
+                if (roleBElem) { roleBElem.classList.add('active'); roleBElem.innerText = "當前：第一階段 角色 B (聽 A 我念 B)"; }
+                if (roleAElem) { roleAElem.classList.remove('active'); roleAElem.innerText = "下一階段：角色 A (我念 A 聽 B)"; }
+            } else {
+                if (roleAElem) { roleAElem.classList.add('active'); roleAElem.innerText = "當前：第二階段 角色 A (我念 A 聽 B)"; }
+                if (roleBElem) { roleBElem.classList.remove('active'); roleBElem.innerText = "✔ 第一階段 角色 B (已完成)"; }
+            }
         }
 
         function displayChatRound(autoPlayOpponent = true) {
@@ -6721,12 +6715,14 @@ async function isNicknameTaken(nickname, excludeUid = null) {
 
             chatRoundPassed = false;
             const curRound = chatRounds[chatRoundIndex];
-            const total = chatRounds.length;
+            const roundTotal = chatRounds.length;
 
             const nextBtnChat = document.getElementById('btn-chat-next');
             if (nextBtnChat) nextBtnChat.style.display = 'none';
 
-            document.getElementById('lbl-chat-progress').innerText = `${chatRoundIndex + 1} / ${total}`;
+            // 進度指示器：若角色 B 顯示 (1/5)，換角色 A 則為 (1/5 [第二輪])
+            const rolePhaseText = (chatRole === 'B') ? `【第一階段·角色 B】` : `【第二階段·角色 A】`;
+            document.getElementById('lbl-chat-progress').innerText = `${rolePhaseText} ${chatRoundIndex + 1} / ${roundTotal}`;
             document.getElementById('lbl-chat-recognized-text').innerText = "-";
             document.getElementById('lbl-chat-score').innerText = "判定結果：--";
             document.getElementById('lbl-chat-score').style.color = "#58cc02";
@@ -6743,10 +6739,11 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             if (playAudioBtn) playAudioBtn.style.display = isChatChallengeMode ? 'none' : 'flex';
 
             if (chatRole === 'A') {
+                // 🌟 角色 A：我是提問方，對方的回答框在回答正確前先隱藏
                 partnerBubble.style.display = 'none';
                 if (isChatChallengeMode) {
-                    instructionTopElem.innerText = `【角色 A】挑戰模式：請參考下方關鍵字提示回答：`;
-                    targetTextElem.innerText = "挑戰模式中，請念出完整句子";
+                    instructionTopElem.innerText = `【角色 A】請發起對話：依關鍵字提示念出提問：`;
+                    targetTextElem.innerText = "挑戰模式中，請念出完整提問句子";
                     transElem.innerText = "";
 
                     const activeHint = (currentConfig.lang === 'en') ? (curRound.hintEn || curRound.hintZh) :
@@ -6759,21 +6756,24 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                         hintBubble.style.display = 'none';
                     }
                 } else {
-                    instructionTopElem.innerText = `【角色 A】請依關鍵字提示念出句子：`;
+                    instructionTopElem.innerText = `【角色 A】請發起對話：念出提問句子：`;
                     hintBubble.style.display = 'none';
                     targetTextElem.innerText = curRound.axText || curRound.aText;
                     transElem.innerText = "";
                 }
             } else {
+                // 🌟 角色 B：對方先說 A，我聽完後回答 B
                 hintBubble.style.display = 'none';
-                partnerBubble.style.display = isChatChallengeMode ? 'none' : 'block';
-                document.getElementById('lbl-partner-title').innerText = `對方 (Speaker A)：`;
-                document.getElementById('lbl-partner-text').innerText = curRound.aText;
+                partnerBubble.style.display = 'none';
 
-                instructionTopElem.innerText = isChatChallengeMode ? `【角色 B】挑戰模式：請聽 Speaker A 語音並念出回答：` : `【角色 B】請聽取 Speaker A 語音並念出回答：`;
-                targetTextElem.innerText = isChatChallengeMode ? "聽取對方語音後直接回應" : (curRound.bxText || curRound.bText);
-                transElem.innerText = "";
+                instructionTopElem.innerText = isChatChallengeMode 
+                    ? `【角色 B】請聽對方提問，並念出正確回應：` 
+                    : `【角色 B】對方提問如下，請念出你的回答：`;
+                
+                targetTextElem.innerText = isChatChallengeMode ? "請聆聽對方提問後作答" : (curRound.bxText || curRound.bText);
+                transElem.innerText = isChatChallengeMode ? "" : (curRound.zh_tw || "");
 
+                // 自動播放對方的提問 (A 的語音)
                 if (autoPlayOpponent) setTimeout(() => playAudioOrTTS(curRound.aAudio, curRound.aText, 0.85), 350);
             }
         }
@@ -6781,12 +6781,15 @@ async function isNicknameTaken(nickname, excludeUid = null) {
         function playChatTargetAudio() {
             const curRound = chatRounds[chatRoundIndex];
             if (!curRound) return;
+            // 播放示範：角色 A 聽 A 音檔，角色 B 聽 B 音檔
             playAudioOrTTS(chatRole === 'A' ? curRound.aAudio : curRound.bAudio, chatRole === 'A' ? curRound.aText : curRound.bText, 0.85);
         }
 
         function handleChatSpeechSuccess(userSpeech) {
             chatRoundPassed = true;
-            markQuestionAnswered(chatRoundIndex);
+            // 計算跨階段總題目索引 (B 輪 0 ~ N-1；A 輪 N ~ 2N-1)
+            const globalIndex = (chatRole === 'B') ? chatRoundIndex : (chatRounds.length + chatRoundIndex);
+            markQuestionAnswered(globalIndex);
 
             const recordBtn = document.getElementById('btn-chat-start-record');
             if (recordBtn) recordBtn.disabled = true;
@@ -6796,19 +6799,25 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             const targetTextElem = document.getElementById('lbl-chat-target-text');
 
             if (chatRole === 'A') {
-                document.getElementById('lbl-chat-score').innerText = "🎉 發音合格！";
+                document.getElementById('lbl-chat-score').innerText = "🎉 提問合格！";
                 document.getElementById('lbl-chat-score').style.color = "#58cc02";
                 targetTextElem.innerText = curRound.aText;
+                
+                // 🌟 角色 A 念完提問合格後，對方的回覆氣泡框在正下方跳出，達成「一問一答」
                 partnerBubble.style.display = 'block';
                 document.getElementById('lbl-partner-title').innerText = `對方 (Speaker B) 回覆：`;
                 document.getElementById('lbl-partner-text').innerText = curRound.bText;
+                
+                // 自動播放對方的回應語音
                 setTimeout(() => playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85), 400);
             } else {
                 document.getElementById('lbl-chat-score').innerText = "🎉 回應合格！";
                 document.getElementById('lbl-chat-score').style.color = "#58cc02";
                 targetTextElem.innerText = curRound.bText;
+                
+                // 角色 B 念完後，下方顯示剛才對方的提問紀錄供核對
                 partnerBubble.style.display = 'block';
-                document.getElementById('lbl-partner-title').innerText = `對方 (Speaker A)：`;
+                document.getElementById('lbl-partner-title').innerText = `對方剛才的提問 (Speaker A)：`;
                 document.getElementById('lbl-partner-text').innerText = curRound.aText;
             }
         }
@@ -6817,7 +6826,14 @@ async function isNicknameTaken(nickname, excludeUid = null) {
             if (chatRoundIndex < chatRounds.length - 1) { 
                 chatRoundIndex++; 
                 displayChatRound(); 
-            } 
+            } else if (chatRole === 'B') {
+                // 🌟 角色 B 全數完成！自動無縫推進進入角色 A
+                alert("🎉 第一階段【角色 B】練習完畢！\n接著將自動切換為【角色 A】，請擔任提問者繼續挑戰！");
+                chatRole = 'A';
+                chatRoundIndex = 0;
+                updateChatRoleBadge();
+                displayChatRound();
+            }
         }
 
         function getSupportedMimeType() {
@@ -7043,7 +7059,9 @@ async function isNicknameTaken(nickname, excludeUid = null) {
                             document.getElementById('lbl-chat-score').style.color = "#ff4b4b";
 
                             isCurrentQuestionAnswered = true;
-                            if (chatRoundIndex < totalChallengeQuestions - 1) {
+                            // 檢查是否已抵達最終總關卡
+                            const globalIndex = (chatRole === 'B') ? chatRoundIndex : (chatRounds.length + chatRoundIndex);
+                            if (globalIndex < totalChallengeQuestions - 1) {
                                 const nextBtn = document.getElementById('btn-chat-next');
                                 if (nextBtn) nextBtn.style.display = 'inline-block';
                             } else {
