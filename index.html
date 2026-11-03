@@ -2021,7 +2021,7 @@
                     <div class="instruction-badge-bar" id="lbl-chat-instruction-top">請依指引念出句子：</div>
                 </div>
 
-                <!-- 角色提示氣泡 (上方) -->
+                <!-- 角色 A 的關鍵字提示氣泡 (上方) -->
                 <div id="chat-a-hint-bubble" style="display: none; background: #fef3c7; border: 1.5px solid #fde68a; border-radius: 14px; padding: 10px; margin-bottom: 10px; text-align: left;">
                     <div style="font-size: 0.85rem; color: #b45309; font-weight: 800; margin-bottom: 2px;" id="lbl-chat-a-hint-title">提示：</div>
                     <div style="font-size: 1.15rem; font-weight: bold; color: #92400e;" id="lbl-chat-a-hint-text">...</div>
@@ -3159,6 +3159,120 @@
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
+        }
+
+        async function processDailyCheckIn(user, userData) {
+            const todayStr = getLocalDateString();
+            let history = Array.isArray(userData.checkInHistory) ? [...userData.checkInHistory] : [];
+            let lastDateStr = userData.lastCheckInDate || null;
+            let streak = userData.streakDays || 0;
+
+            if (lastDateStr === todayStr) {
+                return { streakDays: streak, checkInHistory: history };
+            }
+
+            if (!lastDateStr) {
+                streak = 1;
+            } else {
+                const lastDate = new Date(lastDateStr + "T00:00:00");
+                const todayDate = new Date(todayStr + "T00:00:00");
+                const diffDays = Math.round((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+
+                if (diffDays === 1) streak += 1;
+                else if (diffDays > 1) streak = 1;
+            }
+
+            if (!history.includes(todayStr)) history.push(todayStr);
+
+            userData.streakDays = streak;
+            userData.lastCheckInDate = todayStr;
+            userData.checkInHistory = history;
+            userData.xp = (userData.xp || 0) + 20;
+
+            try {
+                await db.collection("users").doc(user.uid).set({
+                    streakDays: streak,
+                    lastCheckInDate: todayStr,
+                    checkInHistory: history,
+                    xp: firebase.firestore.FieldValue.increment(20)
+                }, { merge: true });
+            } catch (e) {
+                console.error("更新簽到紀錄失敗:", e);
+            }
+
+            return { streakDays: streak, checkInHistory: history };
+        }
+
+        function getItemField(item, fieldName) {
+            if (!item) return '';
+            const f = String(fieldName).toLowerCase().replace(/[\s_\-]/g, '');
+
+            if (Array.isArray(item)) {
+                if (f === 'id') return item[0] !== undefined ? String(item[0]) : '';
+                if (f === 'level' || f === 'lvl') return String(item[1] || '');
+                if (f === 'unitid' || f === 'unit') return String(item[2] || '');
+                if (f === 'lesson' || f === 'stage') return String(item[3] || '');
+                if (f === 'text' || f === 'fulltext') return String(item[4] || '');
+                if (f === 'voice') return String(item[10] || '');
+                return '';
+            }
+
+            if (f === 'lesson' || f === 'stage') return String(item.lesson || item.stage || '');
+            if (f === 'unitid' || f === 'unit') return String(item.unit_id || item.unitid || item.unit || '');
+            if (f === 'level' || f === 'lvl') return String(item.level || item.lvl || '');
+            return item[fieldName] !== undefined ? String(item[fieldName]) : (item[f] !== undefined ? String(item[f]) : '');
+        }
+
+        const ProgressModel = {
+            loadProgress: async (uid) => {
+                try {
+                    const doc = await db.collection("users").doc(uid).get();
+                    return doc.exists ? doc.data() : null;
+                } catch (error) {
+                    console.error("載入進度失敗:", error);
+                    return null;
+                }
+            },
+            saveProgress: async (uid, data) => {
+                try { await db.collection("users").doc(uid).set(data, { merge: true }); }
+                catch (e) { console.error("儲存失敗:", e); }
+            },
+            updateUnitProgress: async (uid, unit, lesson) => {
+                try {
+                    if (!window.currentUserData.unitProgress) window.currentUserData.unitProgress = {};
+                    window.currentUserData.unitProgress[`unit_${unit}`] = {
+                        maxLesson: lesson,
+                        maxStage: lesson,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+                    await db.collection("users").doc(uid).set({ "unitProgress": window.currentUserData.unitProgress }, { merge: true });
+                } catch (e) {
+                    console.error("更新進度失敗:", e);
+                }
+            }
+        };
+
+        function calculateStars(score) {
+            if (score >= 90) return { stars: 3, label: '⭐⭐⭐' };
+            if (score >= 71) return { stars: 2, label: '⭐⭐' };
+            if (score >= 51) return { stars: 1, label: '⭐' };
+            return { stars: 0, label: '未達成' };
+        }
+
+        function getRecordKey(lesson, mode, chalType, unitId = null) {
+            const actualUnit = unitId || currentConfig.unit_id;
+            return `${currentConfig.category}_${currentConfig.level}_${actualUnit}_${lesson}_${mode}_${chalType}`;
+        }
+
+        function getStoredBestRecord(lesson, mode, chalType, unitId = null) {
+            const key = getRecordKey(lesson, mode, chalType, unitId);
+            const userScores = (window.currentUserData && window.currentUserData.modeScores) || {};
+            if (userScores[key]) return userScores[key];
+            try {
+                return JSON.parse(localStorage.getItem(`score_${key}`) || 'null');
+            } catch (e) {
+                return null;
+            }
         }
 async function verifyAndSyncUser(user, isInteractive = false) {
             try {
@@ -6740,17 +6854,15 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             const recordBtn = document.getElementById('btn-chat-start-record');
 
             if (recordBtn) recordBtn.disabled = false;
-            // 入門和挑戰模式中也可以重複播放音檔
-            if (playAudioBtn) playAudioBtn.style.display = 'flex';
+            if (playAudioBtn) playAudioBtn.style.display = isChatChallengeMode ? 'none' : 'flex';
 
             if (chatRole === 'A') {
                 if (topPartnerBubble) topPartnerBubble.style.display = 'none';
                 if (bottomPartnerBubble) bottomPartnerBubble.style.display = 'none';
                 
                 if (isChatChallengeMode) {
-                    instructionTopElem.innerText = `【角色 A】請發起對話：念出提問句子：`;
-                    // 關鍵字部分直接顯示整句提示
-                    targetTextElem.innerText = curRound.axText || curRound.aText;
+                    instructionTopElem.innerText = `【角色 A】請發起對話：依關鍵字提示念出提問：`;
+                    targetTextElem.innerText = "挑戰模式中，請念出完整提問句子";
                     transElem.innerText = "";
 
                     const activeHint = (currentConfig.lang === 'en') ? (curRound.hintEn || curRound.hintZh) :
@@ -6769,22 +6881,16 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                     transElem.innerText = "";
                 }
             } else {
-                // 擔任角色 B 時
                 hintBubble.style.display = 'none';
+                if (topPartnerBubble) topPartnerBubble.style.display = 'none';
                 if (bottomPartnerBubble) bottomPartnerBubble.style.display = 'none';
 
-                // 練習模式、入門和挑戰模式中，角色 A 說的話直接在上方置頂顯示
-                if (topPartnerBubble) {
-                    topPartnerBubble.style.display = 'block';
-                    document.getElementById('lbl-top-partner-title').innerText = `對方 (Speaker A) 提問：`;
-                    document.getElementById('lbl-top-partner-text').innerText = curRound.aText;
-                }
-
-                instructionTopElem.innerText = `【角色 B】對方提問如上，請念出你的回答：`;
+                instructionTopElem.innerText = isChatChallengeMode 
+                    ? `【角色 B】請聽對方提問，並念出正確回應：` 
+                    : `【角色 B】對方提問如下，請念出你的回答：`;
                 
-                // 關鍵字部分直接顯示角色 B 整句，入門和挑戰模式同樣給予提示
-                targetTextElem.innerText = curRound.bxText || curRound.bText;
-                transElem.innerText = curRound.zh_tw || "";
+                targetTextElem.innerText = isChatChallengeMode ? "請聆聽對方提問後作答" : (curRound.bxText || curRound.bText);
+                transElem.innerText = isChatChallengeMode ? "" : (curRound.zh_tw || "");
 
                 if (autoPlayOpponent) setTimeout(() => playAudioOrTTS(curRound.aAudio, curRound.aText, 0.85), 350);
             }
@@ -6793,7 +6899,6 @@ async function verifyAndSyncUser(user, isInteractive = false) {
         function playChatTargetAudio() {
             const curRound = chatRounds[chatRoundIndex];
             if (!curRound) return;
-            // 點擊喇叭播放我方當前要念的句子，讓學員重複聆聽
             playAudioOrTTS(chatRole === 'A' ? curRound.aAudio : curRound.bAudio, chatRole === 'A' ? curRound.aText : curRound.bText, 0.85);
         }
 
