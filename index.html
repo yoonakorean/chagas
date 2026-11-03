@@ -585,7 +585,7 @@
             box-sizing: border-box;
             overflow-x: hidden;
         }
-.stage-pill-selector {
+        .stage-pill-selector {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -888,7 +888,8 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-/* ================= 3D 單字翻轉卡專屬樣式 ================= */
+
+        /* ================= 3D 單字翻轉卡專屬樣式 ================= */
         .fullscreen-stage {
             position: fixed; inset: 0; background: #fbfbfa; z-index: 999999;
             display: none; flex-direction: column; overflow: hidden;
@@ -1349,6 +1350,26 @@
             transform: translateY(2px);
             border-bottom-width: 1.5px;
         }
+
+        .bubble-audio-btn {
+            background: var(--duo-blue);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.82rem;
+            flex-shrink: 0;
+            transition: transform 0.1s ease;
+            box-shadow: 0 2px 4px rgba(28, 176, 246, 0.25);
+        }
+        .bubble-audio-btn:active {
+            transform: scale(0.9);
+        }
     </style>
 </head>
 <body>
@@ -1427,7 +1448,8 @@
             <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 10px;" class="hidden"></div>
         </div>
     </div>
-<!-- 忘記密碼 Modal -->
+
+    <!-- 忘記密碼 Modal -->
     <div id="modal-forgot-password" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
@@ -1567,8 +1589,7 @@
             </div>
         </div>
     </div>
-
-    <!-- 依關卡挑選單字卡彈窗 -->
+<!-- 依關卡挑選單字卡彈窗 -->
     <div id="modal-select-flashcard-stage" class="custom-modal">
         <div class="custom-modal-card" style="padding: 22px 18px;">
             <div class="close-icon-circle" onclick="closeModal('modal-select-flashcard-stage')"><i class="fa-solid fa-xmark"></i></div>
@@ -1821,7 +1842,8 @@
             <button class="ctrl-btn" id="btn-flashcard-next" onclick="stepFlashcard(1)" aria-label="下一個"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
     </div>
-<!-- 主介面容器 -->
+
+    <!-- 主介面容器 -->
     <div class="shadowing-card">
         
         <!-- 上方狀態列 -->
@@ -2026,9 +2048,14 @@
                     <div style="font-size: 1.15rem; font-weight: bold; color: #92400e;" id="lbl-chat-a-hint-text">...</div>
                 </div>
 
-                <!-- 角色 B 狀態下的 Speaker A 提問藍色對話框 (置頂顯示) -->
+                <!-- 角色 B 狀態下的 Speaker A 提問藍色對話框 (置頂顯示，包含專屬發音播放按鈕) -->
                 <div id="chat-top-partner-bubble" style="display: none; background: #e0f2fe; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 10px; margin: 8px 0; text-align: left;">
-                    <div style="font-size: 0.85rem; color: #0284c7; font-weight: 800; margin-bottom: 2px;" id="lbl-top-partner-title">對方 (Speaker A) 提問：</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                        <span style="font-size: 0.85rem; color: #0284c7; font-weight: 800;" id="lbl-top-partner-title">對方 (Speaker A) 提問：</span>
+                        <button class="bubble-audio-btn" id="btn-play-speaker-a" onclick="playSpeakerAAudio(event)" title="播放 Speaker A 發音">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
                     <div style="font-size: 1.25rem; font-weight: bold; color: #0f172a;" id="lbl-top-partner-text">...</div>
                 </div>
 
@@ -2036,9 +2063,14 @@
                 <div class="target-text" id="lbl-chat-target-text">載入中...</div>
                 <div class="translation-text" id="lbl-chat-translation">...</div>
 
-                <!-- 角色 A 狀態下的 Speaker B 對方回覆氣泡框 (置底顯示) -->
+                <!-- 角色 A 狀態下的 Speaker B 對方回覆氣泡框 (置底顯示，包含專屬發音播放按鈕) -->
                 <div id="chat-partner-bubble" style="display: none; background: #e0f2fe; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 10px; margin: 10px 0; text-align: left;">
-                    <div style="font-size: 0.85rem; color: #0284c7; font-weight: 800; margin-bottom: 2px;" id="lbl-partner-title">對方 (Speaker B) 回覆：</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                        <span style="font-size: 0.85rem; color: #0284c7; font-weight: 800;" id="lbl-partner-title">對方 (Speaker B) 回覆：</span>
+                        <button class="bubble-audio-btn" id="btn-play-speaker-b" onclick="playSpeakerBAudio(event)" title="播放 Speaker B 發音">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
                     <div style="font-size: 1.25rem; font-weight: bold; color: #0f172a;" id="lbl-partner-text">...</div>
                 </div>
                 
@@ -2061,8 +2093,7 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-
-            <!-- 步驟 6-B：字塊重組畫面 -->
+<!-- 步驟 6-B：字塊重組畫面 -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-blocks-mode-title">字塊重組</div>
@@ -2179,7 +2210,8 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-trace" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-<!-- 步驟 6-D：通用單字跟讀畫面 -->
+
+            <!-- 步驟 6-D：通用單字跟讀畫面 -->
             <div id="step-quiz-word-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-word-shadow-title">單字跟讀</div>
@@ -2451,8 +2483,7 @@
         let chatRole = 'B';
         let isChatChallengeMode = false;
         let chatRoundPassed = false;
-
-        let wordQuestions = [];
+let wordQuestions = [];
         let wordIndex = 0;
         let currentWordPronMode = 'kr_pron';
 
@@ -2950,7 +2981,23 @@
             }, { passive: true });
         })();
 
-        // 隱藏錄音與重置按鈕，僅保留播放音檔按鈕
+        // 獨立播放 Speaker A 提問音檔
+        function playSpeakerAAudio(event) {
+            if (event) event.stopPropagation();
+            const curRound = chatRounds[chatRoundIndex];
+            if (!curRound) return;
+            playAudioOrTTS(curRound.aAudio, curRound.aText, 0.85);
+        }
+
+        // 獨立播放 Speaker B 回覆音檔
+        function playSpeakerBAudio(event) {
+            if (event) event.stopPropagation();
+            const curRound = chatRounds[chatRoundIndex];
+            if (!curRound) return;
+            playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85);
+        }
+
+        // 隱藏錄音與重置按鈕，僅保留播放音檔按鈕（評分送出後或合格後調用）
         function hideRecordingControls() {
             const activeMode = currentConfig.mode;
             if (activeMode === 'sentence_chat') {
@@ -3624,7 +3671,8 @@ function showIslandLoading(subText = "🏝️ 島嶼生成中，正在同步最�
                 <path d="${pathD}" fill="none" stroke="#0284c7" stroke-width="8" stroke-linecap="round" stroke-dasharray="14 10" />
             `;
         }
-function resetIdleTimer() {
+
+        function resetIdleTimer() {
             if (isIdlePaused) return;
             if (idleTimer) clearTimeout(idleTimer);
             if (challengeSessionStartTime) {
@@ -5576,8 +5624,7 @@ document.getElementById('btn-save-nickname').onclick = async () => {
                 showGrammarQuizArea();
             }
         }
-
-        /* ================= 字母臨摹 Canvas 控制與筆劃評判 ================= */
+/* ================= 字母臨摹 Canvas 控制與筆劃評判 ================= */
         function initTraceCanvas(curItem) {
             const container = document.getElementById('trace-canvas-container');
             const size = Math.min(270, window.innerWidth - 70);
@@ -6853,7 +6900,6 @@ function displayQuestion() {
             const recordBtn = document.getElementById('btn-chat-start-record');
 
             if (recordBtn) recordBtn.disabled = false;
-            // 入門和挑戰模式中也可以重複播放音檔
             if (playAudioBtn) playAudioBtn.style.display = 'flex';
 
             if (chatRole === 'A') {
@@ -6905,7 +6951,7 @@ function displayQuestion() {
                         hintBubble.style.display = 'none';
                     }
                 } else {
-                    // 練習模式：角色 A 說的話直接在上方顯示，主要文字處直接顯示角色 B 整句
+                    // 練習模式：角色 A 說的話直接在上方顯示（含獨立發音按鈕），主要文字處直接顯示角色 B 整句
                     hintBubble.style.display = 'none';
                     instructionTopElem.innerText = `【角色 B】對方提問如下，請念出你的回答：`;
                     
@@ -7216,9 +7262,9 @@ function displayQuestion() {
                 }
 
                 lastRecognizedSpeechText = userSpeech;
-                hideRecordingControls();
 
                 if (currentConfig.mode === 'sentence_chat') {
+                    hideRecordingControls();
                     document.getElementById('lbl-chat-recognized-text').innerText = userSpeech;
                     const curRound = chatRounds[chatRoundIndex];
                     if (curRound) {
@@ -7252,6 +7298,7 @@ function displayQuestion() {
                         }
                     }
                 } else if (currentConfig.mode === 'word_shadow') {
+                    hideRecordingControls();
                     document.getElementById('lbl-word-shadow-recognized-text').innerText = userSpeech;
                     document.getElementById('lbl-word-shadow-score').innerText = "發音已收錄！可點擊下方比對評分";
                     document.getElementById('lbl-word-shadow-score').style.color = "var(--duo-blue)";
@@ -7259,8 +7306,9 @@ function displayQuestion() {
                     const evalBtn = document.getElementById('btn-word-shadow-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
                 } else {
+                    // 句子跟讀挑戰：錄音完畢後不隱藏錄音按鈕，保留錄音鍵讓學員隨時重新錄製覆蓋
                     document.getElementById('lbl-recognized-text').innerText = userSpeech;
-                    document.getElementById('lbl-score').innerText = "發音已收錄！可點擊下方比對評分";
+                    document.getElementById('lbl-score').innerText = "發音已收錄！可點擊下方比對評分，或重新點擊錄音鍵覆蓋";
                     document.getElementById('lbl-score').style.color = "var(--duo-blue)";
 
                     const evalBtn = document.getElementById('btn-submit-speech-eval');
