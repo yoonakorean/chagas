@@ -585,8 +585,7 @@
             box-sizing: border-box;
             overflow-x: hidden;
         }
-
-        .stage-pill-selector {
+.stage-pill-selector {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1822,8 +1821,7 @@
             <button class="ctrl-btn" id="btn-flashcard-next" onclick="stepFlashcard(1)" aria-label="下一個"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
     </div>
-
-    <!-- 主介面容器 -->
+<!-- 主介面容器 -->
     <div class="shadowing-card">
         
         <!-- 上方狀態列 -->
@@ -1883,7 +1881,8 @@
                 <h2 class="step-title" style="margin-top: 6px;"><i class="fa-solid fa-layer-group"></i> 選擇程度</h2>
                 <div id="container-levels" class="option-grid grid-2"></div>
             </div>
-<!-- 步驟 3：全新藍色系闖關大地圖畫面 -->
+
+            <!-- 步驟 3：全新藍色系闖關大地圖畫面 -->
             <div id="step-lesson" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
@@ -2021,7 +2020,7 @@
                     <div class="instruction-badge-bar" id="lbl-chat-instruction-top">請依指引念出句子：</div>
                 </div>
 
-                <!-- 角色 A 的關鍵字提示氣泡 (上方) -->
+                <!-- 角色 A / 角色 B 的關鍵字提示氣泡 (上方) -->
                 <div id="chat-a-hint-bubble" style="display: none; background: #fef3c7; border: 1.5px solid #fde68a; border-radius: 14px; padding: 10px; margin-bottom: 10px; text-align: left;">
                     <div style="font-size: 0.85rem; color: #b45309; font-weight: 800; margin-bottom: 2px;" id="lbl-chat-a-hint-title">提示：</div>
                     <div style="font-size: 1.15rem; font-weight: bold; color: #92400e;" id="lbl-chat-a-hint-text">...</div>
@@ -2176,12 +2175,11 @@
 
                 <div class="nav-controls">
                     <span class="lbl-progress" id="lbl-trace-progress">0 / 0</span>
-                    <button class="btn-nav-next" id="btn-trace-next" onclick="nextTraceQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
+                    <button class="btn-trace-next" id="btn-trace-next" onclick="nextTraceQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-trace" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-
-            <!-- 步驟 6-D：通用單字跟讀畫面 -->
+<!-- 步驟 6-D：通用單字跟讀畫面 -->
             <div id="step-quiz-word-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-word-shadow-title">單字跟讀</div>
@@ -2395,7 +2393,8 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-<!-- 核心邏輯腳本開始 -->
+
+    <!-- 核心邏輯腳本開始 -->
     <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -3041,8 +3040,7 @@
                 userRecordedAudioUrl = null;
             }
         }
-
-        function showIslandLoading(subText = "🏝️ 島嶼生成中，正在同步最新地圖...", progressPct = 30) {
+function showIslandLoading(subText = "🏝️ 島嶼生成中，正在同步最新地圖...", progressPct = 30) {
             const overlay = document.getElementById('game-loading-overlay');
             const subElem = document.getElementById('lbl-island-loading-sub');
             const bar = document.getElementById('island-loading-bar');
@@ -3274,7 +3272,8 @@
                 return null;
             }
         }
-async function verifyAndSyncUser(user, isInteractive = false) {
+
+        async function verifyAndSyncUser(user, isInteractive = false) {
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
                 if (!gasResult || gasResult.status !== "success") {
@@ -3625,8 +3624,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 <path d="${pathD}" fill="none" stroke="#0284c7" stroke-width="8" stroke-linecap="round" stroke-dasharray="14 10" />
             `;
         }
-
-        function resetIdleTimer() {
+function resetIdleTimer() {
             if (isIdlePaused) return;
             if (idleTimer) clearTimeout(idleTimer);
             if (challengeSessionStartTime) {
@@ -4293,8 +4291,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 courseContainer.innerHTML = "<span class='course-pill'>尚無開通課程</span>";
             }
         }
-
-        document.getElementById('btn-save-nickname').onclick = async () => {
+document.getElementById('btn-save-nickname').onclick = async () => {
             const newName = document.getElementById('input-edit-nickname').value.trim();
             const errDiv = document.getElementById('edit-nickname-error-msg');
             const btnSave = document.getElementById('btn-save-nickname');
@@ -6353,8 +6350,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 }
             }
         }
-
-        function displayQuestion() {
+function displayQuestion() {
             stopSpeechRecognition();
             resetSpeechEvalButtons();
             restoreRecordingControls();
@@ -6792,7 +6788,10 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                         zh_tw: d.zh_tw || d.zh || '',
                         hintZh: d.hint_zh || '',
                         hintEn: d.hint_en || '',
-                        hintJp: d.hint_jp || ''
+                        hintJp: d.hint_jp || '',
+                        hintBZh: d.hint_b_zh || d.hint_zh || '',
+                        hintBEn: d.hint_b_en || d.hint_en || '',
+                        hintBJp: d.hint_b_jp || d.hint_jp || ''
                     });
                 }
             });
@@ -6854,7 +6853,8 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             const recordBtn = document.getElementById('btn-chat-start-record');
 
             if (recordBtn) recordBtn.disabled = false;
-            if (playAudioBtn) playAudioBtn.style.display = isChatChallengeMode ? 'none' : 'flex';
+            // 入門和挑戰模式中也可以重複播放音檔
+            if (playAudioBtn) playAudioBtn.style.display = 'flex';
 
             if (chatRole === 'A') {
                 if (topPartnerBubble) topPartnerBubble.style.display = 'none';
@@ -6869,28 +6869,55 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                                        (currentConfig.lang === 'ja') ? (curRound.hintJp || curRound.hintZh) : curRound.hintZh;
 
                     if (activeHint && activeHint.trim()) {
+                        document.getElementById('lbl-chat-a-hint-title').innerText = "提示：";
                         document.getElementById('lbl-chat-a-hint-text').innerText = activeHint.trim();
                         hintBubble.style.display = 'block';
                     } else {
                         hintBubble.style.display = 'none';
                     }
                 } else {
+                    // 練習模式：直接顯示角色 A 整句
                     instructionTopElem.innerText = `【角色 A】請發起對話：念出提問句子：`;
                     hintBubble.style.display = 'none';
-                    targetTextElem.innerText = curRound.axText || curRound.aText;
-                    transElem.innerText = "";
+                    targetTextElem.innerText = curRound.aText || curRound.axText;
+                    transElem.innerText = curRound.zh_tw || "";
                 }
             } else {
-                hintBubble.style.display = 'none';
-                if (topPartnerBubble) topPartnerBubble.style.display = 'none';
+                // 角色 B 狀態
                 if (bottomPartnerBubble) bottomPartnerBubble.style.display = 'none';
 
-                instructionTopElem.innerText = isChatChallengeMode 
-                    ? `【角色 B】請聽對方提問，並念出正確回應：` 
-                    : `【角色 B】對方提問如下，請念出你的回答：`;
-                
-                targetTextElem.innerText = isChatChallengeMode ? "請聆聽對方提問後作答" : (curRound.bxText || curRound.bText);
-                transElem.innerText = isChatChallengeMode ? "" : (curRound.zh_tw || "");
+                if (isChatChallengeMode) {
+                    // 入門與挑戰模式：不顯示角色 A 句子，改為提示
+                    if (topPartnerBubble) topPartnerBubble.style.display = 'none';
+                    instructionTopElem.innerText = `【角色 B】請聽對方提問，並依提示念出回應：`;
+                    targetTextElem.innerText = "請根據提示回答";
+                    transElem.innerText = "";
+
+                    const activeBHint = (currentConfig.lang === 'en') ? (curRound.hintBEn || curRound.hintEn || curRound.hintBZh || curRound.hintZh) :
+                                        (currentConfig.lang === 'ja') ? (curRound.hintBJp || curRound.hintJp || curRound.hintBZh || curRound.hintZh) :
+                                        (curRound.hintBZh || curRound.hintZh || curRound.zh_tw || "");
+
+                    if (activeBHint && activeBHint.trim()) {
+                        document.getElementById('lbl-chat-a-hint-title').innerText = "提示：";
+                        document.getElementById('lbl-chat-a-hint-text').innerText = activeBHint.trim();
+                        hintBubble.style.display = 'block';
+                    } else {
+                        hintBubble.style.display = 'none';
+                    }
+                } else {
+                    // 練習模式：角色 A 說的話直接在上方顯示，主要文字處直接顯示角色 B 整句
+                    hintBubble.style.display = 'none';
+                    instructionTopElem.innerText = `【角色 B】對方提問如下，請念出你的回答：`;
+                    
+                    if (topPartnerBubble) {
+                        topPartnerBubble.style.display = 'block';
+                        document.getElementById('lbl-top-partner-title').innerText = `對方 (Speaker A) 提問：`;
+                        document.getElementById('lbl-top-partner-text').innerText = curRound.aText;
+                    }
+                    
+                    targetTextElem.innerText = curRound.bText || curRound.bxText;
+                    transElem.innerText = curRound.zh_tw || "";
+                }
 
                 if (autoPlayOpponent) setTimeout(() => playAudioOrTTS(curRound.aAudio, curRound.aText, 0.85), 350);
             }
