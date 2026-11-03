@@ -374,8 +374,7 @@
             transform: translateY(2px);
             border-bottom-width: 2px !important;
         }
-
-        #step-grammar.active {
+#step-grammar.active {
             display: flex !important;
             flex-direction: column !important;
             width: 100%;
@@ -2397,16 +2396,16 @@
     </div> <!-- shadowing-card 結束 -->
 <!-- 核心邏輯腳本開始 -->
     <script>
-        const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
+        const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";[cite: 1]
 
         const API_URLS = {
-            korean: "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",
-            japanese: "https://script.google.com/macros/s/AKfycbxQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",
-            english: ""
+            korean: "https://script.google.com/macros/s/AKfycbxNtJt1URgct9-T_yzXowKGvHeM5l17NiwviOs8ySwIbrdWD6zfctdCCx7YpMu3P7zG/exec",[cite: 1]
+            japanese: "https://script.google.com/macros/s/AKfycbxQirnmmcIOXE3aEGSUHlJ62jvB18rLx4N6QXgN8PO53DZJGwGe1lPnNXUjjYZj01gskg/exec",[cite: 1]
+            english: ""[cite: 1]
         };
 
-        let currentUser = null;
-        window.currentUserData = null;
+        let currentUser = null;[cite: 1]
+        window.currentUserData = null;[cite: 1]
 
         let currentConfig = {
             mode: 'shadow',
@@ -2415,87 +2414,87 @@
             unit_id: '1',
             lesson: '1',
             lang: localStorage.getItem('preferred_user_lang') || 'zh'
-        };
+        };[cite: 1]
 
         let rawShadowData = [];  
         let rawBlocksData = [];  
         let globalGrammarData = []; 
         let rawDialogueData = []; 
-        let rawWordData = [];
+        let rawWordData = [];[cite: 1]
 
         // 3D 單字卡專屬變數
-        let flashcardList = [];
-        let flashcardIndex = 0;
-        let flashcardPronMode = 'kr';
+        let flashcardList = [];[cite: 1]
+        let flashcardIndex = 0;[cite: 1]
+        let flashcardPronMode = 'kr';[cite: 1]
 
-        let questions = [];
-        let currentIndex = 0;
-        let recognition = null;
-        let isRecording = false;
-        let isToggling = false; 
-        let selectedBlockIndices = [];
-        let blockInputMode = 'click';
-        let draggedBlockOrderIndex = null;
+        let questions = [];[cite: 1]
+        let currentIndex = 0;[cite: 1]
+        let recognition = null;[cite: 1]
+        let isRecording = false;[cite: 1]
+        let isToggling = false; [cite: 1]
+        let selectedBlockIndices = [];[cite: 1]
+        let blockInputMode = 'click';[cite: 1]
+        let draggedBlockOrderIndex = null;[cite: 1]
 
-        let isSentenceKeywordMode = false;
-        let isSentenceChallengeMode = false;
-        let challengeSessionStartTime = null;
+        let isSentenceKeywordMode = false;[cite: 1]
+        let isSentenceChallengeMode = false;[cite: 1]
+        let challengeSessionStartTime = null;[cite: 1]
 
-        let mediaRecorder = null;
-        let recordedAudioChunks = [];
-        let userRecordedAudioUrl = null;
-        let lastRecognizedSpeechText = "";
+        let mediaRecorder = null;[cite: 1]
+        let recordedAudioChunks = [];[cite: 1]
+        let userRecordedAudioUrl = null;[cite: 1]
+        let lastRecognizedSpeechText = "";[cite: 1]
 
-        // 對話挑戰變數：預設先跑角色 B，再接角色 A
-        let chatRounds = [];
-        let chatRoundIndex = 0;
-        let chatRole = 'B';
-        let isChatChallengeMode = false;
-        let chatRoundPassed = false;
+        // 對話挑戰變數：先跑角色 B，再接角色 A
+        let chatRounds = [];[cite: 1]
+        let chatRoundIndex = 0;[cite: 1]
+        let chatRole = 'B';[cite: 1]
+        let isChatChallengeMode = false;[cite: 1]
+        let chatRoundPassed = false;[cite: 1]
 
-        let wordQuestions = [];
-        let wordIndex = 0;
-        let currentWordPronMode = 'kr_pron';
+        let wordQuestions = [];[cite: 1]
+        let wordIndex = 0;[cite: 1]
+        let currentWordPronMode = 'kr_pron';[cite: 1]
 
         // 字母臨摹專屬變數
-        let traceQuestions = [];
-        let traceIndex = 0;
-        let currentTraceCanvas = null;
-        let currentTraceCtx = null;
-        let traceGuideCanvas = null;
-        let traceGuideCtx = null;
-        let traceStrokes = [];
-        let isDrawingTrace = false;
-        let currentTraceStrokeIndex = 0;
+        let traceQuestions = [];[cite: 1]
+        let traceIndex = 0;[cite: 1]
+        let currentTraceCanvas = null;[cite: 1]
+        let currentTraceCtx = null;[cite: 1]
+        let traceGuideCanvas = null;[cite: 1]
+        let traceGuideCtx = null;[cite: 1]
+        let traceStrokes = [];[cite: 1]
+        let isDrawingTrace = false;[cite: 1]
+        let currentTraceStrokeIndex = 0;[cite: 1]
 
-        let isCurrentQuestionAnswered = false;
-        let currentChallengeScore = 0;
-        let pointsPerQuestion = 10;
-        let passedSubQuestions = new Set();
-        let totalChallengeQuestions = 0;
+        let isCurrentQuestionAnswered = false;[cite: 1]
+        let currentChallengeScore = 0;[cite: 1]
+        let pointsPerQuestion = 10;[cite: 1]
+        let passedSubQuestions = new Set();[cite: 1]
+        let totalChallengeQuestions = 0;[cite: 1]
 
-        let activeChallengeType = 'practice';
-        let challengeTimerInterval = null;
-        let challengeTimeRemaining = 300;
-        let pendingLesson = null;
-        let pendingMode = null;
+        let activeChallengeType = 'practice';[cite: 1]
+        let challengeTimerInterval = null;[cite: 1]
+        let challengeTimeRemaining = 300;[cite: 1]
+        let pendingLesson = null;[cite: 1]
+        let pendingMode = null;[cite: 1]
 
-        let currentGrammarItem = null;
-        let currentDialogIndex = 0;
-        let userGrammarAnswers = [];
-        let activeBlankIndex = 0;
-        let typewriterTimer = null;
-        let isTypewriterTyping = false;
-        let currentFullDialogText = "";
-        let grammarQuizIndex = 0;
-        let isGrammarQuizSubmitted = false;
+        let currentGrammarItem = null;[cite: 1]
+        let currentDialogIndex = 0;[cite: 1]
+        let userGrammarAnswers = [];[cite: 1]
+        let activeBlankIndex = 0;[cite: 1]
+        let typewriterTimer = null;[cite: 1]
+        let isTypewriterTyping = false;[cite: 1]
+        let currentFullDialogText = "";[cite: 1]
+        let grammarQuizIndex = 0;[cite: 1]
+        let isGrammarQuizSubmitted = false;[cite: 1]
 
-        let currentRankSubTab = 'global';
-        let fireworksAnimationId = null;
+        let currentRankSubTab = 'global';[cite: 1]
+        let fireworksAnimationId = null;[cite: 1]
 
-        let idleTimer = null;
-        const IDLE_LIMIT_MS = 90 * 1000;
-        let isIdlePaused = false;
+        let idleTimer = null;[cite: 1]
+        const IDLE_LIMIT_MS = 90 * 1000;[cite: 1]
+        let isIdlePaused = false;[cite: 1]
 
         const GUIDE_DETAILS_MAP = {
             'grammar': {
@@ -2571,51 +2570,51 @@
                     <strong>3. 依序通關：</strong> 需連續完成角色 B 與角色 A 兩輪練習，才能完成整組對話挑戰！
                 `
             }
-        };
+        };[cite: 1]
 
-        function openGuideModesModal() { openModal('modal-guide-modes'); }
+        function openGuideModesModal() { openModal('modal-guide-modes'); }[cite: 1]
         function openGuideDetail(modeKey, modeTitle) {
-            closeModal('modal-guide-modes');
+            closeModal('modal-guide-modes');[cite: 1]
             const detail = GUIDE_DETAILS_MAP[modeKey] || {
                 title: `${modeTitle} 玩法說明`,
                 content: `<strong>1.</strong> 點選關卡進入挑戰。<br><strong>2.</strong> 依照指引作答。<br><strong>3.</strong> 通關並累積經驗值！`
-            };
-            const titleElem = document.getElementById('lbl-guide-detail-title');
-            const boxElem = document.getElementById('guide-detail-content-box');
-            if (titleElem) titleElem.innerHTML = detail.title;
-            if (boxElem) boxElem.innerHTML = detail.content;
-            openModal('modal-guide-detail');
+            };[cite: 1]
+            const titleElem = document.getElementById('lbl-guide-detail-title');[cite: 1]
+            const boxElem = document.getElementById('guide-detail-content-box');[cite: 1]
+            if (titleElem) titleElem.innerHTML = detail.title;[cite: 1]
+            if (boxElem) boxElem.innerHTML = detail.content;[cite: 1]
+            openModal('modal-guide-detail');[cite: 1]
         }
         function backToGuideModes() {
-            closeModal('modal-guide-detail');
-            openModal('modal-guide-modes');
+            closeModal('modal-guide-detail');[cite: 1]
+            openModal('modal-guide-modes');[cite: 1]
         }
 
         function katakanaToHiragana(str) {
             return (str || '').replace(/[\u30A1-\u30F6]/g, function(match) {
                 return String.fromCharCode(match.charCodeAt(0) - 0x60);
-            });
+            });[cite: 1]
         }
 
         function containsKorean(str) {
-            return /[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/.test(str || '');
+            return /[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/.test(str || '');[cite: 1]
         }
 
         function containsJapanese(str) {
-            return /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(str || '');
+            return /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(str || '');[cite: 1]
         }
 
         const KO_COMMON_ENG_MISHEAR_MAP = {
             'eu': '이유', 'iu': '이유', 'iyou': '이유', 'e u': '이유', 'e.u.': '이유', 'e.u': '이유', 'eyou': '이유',
             'an': '안', 'ne': '네', 'ye': '예', 'no': '노'
-        };
+        };[cite: 1]
 
         function correctKoreanEnglishMishear(text) {
-            let clean = (text || '').toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+            let clean = (text || '').toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();[cite: 1]
             if (KO_COMMON_ENG_MISHEAR_MAP[clean]) {
-                return KO_COMMON_ENG_MISHEAR_MAP[clean];
+                return KO_COMMON_ENG_MISHEAR_MAP[clean];[cite: 1]
             }
-            return text;
+            return text;[cite: 1]
         }
 
         const ROMAJI_TO_HIRAGANA_MAP = {
@@ -2632,14 +2631,14 @@
             'ga':'が','gi':'ぎ','gu':'ぐ','ge':'げ','go':'ご','za':'ざ','ji':'じ','zu':'ず','ze':'ぜ','zo':'ぞ',
             'da':'だ','di':'ぢ','du':'づ','de':'де','do':'ど','ba':'ば','bi':'び','bu':'ぶ','be':'べ','bo':'ぼ',
             'pa':'ぱ','pi':'ぴ','pu':'ぷ','pe':'ぺ','po':'ぽ','a':'あ','i':'い','u':'う','e':'え','o':'お'
-        };
+        };[cite: 1]
 
         function romajiToHiragana(text) {
-            let s = (text || '').toLowerCase().replace(/[^a-z]/g, '');
+            let s = (text || '').toLowerCase().replace(/[^a-z]/g, '');[cite: 1]
             for (const [rom, hira] of Object.entries(ROMAJI_TO_HIRAGANA_MAP)) {
-                s = s.replaceAll(rom, hira);
+                s = s.replaceAll(rom, hira);[cite: 1]
             }
-            return s;
+            return s;[cite: 1]
         }
 
         const JP_CORE_KANA_MAP = {
@@ -2657,60 +2656,60 @@
             'ねこ': ['猫'], 'のむ': ['飲む'], 'はな': ['花', '鼻'], 'はなす': ['話す'], 'ひと': ['人'],
             'ほん': ['本'], 'みず': ['水'], 'みみ': ['耳'], 'みる': ['見る', '觀る', '観る'], 'め': ['目'],
             'やま': ['山'], 'よむ': ['読む'], 'わたし': ['私'], 'ぼく': ['僕']
-        };
+        };[cite: 1]
 
-        const JP_CORE_KANJI_LOOKUP = {};
+        const JP_CORE_KANJI_LOOKUP = {};[cite: 1]
         for (const [kana, list] of Object.entries(JP_CORE_KANA_MAP)) {
-            list.forEach(k => { JP_CORE_KANJI_LOOKUP[k] = kana; });
+            list.forEach(k => { JP_CORE_KANJI_LOOKUP[k] = kana; });[cite: 1]
         }
 
         function normalizeToHiragana(text) {
-            if (!text) return '';
-            let res = katakanaToHiragana(text);
+            if (!text) return '';[cite: 1]
+            let res = katakanaToHiragana(text);[cite: 1]
             for (const [kanji, kana] of Object.entries(JP_CORE_KANJI_LOOKUP)) {
-                res = res.replaceAll(kanji, kana);
+                res = res.replaceAll(kanji, kana);[cite: 1]
             }
             if (/[a-zA-Z]/.test(res)) {
-                res = romajiToHiragana(res);
+                res = romajiToHiragana(res);[cite: 1]
             }
-            return res;
+            return res;[cite: 1]
         }
 
         function buildJapaneseMatchCandidates(text, currentItem = null) {
-            let candidates = new Set();
-            if (!text) return Array.from(candidates);
+            let candidates = new Set();[cite: 1]
+            if (!text) return Array.from(candidates);[cite: 1]
 
-            const rawList = String(text).split('/').map(s => s.trim()).filter(Boolean);
+            const rawList = String(text).split('/').map(s => s.trim()).filter(Boolean);[cite: 1]
             rawList.forEach(itemStr => {
-                candidates.add(itemStr);
-                const hira = katakanaToHiragana(itemStr);
-                candidates.add(hira);
+                candidates.add(itemStr);[cite: 1]
+                const hira = katakanaToHiragana(itemStr);[cite: 1]
+                candidates.add(hira);[cite: 1]
 
                 if (JP_CORE_KANA_MAP[hira]) {
-                    JP_CORE_KANA_MAP[hira].forEach(k => candidates.add(k));
+                    JP_CORE_KANA_MAP[hira].forEach(k => candidates.add(k));[cite: 1]
                 }
                 if (JP_CORE_KANJI_LOOKUP[itemStr]) {
-                    candidates.add(JP_CORE_KANJI_LOOKUP[itemStr]);
+                    candidates.add(JP_CORE_KANJI_LOOKUP[itemStr]);[cite: 1]
                 }
-            });
+            });[cite: 1]
 
             if (currentItem) {
-                const checkFields = [currentItem.zh_tw, currentItem.zh, currentItem.hint, currentItem.kr_pron, currentItem.romanization];
+                const checkFields = [currentItem.zh_tw, currentItem.zh, currentItem.hint, currentItem.kr_pron, currentItem.romanization];[cite: 1]
                 checkFields.forEach(val => {
                     if (val && typeof val === 'string') {
-                        const noBrackets = val.replace(/\([^)]*\)|（[^）]*）/g, '').trim();
-                        if (noBrackets) candidates.add(noBrackets);
+                        const noBrackets = val.replace(/\([^)]*\)|（[^）]*）/g, '').trim();[cite: 1]
+                        if (noBrackets) candidates.add(noBrackets);[cite: 1]
 
-                        const matches = val.match(/\(([^)]+)\)|（([^）]+)）/g);
+                        const matches = val.match(/\(([^)]+)\)|（([^）]+)）/g);[cite: 1]
                         if (matches) {
                             matches.forEach(m => {
-                                const clean = m.replace(/[()（）]/g, '').trim();
+                                const clean = m.replace(/[()（）]/g, '').trim();[cite: 1]
                                 if (clean) {
-                                    candidates.add(clean);
-                                    const cleanHira = katakanaToHiragana(clean);
-                                    candidates.add(cleanHira);
+                                    candidates.add(clean);[cite: 1]
+                                    const cleanHira = katakanaToHiragana(clean);[cite: 1]
+                                    candidates.add(cleanHira);[cite: 1]
                                     if (JP_CORE_KANA_MAP[cleanHira]) {
-                                        JP_CORE_KANA_MAP[cleanHira].forEach(k => candidates.add(k));
+                                        JP_CORE_KANA_MAP[cleanHira].forEach(k => candidates.add(k));[cite: 1]
                                     }
                                 }
                             });
@@ -2718,7 +2717,7 @@
                     }
                 });
             }
-            return Array.from(candidates);
+            return Array.from(candidates);[cite: 1]
         }
 
         const LANG_MUTUAL_MAP = {
@@ -2726,357 +2725,357 @@
             'en': 'english',
             'ja': 'japanese',
             'ko': 'korean'
-        };
+        };[cite: 1]
         const LEARN_TO_NATIVE_MAP = {
             'english': 'en',
             'japanese': 'ja',
             'korean': 'ko'
-        };
+        };[cite: 1]
 
         function syncMutualExclusiveLangs(scope = 'setup') {
-            const nativeSelect = (scope === 'setup') ? document.getElementById('select-native-language') : document.getElementById('select-account-language');
-            const learnSelect = (scope === 'setup') ? document.getElementById('select-setup-learn-lang') : document.getElementById('select-account-learn-language');
+            const nativeSelect = (scope === 'setup') ? document.getElementById('select-native-language') : document.getElementById('select-account-language');[cite: 1]
+            const learnSelect = (scope === 'setup') ? document.getElementById('select-setup-learn-lang') : document.getElementById('select-account-learn-language');[cite: 1]
 
-            if (!nativeSelect || !learnSelect) return;
+            if (!nativeSelect || !learnSelect) return;[cite: 1]
 
-            const selectedNative = nativeSelect.value;
-            const conflictLearnCategory = LANG_MUTUAL_MAP[selectedNative] || '';
+            const selectedNative = nativeSelect.value;[cite: 1]
+            const conflictLearnCategory = LANG_MUTUAL_MAP[selectedNative] || '';[cite: 1]
 
             Array.from(learnSelect.options).forEach(opt => {
                 if (opt.value === conflictLearnCategory) {
-                    opt.disabled = true;
-                    opt.style.display = 'none';
+                    opt.disabled = true;[cite: 1]
+                    opt.style.display = 'none';[cite: 1]
                 } else {
-                    opt.disabled = false;
-                    opt.style.display = 'block';
+                    opt.disabled = false;[cite: 1]
+                    opt.style.display = 'block';[cite: 1]
                 }
-            });
+            });[cite: 1]
 
             if (learnSelect.value === conflictLearnCategory) {
-                const availableOpt = Array.from(learnSelect.options).find(o => !o.disabled);
-                if (availableOpt) learnSelect.value = availableOpt.value;
+                const availableOpt = Array.from(learnSelect.options).find(o => !o.disabled);[cite: 1]
+                if (availableOpt) learnSelect.value = availableOpt.value;[cite: 1]
             }
 
-            const selectedLearn = learnSelect.value;
-            const conflictNativeLang = LEARN_TO_NATIVE_MAP[selectedLearn] || '';
+            const selectedLearn = learnSelect.value;[cite: 1]
+            const conflictNativeLang = LEARN_TO_NATIVE_MAP[selectedLearn] || '';[cite: 1]
 
             Array.from(nativeSelect.options).forEach(opt => {
                 if (opt.value === conflictNativeLang) {
-                    opt.disabled = true;
-                    opt.style.display = 'none';
+                    opt.disabled = true;[cite: 1]
+                    opt.style.display = 'none';[cite: 1]
                 } else {
-                    opt.disabled = false;
-                    opt.style.display = 'block';
+                    opt.disabled = false;[cite: 1]
+                    opt.style.display = 'block';[cite: 1]
                 }
-            });
+            });[cite: 1]
 
             if (nativeSelect.value === conflictNativeLang) {
-                const availableNative = Array.from(nativeSelect.options).find(o => !o.disabled);
-                if (availableNative) nativeSelect.value = availableNative.value;
+                const availableNative = Array.from(nativeSelect.options).find(o => !o.disabled);[cite: 1]
+                if (availableNative) nativeSelect.value = availableNative.value;[cite: 1]
             }
         }
 
         function openFlashcardStagePicker() {
-            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-            const wordsOfLevel = rawWordData.filter(v => normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized);
+            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);[cite: 1]
+            const wordsOfLevel = rawWordData.filter(v => normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized);[cite: 1]
 
             if (!wordsOfLevel.length) {
-                alert(`Level ${currentConfig.level} 目前尚無單字資料！`);
-                return;
+                alert(`Level ${currentConfig.level} 目前尚無單字資料！`);[cite: 1]
+                return;[cite: 1]
             }
 
-            const units = [...new Set(wordsOfLevel.map(w => getItemField(w, 'unit_id')))].filter(Boolean).sort((a,b) => Number(a)-Number(b));
-            const unitSelect = document.getElementById('select-flashcard-unit');
-            unitSelect.innerHTML = '';
+            const units = [...new Set(wordsOfLevel.map(w => getItemField(w, 'unit_id')))].filter(Boolean).sort((a,b) => Number(a)-Number(b));[cite: 1]
+            const unitSelect = document.getElementById('select-flashcard-unit');[cite: 1]
+            unitSelect.innerHTML = '';[cite: 1]
             units.forEach(u => {
-                const opt = document.createElement('option');
-                opt.value = u;
-                opt.innerText = `第 ${u} 階段`;
-                if (String(u) === String(currentConfig.unit_id)) opt.selected = true;
-                unitSelect.appendChild(opt);
-            });
+                const opt = document.createElement('option');[cite: 1]
+                opt.value = u;[cite: 1]
+                opt.innerText = `第 ${u} 階段`;[cite: 1]
+                if (String(u) === String(currentConfig.unit_id)) opt.selected = true;[cite: 1]
+                unitSelect.appendChild(opt);[cite: 1]
+            });[cite: 1]
 
-            renderFlashcardLessonOptions();
-            openModal('modal-select-flashcard-stage');
+            renderFlashcardLessonOptions();[cite: 1]
+            openModal('modal-select-flashcard-stage');[cite: 1]
         }
 
         function renderFlashcardLessonOptions() {
-            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-            const selectedUnit = document.getElementById('select-flashcard-unit').value;
+            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);[cite: 1]
+            const selectedUnit = document.getElementById('select-flashcard-unit').value;[cite: 1]
             const wordsOfUnit = rawWordData.filter(v => 
                 normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
                 String(getItemField(v, 'unit_id')).trim() === String(selectedUnit).trim()
-            );
+            );[cite: 1]
 
-            const lessons = [...new Set(wordsOfUnit.map(w => getItemField(w, 'lesson')))].filter(Boolean).sort((a,b) => Number(a)-Number(b));
-            const lessonSelect = document.getElementById('select-flashcard-lesson');
-            lessonSelect.innerHTML = '';
+            const lessons = [...new Set(wordsOfUnit.map(w => getItemField(w, 'lesson')))].filter(Boolean).sort((a,b) => Number(a)-Number(b));[cite: 1]
+            const lessonSelect = document.getElementById('select-flashcard-lesson');[cite: 1]
+            lessonSelect.innerHTML = '';[cite: 1]
             lessons.forEach(l => {
-                const opt = document.createElement('option');
-                opt.value = l;
-                opt.innerText = `第 ${l} 關單字`;
-                if (String(l) === String(currentConfig.lesson)) opt.selected = true;
-                lessonSelect.appendChild(opt);
-            });
+                const opt = document.createElement('option');[cite: 1]
+                opt.value = l;[cite: 1]
+                opt.innerText = `第 ${l} 關單字`;[cite: 1]
+                if (String(l) === String(currentConfig.lesson)) opt.selected = true;[cite: 1]
+                lessonSelect.appendChild(opt);[cite: 1]
+            });[cite: 1]
         }
 
         function confirmLaunchFlashcardStage() {
-            const selectedUnit = document.getElementById('select-flashcard-unit').value;
-            const selectedLesson = document.getElementById('select-flashcard-lesson').value;
-            closeModal('modal-select-flashcard-stage');
-            launchFlashcardForStage(selectedUnit, selectedLesson);
+            const selectedUnit = document.getElementById('select-flashcard-unit').value;[cite: 1]
+            const selectedLesson = document.getElementById('select-flashcard-lesson').value;[cite: 1]
+            closeModal('modal-select-flashcard-stage');[cite: 1]
+            launchFlashcardForStage(selectedUnit, selectedLesson);[cite: 1]
         }
 
         function launchFlashcardForStage(unitId, lessonId) {
-            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);[cite: 1]
             flashcardList = rawWordData.filter(v => 
                 normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
                 String(getItemField(v, 'unit_id')).trim() === String(unitId).trim() &&
                 String(getItemField(v, 'lesson')).trim() === String(lessonId).trim()
-            );
+            );[cite: 1]
 
             if (!flashcardList.length) {
-                alert(`第 ${unitId} 階段 - 第 ${lessonId} 關暫無單字卡資料！`);
-                return;
+                alert(`第 ${unitId} 階段 - 第 ${lessonId} 關暫無單字卡資料！`);[cite: 1]
+                return;[cite: 1]
             }
 
-            flashcardIndex = 0;
-            flashcardPronMode = 'kr';
-            document.getElementById('stage-vocab-flashcard').classList.add('active');
-            renderFlashcardContent();
+            flashcardIndex = 0;[cite: 1]
+            flashcardPronMode = 'kr';[cite: 1]
+            document.getElementById('stage-vocab-flashcard').classList.add('active');[cite: 1]
+            renderFlashcardContent();[cite: 1]
         }
 
         function closeFlashcardStage() {
-            document.getElementById('stage-vocab-flashcard').classList.remove('active');
+            document.getElementById('stage-vocab-flashcard').classList.remove('active');[cite: 1]
         }
 
         function toggleFlashcardFlip() {
-            const card = document.getElementById('flip-flashcard');
-            if (card) card.classList.toggle('flipped');
+            const card = document.getElementById('flip-flashcard');[cite: 1]
+            if (card) card.classList.toggle('flipped');[cite: 1]
         }
 
         function setFlashcardPronMode(mode) {
-            flashcardPronMode = mode;
-            document.getElementById('btn-flashcard-pron-kr').classList.toggle('active', mode === 'kr');
-            document.getElementById('btn-flashcard-pron-roman').classList.toggle('active', mode === 'roman');
-            renderFlashcardPron();
+            flashcardPronMode = mode;[cite: 1]
+            document.getElementById('btn-flashcard-pron-kr').classList.toggle('active', mode === 'kr');[cite: 1]
+            document.getElementById('btn-flashcard-pron-roman').classList.toggle('active', mode === 'roman');[cite: 1]
+            renderFlashcardPron();[cite: 1]
         }
 
         function renderFlashcardPron() {
-            if (!flashcardList.length) return;
-            const item = flashcardList[flashcardIndex];
-            const pronElem = document.getElementById('flashcard-front-pron');
-            if (!pronElem) return;
+            if (!flashcardList.length) return;[cite: 1]
+            const item = flashcardList[flashcardIndex];[cite: 1]
+            const pronElem = document.getElementById('flashcard-front-pron');[cite: 1]
+            if (!pronElem) return;[cite: 1]
             if (flashcardPronMode === 'kr') {
-                pronElem.innerText = item.kr_pron ? `[${item.kr_pron}]` : (item.romanization ? `[${item.romanization}]` : '');
+                pronElem.innerText = item.kr_pron ? `[${item.kr_pron}]` : (item.romanization ? `[${item.romanization}]` : '');[cite: 1]
             } else {
-                pronElem.innerText = item.romanization ? `[${item.romanization}]` : (item.kr_pron ? `[${item.kr_pron}]` : '');
+                pronElem.innerText = item.romanization ? `[${item.romanization}]` : (item.kr_pron ? `[${item.kr_pron}]` : '');[cite: 1]
             }
         }
 
         function renderFlashcardContent() {
-            if (!flashcardList.length) return;
-            const item = flashcardList[flashcardIndex];
-            const card = document.getElementById('flip-flashcard');
-            if (card) card.classList.remove('flipped');
+            if (!flashcardList.length) return;[cite: 1]
+            const item = flashcardList[flashcardIndex];[cite: 1]
+            const card = document.getElementById('flip-flashcard');[cite: 1]
+            if (card) card.classList.remove('flipped');[cite: 1]
 
-            document.getElementById('lbl-flashcard-counter').innerText = `${flashcardIndex + 1} / ${flashcardList.length}`;
-            document.getElementById('flashcard-front-pos').innerText = item.pos || '單字';
-            document.getElementById('flashcard-front-word').innerText = item.text || '';
-            renderFlashcardPron();
+            document.getElementById('lbl-flashcard-counter').innerText = `${flashcardIndex + 1} / ${flashcardList.length}`;[cite: 1]
+            document.getElementById('flashcard-front-pos').innerText = item.pos || '單字';[cite: 1]
+            document.getElementById('flashcard-front-word').innerText = item.text || '';[cite: 1]
+            renderFlashcardPron();[cite: 1]
 
-            document.getElementById('flashcard-back-pos').innerText = item.pos || '單字';
-            document.getElementById('flashcard-back-word').innerText = item.text || '';
+            document.getElementById('flashcard-back-pos').innerText = item.pos || '單字';[cite: 1]
+            document.getElementById('flashcard-back-word').innerText = item.text || '';[cite: 1]
             
-            const trans = getWordTranslation(item);
-            document.getElementById('flashcard-back-meaning').innerText = trans || (item.note || '詳細解釋');
+            const trans = getWordTranslation(item);[cite: 1]
+            document.getElementById('flashcard-back-meaning').innerText = trans || (item.note || '詳細解釋');[cite: 1]
 
-            const exContainer = document.getElementById('flashcard-back-examples');
-            exContainer.innerHTML = '';
+            const exContainer = document.getElementById('flashcard-back-examples');[cite: 1]
+            exContainer.innerHTML = '';[cite: 1]
             if (item.example || item.commonExpressions) {
-                const exText = item.example || item.commonExpressions;
-                const exDiv = document.createElement('div');
-                exDiv.className = 'note-expr';
+                const exText = item.example || item.commonExpressions;[cite: 1]
+                const exDiv = document.createElement('div');[cite: 1]
+                exDiv.className = 'note-expr';[cite: 1]
                 exDiv.innerHTML = `
                     <div class="note-expr-kr">
                         <span>${exText}</span>
                         <button class="mini-play" onclick="event.stopPropagation(); speakTTS('${exText}', 0.85);"><i class="fa-solid fa-volume-high"></i></button>
                     </div>
-                `;
-                exContainer.appendChild(exDiv);
+                `;[cite: 1]
+                exContainer.appendChild(exDiv);[cite: 1]
             }
 
-            document.getElementById('btn-flashcard-prev').disabled = flashcardIndex <= 0;
-            document.getElementById('btn-flashcard-next').disabled = flashcardIndex >= flashcardList.length - 1;
+            document.getElementById('btn-flashcard-prev').disabled = flashcardIndex <= 0;[cite: 1]
+            document.getElementById('btn-flashcard-next').disabled = flashcardIndex >= flashcardList.length - 1;[cite: 1]
 
-            playWordAudioGeneric(item);
+            playWordAudioGeneric(item);[cite: 1]
         }
 
         function stepFlashcard(delta) {
-            const next = flashcardIndex + delta;
+            const next = flashcardIndex + delta;[cite: 1]
             if (next >= 0 && next < flashcardList.length) {
-                flashcardIndex = next;
-                renderFlashcardContent();
+                flashcardIndex = next;[cite: 1]
+                renderFlashcardContent();[cite: 1]
             }
         }
 
         function playFlashcardAudio(e) {
-            if (e) e.stopPropagation();
-            if (!flashcardList.length) return;
-            playWordAudioGeneric(flashcardList[flashcardIndex]);
+            if (e) e.stopPropagation();[cite: 1]
+            if (!flashcardList.length) return;[cite: 1]
+            playWordAudioGeneric(flashcardList[flashcardIndex]);[cite: 1]
         }
 
         function playWordAudioGeneric(item) {
-            if (!item) return;
-            playAudioOrTTS(item.audio_url, item.text, 0.85);
+            if (!item) return;[cite: 1]
+            playAudioOrTTS(item.audio_url, item.text, 0.85);[cite: 1]
         }
 
         (function initFlashcardSwipe() {
-            const zone = document.getElementById('flashcard-swipe-zone');
-            if (!zone) return;
-            let startX = 0, startY = 0, tracking = false;
+            const zone = document.getElementById('flashcard-swipe-zone');[cite: 1]
+            if (!zone) return;[cite: 1]
+            let startX = 0, startY = 0, tracking = false;[cite: 1]
             zone.addEventListener('touchstart', (e) => {
-                const t = e.touches[0];
-                startX = t.clientX; startY = t.clientY; tracking = true;
-            }, { passive: true });
+                const t = e.touches[0];[cite: 1]
+                startX = t.clientX; startY = t.clientY; tracking = true;[cite: 1]
+            }, { passive: true });[cite: 1]
             zone.addEventListener('touchend', (e) => {
-                if (!tracking) return;
-                tracking = false;
-                const t = e.changedTouches[0];
-                const dx = t.clientX - startX, dy = t.clientY - startY;
+                if (!tracking) return;[cite: 1]
+                tracking = false;[cite: 1]
+                const t = e.changedTouches[0];[cite: 1]
+                const dx = t.clientX - startX, dy = t.clientY - startY;[cite: 1]
                 if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.4) {
-                    if (dx > 0) stepFlashcard(-1);
-                    else stepFlashcard(1);
+                    if (dx > 0) stepFlashcard(-1);[cite: 1]
+                    else stepFlashcard(1);[cite: 1]
                 }
-            }, { passive: true });
-        })();
+            }, { passive: true });[cite: 1]
+        })();[cite: 1]
 
-        // 隱藏錄音與重置按鈕，僅保留播放音檔按鈕
+        // 隱藏錄音與重置按鈕，僅保留播放音檔按鈕[cite: 1]
         function hideRecordingControls() {
-            const activeMode = currentConfig.mode;
+            const activeMode = currentConfig.mode;[cite: 1]
             if (activeMode === 'sentence_chat') {
-                const recBtn = document.getElementById('btn-chat-start-record');
-                const resetBtn = document.getElementById('btn-reset-chat');
-                if (recBtn) recBtn.style.display = 'none';
-                if (resetBtn) resetBtn.style.display = 'none';
+                const recBtn = document.getElementById('btn-chat-start-record');[cite: 1]
+                const resetBtn = document.getElementById('btn-reset-chat');[cite: 1]
+                if (recBtn) recBtn.style.display = 'none';[cite: 1]
+                if (resetBtn) resetBtn.style.display = 'none';[cite: 1]
             } else if (activeMode === 'word_shadow') {
-                const recBtn = document.getElementById('btn-word-shadow-start-record');
-                const resetBtn = document.getElementById('btn-reset-word-shadow');
-                if (recBtn) recBtn.style.display = 'none';
-                if (resetBtn) resetBtn.style.display = 'none';
+                const recBtn = document.getElementById('btn-word-shadow-start-record');[cite: 1]
+                const resetBtn = document.getElementById('btn-reset-word-shadow');[cite: 1]
+                if (recBtn) recBtn.style.display = 'none';[cite: 1]
+                if (resetBtn) resetBtn.style.display = 'none';[cite: 1]
             } else if (activeMode === 'shadow') {
-                const recBtn = document.getElementById('btn-start-record');
-                const resetBtn = document.getElementById('btn-reset-shadow');
-                if (recBtn) recBtn.style.display = 'none';
-                if (resetBtn) resetBtn.style.display = 'none';
+                const recBtn = document.getElementById('btn-start-record');[cite: 1]
+                const resetBtn = document.getElementById('btn-reset-shadow');[cite: 1]
+                if (recBtn) recBtn.style.display = 'none';[cite: 1]
+                if (resetBtn) resetBtn.style.display = 'none';[cite: 1]
             }
         }
 
-        // 題目切換時恢復顯示錄音控制項
+        // 題目切換時恢復顯示錄音控制項[cite: 1]
         function restoreRecordingControls() {
-            const recBtnShadow = document.getElementById('btn-start-record');
-            const resetBtnShadow = document.getElementById('btn-reset-shadow');
-            if (recBtnShadow) { recBtnShadow.style.display = 'inline-flex'; recBtnShadow.disabled = false; }
-            if (resetBtnShadow) resetBtnShadow.style.display = 'inline-flex';
+            const recBtnShadow = document.getElementById('btn-start-record');[cite: 1]
+            const resetBtnShadow = document.getElementById('btn-reset-shadow');[cite: 1]
+            if (recBtnShadow) { recBtnShadow.style.display = 'inline-flex'; recBtnShadow.disabled = false; }[cite: 1]
+            if (resetBtnShadow) resetBtnShadow.style.display = 'inline-flex';[cite: 1]
 
-            const recBtnChat = document.getElementById('btn-chat-start-record');
-            const resetBtnChat = document.getElementById('btn-reset-chat');
-            if (recBtnChat) { recBtnChat.style.display = 'inline-flex'; recBtnChat.disabled = false; }
-            if (resetBtnChat) resetBtnChat.style.display = 'inline-flex';
+            const recBtnChat = document.getElementById('btn-chat-start-record');[cite: 1]
+            const resetBtnChat = document.getElementById('btn-reset-chat');[cite: 1]
+            if (recBtnChat) { recBtnChat.style.display = 'inline-flex'; recBtnChat.disabled = false; }[cite: 1]
+            if (resetBtnChat) resetBtnChat.style.display = 'inline-flex';[cite: 1]
 
-            const recBtnWord = document.getElementById('btn-word-shadow-start-record');
-            const resetBtnWord = document.getElementById('btn-reset-word-shadow');
-            if (recBtnWord) { recBtnWord.style.display = 'inline-flex'; recBtnWord.disabled = false; }
-            if (resetBtnWord) resetBtnWord.style.display = 'inline-flex';
+            const recBtnWord = document.getElementById('btn-word-shadow-start-record');[cite: 1]
+            const resetBtnWord = document.getElementById('btn-reset-word-shadow');[cite: 1]
+            if (recBtnWord) { recBtnWord.style.display = 'inline-flex'; recBtnWord.disabled = false; }[cite: 1]
+            if (resetBtnWord) resetBtnWord.style.display = 'inline-flex';[cite: 1]
         }
 
         function forceResetMicrophoneSession() {
             if (recognition) {
                 try {
-                    recognition.onstart = null;
-                    recognition.onend = null;
-                    recognition.onerror = null;
-                    recognition.onresult = null;
-                    recognition.abort();
+                    recognition.onstart = null;[cite: 1]
+                    recognition.onend = null;[cite: 1]
+                    recognition.onerror = null;[cite: 1]
+                    recognition.onresult = null;[cite: 1]
+                    recognition.abort();[cite: 1]
                 } catch(e) {}
-                recognition = null;
+                recognition = null;[cite: 1]
             }
 
             if (mediaRecorder && mediaRecorder.stream) {
                 try {
                     mediaRecorder.stream.getTracks().forEach(track => {
-                        track.stop();
-                        track.enabled = false;
+                        track.stop();[cite: 1]
+                        track.enabled = false;[cite: 1]
                     });
                 } catch(e) {}
-                mediaRecorder = null;
+                mediaRecorder = null;[cite: 1]
             }
 
-            revokeUserAudioUrl();
-            isRecording = false;
-            isToggling = false;
-            document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
+            revokeUserAudioUrl();[cite: 1]
+            isRecording = false;[cite: 1]
+            isToggling = false;[cite: 1]
+            document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));[cite: 1]
 
             const targetLblId = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-recognized-text' :
-                                (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-recognized-text' : 'lbl-recognized-text';
-            const lbl = document.getElementById(targetLblId);
-            if (lbl) lbl.innerText = "麥克風已完全釋放，請點擊錄音";
+                                (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-recognized-text' : 'lbl-recognized-text';[cite: 1]
+            const lbl = document.getElementById(targetLblId);[cite: 1]
+            if (lbl) lbl.innerText = "麥克風已完全釋放，請點擊錄音";[cite: 1]
 
             const scoreLblId = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-score' :
-                               (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-score' : 'lbl-score';
-            const scoreLbl = document.getElementById(scoreLblId);
+                               (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-score' : 'lbl-score';[cite: 1]
+            const scoreLbl = document.getElementById(scoreLblId);[cite: 1]
             if (scoreLbl) {
-                scoreLbl.innerText = "判定結果：--";
-                scoreLbl.style.color = "var(--duo-blue)";
+                scoreLbl.innerText = "判定結果：--";[cite: 1]
+                scoreLbl.style.color = "var(--duo-blue)";[cite: 1]
             }
         }
 
         function revokeUserAudioUrl() {
             if (userRecordedAudioUrl) {
                 try {
-                    URL.revokeObjectURL(userRecordedAudioUrl);
+                    URL.revokeObjectURL(userRecordedAudioUrl);[cite: 1]
                 } catch (e) {
-                    console.warn("釋放音訊記憶體失敗:", e);
+                    console.warn("釋放音訊記憶體失敗:", e);[cite: 1]
                 }
-                userRecordedAudioUrl = null;
+                userRecordedAudioUrl = null;[cite: 1]
             }
         }
 
         function showIslandLoading(subText = "🏝️ 島嶼生成中，正在同步最新地圖...", progressPct = 30) {
-            const overlay = document.getElementById('game-loading-overlay');
-            const subElem = document.getElementById('lbl-island-loading-sub');
-            const bar = document.getElementById('island-loading-bar');
+            const overlay = document.getElementById('game-loading-overlay');[cite: 1]
+            const subElem = document.getElementById('lbl-island-loading-sub');[cite: 1]
+            const bar = document.getElementById('island-loading-bar');[cite: 1]
             if (overlay) {
-                overlay.classList.add('show');
-                if (subElem) subElem.innerText = subText;
-                if (bar) bar.style.width = `${progressPct}%`;
+                overlay.classList.add('show');[cite: 1]
+                if (subElem) subElem.innerText = subText;[cite: 1]
+                if (bar) bar.style.width = `${progressPct}%`;[cite: 1]
             }
         }
 
         function updateIslandLoading(subText, progressPct) {
-            const subElem = document.getElementById('lbl-island-loading-sub');
-            const bar = document.getElementById('island-loading-bar');
-            if (subElem) subElem.innerText = subText;
-            if (bar) bar.style.width = `${progressPct}%`;
+            const subElem = document.getElementById('lbl-island-loading-sub');[cite: 1]
+            const bar = document.getElementById('island-loading-bar');[cite: 1]
+            if (subElem) subElem.innerText = subText;[cite: 1]
+            if (bar) bar.style.width = `${progressPct}%`;[cite: 1]
         }
 
         function hideIslandLoading() {
-            const bar = document.getElementById('island-loading-bar');
-            if (bar) bar.style.width = '100%';
+            const bar = document.getElementById('island-loading-bar');[cite: 1]
+            if (bar) bar.style.width = '100%';[cite: 1]
             setTimeout(() => {
-                const overlay = document.getElementById('game-loading-overlay');
-                if (overlay) overlay.classList.remove('show');
-            }, 300);
+                const overlay = document.getElementById('game-loading-overlay');[cite: 1]
+                if (overlay) overlay.classList.remove('show');[cite: 1]
+            }, 300);[cite: 1]
         }
 
         function formatFocusDurationText(totalSeconds) {
-            const secNum = Math.max(0, Math.floor(totalSeconds || 0));
-            const hours = Math.floor(secNum / 3600);
-            const minutes = Math.floor((secNum % 3600) / 60);
-            const seconds = secNum % 60;
-            if (hours > 0) return `${hours}時 ${minutes}分 ${seconds}秒`;
-            if (minutes > 0) return `${minutes}分 ${seconds}秒`;
-            return `${seconds}秒`;
+            const secNum = Math.max(0, Math.floor(totalSeconds || 0));[cite: 1]
+            const hours = Math.floor(secNum / 3600);[cite: 1]
+            const minutes = Math.floor((secNum % 3600) / 60);[cite: 1]
+            const seconds = secNum % 60;[cite: 1]
+            if (hours > 0) return `${hours}時 ${minutes}分 ${seconds}秒`;[cite: 1]
+            if (minutes > 0) return `${minutes}分 ${seconds}秒`;[cite: 1]
+            return `${seconds}秒`;[cite: 1]
         }
 
         const PRAISE_MESSAGES = [
@@ -3084,77 +3083,76 @@
             "🎉 你到底是怎麼做到的？你真的太強了",
             "🎉 我真的太崇拜你了",
             "🎉 簡直是天才！"
-        ];
+        ];[cite: 1]
 
         function getRandomPraise() {
-            return PRAISE_MESSAGES[Math.floor(Math.random() * PRAISE_MESSAGES.length)];
+            return PRAISE_MESSAGES[Math.floor(Math.random() * PRAISE_MESSAGES.length)];[cite: 1]
         }
 
         function shuffleArray(arr) {
-            const array = [...arr];
+            const array = [...arr];[cite: 1]
             for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+                const j = Math.floor(Math.random() * (i + 1));[cite: 1]
+                [array[i], array[j]] = [array[j], array[i]];[cite: 1]
             }
-            return array;
+            return array;[cite: 1]
         }
 
         function formatDurationMMSS(totalSeconds) {
-            if (!totalSeconds || totalSeconds < 0) return "--:--";
-            const m = Math.floor(totalSeconds / 60);
-            const s = Math.floor(totalSeconds % 60);
-            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            if (!totalSeconds || totalSeconds < 0) return "--:--";[cite: 1]
+            const m = Math.floor(totalSeconds / 60);[cite: 1]
+            const s = Math.floor(totalSeconds % 60);[cite: 1]
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;[cite: 1]
         }
 
         function updateUserFlagIcon() {
-            const flagElem = document.getElementById('lbl-user-flag');
-            if (!flagElem) return;
-            const flagMap = { 'korean': '🇰🇷', 'japanese': '🇯🇵', 'english': '🇺🇸' };
-            flagElem.innerText = flagMap[currentConfig.category] || '🌐';
+            const flagElem = document.getElementById('lbl-user-flag');[cite: 1]
+            if (!flagElem) return;[cite: 1]
+            const flagMap = { 'korean': '🇰🇷', 'japanese': '🇯🇵', 'english': '🇺🇸' };[cite: 1]
+            flagElem.innerText = flagMap[currentConfig.category] || '🌐';[cite: 1]
         }
 
         async function recordSessionFocusTime() {
-            if (!challengeSessionStartTime) return 0;
-            const now = Date.now();
-            const elapsedSeconds = Math.max(0, Math.round((now - challengeSessionStartTime) / 1000));
-            challengeSessionStartTime = null;
+            if (!challengeSessionStartTime) return 0;[cite: 1]
+            const now = Date.now();[cite: 1]
+            const elapsedSeconds = Math.max(0, Math.round((now - challengeSessionStartTime) / 1000));[cite: 1]
+            challengeSessionStartTime = null;[cite: 1]
 
-            if (elapsedSeconds <= 0) return 0;
+            if (elapsedSeconds <= 0) return 0;[cite: 1]
 
-            if (!window.currentUserData) window.currentUserData = {};
-            const currentTotalSeconds = Number(window.currentUserData.focusSeconds || (window.currentUserData.focusHours ? window.currentUserData.focusHours * 3600 : 0));
-            const updatedTotalSeconds = currentTotalSeconds + elapsedSeconds;
+            if (!window.currentUserData) window.currentUserData = {};[cite: 1]
+            const currentTotalSeconds = Number(window.currentUserData.focusSeconds || (window.currentUserData.focusHours ? window.currentUserData.focusHours * 3600 : 0));[cite: 1]
+            const updatedTotalSeconds = currentTotalSeconds + elapsedSeconds;[cite: 1]
 
-            window.currentUserData.focusSeconds = updatedTotalSeconds;
-            window.currentUserData.focusHours = Number((updatedTotalSeconds / 3600).toFixed(4));
+            window.currentUserData.focusSeconds = updatedTotalSeconds;[cite: 1]
+            window.currentUserData.focusHours = Number((updatedTotalSeconds / 3600).toFixed(4));[cite: 1]
 
-            const formattedText = formatFocusDurationText(updatedTotalSeconds);
-            const dashFocus = document.getElementById('dash-focus-hours');
-            const myAccountFocus = document.getElementById('myaccount-focus-text');
-            if (dashFocus) dashFocus.innerText = formattedText;
-            if (myAccountFocus) myAccountFocus.innerText = formattedText;
+            const formattedText = formatFocusDurationText(updatedTotalSeconds);[cite: 1]
+            const dashFocus = document.getElementById('dash-focus-hours');[cite: 1]
+            const myAccountFocus = document.getElementById('myaccount-focus-text');[cite: 1]
+            if (dashFocus) dashFocus.innerText = formattedText;[cite: 1]
+            if (myAccountFocus) myAccountFocus.innerText = formattedText;[cite: 1]
 
             if (currentUser) {
                 try {
                     await db.collection("users").doc(currentUser.uid).set({
                         focusSeconds: firebase.firestore.FieldValue.increment(elapsedSeconds),
                         focusHours: Number((updatedTotalSeconds / 3600).toFixed(4))
-                    }, { merge: true });
+                    }, { merge: true });[cite: 1]
                 } catch (e) {
-                    console.error("更新專注秒數至雲端失敗:", e);
+                    console.error("更新專注秒數至雲端失敗:", e);[cite: 1]
                 }
             }
 
-            return elapsedSeconds;
+            return elapsedSeconds;[cite: 1]
         }
 
         function getModeTagText() {
-            if (activeChallengeType === 'entry') return '(入門)';
-            if (activeChallengeType === 'timed') return '(挑戰)';
-            return '(練習)';
+            if (activeChallengeType === 'entry') return '(入門)';[cite: 1]
+            if (activeChallengeType === 'timed') return '(挑戰)';[cite: 1]
+            return '(練習)';[cite: 1]
         }
-
-        function getLocalDateString(d = new Date()) {
+function getLocalDateString(d = new Date()) {
             const year = d.getFullYear();
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
@@ -3274,7 +3272,8 @@
                 return null;
             }
         }
-async function verifyAndSyncUser(user, isInteractive = false) {
+
+        async function verifyAndSyncUser(user, isInteractive = false) {
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
                 if (!gasResult || gasResult.status !== "success") {
@@ -3783,8 +3782,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 selectLessonAndMode(pendingLesson, pendingMode);
             }
         }
-
-        async function saveChallengeScoreRecord(finalScore, elapsedSeconds = null) {
+async function saveChallengeScoreRecord(finalScore, elapsedSeconds = null) {
             const starInfo = calculateStars(finalScore);
             const key = getRecordKey(currentConfig.lesson, currentConfig.mode, activeChallengeType);
             const existingRecord = getStoredBestRecord(currentConfig.lesson, currentConfig.mode, activeChallengeType);
@@ -4581,8 +4579,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 container.innerHTML = "<div style='text-align:center; color:#ef4444; padding:20px 0;'>載入好友資料失敗，請確認網路！</div>";
             }
         }
-
-        document.getElementById('btn-confirm-add-friend').onclick = async () => {
+document.getElementById('btn-confirm-add-friend').onclick = async () => {
             const input = document.getElementById('input-friend-email');
             const errDiv = document.getElementById('add-friend-error-msg');
             const targetEmail = input.value.trim().toLowerCase();
@@ -5973,8 +5970,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             subElem.innerText = pronStr;
             subElem.style.visibility = pronStr ? "visible" : "hidden";
         }
-
-        function startWordChallenge(wordMode) {
+function startWordChallenge(wordMode) {
             stopSpeechRecognition();
             stopChallengeTimer();
             resetSpeechEvalButtons();
@@ -6045,17 +6041,18 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 if (nextBtn) nextBtn.style.display = 'none';
                 if (recordBtn) recordBtn.disabled = false;
 
+                // 允許重複播放音檔：無論任何模式一律顯示喇叭按鈕
+                if (playAudioBtn) playAudioBtn.style.display = 'flex';
+
                 if (isHard) {
                     targetTextElem.innerText = item.text || "";
                     targetTextElem.style.visibility = "hidden";
                     transElem.innerText = "";
-                    if (playAudioBtn) playAudioBtn.style.display = (activeChallengeType === 'timed') ? 'none' : 'flex';
                 } else {
                     targetTextElem.innerText = item.text || "";
                     targetTextElem.style.visibility = "visible";
                     const trans = getWordTranslation(item);
                     transElem.innerText = trans ? `${trans}` : "";
-                    if (playAudioBtn) playAudioBtn.style.display = 'flex';
                 }
 
                 renderWordShadowSubtext();
@@ -6431,15 +6428,15 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                     }
                 }
 
+                // 允許重複播放音檔：無論任何模式一律顯示喇叭按鈕
+                if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
+
                 if (activeChallengeType === 'practice' || (is0ALevel && activeChallengeType === 'entry')) {
                     transElem.innerText = q.translation || "";
-                    if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
                 } else if (activeChallengeType === 'entry') {
                     transElem.innerText = "";
-                    if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
                 } else if (activeChallengeType === 'timed') {
                     transElem.innerText = q.translation || "";
-                    if (playAudioBtn) playAudioBtn.style.display = 'none';
                 }
 
                 document.getElementById('lbl-block-score').innerText = "請選取字塊或鍵盤輸入作答";
@@ -6854,7 +6851,8 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             const recordBtn = document.getElementById('btn-chat-start-record');
 
             if (recordBtn) recordBtn.disabled = false;
-            if (playAudioBtn) playAudioBtn.style.display = isChatChallengeMode ? 'none' : 'flex';
+            // 允許重複播放音檔：所有模式均顯示播放按鈕
+            if (playAudioBtn) playAudioBtn.style.display = 'flex';
 
             if (chatRole === 'A') {
                 if (topPartnerBubble) topPartnerBubble.style.display = 'none';
@@ -6881,16 +6879,38 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                     transElem.innerText = "";
                 }
             } else {
-                hintBubble.style.display = 'none';
-                if (topPartnerBubble) topPartnerBubble.style.display = 'none';
+                // 擔任角色 B 時：練習、入門與挑戰模式一律直接在對話框中顯示角色 A 說的話
+                if (topPartnerBubble) {
+                    topPartnerBubble.style.display = 'block';
+                    document.getElementById('lbl-top-partner-title').innerText = `對方 (Speaker A) 提問：`;
+                    document.getElementById('lbl-top-partner-text').innerText = curRound.aText;
+                }
                 if (bottomPartnerBubble) bottomPartnerBubble.style.display = 'none';
 
-                instructionTopElem.innerText = isChatChallengeMode 
-                    ? `【角色 B】請聽對方提問，並念出正確回應：` 
-                    : `【角色 B】對方提問如下，請念出你的回答：`;
-                
-                targetTextElem.innerText = isChatChallengeMode ? "請聆聽對方提問後作答" : (curRound.bxText || curRound.bText);
-                transElem.innerText = isChatChallengeMode ? "" : (curRound.zh_tw || "");
+                if (isChatChallengeMode) {
+                    // 入門與挑戰模式擔任角色 B 時：取消原本的隱藏，跟練習模式一樣直接給提示
+                    instructionTopElem.innerText = `【角色 B】請聽對方提問，並念出你的回答：`;
+                    
+                    const activeHintB = (currentConfig.lang === 'en') ? (curRound.hintEn || curRound.hintZh) :
+                                        (currentConfig.lang === 'ja') ? (curRound.hintJp || curRound.hintZh) : (curRound.hintZh || curRound.zh_tw);
+
+                    if (activeHintB && activeHintB.trim()) {
+                        document.getElementById('lbl-chat-a-hint-title').innerText = "提示：";
+                        document.getElementById('lbl-chat-a-hint-text').innerText = activeHintB.trim();
+                        hintBubble.style.display = 'block';
+                    } else {
+                        hintBubble.style.display = 'none';
+                    }
+
+                    targetTextElem.innerText = curRound.bxText || curRound.bText;
+                    transElem.innerText = curRound.zh_tw || "";
+                } else {
+                    // 練習模式擔任角色 B
+                    hintBubble.style.display = 'none';
+                    instructionTopElem.innerText = `【角色 B】對方提問如下，請念出你的回答：`;
+                    targetTextElem.innerText = curRound.bxText || curRound.bText;
+                    transElem.innerText = curRound.zh_tw || "";
+                }
 
                 if (autoPlayOpponent) setTimeout(() => playAudioOrTTS(curRound.aAudio, curRound.aText, 0.85), 350);
             }
@@ -7063,11 +7083,11 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                     const trans = getWordTranslation(currentQ);
                     document.getElementById('lbl-word-shadow-translation').innerText = trans ? `${trans}` : "";
 
-                    if (activeChallengeType === 'timed') {
-                        const playAudioBtn = document.getElementById('btn-word-shadow-play-audio');
-                        if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
-                        playWordAudio();
-                    }
+                    // 允許重複播放音檔
+                    const playAudioBtn = document.getElementById('btn-word-shadow-play-audio');
+                    if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
+                    playWordAudio();
+                    
                     markQuestionAnswered(wordIndex);
                 } else {
                     if (isSentenceChallengeMode || isSentenceKeywordMode) {
