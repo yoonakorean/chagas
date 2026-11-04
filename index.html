@@ -836,8 +836,7 @@
         .doors-opened .gate-unlock-shine { opacity: 1; transform: scale(2.2); }
         .gate-unlock-title { color: #ffffff; font-size: 1.6rem; font-weight: 900; letter-spacing: 1px; margin-bottom: 6px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .gate-unlock-sub { color: #cbd5e1; font-size: 0.95rem; font-weight: bold; margin-bottom: 24px; }
-
-        /* 角色切換專屬動畫 Modal 樣式 */
+/* 角色切換專屬動畫 Modal 樣式 */
         #role-switch-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(8px);
@@ -901,7 +900,7 @@
         }
         .stage-return {
             display: flex; align-items: center; gap: 6px; color: #64748b;
-            font-size: 0.85rem; font-weight: 800; cursor: pointer; border: none; background: none;
+            font-size: 0.85rem; font-weight: 800; cursor: border; border: none; background: none;
         }
         .stage-counter { font-size: 0.82rem; font-weight: 800; color: #94a3b8; }
 
@@ -1589,7 +1588,8 @@
             </div>
         </div>
     </div>
-<!-- 依關卡挑選單字卡彈窗 -->
+
+    <!-- 依關卡挑選單字卡彈窗 -->
     <div id="modal-select-flashcard-stage" class="custom-modal">
         <div class="custom-modal-card" style="padding: 22px 18px;">
             <div class="close-icon-circle" onclick="closeModal('modal-select-flashcard-stage')"><i class="fa-solid fa-xmark"></i></div>
@@ -1842,8 +1842,7 @@
             <button class="ctrl-btn" id="btn-flashcard-next" onclick="stepFlashcard(1)" aria-label="下一個"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
     </div>
-
-    <!-- 主介面容器 -->
+<!-- 主介面容器 -->
     <div class="shadowing-card">
         
         <!-- 上方狀態列 -->
@@ -2042,12 +2041,6 @@
                     <div class="instruction-badge-bar" id="lbl-chat-instruction-top">請依指引念出句子：</div>
                 </div>
 
-                <!-- 角色 A / 角色 B 的關鍵字提示氣泡 (上方) -->
-                <div id="chat-a-hint-bubble" style="display: none; background: #fef3c7; border: 1.5px solid #fde68a; border-radius: 14px; padding: 10px; margin-bottom: 10px; text-align: left;">
-                    <div style="font-size: 0.85rem; color: #b45309; font-weight: 800; margin-bottom: 2px;" id="lbl-chat-a-hint-title">提示：</div>
-                    <div style="font-size: 1.15rem; font-weight: bold; color: #92400e;" id="lbl-chat-a-hint-text">...</div>
-                </div>
-
                 <!-- 角色 B 狀態下的 Speaker A 提問藍色對話框 (置頂顯示，包含專屬發音播放按鈕) -->
                 <div id="chat-top-partner-bubble" style="display: none; background: #e0f2fe; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 10px; margin: 8px 0; text-align: left;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
@@ -2059,9 +2052,15 @@
                     <div style="font-size: 1.25rem; font-weight: bold; color: #0f172a;" id="lbl-top-partner-text">...</div>
                 </div>
 
-                <!-- 本題主要文字 (角色 A 時為提問句子；角色 B 時為我念的回答) -->
+                <!-- 依需求對調：主要文字框置於上方 (角色 A 時顯示挑戰提問句；角色 B 時顯示請根據提示回答) -->
                 <div class="target-text" id="lbl-chat-target-text">載入中...</div>
                 <div class="translation-text" id="lbl-chat-translation">...</div>
+
+                <!-- 依需求對調：黃色提示框置於下方，並顯示 a1x / b1x 內容 -->
+                <div id="chat-a-hint-bubble" style="display: none; background: #fef3c7; border: 1.5px solid #fde68a; border-radius: 14px; padding: 10px; margin: 10px 0; text-align: left;">
+                    <div style="font-size: 0.85rem; color: #b45309; font-weight: 800; margin-bottom: 2px;" id="lbl-chat-a-hint-title">提示：</div>
+                    <div style="font-size: 1.15rem; font-weight: bold; color: #92400e;" id="lbl-chat-a-hint-text">...</div>
+                </div>
 
                 <!-- 角色 A 狀態下的 Speaker B 對方回覆氣泡框 (置底顯示，包含專屬發音播放按鈕) -->
                 <div id="chat-partner-bubble" style="display: none; background: #e0f2fe; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 10px; margin: 10px 0; text-align: left;">
@@ -2093,7 +2092,8 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-<!-- 步驟 6-B：字塊重組畫面 -->
+
+            <!-- 步驟 6-B：字塊重組畫面 -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-blocks-mode-title">字塊重組</div>
@@ -2425,8 +2425,7 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-
-    <!-- 核心邏輯腳本開始 -->
+<!-- 核心邏輯腳本開始 -->
     <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -2483,7 +2482,7 @@
         let chatRole = 'B';
         let isChatChallengeMode = false;
         let chatRoundPassed = false;
-let wordQuestions = [];
+        let wordQuestions = [];
         let wordIndex = 0;
         let currentWordPronMode = 'kr_pron';
 
@@ -3471,8 +3470,7 @@ function showIslandLoading(subText = "🏝️ 島嶼生成中，正在同步最�
                 renderAllLessonsForLevel(currentConfig.level);
             }, 1900);
         }
-
-        function renderCandyRoadmap(unitId, filteredByLevel, units) {
+function renderCandyRoadmap(unitId, filteredByLevel, units) {
             const nodesContainer = document.getElementById('roadmap-nodes-list');
             const svgCanvas = document.getElementById('roadmap-svg-canvas');
             nodesContainer.innerHTML = "";
@@ -5365,8 +5363,7 @@ document.getElementById('btn-save-nickname').onclick = async () => {
                 finishGrammarTask();
             }
         }
-
-        function extractPureAnswer(questionText, rawAnswerText) {
+function extractPureAnswer(questionText, rawAnswerText) {
             if (!rawAnswerText) return "";
             let q = (questionText || "").replace(/_+/g, "___").trim();
             let a = String(rawAnswerText).trim();
@@ -5624,7 +5621,8 @@ document.getElementById('btn-save-nickname').onclick = async () => {
                 showGrammarQuizArea();
             }
         }
-/* ================= 字母臨摹 Canvas 控制與筆劃評判 ================= */
+
+        /* ================= 字母臨摹 Canvas 控制與筆劃評判 ================= */
         function initTraceCanvas(curItem) {
             const container = document.getElementById('trace-canvas-container');
             const size = Math.min(270, window.innerWidth - 70);
@@ -6829,7 +6827,7 @@ function displayQuestion() {
                         aText: aText,
                         bText: bText,
                         axText: (d.a1x || aText).trim(),
-                        bxText: (d.bx1 || bText).trim(),
+                        bxText: (d.b1x || bText).trim(),
                         aAudio: d.a1_audio || d.audio_url || '',
                         bAudio: d.b1_audio || d.audio_url || '',
                         zh_tw: d.zh_tw || d.zh || '',
@@ -6906,7 +6904,22 @@ function displayQuestion() {
                 if (topPartnerBubble) topPartnerBubble.style.display = 'none';
                 if (bottomPartnerBubble) bottomPartnerBubble.style.display = 'none';
                 
-                if (isChatChallengeMode) {
+                if (activeChallengeType === 'entry') {
+                    // 入門模式 角色 A：位置互換 + 提示黃色框顯示 a1x 欄位資料
+                    instructionTopElem.innerText = `【角色 A】請發起對話：依關鍵字提示念出提問：`;
+                    targetTextElem.innerText = "挑戰模式中，請念出完整提問句子";
+                    transElem.innerText = "";
+
+                    const activeHint = curRound.axText || curRound.aText;
+                    if (activeHint && activeHint.trim()) {
+                        document.getElementById('lbl-chat-a-hint-title').innerText = "提示：";
+                        document.getElementById('lbl-chat-a-hint-text').innerText = activeHint.trim();
+                        hintBubble.style.display = 'block';
+                    } else {
+                        hintBubble.style.display = 'none';
+                    }
+                } else if (activeChallengeType === 'timed') {
+                    // 挑戰模式 角色 A
                     instructionTopElem.innerText = `【角色 A】請發起對話：依關鍵字提示念出提問：`;
                     targetTextElem.innerText = "挑戰模式中，請念出完整提問句子";
                     transElem.innerText = "";
@@ -6932,8 +6945,23 @@ function displayQuestion() {
                 // 角色 B 狀態
                 if (bottomPartnerBubble) bottomPartnerBubble.style.display = 'none';
 
-                if (isChatChallengeMode) {
-                    // 入門與挑戰模式：不顯示角色 A 句子，改為提示
+                if (activeChallengeType === 'entry') {
+                    // 入門模式 角色 B：位置互換 + 提示黃色框顯示 b1x 欄位資料
+                    if (topPartnerBubble) topPartnerBubble.style.display = 'none';
+                    instructionTopElem.innerText = `【角色 B】請聽對方提問，並依提示念出回應：`;
+                    targetTextElem.innerText = "請根據提示回答";
+                    transElem.innerText = "";
+
+                    const activeBHint = curRound.bxText || curRound.bText;
+                    if (activeBHint && activeBHint.trim()) {
+                        document.getElementById('lbl-chat-a-hint-title').innerText = "提示：";
+                        document.getElementById('lbl-chat-a-hint-text').innerText = activeBHint.trim();
+                        hintBubble.style.display = 'block';
+                    } else {
+                        hintBubble.style.display = 'none';
+                    }
+                } else if (activeChallengeType === 'timed') {
+                    // 挑戰模式 角色 B
                     if (topPartnerBubble) topPartnerBubble.style.display = 'none';
                     instructionTopElem.innerText = `【角色 B】請聽對方提問，並依提示念出回應：`;
                     targetTextElem.innerText = "請根據提示回答";
@@ -7306,7 +7334,6 @@ function displayQuestion() {
                     const evalBtn = document.getElementById('btn-word-shadow-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
                 } else {
-                    // 句子跟讀挑戰：錄音完畢後不隱藏錄音按鈕，保留錄音鍵讓學員隨時重新錄製覆蓋
                     document.getElementById('lbl-recognized-text').innerText = userSpeech;
                     document.getElementById('lbl-score').innerText = "發音已收錄！可點擊下方比對評分，或重新點擊錄音鍵覆蓋";
                     document.getElementById('lbl-score').style.color = "var(--duo-blue)";
