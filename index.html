@@ -810,7 +810,7 @@
         }
         #gate-unlock-modal.show { display: flex !important; }
         .gate-doors-wrapper {
-            position: relative; width: 260px; height: 320px; perspective: 1000px;
+            position: relative width: 260px; height: 320px; perspective: 1000px;
             display: flex; justify-content: center; align-items: center; margin-bottom: 24px;
         }
         .gate-door {
@@ -900,7 +900,7 @@
         }
         .stage-return {
             display: flex; align-items: center; gap: 6px; color: #64748b;
-            font-size: 0.85rem; font-weight: 800; cursor: border; border: none; background: none;
+            font-size: 0.85rem; font-weight: 800; cursor: pointer; border: none; background: none;
         }
         .stage-counter { font-size: 0.82rem; font-weight: 800; color: #94a3b8; }
 
@@ -2052,7 +2052,7 @@
                     <div style="font-size: 1.25rem; font-weight: bold; color: #0f172a;" id="lbl-top-partner-text">...</div>
                 </div>
 
-                <!-- 依需求對調：主要文字框置於上方 (角色 A 時顯示挑戰提問句；角色 B 時顯示請根據提示回答) -->
+                <!-- 依需求對調：主要文字框置於上方 (角色 A 顯示提問句；角色 B 顯示請根據提示回答) -->
                 <div class="target-text" id="lbl-chat-target-text">載入中...</div>
                 <div class="translation-text" id="lbl-chat-translation">...</div>
 
@@ -2474,6 +2474,7 @@
         let mediaRecorder = null;
         let recordedAudioChunks = [];
         let userRecordedAudioUrl = null;
+        let currentUserAudioElement = null; // 追蹤正在播放的錄音物件
         let lastRecognizedSpeechText = "";
 
         // 對話挑戰變數：預設先跑角色 B，再接角色 A
@@ -3036,6 +3037,15 @@
         }
 
         function forceResetMicrophoneSession() {
+            // 停止正在播放的錄音，徹底釋放音訊佔用
+            if (currentUserAudioElement) {
+                try {
+                    currentUserAudioElement.pause();
+                    currentUserAudioElement.currentTime = 0;
+                } catch(e) {}
+                currentUserAudioElement = null;
+            }
+
             if (recognition) {
                 try {
                     recognition.onstart = null;
@@ -3060,7 +3070,10 @@
             revokeUserAudioUrl();
             isRecording = false;
             isToggling = false;
-            document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
+            document.querySelectorAll('.btn-record').forEach(b => {
+                b.classList.remove('recording');
+                b.disabled = false;
+            });
 
             const targetLblId = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-recognized-text' :
                                 (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-recognized-text' : 'lbl-recognized-text';
@@ -3077,6 +3090,13 @@
         }
 
         function revokeUserAudioUrl() {
+            if (currentUserAudioElement) {
+                try {
+                    currentUserAudioElement.pause();
+                    currentUserAudioElement.currentTime = 0;
+                } catch(e) {}
+                currentUserAudioElement = null;
+            }
             if (userRecordedAudioUrl) {
                 try {
                     URL.revokeObjectURL(userRecordedAudioUrl);
@@ -3470,7 +3490,8 @@ function showIslandLoading(subText = "🏝️ 島嶼生成中，正在同步最�
                 renderAllLessonsForLevel(currentConfig.level);
             }, 1900);
         }
-function renderCandyRoadmap(unitId, filteredByLevel, units) {
+
+        function renderCandyRoadmap(unitId, filteredByLevel, units) {
             const nodesContainer = document.getElementById('roadmap-nodes-list');
             const svgCanvas = document.getElementById('roadmap-svg-canvas');
             nodesContainer.innerHTML = "";
@@ -6827,7 +6848,7 @@ function displayQuestion() {
                         aText: aText,
                         bText: bText,
                         axText: (d.a1x || aText).trim(),
-                        bxText: (d.b1x || bText).trim(),
+                        bxText: (d.b1x || bText).trim(), // 確保精確對應 GAS 聊天qa 表單中之 b1x
                         aAudio: d.a1_audio || d.audio_url || '',
                         bAudio: d.b1_audio || d.audio_url || '',
                         zh_tw: d.zh_tw || d.zh || '',
@@ -6946,7 +6967,7 @@ function displayQuestion() {
                 if (bottomPartnerBubble) bottomPartnerBubble.style.display = 'none';
 
                 if (activeChallengeType === 'entry') {
-                    // 入門模式 角色 B：位置互換 + 提示黃色框顯示 b1x 欄位資料
+                    // 入門模式 角色 B：位置互換 + 提示黃色框精準顯示 b1x 欄位資料
                     if (topPartnerBubble) topPartnerBubble.style.display = 'none';
                     instructionTopElem.innerText = `【角色 B】請聽對方提問，並依提示念出回應：`;
                     targetTextElem.innerText = "請根據提示回答";
@@ -7118,9 +7139,23 @@ function displayQuestion() {
 
         function playUserRecording() {
             if (userRecordedAudioUrl) {
+                if (currentUserAudioElement) {
+                    try {
+                        currentUserAudioElement.pause();
+                        currentUserAudioElement.currentTime = 0;
+                    } catch(e) {}
+                }
                 const audio = new Audio(userRecordedAudioUrl);
+                currentUserAudioElement = audio;
                 audio.volume = 1.0;
+                audio.onended = () => {
+                    currentUserAudioElement = null;
+                };
+                audio.onerror = () => {
+                    currentUserAudioElement = null;
+                };
                 audio.play().catch(err => {
+                    currentUserAudioElement = null;
                     console.error("播放錄音失敗：", err);
                     alert("錄音播放失敗，若使用手機請確認是否開啟靜音開關！");
                 });
@@ -7349,6 +7384,15 @@ function displayQuestion() {
             if (isCurrentQuestionAnswered) return;
             if (isToggling) return;
             isToggling = true;
+
+            // 確保先完全停止並釋放錄音原音播放
+            if (currentUserAudioElement) {
+                try {
+                    currentUserAudioElement.pause();
+                    currentUserAudioElement.currentTime = 0;
+                } catch(e) {}
+                currentUserAudioElement = null;
+            }
 
             if (window.speechSynthesis) window.speechSynthesis.cancel();
 
