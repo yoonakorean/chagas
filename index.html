@@ -1017,8 +1017,7 @@
             transform: scale(0.9);
             background: #0f172a;
         }
-
-        /* ================= 3D 單字翻轉卡專屬樣式 ================= */
+/* ================= 3D 單字翻轉卡專屬樣式 ================= */
         .fullscreen-stage {
             position: fixed; inset: 0; background: #fbfbfa; z-index: 999999;
             display: none; flex-direction: column; overflow: hidden;
@@ -1056,38 +1055,38 @@
         .card-bottom-spacer { height: 32px; flex-shrink: 0; }
 
         .face-pos-tag { font-size: 0.76rem; font-weight: 800; color: var(--pos-fg); background: var(--pos-bg); padding: 4px 12px; border-radius: 100px; }
-.pron-toggle { display: flex; background: #f1f5f9; border-radius: 100px; padding: 2px; font-size: 0.68rem; font-weight: 800; }[cite: 1]
-        .pron-toggle button { padding: 4px 10px; border-radius: 100px; color: #64748b; border: none; background: none; cursor: pointer; }[cite: 1]
-        .pron-toggle button.active { background: #ffffff; color: var(--duo-blue); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }[cite: 1]
-        .front-pron-row { display: flex; align-items: center; justify-content: center; gap: 10px; }[cite: 1]
+        .pron-toggle { display: flex; background: #f1f5f9; border-radius: 100px; padding: 2px; font-size: 0.68rem; font-weight: 800; }
+        .pron-toggle button { padding: 4px 10px; border-radius: 100px; color: #64748b; border: none; background: none; cursor: pointer; }
+        .pron-toggle button.active { background: #ffffff; color: var(--duo-blue); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .front-pron-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
 
-        .front-word { font-weight: 900; font-size: clamp(2.6rem, 9.5vw, 3.6rem); color: #1e293b; line-height: 1.2; word-break: break-word; }[cite: 1]
-        .front-pron { font-size: 1.05rem; color: #64748b; font-weight: bold; letter-spacing: 0.02em; }[cite: 1]
-        .mini-play { width: 32px; height: 32px; border-radius: 50%; background: #f0f9ff; color: var(--duo-blue); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; border: none; cursor: pointer; transition: transform .1s; }[cite: 1]
-        .mini-play:active { transform: scale(0.9); }[cite: 1]
+        .front-word { font-weight: 900; font-size: clamp(2.6rem, 9.5vw, 3.6rem); color: #1e293b; line-height: 1.2; word-break: break-word; }
+        .front-pron { font-size: 1.05rem; color: #64748b; font-weight: bold; letter-spacing: 0.02em; }
+        .mini-play { width: 32px; height: 32px; border-radius: 50%; background: #f0f9ff; color: var(--duo-blue); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; border: none; cursor: pointer; transition: transform .1s; }
+        .mini-play:active { transform: scale(0.9); }
 
-        .note-word-kr { font-weight: 900; font-size: 1.25rem; color: #1e293b; }[cite: 1]
-        .note-note { font-size: 0.96rem; color: #334155; line-height: 1.7; font-weight: 500; margin-top: 14px; margin-bottom: 20px; }[cite: 1]
-        .note-expr { padding: 12px 0; border-top: 1px solid #f1f5f9; }[cite: 1]
-        .note-expr-kr { font-weight: 700; font-size: 0.98rem; display: flex; align-items: center; gap: 8px; color: #1e293b; }[cite: 1]
-        .note-expr-zh { font-size: 0.82rem; color: #64748b; margin-top: 4px; font-weight: 500; }[cite: 1]
+        .note-word-kr { font-weight: 900; font-size: 1.25rem; color: #1e293b; }
+        .note-note { font-size: 0.96rem; color: #334155; line-height: 1.7; font-weight: 500; margin-top: 14px; margin-bottom: 20px; }
+        .note-expr { padding: 12px 0; border-top: 1px solid #f1f5f9; }
+        .note-expr-kr { font-weight: 700; font-size: 0.98rem; display: flex; align-items: center; gap: 8px; color: #1e293b; }
+        .note-expr-zh { font-size: 0.82rem; color: #64748b; margin-top: 4px; font-weight: 500; }
 
         .stage-controlbar {
             flex-shrink: 0; display: flex; align-items: center; justify-content: center;
             gap: 24px; padding: 10px 16px 24px;
-        }[cite: 1]
-        .ctrl-btn { width: 44px; height: 44px; border-radius: 50%; background: #ffffff; border: 2px solid #e2e8f0; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 1.05rem; cursor: pointer; transition: transform .1s; }[cite: 1]
-        .ctrl-btn:disabled { opacity: 0.3; cursor: not-allowed; }[cite: 1]
-        .ctrl-btn.primary-ctrl { background: #f0fdf4; color: #16a34a; border-color: #86efac; }[cite: 1]
-        .ctrl-btn:active:not(:disabled) { transform: scale(0.92); }[cite: 1]
+        }
+        .ctrl-btn { width: 44px; height: 44px; border-radius: 50%; background: #ffffff; border: 2px solid #e2e8f0; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 1.05rem; cursor: pointer; transition: transform .1s; }
+        .ctrl-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .ctrl-btn.primary-ctrl { background: #f0fdf4; color: #16a34a; border-color: #86efac; }
+        .ctrl-btn:active:not(:disabled) { transform: scale(0.92); }
 
         .custom-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.55); display: none; justify-content: center;
             align-items: center; z-index: 999999;
             padding: 16px;
-        }[cite: 1]
-        .custom-modal.show { display: flex !important; }[cite: 1]
+        }
+        .custom-modal.show { display: flex !important; }
         .custom-modal-card {
             background: white; border-radius: 24px; padding: 22px 18px;
             width: 100%; max-width: 380px; text-align: center;
@@ -1095,160 +1094,160 @@
             animation: modalPopIn 0.18s ease-out;
             max-height: 90vh;
             overflow-y: auto;
-        }[cite: 1]
+        }
         @keyframes modalPopIn {
             from { transform: scale(0.92); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
-        }[cite: 1]
+        }
 
         .close-icon-circle {
             position: absolute; top: 14px; left: 16px; width: 28px; height: 28px;
             background: #f3f4f6; color: #9ca3af; border-radius: 50%;
             display: flex; align-items: center; justify-content: center; font-size: 0.9rem;
             cursor: pointer; transition: background 0.15s;
-        }[cite: 1]
-        .close-icon-circle:hover { background: #e2e8f0; color: #64748b; }[cite: 1]
+        }
+        .close-icon-circle:hover { background: #e2e8f0; color: #64748b; }
 
-        .hidden { display: none !important; }[cite: 1]
+        .hidden { display: none !important; }
 
         input, select {
             width: 100%; padding: 10px 12px; margin: 6px 0; border-radius: 12px;
             border: 2px solid #e5e7eb; font-size: 0.95rem; font-family: inherit; outline: none;
-        }[cite: 1]
-        input:focus, select:focus { border-color: var(--duo-blue); }[cite: 1]
+        }
+        input:focus, select:focus { border-color: var(--duo-blue); }
 
         .level-select-box {
             width: 100%; padding: 10px 12px; margin: 12px 0 14px 0; border-radius: 14px;
             border: 2px solid var(--duo-blue) !important; font-size: 0.95rem;
             font-weight: bold; color: #1e293b; background: #fff; outline: none; cursor: pointer;
-        }[cite: 1]
+        }
 
         .btn-3d {
             font-size: 0.95rem; font-weight: bold; border: none;
             border-radius: 14px; cursor: pointer; transition: all 0.1s ease;
             touch-action: manipulation;
-        }[cite: 1]
-        .btn-3d-primary { background: var(--duo-green); color: white; box-shadow: 0 4px 0 var(--duo-green-shadow); }[cite: 1]
-        .btn-3d-primary:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--duo-green-shadow); }[cite: 1]
-        .btn-3d-blue { background: var(--duo-blue); color: white; box-shadow: 0 4px 0 var(--duo-blue-shadow); }[cite: 1]
-        .btn-3d-blue:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--duo-blue-shadow); }[cite: 1]
-        .btn-3d-secondary { background: #ffffff; color: #4b5563; border: 2px solid #e5e7eb; box-shadow: 0 4px 0 #e5e7eb; }[cite: 1]
-        .btn-3d-secondary:active { transform: translateY(2px); box-shadow: 0 1px 0 #e5e7eb; }[cite: 1]
+        }
+        .btn-3d-primary { background: var(--duo-green); color: white; box-shadow: 0 4px 0 var(--duo-green-shadow); }
+        .btn-3d-primary:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--duo-green-shadow); }
+        .btn-3d-blue { background: var(--duo-blue); color: white; box-shadow: 0 4px 0 var(--duo-blue-shadow); }
+        .btn-3d-blue:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--duo-blue-shadow); }
+        .btn-3d-secondary { background: #ffffff; color: #4b5563; border: 2px solid #e5e7eb; box-shadow: 0 4px 0 #e5e7eb; }
+        .btn-3d-secondary:active { transform: translateY(2px); box-shadow: 0 1px 0 #e5e7eb; }
 
         .btn-google {
             background: #ffffff; color: #374151; border: 2px solid #e5e7eb;
             box-shadow: 0 4px 0 #e5e7eb; display: flex; align-items: center;
             justify-content: center; gap: 10px; width: 100%; padding: 12px;
             font-size: 0.95rem; font-weight: bold; border-radius: 14px; cursor: pointer;
-        }[cite: 1]
+        }
         .calendar-header-ctrl {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 10px; font-weight: bold; color: #374151; font-size: 0.9rem;
-        }[cite: 1]
+        }
         .calendar-nav-btn {
             background: #f3f4f6; border: none; border-radius: 8px; width: 28px; height: 28px;
             display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: #4b5563;
-        }[cite: 1]
+        }
         .calendar-grid {
             display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; text-align: center;
-        }[cite: 1]
-        .calendar-day-header { font-size: 0.75rem; color: #9ca3af; font-weight: bold; padding-bottom: 4px; }[cite: 1]
+        }
+        .calendar-day-header { font-size: 0.75rem; color: #9ca3af; font-weight: bold; padding-bottom: 4px; }
         .calendar-day {
             font-size: 0.8rem; padding: 7px 0; border-radius: 8px; background: #f9fafb;
             border: 1px solid #f3f4f6; color: #4b5563; font-weight: bold;
-        }[cite: 1]
-        .calendar-day.empty { background: transparent; border: none; }[cite: 1]
+        }
+        .calendar-day.empty { background: transparent; border: none; }
         .calendar-day.checked {
             background: #dcfce7 !important; color: #15803d !important;
             border-color: #86efac !important; font-weight: 900;
-        }[cite: 1]
+        }
 
         .profile-container-card {
             background: #ffffff; border: 2px solid #e5e7eb; border-radius: 20px;
             padding: 18px 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); text-align: left; margin-top: 10px;
-        }[cite: 1]
+        }
         .nav-pill-btn {
             padding: 7px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: bold;
             border: 2px solid #e5e7eb; background: #ffffff; color: #64748b; cursor: pointer; transition: all 0.15s ease;
-        }[cite: 1]
-        .nav-pill-btn.active { background: var(--duo-blue); color: white; border-color: var(--duo-blue); }[cite: 1]
+        }
+        .nav-pill-btn.active { background: var(--duo-blue); color: white; border-color: var(--duo-blue); }
 
         .tab-segmented {
             display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 14px;
-        }[cite: 1]
+        }
         .tab-segmented-item {
             flex: 1; padding: 8px 10px; border: none; background: transparent; font-weight: bold;
             color: #64748b; border-radius: 10px; cursor: pointer; font-size: 0.88rem;
-        }[cite: 1]
-        .tab-segmented-item.active { background: var(--duo-blue); color: white; }[cite: 1]
+        }
+        .tab-segmented-item.active { background: var(--duo-blue); color: white; }
 
         .course-pill {
             background: #e0f2fe; color: #0369a1; border: 1.5px solid #bae6fd;
             border-radius: 25px; padding: 8px 14px; font-weight: bold; font-size: 0.85rem; margin-bottom: 8px; display: block;
-        }[cite: 1]
+        }
 
         .rank-item-row {
             display: flex; align-items: center; justify-content: space-between;
             padding: 9px 10px; border-radius: 12px; background: #ffffff; border: 1px solid #f1f5f9; margin-bottom: 6px; gap: 8px;
-        }[cite: 1]
-        .rank-item-row.me-row { background: #f0fdf4; border: 1.5px solid #86efac; }[cite: 1]
-        .rank-num { font-size: 1.1rem; font-weight: 900; width: 24px; text-align: center; flex-shrink: 0; }[cite: 1]
-        .rank-num.rank-1 { color: #f59e0b; }[cite: 1]
-        .rank-num.rank-2 { color: #94a3b8; }[cite: 1]
-        .rank-num.rank-3 { color: #d97706; }[cite: 1]
+        }
+        .rank-item-row.me-row { background: #f0fdf4; border: 1.5px solid #86efac; }
+        .rank-num { font-size: 1.1rem; font-weight: 900; width: 24px; text-align: center; flex-shrink: 0; }
+        .rank-num.rank-1 { color: #f59e0b; }
+        .rank-num.rank-2 { color: #94a3b8; }
+        .rank-num.rank-3 { color: #d97706; }
 
-        h2.step-title { color: var(--duo-dark); font-size: 1.25rem; margin-top: 0; margin-bottom: 16px; text-align: center; }[cite: 1]
-        .option-grid { display: grid; gap: 10px; margin-bottom: 16px; }[cite: 1]
-        .grid-2 { grid-template-columns: repeat(2, 1fr); }[cite: 1]
+        h2.step-title { color: var(--duo-dark); font-size: 1.25rem; margin-top: 0; margin-bottom: 16px; text-align: center; }
+        .option-grid { display: grid; gap: 10px; margin-bottom: 16px; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
 
         .btn-option {
             background: white; border: 2px solid #e5e7eb; border-bottom: 4px solid #e5e7eb;
             border-radius: 14px; padding: 12px 8px; font-size: 0.95rem; font-weight: bold;
             color: var(--duo-dark); cursor: pointer; transition: all 0.15s ease; text-align: center; word-break: break-word;
-        }[cite: 1]
-        .btn-option:hover { border-color: var(--duo-blue); color: var(--duo-blue); }[cite: 1]
+        }
+        .btn-option:hover { border-color: var(--duo-blue); color: var(--duo-blue); }
         .btn-option.locked {
             opacity: 0.55; background-color: #f3f4f6; border-color: #d1d5db; color: #9ca3af; cursor: not-allowed;
-        }[cite: 1]
+        }
 
         .btn-confirm {
             width: 100%; background: var(--duo-green) !important; color: white !important; border: none !important;
             border-bottom: 4px solid #46a302 !important; padding: 13px !important; font-size: 1.05rem !important;
             font-weight: bold !important; border-radius: 14px !important; cursor: pointer; margin-top: 8px;
-        }[cite: 1]
-        .btn-confirm:active { transform: translateY(2px); border-bottom-width: 2px !important; }[cite: 1]
-        .btn-confirm:disabled { opacity: 0.45; cursor: not-allowed; border-bottom-width: 2px !important; transform: none; }[cite: 1]
+        }
+        .btn-confirm:active { transform: translateY(2px); border-bottom-width: 2px !important; }
+        .btn-confirm:disabled { opacity: 0.45; cursor: not-allowed; border-bottom-width: 2px !important; transform: none; }
 
         .btn-finish-challenge {
             width: 100%; background: #f59e0b; color: white; border: none;
             border-bottom: 4px solid #d97706; padding: 14px; font-size: 1.1rem;
             font-weight: bold; border-radius: 14px; cursor: pointer; margin-top: 14px;
             box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); display: none; animation: modalPopIn 0.3s ease-out;
-        }[cite: 1]
-        .btn-finish-challenge:active { transform: translateY(2px); border-bottom-width: 2px; }[cite: 1]
+        }
+        .btn-finish-challenge:active { transform: translateY(2px); border-bottom-width: 2px; }
 
         .btn-sync-refresh {
             background: none; border: none; color: var(--duo-blue); font-size: 0.85rem;
             font-weight: bold; cursor: pointer; margin-top: 12px; text-decoration: underline;
-        }[cite: 1]
+        }
 
         .top-nav { 
             position: sticky; top: 0; background: #ffffff; z-index: 10;
             padding: 6px 0 8px 0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; 
             gap: 6px; width: 100%; box-sizing: border-box; flex-wrap: nowrap;
-        }[cite: 1]
+        }
         .btn-back-step {
             background: none; border: none; color: #475569; font-size: 0.85rem;
             cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-weight: 800;
             white-space: nowrap; flex-shrink: 0; padding: 4px 0;
-        }[cite: 1]
-        .btn-back-step:hover { color: var(--duo-blue); }[cite: 1]
+        }
+        .btn-back-step:hover { color: var(--duo-blue); }
 
         .top-nav-title-badge {
             font-weight: 800; color: var(--duo-purple); font-size: 0.82rem;
             text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
             flex-shrink: 1; min-width: 0;
-        }[cite: 1]
+        }
 
         .target-text,
         .translation-text,
@@ -1259,39 +1258,39 @@
         #lbl-word-choice-text,
         #container-grammar-questions {
             text-align: center !important;
-        }[cite: 1]
+        }
 
         .target-text {
             font-size: 2.2rem; font-weight: bold; color: #1f2937; margin: 12px 0 6px 0;
             min-height: 2.6rem; word-break: break-word; line-height: 1.35;
-        }[cite: 1]
+        }
         .translation-text { 
             font-size: 1.2rem; color: #4b5563; margin-bottom: 10px; min-height: 1.6rem; word-break: break-word; font-weight: 500;
-        }[cite: 1]
+        }
         .hint-text {
             font-size: 1.05rem; color: #b45309; background-color: #fef3c7;
             padding: 8px 14px; border-radius: 12px; display: inline-block; margin-bottom: 14px; font-weight: bold;
-        }[cite: 1]
+        }
 
         #lbl-word-shadow-subtext,
         #lbl-word-choice-sub {
             font-size: 1.15rem; color: #475569; font-weight: bold; margin-bottom: 8px; min-height: 1.6rem; line-height: 1.6rem; display: block;
-        }[cite: 1]
+        }
 
         .instruction-badge-bar {
             font-size: 0.98rem; font-weight: 800; color: var(--duo-blue); background: #f0f9ff;
             border: 1.5px solid #bae6fd; border-radius: 12px; padding: 6px 12px; margin: 6px auto 10px auto; display: inline-block; max-width: 95%;
-        }[cite: 1]
+        }
 
-        .controls { display: flex; justify-content: center; gap: 14px; margin-bottom: 12px; align-items: center; }[cite: 1]
+        .controls { display: flex; justify-content: center; gap: 14px; margin-bottom: 12px; align-items: center; }
         .btn-circle {
             width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer;
             font-size: 1rem; color: white; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0;
-        }[cite: 1]
-        .btn-listen { background: var(--duo-blue); box-shadow: 0 4px 0 #1899d6; }[cite: 1]
-        .btn-record { background: var(--duo-red); box-shadow: 0 4px 0 #ea2b2b; }[cite: 1]
-        .btn-record.recording { animation: pulse 1s infinite; background: #dc2626; }[cite: 1]
-        @keyframes pulse { 0%{transform: scale(1);} 50%{transform: scale(1.08);} 100%{transform: scale(1);} }[cite: 1]
+        }
+        .btn-listen { background: var(--duo-blue); box-shadow: 0 4px 0 #1899d6; }
+        .btn-record { background: var(--duo-red); box-shadow: 0 4px 0 #ea2b2b; }
+        .btn-record.recording { animation: pulse 1s infinite; background: #dc2626; }
+        @keyframes pulse { 0%{transform: scale(1);} 50%{transform: scale(1.08);} 100%{transform: scale(1);} }
 
         .btn-mic-reset {
             background: var(--duo-orange);
@@ -1299,87 +1298,87 @@
             width: 38px;
             height: 38px;
             font-size: 0.9rem;
-        }[cite: 1]
-        .btn-mic-reset:active { transform: translateY(2px); box-shadow: 0 2px 0 #d97706; }[cite: 1]
+        }
+        .btn-mic-reset:active { transform: translateY(2px); box-shadow: 0 2px 0 #d97706; }
 
         .result-box { 
             background: #f3f4f6; border-radius: 12px; padding: 8px 12px; margin-top: 10px; font-size: 0.95rem; text-align: center;
             min-height: 82px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box;
-        }[cite: 1]
+        }
 
-        .score-badge { font-size: 1.05rem; font-weight: bold; color: var(--duo-green); margin-top: 2px; line-height: 1.45; word-break: break-word; }[cite: 1]
+        .score-badge { font-size: 1.05rem; font-weight: bold; color: var(--duo-green); margin-top: 2px; line-height: 1.45; word-break: break-word; }
 
         .nav-controls { 
             display: flex; justify-content: center; align-items: center; position: relative; margin-top: 14px; min-height: 42px; width: 100%;
-        }[cite: 1]
-        .nav-controls .lbl-progress { color: #6b7280; font-size: 0.95rem; font-weight: 800; text-align: center; }[cite: 1]
+        }
+        .nav-controls .lbl-progress { color: #6b7280; font-size: 0.95rem; font-weight: 800; text-align: center; }
         .nav-controls .btn-nav-next {
             position: absolute; right: 0; top: 50%; transform: translateY(-50%); background: var(--duo-blue); 
             color: white; border: none; border-bottom: 3.5px solid var(--duo-blue-shadow); padding: 8px 16px; border-radius: 12px; 
             cursor: pointer; font-weight: 800; font-size: 0.92rem; display: none; animation: nextBtnPopIn 0.18s ease-out forwards;
-        }[cite: 1]
+        }
         @keyframes nextBtnPopIn {
             from { transform: translateY(-50%) scale(0.88); opacity: 0; }
             to { transform: translateY(-50%) scale(1); opacity: 1; }
-        }[cite: 1]
+        }
 
         .mode-select-btn {
             padding: 11px 14px; font-size: 1rem; display: flex; align-items: center; justify-content: space-between; width: 100%; box-sizing: border-box;
-        }[cite: 1]
-        .mode-right-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }[cite: 1]
-        .mode-time-tag { font-size: 0.76rem; font-weight: 800; color: #ffffff; opacity: 0.92; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 3px; }[cite: 1]
-        .mode-star-tag { font-size: 0.82rem; font-weight: 900; color: #fef08a; letter-spacing: 2px; background: rgba(0, 0, 0, 0.22); padding: 2px 7px; border-radius: 7px; display: inline-flex; align-items: center; }[cite: 1]
+        }
+        .mode-right-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+        .mode-time-tag { font-size: 0.76rem; font-weight: 800; color: #ffffff; opacity: 0.92; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 3px; }
+        .mode-star-tag { font-size: 0.82rem; font-weight: 900; color: #fef08a; letter-spacing: 2px; background: rgba(0, 0, 0, 0.22); padding: 2px 7px; border-radius: 7px; display: inline-flex; align-items: center; }
 
-        .gear-menu-container { position: relative; }[cite: 1]
+        .gear-menu-container { position: relative; }
         .btn-gear {
             background: #f3f4f6; border: 1.1px solid #d1d5db; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; color: #4b5563; font-size: 0.95rem;
             display: flex; align-items: center; justify-content: center; transition: all 0.2s;
-        }[cite: 1]
+        }
         .gear-dropdown {
             display: none; position: absolute; top: 40px; right: 0; background: white; border: 2px solid #e5e7eb; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             padding: 6px; z-index: 100; min-width: 140px; flex-direction: column; gap: 4px;
-        }[cite: 1]
-        .gear-dropdown.show { display: flex; }[cite: 1]
+        }
+        .gear-dropdown.show { display: flex; }
         .gear-dropdown-item {
             background: none; border: none; padding: 8px 12px; text-align: left; font-size: 0.85rem; font-weight: bold; color: #374151; border-radius: 8px;
             cursor: pointer; display: flex; align-items: center; gap: 8px; width: 100%; box-sizing: border-box;
-        }[cite: 1]
-        .gear-dropdown-item:hover { background: #ddf4ff; color: var(--duo-blue); }[cite: 1]
-        .gear-dropdown-item.quit-item:hover { background: #fee2e2; color: var(--duo-red); }[cite: 1]
+        }
+        .gear-dropdown-item:hover { background: #ddf4ff; color: var(--duo-blue); }
+        .gear-dropdown-item.quit-item:hover { background: #fee2e2; color: var(--duo-red); }
 
         .block-zone {
             min-height: 65px; border-bottom: 2px dashed #cbd5e1; display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; justify-content: center; align-items: center; margin-bottom: 16px;
-        }[cite: 1]
+        }
         .block-chip {
             background: white; border: 2px solid #cbd5e1; border-bottom: 3.5px solid #cbd5e1; border-radius: 12px; padding: 8px 14px; font-size: 1.05rem; font-weight: bold;
             color: var(--duo-dark); cursor: pointer; transition: transform 0.1s;
-        }[cite: 1]
-        .block-chip:active { transform: translateY(2px); border-bottom-width: 2px; }[cite: 1]
-        .block-chip.used { opacity: 0.3; pointer-events: none; background: #f3f4f6; }[cite: 1]
-        .block-chip.locked-chip { pointer-events: none !important; opacity: 0.65; cursor: not-allowed; }[cite: 1]
+        }
+        .block-chip:active { transform: translateY(2px); border-bottom-width: 2px; }
+        .block-chip.used { opacity: 0.3; pointer-events: none; background: #f3f4f6; }
+        .block-chip.locked-chip { pointer-events: none !important; opacity: 0.65; cursor: not-allowed; }
 
         .block-chip.draggable-chip {
             cursor: grab;
             touch-action: none;
-        }[cite: 1]
+        }
         .block-chip.draggable-chip:active {
             cursor: grabbing;
-        }[cite: 1]
+        }
         .block-chip.drag-over {
             border: 2px dashed #0284c7 !important;
             background: #e0f2fe !important;
             transform: scale(1.05);
-        }[cite: 1]
+        }
         .block-chip.dragging {
             opacity: 0.45;
-        }[cite: 1]
+        }
 
         .block-mode-toggle-wrap {
             display: flex;
             justify-content: center;
             gap: 8px;
             margin-bottom: 10px;
-        }[cite: 1]
+        }
         .btn-block-mode-toggle {
             padding: 7px 16px;
             border-radius: 20px;
@@ -1393,14 +1392,14 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-        }[cite: 1]
+        }
         .btn-block-mode-toggle:active {
             transform: translateY(2px);
-        }[cite: 1]
+        }
 
         .vocab-input {
             width: 88%; max-width: 320px; padding: 10px; font-size: 1.15rem; border: 2px solid #cbd5e1; border-radius: 12px; text-align: center; outline: none; margin: 10px auto; font-weight: bold; display: block;
-        }[cite: 1]
+        }
         
         .vocab-choice-list { 
             display: flex !important;
@@ -1412,41 +1411,41 @@
             margin: 16px auto !important;
             width: 100% !important;
             max-width: 400px !important;
-        }[cite: 1]
+        }
         .btn-vocab-choice {
             background: white; border: 2px solid #e5e7eb; border-bottom: 3.5px solid #e5e7eb; border-radius: 14px; padding: 12px 18px; font-size: 1.05rem; font-weight: bold;
             color: var(--duo-dark); cursor: pointer; transition: all 0.15s ease; text-align: center; display: inline-flex; justify-content: center; align-items: center; min-width: 75px;
-        }[cite: 1]
-        .btn-vocab-choice:active { transform: translateY(2px); border-bottom-width: 1.5px; }[cite: 1]
+        }
+        .btn-vocab-choice:active { transform: translateY(2px); border-bottom-width: 1.5px; }
 
-        .profile-avatar-large { width: 72px; height: 72px; border-radius: 50%; border: 3px solid var(--duo-blue); margin: 0 auto 8px auto; object-fit: cover; display: block; }[cite: 1]
-        .quit-modal-img { width: 120px; height: 120px; object-fit: contain; margin: 0 auto 12px auto; display: block; }[cite: 1]
+        .profile-avatar-large { width: 72px; height: 72px; border-radius: 50%; border: 3px solid var(--duo-blue); margin: 0 auto 8px auto; object-fit: cover; display: block; }
+        .quit-modal-img { width: 120px; height: 120px; object-fit: contain; margin: 0 auto 12px auto; display: block; }
 
-        #settlement-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }[cite: 1]
-        .settlement-stars-container { display: flex; justify-content: center; align-items: center; gap: 12px; margin: 14px 0 16px 0; }[cite: 1]
-        .settlement-star { font-size: 3.2rem; color: #e2e8f0; transform: scale(0.6); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }[cite: 1]
-        .settlement-star.active { color: #f59e0b; filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.45)); transform: scale(1.15); opacity: 1; }[cite: 1]
-        .settlement-star.inactive { color: #cbd5e1; transform: scale(1); opacity: 0.5; }[cite: 1]
+        #settlement-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+        .settlement-stars-container { display: flex; justify-content: center; align-items: center; gap: 12px; margin: 14px 0 16px 0; }
+        .settlement-star { font-size: 3.2rem; color: #e2e8f0; transform: scale(0.6); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .settlement-star.active { color: #f59e0b; filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.45)); transform: scale(1.15); opacity: 1; }
+        .settlement-star.inactive { color: #cbd5e1; transform: scale(1); opacity: 0.5; }
 
-        .star-anim-1 { animation: starPop 0.5s ease-out 0.2s forwards; }[cite: 1]
-        .star-anim-2 { animation: starPop 0.5s ease-out 0.5s forwards; }[cite: 1]
-        .star-anim-3 { animation: starPop 0.5s ease-out 0.8s forwards; }[cite: 1]
+        .star-anim-1 { animation: starPop 0.5s ease-out 0.2s forwards; }
+        .star-anim-2 { animation: starPop 0.5s ease-out 0.5s forwards; }
+        .star-anim-3 { animation: starPop 0.5s ease-out 0.8s forwards; }
 
         .settlement-stat-card {
             background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 12px 14px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; text-align: left;
-        }[cite: 1]
-        .settlement-stat-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; font-weight: 800; color: #475569; }[cite: 1]
-        .settlement-stat-val { font-weight: 900; font-size: 1.05rem; color: #1e293b; }[cite: 1]
+        }
+        .settlement-stat-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; font-weight: 800; color: #475569; }
+        .settlement-stat-val { font-weight: 900; font-size: 1.05rem; color: #1e293b; }
 
         #game-loading-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at center, #ffffff 0%, #f0f9ff 100%);
             display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999999; padding: 24px; box-sizing: border-box; transition: opacity 0.35s ease;
-        }[cite: 1]
-        #game-loading-overlay.show { display: flex !important; }[cite: 1]
-        .loading-island-icon { font-size: 4.8rem; color: var(--duo-blue); margin-bottom: 20px; animation: islandFloat 2.6s ease-in-out infinite; filter: drop-shadow(0 10px 18px rgba(28, 176, 246, 0.28)); }[cite: 1]
-        @keyframes islandFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }[cite: 1]
-        .island-progress-track { width: 100%; max-width: 280px; height: 14px; background: #e0f2fe; border-radius: 20px; overflow: hidden; border: 2px solid #bae6fd; position: relative; }[cite: 1]
-        .island-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #38bdf8, #0284c7); border-radius: 20px; transition: width 0.35s ease; position: relative; }[cite: 1]
+        }
+        #game-loading-overlay.show { display: flex !important; }
+        .loading-island-icon { font-size: 4.8rem; color: var(--duo-blue); margin-bottom: 20px; animation: islandFloat 2.6s ease-in-out infinite; filter: drop-shadow(0 10px 18px rgba(28, 176, 246, 0.28)); }
+        @keyframes islandFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        .island-progress-track { width: 100%; max-width: 280px; height: 14px; background: #e0f2fe; border-radius: 20px; overflow: hidden; border: 2px solid #bae6fd; position: relative; }
+        .island-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #38bdf8, #0284c7); border-radius: 20px; transition: width 0.35s ease; position: relative; }
 
         .guide-mode-item-btn {
             width: 100%;
@@ -1463,16 +1462,16 @@
             color: #1e293b;
             cursor: pointer;
             transition: all 0.15s ease;
-        }[cite: 1]
+        }
         .guide-mode-item-btn:hover {
             border-color: var(--duo-blue);
             background: #f0f9ff;
             color: var(--duo-blue);
-        }[cite: 1]
+        }
         .guide-mode-item-btn:active {
             transform: translateY(2px);
             border-bottom-width: 1.5px;
-        }[cite: 1]
+        }
 
         .bubble-audio-btn {
             background: var(--duo-blue);
@@ -1489,10 +1488,10 @@
             flex-shrink: 0;
             transition: transform 0.1s ease;
             box-shadow: 0 2px 4px rgba(28, 176, 246, 0.25);
-        }[cite: 1]
+        }
         .bubble-audio-btn:active {
             transform: scale(0.9);
-        }[cite: 1]
+        }
     </style>
 </head>
 <body>
@@ -1504,7 +1503,7 @@
         <div class="island-progress-track">
             <div class="island-progress-fill" id="island-loading-bar"></div>
         </div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 解鎖大門全螢幕動畫過場 Modal -->
     <div id="gate-unlock-modal">
@@ -1516,7 +1515,7 @@
         </div>
         <div class="gate-unlock-title" id="gate-unlock-title">🏰 正在解鎖下一階段...</div>
         <div class="gate-unlock-sub" id="gate-unlock-sub">前往全新領域！</div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 角色切換專屬動畫 Modal -->
     <div id="role-switch-modal">
@@ -1536,7 +1535,7 @@
         <button class="btn-role-switch-continue" onclick="proceedToRoleB()">
             <i class="fa-solid fa-play"></i> 開始擔任回應方
         </button>
-    </div>[cite: 1]
+    </div>
 
     <!-- 登入 / 註冊完整彈窗 -->
     <div class="custom-modal" id="login-modal">
@@ -1570,7 +1569,7 @@
             </div>
             <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 10px;" class="hidden"></div>
         </div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 忘記密碼 Modal -->
     <div id="modal-forgot-password" class="custom-modal">
@@ -1583,7 +1582,7 @@
                 <button id="btn-cancel-forgot-password" class="btn-3d btn-3d-secondary" style="flex:1; padding:10px;">取消</button>
             </div>
         </div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 首次登入設定暱稱、學習語言與母語 -->
     <div id="modal-setup-nickname" class="custom-modal">
@@ -1609,7 +1608,7 @@
             <div id="setup-nickname-error" style="color: var(--duo-red); font-size: 0.8rem; margin-top: 6px;" class="hidden"></div>
             <button id="btn-save-initial-nickname" class="btn-3d btn-3d-primary" style="width:100%; padding:10px; margin-top:12px;">完成設定並開始學習</button>
         </div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 新增好友 Modal -->
     <div id="modal-add-friend" class="custom-modal">
@@ -1624,7 +1623,7 @@
                 <button class="btn-3d btn-3d-secondary" onclick="closeModal('modal-add-friend')" style="flex:1; padding:10px;">取消</button>
             </div>
         </div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 學習成就統計 Dashboard Modal -->
     <div id="modal-streak-dashboard" class="custom-modal">
@@ -1666,9 +1665,8 @@
                 <div id="calendar-days-container" style="display: contents;"></div>
             </div>
         </div>
-    </div>[cite: 1]
-
-    <!-- 選擇課程程度 Modal -->
+    </div>
+<!-- 選擇課程程度 Modal -->
     <div id="modal-select-initial-level" class="custom-modal">
         <div class="custom-modal-card">
             <div class="close-icon-circle" id="btn-close-level-modal" onclick="closeModal('modal-select-initial-level')"><i class="fa-solid fa-xmark"></i></div>
@@ -1677,7 +1675,7 @@
             <select id="initial-level-select" class="level-select-box"></select>
             <button id="btn-confirm-initial-level" class="btn-3d btn-3d-primary" style="width: 100%; padding: 10px; margin-top: 4px;">確定切換</button>
         </div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 模式選擇彈窗 -->
     <div id="modal-select-mode-type" class="custom-modal">
@@ -1711,7 +1709,7 @@
                 </button>
             </div>
         </div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 依關卡挑選單字卡彈窗 -->
     <div id="modal-select-flashcard-stage" class="custom-modal">
@@ -1737,7 +1735,7 @@
                 </button>
             </div>
         </div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 離開挑戰二次確認彈窗 -->
     <div id="modal-quit-challenge" class="custom-modal">
@@ -1757,7 +1755,7 @@
                 </button>
             </div>
         </div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 閒置過久 / 背景切出防掛機提示彈窗 -->
     <div id="modal-idle-timeout" class="custom-modal" style="z-index: 9999999;">
@@ -1778,7 +1776,7 @@
                 <i class="fa-solid fa-map-location-dot"></i> 返回地圖
             </button>
         </div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 關卡任務完成提示彈窗 -->
     <div id="modal-grammar-complete" class="custom-modal">
@@ -1792,7 +1790,7 @@
                 <i class="fa-solid fa-arrow-right"></i> 返回關卡選單
             </button>
         </div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 小試身手再來一次選擇彈窗 -->
     <div id="modal-grammar-retry-choice" class="custom-modal">
@@ -1812,7 +1810,7 @@
                 </button>
             </div>
         </div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 挑戰介紹選單彈窗 -->
     <div id="modal-guide-modes" class="custom-modal">
@@ -1855,7 +1853,7 @@
                 </button>
             </div>
         </div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 挑戰玩法詳細說明彈窗 -->
     <div id="modal-guide-detail" class="custom-modal">
@@ -1875,7 +1873,7 @@
                 </button>
             </div>
         </div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 一般題型通關結算彈窗 -->
     <div id="modal-challenge-settlement" class="custom-modal" style="background: rgba(15, 23, 42, 0.75);">
@@ -1909,7 +1907,7 @@
                 <i class="fa-solid fa-arrow-right"></i> 繼續前進
             </button>
         </div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 修改暱稱 Modal -->
     <div id="modal-edit-nickname" class="custom-modal">
@@ -1923,7 +1921,7 @@
                 <button id="btn-cancel-nickname" class="btn-3d btn-3d-secondary" onclick="closeModal('modal-edit-nickname')" style="flex:1; padding:10px;">取消</button>
             </div>
         </div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 全螢幕獨立單字卡學習視圖 -->
     <div class="fullscreen-stage" id="stage-vocab-flashcard">
@@ -1965,7 +1963,7 @@
             <button class="ctrl-btn primary-ctrl" onclick="toggleFlashcardFlip()" aria-label="翻面"><i class="fa-solid fa-rotate"></i></button>
             <button class="ctrl-btn" id="btn-flashcard-next" onclick="stepFlashcard(1)" aria-label="下一個"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
-    </div>[cite: 1]
+    </div>
 
     <!-- 主介面容器 -->
     <div class="shadowing-card">
@@ -1993,7 +1991,7 @@
                 <span id="lbl-user-level">1A</span>
                 <i class="fa-solid fa-caret-down" style="font-size: 0.75rem; color: #9ca3af;"></i>
             </div>
-        </div>[cite: 1]
+        </div>
 
         <!-- 中間滾動主區塊 -->
         <div id="learning-content-view">
@@ -2013,11 +2011,11 @@
                         <i class="fa-solid fa-user-plus"></i> 註冊帳號
                     </button>
                 </div>
-            </div>[cite: 1]
+            </div>
 
             <div id="step-learn-lang" class="step-page hidden">
                 <div id="cache-status" style="font-size: 0.75rem; color: #6b7280; margin-top: 8px;"></div>
-            </div>[cite: 1]
+            </div>
 
             <!-- 步驟 2：程度選擇 -->
             <div id="step-level" class="step-page">
@@ -2026,7 +2024,7 @@
                 </div>
                 <h2 class="step-title" style="margin-top: 6px;"><i class="fa-solid fa-layer-group"></i> 選擇程度</h2>
                 <div id="container-levels" class="option-grid grid-2"></div>
-            </div>[cite: 1]
+            </div>
 
             <!-- 步驟 3：全新藍色系闖關大地圖畫面 -->
             <div id="step-lesson" class="step-page">
@@ -2041,7 +2039,7 @@
                     <svg class="roadmap-svg-layer" id="roadmap-svg-canvas"></svg>
                     <div class="roadmap-nodes-container" id="roadmap-nodes-list"></div>
                 </div>
-            </div>[cite: 1]
+            </div>
 
             <!-- 步驟 5.5：語法介紹教室 -->
             <div id="step-grammar" class="step-page">
@@ -2088,7 +2086,7 @@
                         <button class="btn-confirm" id="btn-grammar-action"></button>
                     </div>
                 </div>
-            </div>[cite: 1]
+            </div>
 
             <!-- 步驟 6-A：Sentence 句子跟讀畫面 -->
             <div id="step-quiz-shadow" class="step-page">
@@ -2133,8 +2131,9 @@
                     <button class="btn-nav-next" id="btn-next" onclick="nextQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
-            </div>[cite: 1]
-<!-- 步驟 6-G：對話挑戰畫面 -->
+            </div>
+
+            <!-- 步驟 6-G：對話挑戰畫面 -->
             <div id="step-quiz-sentence-chat" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-chat-mode-title">對話挑戰</div>
@@ -2272,8 +2271,7 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-
-            <!-- 步驟 6-H：0A 字母臨摹畫面 -->
+<!-- 步驟 6-H：0A 字母臨摹畫面 -->
             <div id="step-quiz-trace" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-trace-title">字母臨摹</div>
@@ -2466,7 +2464,7 @@
 
                 <div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 14px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 10px;">
                     <div>
-                        <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: align-items: center; gap: 6px;">
+                        <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
                             <i class="fa-solid fa-earth-americas" style="color: var(--duo-green);"></i> 顯示母語設定
                         </div>
                         <select id="select-account-language" onchange="updateAccountNativeLang(this.value)" style="margin: 0;">
@@ -2595,8 +2593,7 @@
         let userRecordedAudioUrl = null;
         let lastRecognizedSpeechText = "";
 
-        // 對話挑戰變數：角色 A 完成後切換至角色 B，且各自獨立打亂順序
-        let rawChatRounds = [];
+        // 對話挑戰變數：先擔任角色 A，全部完成後再接角色 B
         let chatRounds = [];
         let chatRoundIndex = 0;
         let chatRole = 'A';
@@ -2868,8 +2865,7 @@
             }
             return Array.from(candidates);
         }
-
-        const LANG_MUTUAL_MAP = {
+const LANG_MUTUAL_MAP = {
             'zh': 'chinese',
             'en': 'english',
             'ja': 'japanese',
@@ -2949,7 +2945,7 @@
         }
 
         function renderFlashcardLessonOptions() {
-const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
             const selectedUnit = document.getElementById('select-flashcard-unit').value;
             const wordsOfUnit = rawWordData.filter(v => 
                 normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
@@ -3593,8 +3589,7 @@ const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
                 renderAllLessonsForLevel(currentConfig.level);
             }, 1900);
         }
-
-        function renderCandyRoadmap(unitId, filteredByLevel, units) {
+function renderCandyRoadmap(unitId, filteredByLevel, units) {
             const nodesContainer = document.getElementById('roadmap-nodes-list');
             const svgCanvas = document.getElementById('roadmap-svg-canvas');
             nodesContainer.innerHTML = "";
@@ -4461,8 +4456,7 @@ const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
                 courseContainer.innerHTML = "<span class='course-pill'>尚無開通課程</span>";
             }
         }
-
-        document.getElementById('btn-save-nickname').onclick = async () => {
+document.getElementById('btn-save-nickname').onclick = async () => {
             const newName = document.getElementById('input-edit-nickname').value.trim();
             const errDiv = document.getElementById('edit-nickname-error-msg');
             const btnSave = document.getElementById('btn-save-nickname');
@@ -6930,7 +6924,6 @@ function startTypewriter(text) {
             stopSpeechRecognition();
             stopChallengeTimer();
             revokeUserAudioUrl();
-            rawChatRounds = [];
             chatRounds = [];
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
             const is0ALevel = (targetLevelNormalized === '0A');
@@ -6949,7 +6942,7 @@ function startTypewriter(text) {
                 const aText = (d.a1 || '').trim();
                 const bText = (d.b1 || '').trim();
                 if (aText || bText) {
-                    rawChatRounds.push({
+                    chatRounds.push({
                         roundNum: idx + 1,
                         aText: aText,
                         bText: bText,
@@ -6962,11 +6955,10 @@ function startTypewriter(text) {
                 }
             });
 
-            if (rawChatRounds.length === 0) return alert("此關卡 dialogue 分頁無題目資料！");
+            if (chatRounds.length === 0) return alert("此關卡 dialogue 分頁無題目資料！");
 
-            chatRounds = shuffleArray(rawChatRounds);
             chatRoundIndex = 0;
-            totalChallengeQuestions = rawChatRounds.length * 2;
+            totalChallengeQuestions = chatRounds.length * 2;
             pointsPerQuestion = totalChallengeQuestions > 0 ? (100 / totalChallengeQuestions) : 10;
             
             chatRole = 'A';
@@ -6976,7 +6968,8 @@ function startTypewriter(text) {
             displayChatRound();
             if (activeChallengeType === 'timed') startChallengeTimer('chat');
         }
-function displayChatRound(autoPlayOpponent = true) {
+
+        function displayChatRound(autoPlayOpponent = true) {
             stopSpeechRecognition();
             revokeUserAudioUrl();
             restoreRecordingControls();
@@ -7115,7 +7108,6 @@ function displayChatRound(autoPlayOpponent = true) {
                 modal.classList.remove('show');
             }
             chatRole = 'B';
-            chatRounds = shuffleArray(rawChatRounds);
             chatRoundIndex = 0;
             displayChatRound();
         }
@@ -7398,20 +7390,23 @@ function displayChatRound(autoPlayOpponent = true) {
 
                 if (currentConfig.mode === 'sentence_chat') {
                     document.getElementById('lbl-chat-recognized-text').innerText = userSpeech;
-                    document.getElementById('lbl-chat-score').innerText = "";
+                    document.getElementById('lbl-chat-score').innerText = "發音已收錄！可點擊下方比對評分，或重新點擊錄音鍵覆蓋";
+                    document.getElementById('lbl-chat-score').style.color = "var(--duo-blue)";
 
                     const evalBtn = document.getElementById('btn-chat-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
                 } else if (currentConfig.mode === 'word_shadow') {
                     hideRecordingControls();
                     document.getElementById('lbl-word-shadow-recognized-text').innerText = userSpeech;
-                    document.getElementById('lbl-word-shadow-score').innerText = "";
+                    document.getElementById('lbl-word-shadow-score').innerText = "發音已收錄！可點擊下方比對評分";
+                    document.getElementById('lbl-word-shadow-score').style.color = "var(--duo-blue)";
 
                     const evalBtn = document.getElementById('btn-word-shadow-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
                 } else {
                     document.getElementById('lbl-recognized-text').innerText = userSpeech;
-                    document.getElementById('lbl-score').innerText = "";
+                    document.getElementById('lbl-score').innerText = "發音已收錄！可點擊下方比對評分，或重新點擊錄音鍵覆蓋";
+                    document.getElementById('lbl-score').style.color = "var(--duo-blue)";
 
                     const evalBtn = document.getElementById('btn-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
