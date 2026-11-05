@@ -4452,6 +4452,901 @@ function katakanaToHiragana(str) {
                 courseContainer.innerHTML = "<span class='course-pill'>尚無開通課程</span>";
             }
         }
+document.getElementById('btn-save-nickname').onclick = async () => {
+            const newName = document.getElementById('input-edit-nickname').value.trim();
+            const errDiv = document.getElementById('edit-nickname-error-msg');
+            const btnSave = document.getElementById('btn-save-nickname');
+            const now = Date.now();
+
+            if (newName.length < 2 || newName.length > 12) {
+                errDiv.innerText = "暱稱需介於 2 到 12 個字元！";
+                errDiv.classList.remove('hidden');
+                return;
+            }
+            if (newName === (window.currentUserData.displayName || '')) {
+                errDiv.innerText = "新暱稱與現有暱稱相同！";
+                errDiv.classList.remove('hidden');
+                return;
+            }
+            const lastUpdated = window.currentUserData.lastNicknameUpdatedAt || 0;
+            const diffSeconds = Math.floor((now - lastUpdated) / 1000);
+            if (diffSeconds < 30) {
+                errDiv.innerText = `冷卻中！請等待 ${30 - diffSeconds} 秒後再修改。`;
+                errDiv.classList.remove('hidden');
+                return;
+            }
+
+            btnSave.disabled = true;
+            btnSave.innerText = "檢查重複中...";
+            try {
+                if (await isNicknameTaken(newName, currentUser.uid)) {
+                    errDiv.innerText = "此暱稱已被其他學員使用，請換一個再試！";
+                    errDiv.classList.remove('hidden');
+                    return;
+                }
+                await ProgressModel.saveProgress(currentUser.uid, { displayName: newName, lastNicknameUpdatedAt: now });
+                window.currentUserData.displayName = newName;
+                window.currentUserData.lastNicknameUpdatedAt = now;
+                renderUserInfo();
+                closeModal('modal-edit-nickname');
+                alert("暱稱修改成功！");
+            } catch (e) {
+                errDiv.innerText = "修改失敗：" + e.message;
+                errDiv.classList.remove('hidden');
+            } finally {
+                btnSave.disabled = false;
+                btnSave.innerText = "儲存修改";
+            }
+        };
+
+        const btnCancelNickname = document.getElementById('btn-cancel-nickname');
+        if (btnCancelNickname) btnCancelNickname.onclick = () => closeModal('modal-edit-nickname');
+
+        document.getElementById('btn-google-login').onclick = async () => {
+            try { 
+                showIslandLoading("地圖生成中...", 30);
+                const cred = await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+                await verifyAndSyncUser(cred.user, true);
+            } catch (err) { 
+                hideIslandLoading();
+                showLoginError(err.message); 
+            }
+        };
+
+        btnAuthSubmit.onclick = async () => {
+            const email = document.getElementById('email-input').value.trim();
+            const password = document.getElementById('password-input').value;
+            if (!email || !password) return showLoginError("請輸入信箱與密碼！");
+            try {
+                showIslandLoading("帳號驗證中...", 30);
+                let cred;
+                if (authMode === 'login') cred = await auth.signInWithEmailAndPassword(email, password);
+                else cred = await auth.createUserWithEmailAndPassword(email, password);
+                await verifyAndSyncUser(cred.user, true);
+            } catch (err) { 
+                hideIslandLoading();
+                showLoginError(err.message); 
+            }
+        };
+
+        function showLoginError(msg) {
+            loginErrorMsg.innerText = msg;
+            loginErrorMsg.classList.remove('hidden');
+        }
+
+        document.getElementById('btn-forgot-password').onclick = () => openModal('modal-forgot-password');
+        document.getElementById('btn-cancel-forgot-password').onclick = () => closeModal('modal-forgot-password');
+        document.getElementById('btn-send-reset-email').onclick = async () => {
+            const email = document.getElementById('input-forgot-email').value.trim();
+            if (!email) return alert("請輸入電子郵件！");
+            try {
+                await auth.sendPasswordResetEmail(email);
+                alert("重設信件已寄出，請至信箱查收！");
+                closeModal('modal-forgot-password');
+            } catch (err) {
+                alert("寄送失敗：" + err.message);
+            }
+        };
+
+        function handleLogout() {
+            if (confirm("確定要登出系統嗎？")) {
+                clearIdleTimer();
+                recordSessionFocusTime();
+                auth.signOut();
+                closeProfileView();
+                goToStep('step-welcome');
+            }
+        }
+
+        function openModal(modalId) {
+            const m = document.getElementById(modalId);
+            if (m) { m.classList.add('show'); m.classList.remove('hidden'); }
+        }
+        function closeModal(modalId) {
+            const m = document.getElementById(modalId);
+            if (m) { m.classList.remove('show'); m.classList.add('hidden'); }
+        }
+
+        function openProfileView() {
+            clearIdleTimer();
+            document.getElementById('learning-content-view').classList.add('hidden');
+            document.getElementById('profile-view').classList.remove('hidden');
+            renderUserInfo();
+            switchProfileTab('leaderboard');
+        }
+
+        function closeProfileView() {
+            document.getElementById('profile-view').classList.add('hidden');
+            document.getElementById('learning-content-view').classList.remove('hidden');
+        }
+
+        function switchProfileTab(tab) {
+            const btnLeaderboard = document.getElementById('btn-nav-leaderboard');
+            const btnMyAccount = document.getElementById('btn-nav-myaccount');
+            const pageLeaderboard = document.getElementById('sub-page-leaderboard');
+            const pageMyAccount = document.getElementById('sub-page-myaccount');
+
+            if (tab === 'leaderboard') {
+                btnLeaderboard.classList.add('active');
+                btnMyAccount.classList.remove('active');
+                pageLeaderboard.classList.remove('hidden');
+                pageMyAccount.classList.add('hidden');
+                switchRankSubTab(currentRankSubTab);
+            } else {
+                btnMyAccount.classList.add('active');
+                btnLeaderboard.classList.remove('active');
+                pageMyAccount.classList.remove('hidden');
+                pageLeaderboard.classList.add('hidden');
+            }
+        }
+
+        function switchRankSubTab(subTab) {
+            currentRankSubTab = subTab;
+            const btnFriends = document.getElementById('tab-rank-friends');
+            const btnGlobal = document.getElementById('tab-rank-global');
+            const btnAddFriend = document.getElementById('btn-open-add-friend');
+
+            if (subTab === 'global') {
+                btnGlobal.classList.add('active');
+                btnFriends.classList.remove('active');
+                if (btnAddFriend) btnAddFriend.style.display = 'none';
+                loadLeaderboardData();
+            } else {
+                btnFriends.classList.add('active');
+                btnGlobal.classList.remove('active');
+                if (btnAddFriend) btnAddFriend.style.display = 'inline-block';
+                loadFriendsLeaderboardData();
+            }
+        }
+
+        async function loadLeaderboardData() {
+            const container = document.getElementById('leaderboard-list-container');
+            container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>載入排行榜中...</div>";
+            try {
+                const snapshot = await db.collection("users").orderBy("xp", "desc").limit(20).get();
+                if (snapshot.empty) {
+                    container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>暫無榜單資料</div>";
+                    return;
+                }
+                container.innerHTML = "";
+                let rank = 1;
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const isMe = currentUser && doc.id === currentUser.uid;
+                    const row = document.createElement('div');
+                    row.className = "rank-item-row" + (isMe ? " me-row" : "");
+                    let rankClass = rank === 1 ? "rank-1" : (rank === 2 ? "rank-2" : (rank === 3 ? "rank-3" : ""));
+
+                    row.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+                            <div class="rank-num ${rankClass}">${rank}</div>
+                            <img src="https://lh3.googleusercontent.com/a/default-user" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
+                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                <div style="font-weight: 800; color: #1e293b; font-size: 0.92rem; overflow: hidden; text-overflow: ellipsis;">
+                                    ${data.displayName || '學生'}${isMe ? ' <span style="font-size:0.75rem; color:var(--duo-green);">(你)</span>' : ''}
+                                </div>
+                                <div style="font-size: 0.75rem; color: #94a3b8;">${data.unlockedLevels ? data.unlockedLevels[0] : '1A'}</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right; flex-shrink: 0;">
+                            <div style="font-weight: 800; color: var(--duo-gold); font-size: 0.92rem;"><i class="fa-solid fa-star"></i> ${data.xp || 0}</div>
+                            <div style="font-size: 0.75rem; color: var(--duo-fire-red); font-weight: bold;"><i class="fa-solid fa-fire"></i> ${data.streakDays || 0} 天</div>
+                        </div>
+                    `;
+                    container.appendChild(row);
+                    rank++;
+                });
+            } catch (e) {
+                container.innerHTML = "<div style='text-align:color:#ef4444; padding:20px 0;'>載入失敗，請確認網路！</div>";
+            }
+        }
+
+        async function loadFriendsLeaderboardData() {
+            const container = document.getElementById('leaderboard-list-container');
+            container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>載入好友排行中...</div>";
+            if (!currentUser || !window.currentUserData) {
+                container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>請先登入後查看好友</div>";
+                return;
+            }
+
+            const friendsEmails = window.currentUserData.friends || [];
+            let targetUsers = [{
+                email: currentUser.email,
+                displayName: window.currentUserData.displayName || "我",
+                xp: window.currentUserData.xp || 0,
+                streakDays: window.currentUserData.streakDays || 0,
+                level: window.currentUserData.unlockedLevels ? window.currentUserData.unlockedLevels[0] : '1A',
+                isMe: true
+            }];
+
+            try {
+                if (friendsEmails.length > 0) {
+                    for (let i = 0; i < friendsEmails.length; i += 10) {
+                        const chunk = friendsEmails.slice(i, i + 10);
+                        const snap = await db.collection("users").where("email", "in", chunk).get();
+                        snap.forEach(doc => {
+                            const d = doc.data();
+                            targetUsers.push({
+                                email: d.email,
+                                displayName: d.displayName || "好友",
+                                xp: d.xp || 0,
+                                streakDays: d.streakDays || 0,
+                                level: d.unlockedLevels ? d.unlockedLevels[0] : '1A',
+                                isMe: false
+                            });
+                        });
+                    }
+                }
+
+                targetUsers.sort((a, b) => (b.xp || 0) - (a.xp || 0));
+                container.innerHTML = "";
+                let rank = 1;
+                targetUsers.forEach(u => {
+                    const row = document.createElement('div');
+                    row.className = "rank-item-row" + (u.isMe ? " me-row" : "");
+                    let rankClass = rank === 1 ? "rank-1" : (rank === 2 ? "rank-2" : (rank === 3 ? "rank-3" : ""));
+
+                    row.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+                            <div class="rank-num ${rankClass}">${rank}</div>
+                            <img src="https://lh3.googleusercontent.com/a/default-user" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
+                            <div style="display: flex; flex-direction: column; overflow: hidden;">
+                                <div style="font-weight: 800; color: #1e293b; font-size: 0.92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                    ${u.displayName}${u.isMe ? ' <span style="font-size:0.75rem; color:var(--duo-green);">(你)</span>' : ''}
+                                </div>
+                                <div style="font-size: 0.75rem; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${u.email}</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+                            <div style="text-align: right;">
+                                <div style="font-weight: 800; color: var(--duo-gold); font-size: 0.92rem;"><i class="fa-solid fa-star"></i> ${u.xp || 0}</div>
+                                <div style="font-size: 0.75rem; color: var(--duo-fire-red); font-weight: bold;"><i class="fa-solid fa-fire"></i> ${u.streakDays || 0} 天</div>
+                            </div>
+                            ${!u.isMe ? `<button onclick="removeFriend('${u.email}')" title="刪除好友" style="background:none; border:none; color:#9ca3af; cursor:pointer; padding:4px;"><i class="fa-solid fa-user-xmark"></i></button>` : ''}
+                        </div>
+                    `;
+                    container.appendChild(row);
+                    rank++;
+                });
+
+                if (friendsEmails.length === 0) {
+                    const notice = document.createElement('div');
+                    notice.style.cssText = "text-align:center; color:#6b7280; font-size:0.85rem; padding:15px 0;";
+                    notice.innerHTML = `目前只有你一人喔！點擊右上角「<strong>+ 加好友</strong>」與好友一同切磋！`;
+                    container.appendChild(notice);
+                }
+            } catch (err) {
+                container.innerHTML = "<div style='text-align:center; color:#ef4444; padding:20px 0;'>載入好友資料失敗，請確認網路！</div>";
+            }
+        }
+
+        document.getElementById('btn-confirm-add-friend').onclick = async () => {
+            const input = document.getElementById('input-friend-email');
+            const errDiv = document.getElementById('add-friend-error-msg');
+            const targetEmail = input.value.trim().toLowerCase();
+
+            if (!targetEmail) return (errDiv.innerText = "請輸入好友的電子信箱！", errDiv.classList.remove('hidden'));
+            if (targetEmail === currentUser.email.toLowerCase()) return (errDiv.innerText = "不能將自己加為好友喔！", errDiv.classList.remove('hidden'));
+
+            const currentFriends = window.currentUserData.friends || [];
+            if (currentFriends.map(e => e.toLowerCase()).includes(targetEmail)) {
+                return (errDiv.innerText = "此使用者已經在您的好友名單中囉！", errDiv.classList.remove('hidden'));
+            }
+
+            const btnConfirm = document.getElementById('btn-confirm-add-friend');
+            btnConfirm.disabled = true;
+            btnConfirm.innerText = "驗證中...";
+            try {
+                const querySnap = await db.collection("users").where("email", "==", targetEmail).limit(1).get();
+                if (querySnap.empty) {
+                    errDiv.innerText = "找不到此帳號！請確認對方是否已登入系統建立角色。";
+                    errDiv.classList.remove('hidden');
+                    return;
+                }
+                currentFriends.push(targetEmail);
+                await db.collection("users").doc(currentUser.uid).set({ friends: currentFriends }, { merge: true });
+                window.currentUserData.friends = currentFriends;
+                input.value = "";
+                errDiv.classList.add('hidden');
+                closeModal('modal-add-friend');
+                alert("已成功加入好友！");
+                loadFriendsLeaderboardData();
+            } catch (e) {
+                errDiv.innerText = "新增好友失敗：" + e.message;
+                errDiv.classList.add('hidden');
+            } finally {
+                btnConfirm.disabled = false;
+                btnConfirm.innerText = "確認新增";
+            }
+        };
+
+        async function removeFriend(email) {
+            if (!confirm(`確定要將 ${email} 從好友名單中移除嗎？`)) return;
+            try {
+                let currentFriends = (window.currentUserData.friends || []).filter(e => e.toLowerCase() !== email.toLowerCase());
+                await db.collection("users").doc(currentUser.uid).set({ friends: currentFriends }, { merge: true });
+                window.currentUserData.friends = currentFriends;
+                loadFriendsLeaderboardData();
+            } catch (e) {
+                alert("移除好友失敗：" + e.message);
+            }
+        }
+
+        let calendarCurrentDate = new Date();
+
+        function renderStreakCalendar(dateObj) {
+            const year = dateObj.getFullYear();
+            const month = dateObj.getMonth();
+            document.getElementById('lbl-calendar-month-title').innerText = `${year}年 ${month + 1}月`;
+
+            const container = document.getElementById('calendar-days-container');
+            if (!container) return;
+            container.innerHTML = "";
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const totalDays = new Date(year, month + 1, 0).getDate();
+            const historyList = (window.currentUserData && Array.isArray(window.currentUserData.checkInHistory)) ? window.currentUserData.checkInHistory : [];
+
+            for (let i = 0; i < firstDayIndex; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = "calendar-day empty";
+                container.appendChild(emptyCell);
+            }
+
+            for (let day = 1; day <= totalDays; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = "calendar-day";
+                dayCell.innerText = day;
+                const currentCellDateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                if (historyList.includes(currentCellDateStr)) dayCell.classList.add('checked');
+                container.appendChild(dayCell);
+            }
+        }
+
+        function openStreakDashboard() {
+            renderStreakCalendar(calendarCurrentDate);
+            openModal('modal-streak-dashboard');
+        }
+
+        document.getElementById('btn-cal-prev').onclick = () => {
+            calendarCurrentDate.setMonth(calendarCurrentDate.getMonth() - 1);
+            renderStreakCalendar(calendarCurrentDate);
+        };
+        document.getElementById('btn-cal-next').onclick = () => {
+            calendarCurrentDate.setMonth(calendarCurrentDate.getMonth() + 1);
+            renderStreakCalendar(calendarCurrentDate);
+        };
+
+        let initialLevelSelect = document.getElementById('initial-level-select');
+
+        function triggerLevelSelectionModal() {
+            let cachedUnlocked = [];
+            try { cachedUnlocked = JSON.parse(localStorage.getItem('cached_unlocked_levels') || '[]'); } catch(e) {}
+            const userUnlocked = ((window.currentUserData && window.currentUserData.unlockedLevels)
+                ? window.currentUserData.unlockedLevels
+                : (cachedUnlocked.length > 0 ? cachedUnlocked : ['0A'])).map(l => String(l).trim().toUpperCase());
+
+            const allLevels = [
+                { code: '0A', title: '0A 認識字母' },
+                { code: '1A', title: '1A 基礎級' },
+                { code: '1B', title: '1B 初級' },
+                { code: '2A', title: '2A 中初級' },
+                { code: '2B', title: '2B 中級' },
+                { code: '3A', title: '3A 中高級' },
+                { code: '3B', title: '3B 高級' },
+                { code: '4A', title: '4A 精通級' },
+                { code: 'JLPT/TOPIK', title: '檢定課程' }
+            ];
+
+            initialLevelSelect.innerHTML = "";
+            allLevels.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.code;
+                const isUnlocked = userUnlocked.includes(item.code.toUpperCase());
+                opt.innerText = isUnlocked ? item.title : `🔒 ${item.title} (未開通)`;
+                opt.disabled = !isUnlocked;
+                if (item.code.toUpperCase() === (currentConfig.level || '1A').toUpperCase()) opt.selected = true;
+                initialLevelSelect.appendChild(opt);
+            });
+            openModal('modal-select-initial-level');
+        }
+
+        document.getElementById('btn-confirm-initial-level').onclick = () => {
+            const selectedVal = initialLevelSelect.value;
+            const selectedText = initialLevelSelect.options[initialLevelSelect.selectedIndex].text;
+            closeModal('modal-select-initial-level');
+            selectLevel(selectedVal, selectedText);
+        };
+
+        function promptQuitChallenge() {
+            document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
+            openModal('modal-quit-challenge');
+        }
+
+        async function confirmExitChallenge() {
+            closeModal('modal-quit-challenge');
+            clearIdleTimer();
+            stopSpeechRecognition();
+            stopChallengeTimer();
+            await recordSessionFocusTime();
+            goToStep('step-lesson');
+        }
+
+        async function addXP(amount) {
+            if (!currentUser || !window.currentUserData) return;
+            window.currentUserData.xp = (window.currentUserData.xp || 0) + amount;
+            renderUserInfo();
+            try {
+                await db.collection('users').doc(currentUser.uid).set({ xp: firebase.firestore.FieldValue.increment(amount) }, { merge: true });
+            } catch (e) { console.error("更新 XP 失敗:", e); }
+        }
+
+        function toggleGearDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            document.querySelectorAll('.gear-dropdown').forEach(d => { if (d.id !== dropdownId) d.classList.remove('show'); });
+            if (dropdown) dropdown.classList.toggle('show');
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.gear-menu-container')) {
+                document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
+            }
+        });
+
+        function stopMediaRecording() {
+            if (mediaRecorder) {
+                if (mediaRecorder.state !== 'inactive') {
+                    try { mediaRecorder.stop(); } catch (e) {}
+                }
+                if (mediaRecorder.stream) {
+                    try {
+                        mediaRecorder.stream.getTracks().forEach(track => {
+                            track.stop();
+                            track.enabled = false;
+                        });
+                    } catch (e) {}
+                }
+            }
+        }
+
+        function stopSpeechRecognition() {
+            if (recognition) {
+                try { 
+                    recognition.onstart = null;
+                    recognition.onend = null;
+                    recognition.onerror = null;
+                    recognition.onresult = null;
+                    recognition.abort(); 
+                } catch (e) {}
+                recognition = null;
+            }
+            stopMediaRecording();
+            isRecording = false;
+            isToggling = false;
+            document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
+        }
+
+        function goToStep(stepId) {
+            stopSpeechRecognition();
+            revokeUserAudioUrl();
+            if (!stepId.startsWith('step-quiz-') && stepId !== 'step-grammar') {
+                clearIdleTimer();
+            }
+            document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
+            document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
+            const targetPage = document.getElementById(stepId);
+            if (targetPage) targetPage.classList.add('active');
+
+            const isWelcome = (stepId === 'step-welcome');
+            const isDoingQuiz = stepId.startsWith('step-quiz-') || stepId === 'step-grammar';
+
+            const metaBar = document.getElementById('app-user-meta-bar');
+            if (metaBar) {
+                metaBar.style.display = (isWelcome || isDoingQuiz) ? 'none' : 'flex';
+                updateUserFlagIcon();
+            }
+
+            const bottomBar = document.getElementById('app-bottom-bar');
+            if (bottomBar) {
+                bottomBar.style.display = (stepId === 'step-lesson') ? 'flex' : 'none';
+            }
+
+            if (stepId === 'step-level') renderLevelMenu();
+            if (stepId === 'step-lesson') {
+                setTimeout(() => {
+                    drawRoadmapSvgPath();
+                    const mainScrollView = document.getElementById('learning-content-view');
+                    const currentNode = document.querySelector('.candy-node-btn.current') || document.querySelector('.candy-node-btn');
+                    if (currentNode && mainScrollView) {
+                        currentNode.scrollIntoView({ behavior: 'auto', block: 'center' });
+                    } else if (mainScrollView) {
+                        mainScrollView.scrollTop = mainScrollView.scrollHeight;
+                    }
+                }, 100);
+            }
+        }
+
+        function setUserLang(lang) {
+            currentConfig.lang = lang;
+            localStorage.setItem('preferred_user_lang', lang);
+        }
+
+        async function forceClearAndSync() {
+            ['all_data_', 'grammar_data_', 'dialogue_data_', 'word_data_'].forEach(k => {
+                localStorage.removeItem(k + currentConfig.category);
+            });
+            showIslandLoading("快取清除完成，正在同步最新島嶼地圖...", 40);
+            await autoLoadCategoryData(currentConfig.category, true);
+            hideIslandLoading();
+        }
+
+        async function autoLoadCategoryData(cat, forceRefresh = false) {
+            const targetApi = API_URLS[cat];
+            if (!targetApi) return alert(`該語言 API 尚未設定！`);
+
+            const cacheMap = {
+                all: `all_data_${cat}`,
+                grammar: `grammar_data_${cat}`,
+                dialogue: `dialogue_data_${cat}`,
+                word: `word_data_${cat}`
+            };
+
+            const readCache = (key) => {
+                try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch(e) { return null; }
+            };
+
+            if (!forceRefresh) {
+                const cachedAll = readCache(cacheMap.all);
+                if (cachedAll && (cachedAll.shadow || cachedAll.blocks)) {
+                    rawShadowData = cachedAll.shadow || [];
+                    rawBlocksData = cachedAll.blocks || [];
+                    globalGrammarData = readCache(cacheMap.grammar) || [];
+                    rawDialogueData = readCache(cacheMap.dialogue) || [];
+                    rawWordData = readCache(cacheMap.word) || [];
+                    renderLevelMenu();
+                    return;
+                }
+            }
+
+            try {
+                const [shadowRes, blocksRes, grammarRes, dialogueRes, wordRes] = await Promise.all([
+                    requestGAS(targetApi, 'getLanguageData').catch(() => null),
+                    requestGAS(targetApi, 'getBlocksData').catch(() => null),
+                    requestGAS(targetApi, 'getGrammarData').catch(() => null),
+                    requestGAS(targetApi, 'getDialogueData').catch(() => null),
+                    requestGAS(targetApi, 'getWordData').catch(() => null)
+                ]);
+
+                rawShadowData = (shadowRes && shadowRes.status === 'success') ? (shadowRes.data || []) : [];
+                rawBlocksData = (blocksRes && blocksRes.status === 'success') ? (blocksRes.data || []) : [];
+                globalGrammarData = (grammarRes && grammarRes.status === 'success') ? (grammarRes.data || []) : [];
+                rawDialogueData = (dialogueRes && dialogueRes.status === 'success') ? (dialogueRes.data || []) : [];
+                rawWordData = (wordRes && wordRes.status === 'success') ? (wordRes.data || []) : [];
+
+                localStorage.setItem(cacheMap.all, JSON.stringify({ shadow: rawShadowData, blocks: rawBlocksData }));
+                localStorage.setItem(cacheMap.grammar, JSON.stringify(globalGrammarData));
+                localStorage.setItem(cacheMap.dialogue, JSON.stringify(rawDialogueData));
+                localStorage.setItem(cacheMap.word, JSON.stringify(rawWordData));
+
+                renderLevelMenu();
+            } catch (e) {
+                console.error(`自動更新 ${cat} 地圖失敗:`, e);
+                alert("無法連線至 API！請確認網路。");
+            }
+        }
+
+        function renderLevelMenu() {
+            const container = document.getElementById('container-levels');
+            if (!container) return;
+            container.innerHTML = "";
+
+            let cachedUnlocked = [];
+            try { cachedUnlocked = JSON.parse(localStorage.getItem('cached_unlocked_levels') || '[]'); } catch(e) {}
+            const userUnlocked = ((window.currentUserData && window.currentUserData.unlockedLevels) 
+                ? window.currentUserData.unlockedLevels 
+                : (cachedUnlocked.length > 0 ? cachedUnlocked : ['0A'])).map(l => String(l).trim().toUpperCase());
+
+            const krLevels = [
+                { code: '0A', title: '0A 認識字母' },
+                { code: '1A', title: '1A 基礎級' },
+                { code: '1B', title: '1B 初級' },
+                { code: '2A', title: '2A 中初級' },
+                { code: '2B', title: '2B 中級' },
+                { code: '3A', title: '3A 中高級' },
+                { code: '3B', title: '3B 高級' },
+                { code: '4A', title: '4A 精通級' },
+                { code: 'JLPT/TOPIK', title: '檢定課程' }
+            ];
+
+            krLevels.forEach(item => {
+                const btn = document.createElement('button');
+                const isUnlocked = userUnlocked.includes(item.code.toUpperCase());
+                if (isUnlocked) {
+                    btn.className = "btn-option";
+                    btn.innerText = item.title;
+                    btn.onclick = () => selectLevel(item.code, item.title);
+                } else {
+                    btn.className = "btn-option locked";
+                    btn.innerHTML = `<i class="fa-solid fa-lock"></i> ${item.title}`;
+                    btn.onclick = () => alert(`「${item.title}」未開通！\n請聯繫管理員購買該程度課程。`);
+                }
+                container.appendChild(btn);
+            });
+        }
+
+        function normalizeLevelStr(val) {
+            if (!val) return "";
+            let s = String(val).trim().toUpperCase().replace(/[\s_\-\/]/g, '');
+            return (s === 'JLPT' || s === 'TOPIK' || s === 'JLPTTOPIK') ? 'JLPTTOPIK' : s;
+        }
+
+        function selectLevel(levelCode, levelTitle) {
+            stopSpeechRecognition();
+            revokeUserAudioUrl();
+            currentConfig.level = levelCode;
+            localStorage.setItem('last_played_level', levelCode);
+            document.getElementById('lbl-user-level').innerText = levelCode;
+            renderAllLessonsForLevel(levelCode);
+            goToStep('step-lesson');
+        }
+
+        function startChallengeTimer(targetModeKey) {
+            stopChallengeTimer();
+            challengeTimeRemaining = 300;
+
+            const badgeElem = document.getElementById(`lbl-timer-${targetModeKey}`);
+            const barWrapper = document.getElementById(`bar-wrapper-${targetModeKey}`);
+            const barElem = document.getElementById(`bar-progress-${targetModeKey}`);
+
+            if (!badgeElem || !barWrapper || !barElem) return;
+
+            badgeElem.style.display = 'inline-block';
+            barWrapper.style.display = 'block';
+            barElem.style.width = '100%';
+
+            function updateDisplay() {
+                const mins = Math.floor(challengeTimeRemaining / 60);
+                const secs = challengeTimeRemaining % 60;
+                badgeElem.innerText = `⏱ ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                const pct = (challengeTimeRemaining / 300) * 100;
+                barElem.style.width = `${pct}%`;
+
+                if (challengeTimeRemaining <= 30) barElem.style.background = 'var(--duo-fire-red)';
+                else if (challengeTimeRemaining <= 90) barElem.style.background = 'var(--duo-gold)';
+                else barElem.style.background = 'linear-gradient(90deg, var(--duo-blue), var(--duo-green))';
+            }
+
+            updateDisplay();
+            challengeTimerInterval = setInterval(() => {
+                challengeTimeRemaining--;
+                if (challengeTimeRemaining <= 0) {
+                    stopChallengeTimer();
+                    updateDisplay();
+                    recordSessionFocusTime();
+                    alert("⏰ 時間到！300 秒挑戰已結束。再試一次吧！");
+                    goToStep('step-lesson');
+                } else {
+                    updateDisplay();
+                }
+            }, 1000);
+        }
+
+        function stopChallengeTimer() {
+            if (challengeTimerInterval) {
+                clearInterval(challengeTimerInterval);
+                challengeTimerInterval = null;
+            }
+            ['shadow', 'chat', 'blocks', 'word-shadow', 'word-choice'].forEach(k => {
+                const badge = document.getElementById(`lbl-timer-${k}`);
+                const wrapper = document.getElementById(`bar-wrapper-${k}`);
+                if (badge) badge.style.display = 'none';
+                if (wrapper) wrapper.style.display = 'none';
+            });
+        }
+
+        function resetChallengeProgress() {
+            passedSubQuestions.clear();
+            currentChallengeScore = 0;
+            document.querySelectorAll('.btn-finish-challenge').forEach(btn => btn.style.display = 'none');
+            document.querySelectorAll('.btn-nav-next').forEach(btn => btn.style.display = 'none');
+        }
+
+        function markQuestionAnswered(qIndex) {
+            isCurrentQuestionAnswered = true;
+            if (!passedSubQuestions.has(qIndex)) {
+                passedSubQuestions.add(qIndex);
+                currentChallengeScore = Math.min(100, Math.round(passedSubQuestions.size * pointsPerQuestion));
+            }
+
+            if (qIndex >= totalChallengeQuestions - 1) {
+                document.querySelectorAll('.btn-finish-challenge').forEach(btn => btn.style.display = 'block');
+                document.querySelectorAll('.btn-nav-next').forEach(btn => btn.style.display = 'none');
+            } else {
+                const nextBtnId = (currentConfig.mode === 'shadow') ? 'btn-next' :
+                                  (currentConfig.mode === 'blocks') ? 'btn-block-next' :
+                                  (currentConfig.mode === 'sentence_chat') ? 'btn-chat-next' :
+                                  (currentConfig.mode === 'trace') ? 'btn-trace-next' :
+                                  (currentConfig.mode === 'word_shadow') ? 'btn-word-shadow-next' : 'btn-word-choice-next';
+                const nextBtn = document.getElementById(nextBtnId);
+                if (nextBtn) nextBtn.style.display = 'inline-block';
+            }
+        }
+
+        async function finishCurrentChallenge() {
+            clearIdleTimer();
+            stopSpeechRecognition();
+            stopChallengeTimer();
+
+            const elapsedSeconds = await recordSessionFocusTime();
+            const finalScore = Math.min(100, Math.round(passedSubQuestions.size * pointsPerQuestion));
+            const result = await saveChallengeScoreRecord(finalScore, elapsedSeconds);
+
+            if (currentUser && window.currentUserData) {
+                await processDailyCheckIn(currentUser, window.currentUserData);
+            }
+
+            const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_${currentConfig.mode}`;
+            let completedList = (window.currentUserData && Array.isArray(window.currentUserData.completedLessons)) ? window.currentUserData.completedLessons : [];
+
+            const isPassedStar = result.starInfo && result.starInfo.stars >= 1;
+
+            if (isPassedStar && !completedList.includes(lessonKey)) {
+                completedList.push(lessonKey);
+                window.currentUserData.completedLessons = completedList;
+                await addXP(100);
+                if (currentUser) {
+                    try {
+                        await db.collection("users").doc(currentUser.uid).set({ completedLessons: completedList }, { merge: true });
+                    } catch (err) {
+                        console.error("儲存通關紀錄失敗:", err);
+                    }
+                }
+            }
+
+            launchSettlementModal({
+                finalScore: finalScore,
+                starInfo: result.starInfo,
+                elapsedSeconds: elapsedSeconds,
+                bestTime: result.bestTime
+            });
+        }
+
+        async function finishGrammarTask() {
+            clearIdleTimer();
+            stopSpeechRecognition();
+            stopChallengeTimer();
+            await recordSessionFocusTime();
+
+            if (currentUser && window.currentUserData) {
+                await processDailyCheckIn(currentUser, window.currentUserData);
+            }
+
+            const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_grammar`;
+            let completedList = (window.currentUserData && Array.isArray(window.currentUserData.completedLessons)) ? window.currentUserData.completedLessons : [];
+
+            if (!completedList.includes(lessonKey)) {
+                completedList.push(lessonKey);
+                window.currentUserData.completedLessons = completedList;
+                await addXP(60);
+                if (currentUser) {
+                    try {
+                        await db.collection("users").doc(currentUser.uid).set({ completedLessons: completedList }, { merge: true });
+                    } catch (err) {
+                        console.error("儲存通關紀錄失敗:", err);
+                    }
+                }
+            }
+            openModal('modal-grammar-complete');
+        }
+
+        function selectLessonAndMode(lesson, mode) {
+            stopSpeechRecognition(); 
+            stopChallengeTimer();
+            revokeUserAudioUrl();
+            currentConfig.lesson = lesson;
+            currentConfig.mode = mode;
+            resetChallengeProgress();
+
+            challengeSessionStartTime = Date.now();
+            isIdlePaused = false;
+            resetIdleTimer();
+
+            if (currentUser) ProgressModel.updateUnitProgress(currentUser.uid, currentConfig.unit_id, lesson);
+
+            if (mode === 'grammar') {
+                const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+                const matchGrammar = globalGrammarData.find(g => 
+                    normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
+                    String(getItemField(g, 'unit_id')) === String(currentConfig.unit_id) &&
+                    String(getItemField(g, 'lesson')) === String(lesson)
+                );
+
+                if (matchGrammar && ((matchGrammar.dialogs && matchGrammar.dialogs.length) || (matchGrammar.quizzes && matchGrammar.quizzes.length))) {
+                    startGrammarChallenge(matchGrammar);
+                } else {
+                    alert("此關卡目前沒有設定獨立語法觀念喔！");
+                }
+            } else if (mode === 'trace') {
+                startTraceChallenge();
+            } else if (mode === 'sentence_chat') {
+                startSentenceChatChallenge();
+            } else if (mode.startsWith('word_')) {
+                startWordChallenge(mode);
+            } else {
+                startMainQuiz();
+            }
+        }
+
+        function cleanInitialWhitespace(str) {
+            return (str || '').replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
+        }
+
+        function startGrammarChallenge(grammarGroup) {
+            stopSpeechRecognition();
+            stopChallengeTimer();
+            revokeUserAudioUrl();
+            currentGrammarItem = grammarGroup;
+            currentDialogIndex = 0;
+            grammarQuizIndex = 0;
+            isGrammarQuizSubmitted = false;
+            
+            document.getElementById('lbl-grammar-info').innerText = `關卡任務 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Lesson ${currentConfig.lesson}`;
+            document.getElementById('area-grammar-quiz').style.display = 'none';
+
+            let expandedQuizzes = [];
+            (currentGrammarItem.quizzes || []).forEach(qObj => {
+                const qList = (qObj.question || '').split('/').map(s => s.trim()).filter(Boolean);
+                const aList = (qObj.answer || '').split('/').map(s => s.trim()).filter(Boolean);
+                
+                if (qList.length > 1) {
+                    qList.forEach((qText, qIdx) => {
+                        expandedQuizzes.push({
+                            question: qText,
+                            choice: qObj.choice || '',
+                            answer: aList[qIdx] !== undefined ? aList[qIdx] : (aList[0] || ''),
+                            correct: qObj.correct || "🎉 完全正確！",
+                            incorrect: qObj.incorrect || "❌ 答案不太對喔，再試一次！"
+                        });
+                    });
+                } else {
+                    expandedQuizzes.push(qObj);
+                }
+            });
+            currentGrammarItem.expandedQuizzes = expandedQuizzes;
+
+            if (currentGrammarItem.dialogs && currentGrammarItem.dialogs.length > 0) {
+                document.getElementById('area-grammar-dialog').style.display = 'flex';
+                showCurrentGrammarDialog();
+            } else if (currentGrammarItem.expandedQuizzes && currentGrammarItem.expandedQuizzes.length > 0) {
+                showGrammarQuizArea();
+            } else {
+                alert("此關卡無可呈現的語法內容！");
+                goToStep('step-lesson');
+                return;
+            }
+
+            goToStep('step-grammar');
+        }
 
         function showCurrentGrammarDialog() {
             if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
