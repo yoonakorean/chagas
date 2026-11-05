@@ -888,7 +888,136 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-/* ================= 3D 單字翻轉卡專屬樣式 ================= */
+/* ================= 現代即時通訊對話框風格 (參考圖 2) ================= */
+        .chat-dialog-stage {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+            max-width: 440px;
+            margin: 12px auto 16px auto;
+            padding: 4px 6px;
+            box-sizing: border-box;
+        }
+
+        .chat-bubble-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            width: 100%;
+            position: relative;
+            animation: bubbleSlideIn 0.25s ease-out;
+        }
+        @keyframes bubbleSlideIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-bubble-row.bubble-row-left {
+            justify-content: flex-start;
+        }
+
+        .chat-bubble-row.bubble-row-right {
+            justify-content: flex-end;
+        }
+
+        .chat-bubble-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid #bae6fd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+        }
+        .chat-bubble-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .chat-msg-bubble {
+            position: relative;
+            padding: 16px 20px;
+            border-radius: 20px;
+            max-width: 82%;
+            font-size: 1.25rem;
+            font-weight: 800;
+            line-height: 1.45;
+            word-break: break-word;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+            box-sizing: border-box;
+        }
+
+        /* 提問方 A：天藍色氣泡，朝左箭頭 */
+        .chat-msg-bubble.bubble-a {
+            background: #bae6fd;
+            color: #0c4a6e;
+            border-bottom-left-radius: 4px;
+            text-align: left;
+        }
+        .chat-msg-bubble.bubble-a::after {
+            content: "";
+            position: absolute;
+            left: -8px;
+            bottom: 12px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 6px 10px 6px 0;
+            border-color: transparent #bae6fd transparent transparent;
+        }
+
+        /* 回答方 B：暖米黃色氣泡，朝右箭頭 */
+        .chat-msg-bubble.bubble-b {
+            background: #fef3c7;
+            color: #78350f;
+            border-bottom-right-radius: 4px;
+            text-align: left;
+            margin-left: auto;
+        }
+        .chat-msg-bubble.bubble-b::after {
+            content: "";
+            position: absolute;
+            right: -8px;
+            bottom: 12px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 6px 0 6px 10px;
+            border-color: transparent transparent transparent #fef3c7;
+        }
+
+        .chat-bubble-play-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #1e293b;
+            color: #ffffff;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.82rem;
+            flex-shrink: 0;
+            transition: transform 0.1s ease, background 0.15s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            padding: 0;
+        }
+        .chat-bubble-play-btn:active {
+            transform: scale(0.9);
+            background: #0f172a;
+        }
+
+        /* ================= 3D 單字翻轉卡專屬樣式 ================= */
         .fullscreen-stage {
             position: fixed; inset: 0; background: #fbfbfa; z-index: 999999;
             display: none; flex-direction: column; overflow: hidden;
@@ -1124,8 +1253,6 @@
         .translation-text,
         #lbl-target-text,
         #lbl-translation,
-        #lbl-chat-target-text,
-        #lbl-chat-translation,
         #lbl-word-shadow-target-text,
         #lbl-word-shadow-translation,
         #lbl-word-choice-text,
@@ -1290,10 +1417,6 @@
             color: var(--duo-dark); cursor: pointer; transition: all 0.15s ease; text-align: center; display: inline-flex; justify-content: center; align-items: center; min-width: 75px;
         }
         .btn-vocab-choice:active { transform: translateY(2px); border-bottom-width: 1.5px; }
-
-        .role-switch-box { display: flex; justify-content: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-        .btn-role { padding: 5px 12px; border-radius: 20px; border: 2px solid #e5e7eb; background: white; font-weight: bold; cursor: default; font-size: 0.85rem; }
-        .btn-role.active { border-color: var(--duo-blue); background: #ddf4ff; color: var(--duo-blue); font-weight: 800; }
 
         .profile-avatar-large { width: 72px; height: 72px; border-radius: 50%; border: 3px solid var(--duo-blue); margin: 0 auto 8px auto; object-fit: cover; display: block; }
         .quit-modal-img { width: 120px; height: 120px; object-fit: contain; margin: 0 auto 12px auto; display: block; }
@@ -2010,7 +2133,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 步驟 6-G：句子問答畫面 (對話挑戰：先 A 後 B 順序呈現) -->
+            <!-- 步驟 6-G：對話挑戰畫面 (已刪除紅圈角色標籤，改為圖 2 的現代對話氣泡) -->
             <div id="step-quiz-sentence-chat" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-chat-mode-title">對話挑戰</div>
@@ -2028,46 +2151,41 @@
                     <div class="timer-progress-bar" id="bar-progress-chat"></div>
                 </div>
 
-                <!-- 角色狀態指示標籤：先角色 A，再角色 B -->
-                <div class="role-switch-box" style="margin-top: 4px;">
-                    <div class="btn-role" id="btn-chat-role-a">第一階段：角色 A (我念 A 聽 B)</div>
-                    <div class="btn-role" id="btn-chat-role-b">第二階段：角色 B (聽 A 我念 B)</div>
-                </div>
-
+                <!-- 頂部指引徽章 (原紅圈的冗餘指示標籤已在此完全刪除) -->
                 <div>
                     <div class="instruction-badge-bar" id="lbl-chat-instruction-top">請依指引念出句子：</div>
                 </div>
 
-                <!-- 角色 B 狀態下的 Speaker A 提問藍色對話框 (置頂顯示，包含專屬發音播放按鈕) -->
-                <div id="chat-top-partner-bubble" style="display: none; background: #e0f2fe; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 10px; margin: 8px 0; text-align: left;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                        <span style="font-size: 0.85rem; color: #0284c7; font-weight: 800;" id="lbl-top-partner-title">對方 (Speaker A) 提問：</span>
-                        <button class="bubble-audio-btn" id="btn-play-speaker-a" onclick="playSpeakerAAudio(event)" title="播放 Speaker A 發音">
-                            <i class="fa-solid fa-volume-high"></i>
-                        </button>
+                <!-- 對話氣泡舞台 (依第二張圖風格呈現：上方天藍色氣泡，下方米黃色氣泡 + 黑色圓形播放鈕) -->
+                <div class="chat-dialog-stage">
+                    <!-- 對話提問方 A (天藍色氣泡，朝左箭頭) -->
+                    <div class="chat-bubble-row bubble-row-left" id="row-chat-bubble-a">
+                        <div class="chat-msg-bubble bubble-a" id="bubble-chat-a">
+                            <span id="lbl-chat-bubble-a-text">...</span>
+                            <button class="chat-bubble-play-btn" id="btn-bubble-play-a" onclick="playSpeakerAAudio(event)" title="播放提問發音" style="display:none;">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div style="font-size: 1.25rem; font-weight: bold; color: #0f172a;" id="lbl-top-partner-text">...</div>
+
+                    <!-- 對話回答方 B (米黃色氣泡，朝右箭頭，附帶黑色圓形播放鈕與人物裝飾) -->
+                    <div class="chat-bubble-row bubble-row-right" id="row-chat-bubble-b" style="display: none;">
+                        <div class="chat-msg-bubble bubble-b" id="bubble-chat-b">
+                            <span id="lbl-chat-bubble-b-text">...</span>
+                            <button class="chat-bubble-play-btn" id="btn-bubble-play-b" onclick="playSpeakerBAudio(event)" title="播放回答發音">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                        </div>
+                        <div class="chat-bubble-avatar" id="avatar-chat-b">
+                            <img src="images/avatar.png" onerror="this.onerror=null; this.src='https://api.dicebear.com/7.x/bottts/svg?seed=Yoona';" alt="Partner">
+                        </div>
+                    </div>
                 </div>
 
-                <!-- 主要文字框置於上方 (角色 A 時顯示提問句；角色 B 時顯示提示回答句) -->
-                <div class="target-text" id="lbl-chat-target-text">載入中...</div>
-                <div class="translation-text" id="lbl-chat-translation">...</div>
-
-                <!-- 黃色提示框置於下方，顯示 a1x / b1x 內容 -->
-                <div id="chat-a-hint-bubble" style="display: none; background: #fef3c7; border: 1.5px solid #fde68a; border-radius: 14px; padding: 10px; margin: 10px 0; text-align: left;">
+                <!-- 關鍵字提示氣泡 (黃色框：純顯示 a1x / b1x 內容) -->
+                <div id="chat-a-hint-bubble" style="display: none; background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 14px; padding: 10px 14px; margin: 4px auto 12px auto; max-width: 440px; text-align: left;">
                     <div style="font-size: 0.85rem; color: #b45309; font-weight: 800; margin-bottom: 2px;" id="lbl-chat-a-hint-title">提示：</div>
                     <div style="font-size: 1.15rem; font-weight: bold; color: #92400e;" id="lbl-chat-a-hint-text">...</div>
-                </div>
-
-                <!-- 角色 A 狀態下的 Speaker B 對方回覆氣泡框 (置底顯示，包含專屬發音播放按鈕) -->
-                <div id="chat-partner-bubble" style="display: none; background: #e0f2fe; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 10px; margin: 10px 0; text-align: left;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                        <span style="font-size: 0.85rem; color: #0284c7; font-weight: 800;" id="lbl-partner-title">對方 (Speaker B) 回覆：</span>
-                        <button class="bubble-audio-btn" id="btn-play-speaker-b" onclick="playSpeakerBAudio(event)" title="播放 Speaker B 發音">
-                            <i class="fa-solid fa-volume-high"></i>
-                        </button>
-                    </div>
-                    <div style="font-size: 1.25rem; font-weight: bold; color: #0f172a;" id="lbl-partner-text">...</div>
                 </div>
                 
                 <div class="controls" id="controls-chat">
@@ -2473,7 +2591,7 @@
         let userRecordedAudioUrl = null;
         let lastRecognizedSpeechText = "";
 
-        // 對話挑戰變數：先擔任角色 A，全部完成後再擔任角色 B
+        // 對話挑戰變數：先擔任角色 A，全部完成後再接角色 B
         let chatRounds = [];
         let chatRoundIndex = 0;
         let chatRole = 'A';
@@ -2528,7 +2646,7 @@
                 title: '📘 關卡任務玩法說明',
                 content: `
                     <strong>1. 觀念導讀：</strong> 進入關卡後會先播放語法說明與對話情境，點擊對話框可立即完成文字打字機。<br>
-                    <strong>2. 例句聆聽：</strong> 觀念下方附有發音例句，點擊喇叭圖示可重複聆聽標準語音示範。<br>
+                    <strong>2. 例句聆聽：</strong> 只要題目內有例句，下方即會自動生成語音播放按鈕，點擊可隨時聆聽標準示範。<br>
                     <strong>3. 進入測驗：</strong> 觀念讀完後點擊「進入隨堂測驗」展開「小試身手」實戰造句填空。<br>
                     <strong>4. 填入答案：</strong> 系統會將當前正在作答的題目加上亮藍色外框，點擊下方字塊即可填入空格。<br>
                     <strong>5. 檢查訂正：</strong> 送出答案後，若答錯會在填空右側單行提示正確答案，並可隨時點擊「再來一次」。<br>
@@ -2551,9 +2669,8 @@
                     <strong>1. 聆聽示範：</strong> 點擊喇叭按鈕聆聽單字正確發音與音調。<br>
                     <strong>2. 開始錄音：</strong> 點擊紅色麥克風圖示後，對準手機清晰念出畫面中的單字。<br>
                     <strong>3. 停止辨識：</strong> 再次點擊麥克風完成錄音，系統將即時比對語音文字。<br>
-                    <strong>4. 聽自己的聲音：</strong> 錄音完畢後可點擊綠色耳機播放剛才錄下的原音。<br>
-                    <strong>5. 評分判定：</strong> 系統判定發音合格後將自動解鎖並點亮通關下一題。<br>
-                    <strong>6. 挑戰結算：</strong> 全數單字完成後將統計耗時並結算星級榮譽！
+                    <strong>4. 評分判定：</strong> 系統判定發音合格後將自動解鎖並點亮通關下一題。<br>
+                    <strong>5. 挑戰結算：</strong> 全數單字完成後將統計耗時並結算星級榮譽！
                 `
             },
             'word_choice': {
@@ -2592,8 +2709,8 @@
             'sentence_chat': {
                 title: '💬 對話挑戰玩法說明',
                 content: `
-                    <strong>1. 雙向訓練：</strong> 挑戰全程一律先由【角色 A】開始（發起提問聆聽回覆），全部完成後自動進入【角色 B】（聽 Speaker A 念出回答）。<br>
-                    <strong>2. 一問一答：</strong> 當輪到角色 A 提問完畢且發音合格後，對方的回覆框會自然出現在下方。<br>
+                    <strong>1. 雙向訓練：</strong> 挑戰全程一律先由【角色 A】開始（發起提問聆聽回覆），全部完成後自動進入【角色 B】（聽對方提問念出回答）。<br>
+                    <strong>2. 氣泡對話：</strong> 畫面以生動的氣泡對話框呈現（上方天藍色為提問、下方米黃色為回答）。<br>
                     <strong>3. 依序通關：</strong> 需連續完成角色 A 與角色 B 兩輪練習，才能完成整組對話挑戰！
                 `
             }
@@ -2679,7 +2796,7 @@ function katakanaToHiragana(str) {
             'くち': ['口'], 'さかな': ['魚'], 'した': ['下', '舌'], 'じかん': ['時間'], 'しろ': ['白'],
             'しろい': ['白い'], 'せんせい': ['先生'], 'そら': ['空'], 'たべる': ['食べる'], 'ちいさい': ['小さい'],
             'て': ['手'], 'ともだち': ['友達'], 'なまえ': ['名前'], 'にほん': ['日本'], 'にほんじん': ['日本人'],
-            'ねこ': ['猫'], 'のむ': ['飲む'], 'はな': ['花', '鼻'], 'はなす': ['話す'], 'ひと': ['人'],
+            'ねこ': ['猫'], 'のむ': ['飲む'], 'はな': ['花', '鼻'], 'は那す': ['話す'], 'ひと': ['人'],
             'ほん': ['本'], 'みず': ['水'], 'みみ': ['耳'], 'みる': ['見る', '觀る', '観る'], 'め': ['目'],
             'やま': ['山'], 'よむ': ['読む'], 'わたし': ['私'], 'ぼく': ['僕']
         };
@@ -3315,7 +3432,8 @@ function katakanaToHiragana(str) {
                 return null;
             }
         }
-async function verifyAndSyncUser(user, isInteractive = false) {
+
+        async function verifyAndSyncUser(user, isInteractive = false) {
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
                 if (!gasResult || gasResult.status !== "success") {
@@ -4334,901 +4452,6 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 courseContainer.innerHTML = "<span class='course-pill'>尚無開通課程</span>";
             }
         }
-document.getElementById('btn-save-nickname').onclick = async () => {
-            const newName = document.getElementById('input-edit-nickname').value.trim();
-            const errDiv = document.getElementById('edit-nickname-error-msg');
-            const btnSave = document.getElementById('btn-save-nickname');
-            const now = Date.now();
-
-            if (newName.length < 2 || newName.length > 12) {
-                errDiv.innerText = "暱稱需介於 2 到 12 個字元！";
-                errDiv.classList.remove('hidden');
-                return;
-            }
-            if (newName === (window.currentUserData.displayName || '')) {
-                errDiv.innerText = "新暱稱與現有暱稱相同！";
-                errDiv.classList.remove('hidden');
-                return;
-            }
-            const lastUpdated = window.currentUserData.lastNicknameUpdatedAt || 0;
-            const diffSeconds = Math.floor((now - lastUpdated) / 1000);
-            if (diffSeconds < 30) {
-                errDiv.innerText = `冷卻中！請等待 ${30 - diffSeconds} 秒後再修改。`;
-                errDiv.classList.remove('hidden');
-                return;
-            }
-
-            btnSave.disabled = true;
-            btnSave.innerText = "檢查重複中...";
-            try {
-                if (await isNicknameTaken(newName, currentUser.uid)) {
-                    errDiv.innerText = "此暱稱已被其他學員使用，請換一個再試！";
-                    errDiv.classList.remove('hidden');
-                    return;
-                }
-                await ProgressModel.saveProgress(currentUser.uid, { displayName: newName, lastNicknameUpdatedAt: now });
-                window.currentUserData.displayName = newName;
-                window.currentUserData.lastNicknameUpdatedAt = now;
-                renderUserInfo();
-                closeModal('modal-edit-nickname');
-                alert("暱稱修改成功！");
-            } catch (e) {
-                errDiv.innerText = "修改失敗：" + e.message;
-                errDiv.classList.remove('hidden');
-            } finally {
-                btnSave.disabled = false;
-                btnSave.innerText = "儲存修改";
-            }
-        };
-
-        const btnCancelNickname = document.getElementById('btn-cancel-nickname');
-        if (btnCancelNickname) btnCancelNickname.onclick = () => closeModal('modal-edit-nickname');
-
-        document.getElementById('btn-google-login').onclick = async () => {
-            try { 
-                showIslandLoading("地圖生成中...", 30);
-                const cred = await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-                await verifyAndSyncUser(cred.user, true);
-            } catch (err) { 
-                hideIslandLoading();
-                showLoginError(err.message); 
-            }
-        };
-
-        btnAuthSubmit.onclick = async () => {
-            const email = document.getElementById('email-input').value.trim();
-            const password = document.getElementById('password-input').value;
-            if (!email || !password) return showLoginError("請輸入信箱與密碼！");
-            try {
-                showIslandLoading("帳號驗證中...", 30);
-                let cred;
-                if (authMode === 'login') cred = await auth.signInWithEmailAndPassword(email, password);
-                else cred = await auth.createUserWithEmailAndPassword(email, password);
-                await verifyAndSyncUser(cred.user, true);
-            } catch (err) { 
-                hideIslandLoading();
-                showLoginError(err.message); 
-            }
-        };
-
-        function showLoginError(msg) {
-            loginErrorMsg.innerText = msg;
-            loginErrorMsg.classList.remove('hidden');
-        }
-
-        document.getElementById('btn-forgot-password').onclick = () => openModal('modal-forgot-password');
-        document.getElementById('btn-cancel-forgot-password').onclick = () => closeModal('modal-forgot-password');
-        document.getElementById('btn-send-reset-email').onclick = async () => {
-            const email = document.getElementById('input-forgot-email').value.trim();
-            if (!email) return alert("請輸入電子郵件！");
-            try {
-                await auth.sendPasswordResetEmail(email);
-                alert("重設信件已寄出，請至信箱查收！");
-                closeModal('modal-forgot-password');
-            } catch (err) {
-                alert("寄送失敗：" + err.message);
-            }
-        };
-
-        function handleLogout() {
-            if (confirm("確定要登出系統嗎？")) {
-                clearIdleTimer();
-                recordSessionFocusTime();
-                auth.signOut();
-                closeProfileView();
-                goToStep('step-welcome');
-            }
-        }
-
-        function openModal(modalId) {
-            const m = document.getElementById(modalId);
-            if (m) { m.classList.add('show'); m.classList.remove('hidden'); }
-        }
-        function closeModal(modalId) {
-            const m = document.getElementById(modalId);
-            if (m) { m.classList.remove('show'); m.classList.add('hidden'); }
-        }
-
-        function openProfileView() {
-            clearIdleTimer();
-            document.getElementById('learning-content-view').classList.add('hidden');
-            document.getElementById('profile-view').classList.remove('hidden');
-            renderUserInfo();
-            switchProfileTab('leaderboard');
-        }
-
-        function closeProfileView() {
-            document.getElementById('profile-view').classList.add('hidden');
-            document.getElementById('learning-content-view').classList.remove('hidden');
-        }
-
-        function switchProfileTab(tab) {
-            const btnLeaderboard = document.getElementById('btn-nav-leaderboard');
-            const btnMyAccount = document.getElementById('btn-nav-myaccount');
-            const pageLeaderboard = document.getElementById('sub-page-leaderboard');
-            const pageMyAccount = document.getElementById('sub-page-myaccount');
-
-            if (tab === 'leaderboard') {
-                btnLeaderboard.classList.add('active');
-                btnMyAccount.classList.remove('active');
-                pageLeaderboard.classList.remove('hidden');
-                pageMyAccount.classList.add('hidden');
-                switchRankSubTab(currentRankSubTab);
-            } else {
-                btnMyAccount.classList.add('active');
-                btnLeaderboard.classList.remove('active');
-                pageMyAccount.classList.remove('hidden');
-                pageLeaderboard.classList.add('hidden');
-            }
-        }
-
-        function switchRankSubTab(subTab) {
-            currentRankSubTab = subTab;
-            const btnFriends = document.getElementById('tab-rank-friends');
-            const btnGlobal = document.getElementById('tab-rank-global');
-            const btnAddFriend = document.getElementById('btn-open-add-friend');
-
-            if (subTab === 'global') {
-                btnGlobal.classList.add('active');
-                btnFriends.classList.remove('active');
-                if (btnAddFriend) btnAddFriend.style.display = 'none';
-                loadLeaderboardData();
-            } else {
-                btnFriends.classList.add('active');
-                btnGlobal.classList.remove('active');
-                if (btnAddFriend) btnAddFriend.style.display = 'inline-block';
-                loadFriendsLeaderboardData();
-            }
-        }
-
-        async function loadLeaderboardData() {
-            const container = document.getElementById('leaderboard-list-container');
-            container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>載入排行榜中...</div>";
-            try {
-                const snapshot = await db.collection("users").orderBy("xp", "desc").limit(20).get();
-                if (snapshot.empty) {
-                    container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>暫無榜單資料</div>";
-                    return;
-                }
-                container.innerHTML = "";
-                let rank = 1;
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const isMe = currentUser && doc.id === currentUser.uid;
-                    const row = document.createElement('div');
-                    row.className = "rank-item-row" + (isMe ? " me-row" : "");
-                    let rankClass = rank === 1 ? "rank-1" : (rank === 2 ? "rank-2" : (rank === 3 ? "rank-3" : ""));
-
-                    row.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
-                            <div class="rank-num ${rankClass}">${rank}</div>
-                            <img src="https://lh3.googleusercontent.com/a/default-user" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
-                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                <div style="font-weight: 800; color: #1e293b; font-size: 0.92rem; overflow: hidden; text-overflow: ellipsis;">
-                                    ${data.displayName || '學生'}${isMe ? ' <span style="font-size:0.75rem; color:var(--duo-green);">(你)</span>' : ''}
-                                </div>
-                                <div style="font-size: 0.75rem; color: #94a3b8;">${data.unlockedLevels ? data.unlockedLevels[0] : '1A'}</div>
-                            </div>
-                        </div>
-                        <div style="text-align: right; flex-shrink: 0;">
-                            <div style="font-weight: 800; color: var(--duo-gold); font-size: 0.92rem;"><i class="fa-solid fa-star"></i> ${data.xp || 0}</div>
-                            <div style="font-size: 0.75rem; color: var(--duo-fire-red); font-weight: bold;"><i class="fa-solid fa-fire"></i> ${data.streakDays || 0} 天</div>
-                        </div>
-                    `;
-                    container.appendChild(row);
-                    rank++;
-                });
-            } catch (e) {
-                container.innerHTML = "<div style='text-align:color:#ef4444; padding:20px 0;'>載入失敗，請確認網路！</div>";
-            }
-        }
-
-        async function loadFriendsLeaderboardData() {
-            const container = document.getElementById('leaderboard-list-container');
-            container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>載入好友排行中...</div>";
-            if (!currentUser || !window.currentUserData) {
-                container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>請先登入後查看好友</div>";
-                return;
-            }
-
-            const friendsEmails = window.currentUserData.friends || [];
-            let targetUsers = [{
-                email: currentUser.email,
-                displayName: window.currentUserData.displayName || "我",
-                xp: window.currentUserData.xp || 0,
-                streakDays: window.currentUserData.streakDays || 0,
-                level: window.currentUserData.unlockedLevels ? window.currentUserData.unlockedLevels[0] : '1A',
-                isMe: true
-            }];
-
-            try {
-                if (friendsEmails.length > 0) {
-                    for (let i = 0; i < friendsEmails.length; i += 10) {
-                        const chunk = friendsEmails.slice(i, i + 10);
-                        const snap = await db.collection("users").where("email", "in", chunk).get();
-                        snap.forEach(doc => {
-                            const d = doc.data();
-                            targetUsers.push({
-                                email: d.email,
-                                displayName: d.displayName || "好友",
-                                xp: d.xp || 0,
-                                streakDays: d.streakDays || 0,
-                                level: d.unlockedLevels ? d.unlockedLevels[0] : '1A',
-                                isMe: false
-                            });
-                        });
-                    }
-                }
-
-                targetUsers.sort((a, b) => (b.xp || 0) - (a.xp || 0));
-                container.innerHTML = "";
-                let rank = 1;
-                targetUsers.forEach(u => {
-                    const row = document.createElement('div');
-                    row.className = "rank-item-row" + (u.isMe ? " me-row" : "");
-                    let rankClass = rank === 1 ? "rank-1" : (rank === 2 ? "rank-2" : (rank === 3 ? "rank-3" : ""));
-
-                    row.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
-                            <div class="rank-num ${rankClass}">${rank}</div>
-                            <img src="https://lh3.googleusercontent.com/a/default-user" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
-                            <div style="display: flex; flex-direction: column; overflow: hidden;">
-                                <div style="font-weight: 800; color: #1e293b; font-size: 0.92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                    ${u.displayName}${u.isMe ? ' <span style="font-size:0.75rem; color:var(--duo-green);">(你)</span>' : ''}
-                                </div>
-                                <div style="font-size: 0.75rem; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${u.email}</div>
-                            </div>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
-                            <div style="text-align: right;">
-                                <div style="font-weight: 800; color: var(--duo-gold); font-size: 0.92rem;"><i class="fa-solid fa-star"></i> ${u.xp || 0}</div>
-                                <div style="font-size: 0.75rem; color: var(--duo-fire-red); font-weight: bold;"><i class="fa-solid fa-fire"></i> ${u.streakDays || 0} 天</div>
-                            </div>
-                            ${!u.isMe ? `<button onclick="removeFriend('${u.email}')" title="刪除好友" style="background:none; border:none; color:#9ca3af; cursor:pointer; padding:4px;"><i class="fa-solid fa-user-xmark"></i></button>` : ''}
-                        </div>
-                    `;
-                    container.appendChild(row);
-                    rank++;
-                });
-
-                if (friendsEmails.length === 0) {
-                    const notice = document.createElement('div');
-                    notice.style.cssText = "text-align:center; color:#6b7280; font-size:0.85rem; padding:15px 0;";
-                    notice.innerHTML = `目前只有你一人喔！點擊右上角「<strong>+ 加好友</strong>」與好友一同切磋！`;
-                    container.appendChild(notice);
-                }
-            } catch (err) {
-                container.innerHTML = "<div style='text-align:center; color:#ef4444; padding:20px 0;'>載入好友資料失敗，請確認網路！</div>";
-            }
-        }
-
-        document.getElementById('btn-confirm-add-friend').onclick = async () => {
-            const input = document.getElementById('input-friend-email');
-            const errDiv = document.getElementById('add-friend-error-msg');
-            const targetEmail = input.value.trim().toLowerCase();
-
-            if (!targetEmail) return (errDiv.innerText = "請輸入好友的電子信箱！", errDiv.classList.remove('hidden'));
-            if (targetEmail === currentUser.email.toLowerCase()) return (errDiv.innerText = "不能將自己加為好友喔！", errDiv.classList.remove('hidden'));
-
-            const currentFriends = window.currentUserData.friends || [];
-            if (currentFriends.map(e => e.toLowerCase()).includes(targetEmail)) {
-                return (errDiv.innerText = "此使用者已經在您的好友名單中囉！", errDiv.classList.remove('hidden'));
-            }
-
-            const btnConfirm = document.getElementById('btn-confirm-add-friend');
-            btnConfirm.disabled = true;
-            btnConfirm.innerText = "驗證中...";
-            try {
-                const querySnap = await db.collection("users").where("email", "==", targetEmail).limit(1).get();
-                if (querySnap.empty) {
-                    errDiv.innerText = "找不到此帳號！請確認對方是否已登入系統建立角色。";
-                    errDiv.classList.remove('hidden');
-                    return;
-                }
-                currentFriends.push(targetEmail);
-                await db.collection("users").doc(currentUser.uid).set({ friends: currentFriends }, { merge: true });
-                window.currentUserData.friends = currentFriends;
-                input.value = "";
-                errDiv.classList.add('hidden');
-                closeModal('modal-add-friend');
-                alert("已成功加入好友！");
-                loadFriendsLeaderboardData();
-            } catch (e) {
-                errDiv.innerText = "新增好友失敗：" + e.message;
-                errDiv.classList.add('hidden');
-            } finally {
-                btnConfirm.disabled = false;
-                btnConfirm.innerText = "確認新增";
-            }
-        };
-
-        async function removeFriend(email) {
-            if (!confirm(`確定要將 ${email} 從好友名單中移除嗎？`)) return;
-            try {
-                let currentFriends = (window.currentUserData.friends || []).filter(e => e.toLowerCase() !== email.toLowerCase());
-                await db.collection("users").doc(currentUser.uid).set({ friends: currentFriends }, { merge: true });
-                window.currentUserData.friends = currentFriends;
-                loadFriendsLeaderboardData();
-            } catch (e) {
-                alert("移除好友失敗：" + e.message);
-            }
-        }
-
-        let calendarCurrentDate = new Date();
-
-        function renderStreakCalendar(dateObj) {
-            const year = dateObj.getFullYear();
-            const month = dateObj.getMonth();
-            document.getElementById('lbl-calendar-month-title').innerText = `${year}年 ${month + 1}月`;
-
-            const container = document.getElementById('calendar-days-container');
-            if (!container) return;
-            container.innerHTML = "";
-
-            const firstDayIndex = new Date(year, month, 1).getDay();
-            const totalDays = new Date(year, month + 1, 0).getDate();
-            const historyList = (window.currentUserData && Array.isArray(window.currentUserData.checkInHistory)) ? window.currentUserData.checkInHistory : [];
-
-            for (let i = 0; i < firstDayIndex; i++) {
-                const emptyCell = document.createElement('div');
-                emptyCell.className = "calendar-day empty";
-                container.appendChild(emptyCell);
-            }
-
-            for (let day = 1; day <= totalDays; day++) {
-                const dayCell = document.createElement('div');
-                dayCell.className = "calendar-day";
-                dayCell.innerText = day;
-                const currentCellDateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                if (historyList.includes(currentCellDateStr)) dayCell.classList.add('checked');
-                container.appendChild(dayCell);
-            }
-        }
-
-        function openStreakDashboard() {
-            renderStreakCalendar(calendarCurrentDate);
-            openModal('modal-streak-dashboard');
-        }
-
-        document.getElementById('btn-cal-prev').onclick = () => {
-            calendarCurrentDate.setMonth(calendarCurrentDate.getMonth() - 1);
-            renderStreakCalendar(calendarCurrentDate);
-        };
-        document.getElementById('btn-cal-next').onclick = () => {
-            calendarCurrentDate.setMonth(calendarCurrentDate.getMonth() + 1);
-            renderStreakCalendar(calendarCurrentDate);
-        };
-
-        let initialLevelSelect = document.getElementById('initial-level-select');
-
-        function triggerLevelSelectionModal() {
-            let cachedUnlocked = [];
-            try { cachedUnlocked = JSON.parse(localStorage.getItem('cached_unlocked_levels') || '[]'); } catch(e) {}
-            const userUnlocked = ((window.currentUserData && window.currentUserData.unlockedLevels)
-                ? window.currentUserData.unlockedLevels
-                : (cachedUnlocked.length > 0 ? cachedUnlocked : ['0A'])).map(l => String(l).trim().toUpperCase());
-
-            const allLevels = [
-                { code: '0A', title: '0A 認識字母' },
-                { code: '1A', title: '1A 基礎級' },
-                { code: '1B', title: '1B 初級' },
-                { code: '2A', title: '2A 中初級' },
-                { code: '2B', title: '2B 中級' },
-                { code: '3A', title: '3A 中高級' },
-                { code: '3B', title: '3B 高級' },
-                { code: '4A', title: '4A 精通級' },
-                { code: 'JLPT/TOPIK', title: '檢定課程' }
-            ];
-
-            initialLevelSelect.innerHTML = "";
-            allLevels.forEach(item => {
-                const opt = document.createElement('option');
-                opt.value = item.code;
-                const isUnlocked = userUnlocked.includes(item.code.toUpperCase());
-                opt.innerText = isUnlocked ? item.title : `🔒 ${item.title} (未開通)`;
-                opt.disabled = !isUnlocked;
-                if (item.code.toUpperCase() === (currentConfig.level || '1A').toUpperCase()) opt.selected = true;
-                initialLevelSelect.appendChild(opt);
-            });
-            openModal('modal-select-initial-level');
-        }
-
-        document.getElementById('btn-confirm-initial-level').onclick = () => {
-            const selectedVal = initialLevelSelect.value;
-            const selectedText = initialLevelSelect.options[initialLevelSelect.selectedIndex].text;
-            closeModal('modal-select-initial-level');
-            selectLevel(selectedVal, selectedText);
-        };
-
-        function promptQuitChallenge() {
-            document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
-            openModal('modal-quit-challenge');
-        }
-
-        async function confirmExitChallenge() {
-            closeModal('modal-quit-challenge');
-            clearIdleTimer();
-            stopSpeechRecognition();
-            stopChallengeTimer();
-            await recordSessionFocusTime();
-            goToStep('step-lesson');
-        }
-
-        async function addXP(amount) {
-            if (!currentUser || !window.currentUserData) return;
-            window.currentUserData.xp = (window.currentUserData.xp || 0) + amount;
-            renderUserInfo();
-            try {
-                await db.collection('users').doc(currentUser.uid).set({ xp: firebase.firestore.FieldValue.increment(amount) }, { merge: true });
-            } catch (e) { console.error("更新 XP 失敗:", e); }
-        }
-
-        function toggleGearDropdown(dropdownId) {
-            const dropdown = document.getElementById(dropdownId);
-            document.querySelectorAll('.gear-dropdown').forEach(d => { if (d.id !== dropdownId) d.classList.remove('show'); });
-            if (dropdown) dropdown.classList.toggle('show');
-        }
-
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.gear-menu-container')) {
-                document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
-            }
-        });
-
-        function stopMediaRecording() {
-            if (mediaRecorder) {
-                if (mediaRecorder.state !== 'inactive') {
-                    try { mediaRecorder.stop(); } catch (e) {}
-                }
-                if (mediaRecorder.stream) {
-                    try {
-                        mediaRecorder.stream.getTracks().forEach(track => {
-                            track.stop();
-                            track.enabled = false;
-                        });
-                    } catch (e) {}
-                }
-            }
-        }
-
-        function stopSpeechRecognition() {
-            if (recognition) {
-                try { 
-                    recognition.onstart = null;
-                    recognition.onend = null;
-                    recognition.onerror = null;
-                    recognition.onresult = null;
-                    recognition.abort(); 
-                } catch (e) {}
-                recognition = null;
-            }
-            stopMediaRecording();
-            isRecording = false;
-            isToggling = false;
-            document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
-        }
-
-        function goToStep(stepId) {
-            stopSpeechRecognition();
-            revokeUserAudioUrl();
-            if (!stepId.startsWith('step-quiz-') && stepId !== 'step-grammar') {
-                clearIdleTimer();
-            }
-            document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
-            document.querySelectorAll('.step-page').forEach(page => page.classList.remove('active'));
-            const targetPage = document.getElementById(stepId);
-            if (targetPage) targetPage.classList.add('active');
-
-            const isWelcome = (stepId === 'step-welcome');
-            const isDoingQuiz = stepId.startsWith('step-quiz-') || stepId === 'step-grammar';
-
-            const metaBar = document.getElementById('app-user-meta-bar');
-            if (metaBar) {
-                metaBar.style.display = (isWelcome || isDoingQuiz) ? 'none' : 'flex';
-                updateUserFlagIcon();
-            }
-
-            const bottomBar = document.getElementById('app-bottom-bar');
-            if (bottomBar) {
-                bottomBar.style.display = (stepId === 'step-lesson') ? 'flex' : 'none';
-            }
-
-            if (stepId === 'step-level') renderLevelMenu();
-            if (stepId === 'step-lesson') {
-                setTimeout(() => {
-                    drawRoadmapSvgPath();
-                    const mainScrollView = document.getElementById('learning-content-view');
-                    const currentNode = document.querySelector('.candy-node-btn.current') || document.querySelector('.candy-node-btn');
-                    if (currentNode && mainScrollView) {
-                        currentNode.scrollIntoView({ behavior: 'auto', block: 'center' });
-                    } else if (mainScrollView) {
-                        mainScrollView.scrollTop = mainScrollView.scrollHeight;
-                    }
-                }, 100);
-            }
-        }
-
-        function setUserLang(lang) {
-            currentConfig.lang = lang;
-            localStorage.setItem('preferred_user_lang', lang);
-        }
-
-        async function forceClearAndSync() {
-            ['all_data_', 'grammar_data_', 'dialogue_data_', 'word_data_'].forEach(k => {
-                localStorage.removeItem(k + currentConfig.category);
-            });
-            showIslandLoading("快取清除完成，正在同步最新島嶼地圖...", 40);
-            await autoLoadCategoryData(currentConfig.category, true);
-            hideIslandLoading();
-        }
-
-        async function autoLoadCategoryData(cat, forceRefresh = false) {
-            const targetApi = API_URLS[cat];
-            if (!targetApi) return alert(`該語言 API 尚未設定！`);
-
-            const cacheMap = {
-                all: `all_data_${cat}`,
-                grammar: `grammar_data_${cat}`,
-                dialogue: `dialogue_data_${cat}`,
-                word: `word_data_${cat}`
-            };
-
-            const readCache = (key) => {
-                try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch(e) { return null; }
-            };
-
-            if (!forceRefresh) {
-                const cachedAll = readCache(cacheMap.all);
-                if (cachedAll && (cachedAll.shadow || cachedAll.blocks)) {
-                    rawShadowData = cachedAll.shadow || [];
-                    rawBlocksData = cachedAll.blocks || [];
-                    globalGrammarData = readCache(cacheMap.grammar) || [];
-                    rawDialogueData = readCache(cacheMap.dialogue) || [];
-                    rawWordData = readCache(cacheMap.word) || [];
-                    renderLevelMenu();
-                    return;
-                }
-            }
-
-            try {
-                const [shadowRes, blocksRes, grammarRes, dialogueRes, wordRes] = await Promise.all([
-                    requestGAS(targetApi, 'getLanguageData').catch(() => null),
-                    requestGAS(targetApi, 'getBlocksData').catch(() => null),
-                    requestGAS(targetApi, 'getGrammarData').catch(() => null),
-                    requestGAS(targetApi, 'getDialogueData').catch(() => null),
-                    requestGAS(targetApi, 'getWordData').catch(() => null)
-                ]);
-
-                rawShadowData = (shadowRes && shadowRes.status === 'success') ? (shadowRes.data || []) : [];
-                rawBlocksData = (blocksRes && blocksRes.status === 'success') ? (blocksRes.data || []) : [];
-                globalGrammarData = (grammarRes && grammarRes.status === 'success') ? (grammarRes.data || []) : [];
-                rawDialogueData = (dialogueRes && dialogueRes.status === 'success') ? (dialogueRes.data || []) : [];
-                rawWordData = (wordRes && wordRes.status === 'success') ? (wordRes.data || []) : [];
-
-                localStorage.setItem(cacheMap.all, JSON.stringify({ shadow: rawShadowData, blocks: rawBlocksData }));
-                localStorage.setItem(cacheMap.grammar, JSON.stringify(globalGrammarData));
-                localStorage.setItem(cacheMap.dialogue, JSON.stringify(rawDialogueData));
-                localStorage.setItem(cacheMap.word, JSON.stringify(rawWordData));
-
-                renderLevelMenu();
-            } catch (e) {
-                console.error(`自動更新 ${cat} 地圖失敗:`, e);
-                alert("無法連線至 API！請確認網路。");
-            }
-        }
-
-        function renderLevelMenu() {
-            const container = document.getElementById('container-levels');
-            if (!container) return;
-            container.innerHTML = "";
-
-            let cachedUnlocked = [];
-            try { cachedUnlocked = JSON.parse(localStorage.getItem('cached_unlocked_levels') || '[]'); } catch(e) {}
-            const userUnlocked = ((window.currentUserData && window.currentUserData.unlockedLevels) 
-                ? window.currentUserData.unlockedLevels 
-                : (cachedUnlocked.length > 0 ? cachedUnlocked : ['0A'])).map(l => String(l).trim().toUpperCase());
-
-            const krLevels = [
-                { code: '0A', title: '0A 認識字母' },
-                { code: '1A', title: '1A 基礎級' },
-                { code: '1B', title: '1B 初級' },
-                { code: '2A', title: '2A 中初級' },
-                { code: '2B', title: '2B 中級' },
-                { code: '3A', title: '3A 中高級' },
-                { code: '3B', title: '3B 高級' },
-                { code: '4A', title: '4A 精通級' },
-                { code: 'JLPT/TOPIK', title: '檢定課程' }
-            ];
-
-            krLevels.forEach(item => {
-                const btn = document.createElement('button');
-                const isUnlocked = userUnlocked.includes(item.code.toUpperCase());
-                if (isUnlocked) {
-                    btn.className = "btn-option";
-                    btn.innerText = item.title;
-                    btn.onclick = () => selectLevel(item.code, item.title);
-                } else {
-                    btn.className = "btn-option locked";
-                    btn.innerHTML = `<i class="fa-solid fa-lock"></i> ${item.title}`;
-                    btn.onclick = () => alert(`「${item.title}」未開通！\n請聯繫管理員購買該程度課程。`);
-                }
-                container.appendChild(btn);
-            });
-        }
-
-        function normalizeLevelStr(val) {
-            if (!val) return "";
-            let s = String(val).trim().toUpperCase().replace(/[\s_\-\/]/g, '');
-            return (s === 'JLPT' || s === 'TOPIK' || s === 'JLPTTOPIK') ? 'JLPTTOPIK' : s;
-        }
-
-        function selectLevel(levelCode, levelTitle) {
-            stopSpeechRecognition();
-            revokeUserAudioUrl();
-            currentConfig.level = levelCode;
-            localStorage.setItem('last_played_level', levelCode);
-            document.getElementById('lbl-user-level').innerText = levelCode;
-            renderAllLessonsForLevel(levelCode);
-            goToStep('step-lesson');
-        }
-
-        function startChallengeTimer(targetModeKey) {
-            stopChallengeTimer();
-            challengeTimeRemaining = 300;
-
-            const badgeElem = document.getElementById(`lbl-timer-${targetModeKey}`);
-            const barWrapper = document.getElementById(`bar-wrapper-${targetModeKey}`);
-            const barElem = document.getElementById(`bar-progress-${targetModeKey}`);
-
-            if (!badgeElem || !barWrapper || !barElem) return;
-
-            badgeElem.style.display = 'inline-block';
-            barWrapper.style.display = 'block';
-            barElem.style.width = '100%';
-
-            function updateDisplay() {
-                const mins = Math.floor(challengeTimeRemaining / 60);
-                const secs = challengeTimeRemaining % 60;
-                badgeElem.innerText = `⏱ ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-                const pct = (challengeTimeRemaining / 300) * 100;
-                barElem.style.width = `${pct}%`;
-
-                if (challengeTimeRemaining <= 30) barElem.style.background = 'var(--duo-fire-red)';
-                else if (challengeTimeRemaining <= 90) barElem.style.background = 'var(--duo-gold)';
-                else barElem.style.background = 'linear-gradient(90deg, var(--duo-blue), var(--duo-green))';
-            }
-
-            updateDisplay();
-            challengeTimerInterval = setInterval(() => {
-                challengeTimeRemaining--;
-                if (challengeTimeRemaining <= 0) {
-                    stopChallengeTimer();
-                    updateDisplay();
-                    recordSessionFocusTime();
-                    alert("⏰ 時間到！300 秒挑戰已結束。再試一次吧！");
-                    goToStep('step-lesson');
-                } else {
-                    updateDisplay();
-                }
-            }, 1000);
-        }
-
-        function stopChallengeTimer() {
-            if (challengeTimerInterval) {
-                clearInterval(challengeTimerInterval);
-                challengeTimerInterval = null;
-            }
-            ['shadow', 'chat', 'blocks', 'word-shadow', 'word-choice'].forEach(k => {
-                const badge = document.getElementById(`lbl-timer-${k}`);
-                const wrapper = document.getElementById(`bar-wrapper-${k}`);
-                if (badge) badge.style.display = 'none';
-                if (wrapper) wrapper.style.display = 'none';
-            });
-        }
-
-        function resetChallengeProgress() {
-            passedSubQuestions.clear();
-            currentChallengeScore = 0;
-            document.querySelectorAll('.btn-finish-challenge').forEach(btn => btn.style.display = 'none');
-            document.querySelectorAll('.btn-nav-next').forEach(btn => btn.style.display = 'none');
-        }
-
-        function markQuestionAnswered(qIndex) {
-            isCurrentQuestionAnswered = true;
-            if (!passedSubQuestions.has(qIndex)) {
-                passedSubQuestions.add(qIndex);
-                currentChallengeScore = Math.min(100, Math.round(passedSubQuestions.size * pointsPerQuestion));
-            }
-
-            if (qIndex >= totalChallengeQuestions - 1) {
-                document.querySelectorAll('.btn-finish-challenge').forEach(btn => btn.style.display = 'block');
-                document.querySelectorAll('.btn-nav-next').forEach(btn => btn.style.display = 'none');
-            } else {
-                const nextBtnId = (currentConfig.mode === 'shadow') ? 'btn-next' :
-                                  (currentConfig.mode === 'blocks') ? 'btn-block-next' :
-                                  (currentConfig.mode === 'sentence_chat') ? 'btn-chat-next' :
-                                  (currentConfig.mode === 'trace') ? 'btn-trace-next' :
-                                  (currentConfig.mode === 'word_shadow') ? 'btn-word-shadow-next' : 'btn-word-choice-next';
-                const nextBtn = document.getElementById(nextBtnId);
-                if (nextBtn) nextBtn.style.display = 'inline-block';
-            }
-        }
-
-        async function finishCurrentChallenge() {
-            clearIdleTimer();
-            stopSpeechRecognition();
-            stopChallengeTimer();
-
-            const elapsedSeconds = await recordSessionFocusTime();
-            const finalScore = Math.min(100, Math.round(passedSubQuestions.size * pointsPerQuestion));
-            const result = await saveChallengeScoreRecord(finalScore, elapsedSeconds);
-
-            if (currentUser && window.currentUserData) {
-                await processDailyCheckIn(currentUser, window.currentUserData);
-            }
-
-            const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_${currentConfig.mode}`;
-            let completedList = (window.currentUserData && Array.isArray(window.currentUserData.completedLessons)) ? window.currentUserData.completedLessons : [];
-
-            const isPassedStar = result.starInfo && result.starInfo.stars >= 1;
-
-            if (isPassedStar && !completedList.includes(lessonKey)) {
-                completedList.push(lessonKey);
-                window.currentUserData.completedLessons = completedList;
-                await addXP(100);
-                if (currentUser) {
-                    try {
-                        await db.collection("users").doc(currentUser.uid).set({ completedLessons: completedList }, { merge: true });
-                    } catch (err) {
-                        console.error("儲存通關紀錄失敗:", err);
-                    }
-                }
-            }
-
-            launchSettlementModal({
-                finalScore: finalScore,
-                starInfo: result.starInfo,
-                elapsedSeconds: elapsedSeconds,
-                bestTime: result.bestTime
-            });
-        }
-
-        async function finishGrammarTask() {
-            clearIdleTimer();
-            stopSpeechRecognition();
-            stopChallengeTimer();
-            await recordSessionFocusTime();
-
-            if (currentUser && window.currentUserData) {
-                await processDailyCheckIn(currentUser, window.currentUserData);
-            }
-
-            const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_grammar`;
-            let completedList = (window.currentUserData && Array.isArray(window.currentUserData.completedLessons)) ? window.currentUserData.completedLessons : [];
-
-            if (!completedList.includes(lessonKey)) {
-                completedList.push(lessonKey);
-                window.currentUserData.completedLessons = completedList;
-                await addXP(60);
-                if (currentUser) {
-                    try {
-                        await db.collection("users").doc(currentUser.uid).set({ completedLessons: completedList }, { merge: true });
-                    } catch (err) {
-                        console.error("儲存通關紀錄失敗:", err);
-                    }
-                }
-            }
-            openModal('modal-grammar-complete');
-        }
-
-        function selectLessonAndMode(lesson, mode) {
-            stopSpeechRecognition(); 
-            stopChallengeTimer();
-            revokeUserAudioUrl();
-            currentConfig.lesson = lesson;
-            currentConfig.mode = mode;
-            resetChallengeProgress();
-
-            challengeSessionStartTime = Date.now();
-            isIdlePaused = false;
-            resetIdleTimer();
-
-            if (currentUser) ProgressModel.updateUnitProgress(currentUser.uid, currentConfig.unit_id, lesson);
-
-            if (mode === 'grammar') {
-                const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-                const matchGrammar = globalGrammarData.find(g => 
-                    normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
-                    String(getItemField(g, 'unit_id')) === String(currentConfig.unit_id) &&
-                    String(getItemField(g, 'lesson')) === String(lesson)
-                );
-
-                if (matchGrammar && ((matchGrammar.dialogs && matchGrammar.dialogs.length) || (matchGrammar.quizzes && matchGrammar.quizzes.length))) {
-                    startGrammarChallenge(matchGrammar);
-                } else {
-                    alert("此關卡目前沒有設定獨立語法觀念喔！");
-                }
-            } else if (mode === 'trace') {
-                startTraceChallenge();
-            } else if (mode === 'sentence_chat') {
-                startSentenceChatChallenge();
-            } else if (mode.startsWith('word_')) {
-                startWordChallenge(mode);
-            } else {
-                startMainQuiz();
-            }
-        }
-
-        function cleanInitialWhitespace(str) {
-            return (str || '').replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
-        }
-
-        function startGrammarChallenge(grammarGroup) {
-            stopSpeechRecognition();
-            stopChallengeTimer();
-            revokeUserAudioUrl();
-            currentGrammarItem = grammarGroup;
-            currentDialogIndex = 0;
-            grammarQuizIndex = 0;
-            isGrammarQuizSubmitted = false;
-            
-            document.getElementById('lbl-grammar-info').innerText = `關卡任務 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Lesson ${currentConfig.lesson}`;
-            document.getElementById('area-grammar-quiz').style.display = 'none';
-
-            let expandedQuizzes = [];
-            (currentGrammarItem.quizzes || []).forEach(qObj => {
-                const qList = (qObj.question || '').split('/').map(s => s.trim()).filter(Boolean);
-                const aList = (qObj.answer || '').split('/').map(s => s.trim()).filter(Boolean);
-                
-                if (qList.length > 1) {
-                    qList.forEach((qText, qIdx) => {
-                        expandedQuizzes.push({
-                            question: qText,
-                            choice: qObj.choice || '',
-                            answer: aList[qIdx] !== undefined ? aList[qIdx] : (aList[0] || ''),
-                            correct: qObj.correct || "🎉 完全正確！",
-                            incorrect: qObj.incorrect || "❌ 答案不太對喔，再試一次！"
-                        });
-                    });
-                } else {
-                    expandedQuizzes.push(qObj);
-                }
-            });
-            currentGrammarItem.expandedQuizzes = expandedQuizzes;
-
-            if (currentGrammarItem.dialogs && currentGrammarItem.dialogs.length > 0) {
-                document.getElementById('area-grammar-dialog').style.display = 'flex';
-                showCurrentGrammarDialog();
-            } else if (currentGrammarItem.expandedQuizzes && currentGrammarItem.expandedQuizzes.length > 0) {
-                showGrammarQuizArea();
-            } else {
-                alert("此關卡無可呈現的語法內容！");
-                goToStep('step-lesson');
-                return;
-            }
-
-            goToStep('step-grammar');
-        }
 
         function showCurrentGrammarDialog() {
             if (!currentGrammarItem || !currentGrammarItem.dialogs) return;
@@ -5268,6 +4491,7 @@ document.getElementById('btn-save-nickname').onclick = async () => {
             const listExample = document.getElementById('container-grammar-example-list');
             listExample.innerHTML = "";
 
+            // 只要 example 欄位中有資料，即自動生成播放按鈕，不需要額外輸入 yes
             if (rawExample) {
                 const exArr = rawExample.split('/').map(s => s.trim()).filter(Boolean);
                 if (exArr.length > 0) {
@@ -5295,8 +4519,7 @@ document.getElementById('btn-save-nickname').onclick = async () => {
                 boxExample.style.display = 'none';
             }
         }
-
-        function startTypewriter(text) {
+function startTypewriter(text) {
             if (typewriterTimer) clearInterval(typewriterTimer);
             const box = document.getElementById('lbl-grammar-dialog');
             const container = document.getElementById('box-grammar-dialog-main');
@@ -6796,8 +6019,7 @@ function traceUndo() {
             }
             return false;
         }
-
-        /* ================= 對話挑戰：先 A 後 B 全流程與提示欄位修正 ================= */
+/* ================= 對話挑戰：先 A 後 B 全流程、現代氣泡框與提示欄位修正 ================= */
         function startSentenceChatChallenge() {
             stopSpeechRecognition();
             stopChallengeTimer();
@@ -6843,22 +6065,9 @@ function traceUndo() {
             chatRole = 'A';
             isChatChallengeMode = (activeChallengeType === 'timed' || (activeChallengeType === 'entry' && !is0ALevel));
 
-            updateChatRoleBadge();
             goToStep('step-quiz-sentence-chat');
             displayChatRound();
             if (activeChallengeType === 'timed') startChallengeTimer('chat');
-        }
-
-        function updateChatRoleBadge() {
-            const roleAElem = document.getElementById('btn-chat-role-a');
-            const roleBElem = document.getElementById('btn-chat-role-b');
-            if (chatRole === 'A') {
-                if (roleAElem) { roleAElem.classList.add('active'); roleAElem.innerText = "當前：第一階段 角色 A (我念 A 聽 B)"; }
-                if (roleBElem) { roleBElem.classList.remove('active'); roleBElem.innerText = "下一階段：角色 B (聽 A 我念 B)"; }
-            } else {
-                if (roleBElem) { roleBElem.classList.add('active'); roleBElem.innerText = "當前：第二階段 角色 B (聽 A 我念 B)"; }
-                if (roleAElem) { roleAElem.classList.remove('active'); roleAElem.innerText = "✔ 第一階段 角色 A (已完成)"; }
-            }
         }
 
         function displayChatRound(autoPlayOpponent = true) {
@@ -6881,11 +6090,13 @@ function traceUndo() {
             document.getElementById('lbl-chat-score').innerText = "判定結果：--";
             document.getElementById('lbl-chat-score').style.color = "#58cc02";
 
-            const topPartnerBubble = document.getElementById('chat-top-partner-bubble');
-            const bottomPartnerBubble = document.getElementById('chat-partner-bubble');
+            const rowBubbleA = document.getElementById('row-chat-bubble-a');
+            const rowBubbleB = document.getElementById('row-chat-bubble-b');
+            const lblBubbleAText = document.getElementById('lbl-chat-bubble-a-text');
+            const lblBubbleBText = document.getElementById('lbl-chat-bubble-b-text');
+            const btnPlayA = document.getElementById('btn-bubble-play-a');
+            const btnPlayB = document.getElementById('btn-bubble-play-b');
             const hintBubble = document.getElementById('chat-a-hint-bubble');
-            const targetTextElem = document.getElementById('lbl-chat-target-text');
-            const transElem = document.getElementById('lbl-chat-translation');
             const instructionTopElem = document.getElementById('lbl-chat-instruction-top');
             const playAudioBtn = document.getElementById('btn-chat-play-audio');
             const recordBtn = document.getElementById('btn-chat-start-record');
@@ -6894,15 +6105,14 @@ function traceUndo() {
             if (playAudioBtn) playAudioBtn.style.display = 'flex';
 
             if (chatRole === 'A') {
-                if (topPartnerBubble) topPartnerBubble.style.display = 'none';
-                if (bottomPartnerBubble) bottomPartnerBubble.style.display = 'none';
-                
-                // 入門模式與挑戰模式：均以 a1x 作為提示，不使用 hint_zh/en/jp
+                // 第一階段：擔任角色 A (我念 A 聽 B)
+                rowBubbleA.style.display = 'flex';
+                rowBubbleB.style.display = 'none';
+                if (btnPlayA) btnPlayA.style.display = 'none';
+
                 if (activeChallengeType === 'entry' || activeChallengeType === 'timed') {
-                    instructionTopElem.innerText = `【角色 A】請發起對話：依關鍵字提示念出提問：`;
-                    targetTextElem.innerText = (activeChallengeType === 'timed') ? "挑戰模式中，請念出完整提問句子" : (curRound.aText || "");
-                    targetTextElem.style.visibility = (activeChallengeType === 'timed') ? "visible" : "visible";
-                    transElem.innerText = "";
+                    instructionTopElem.innerText = `【角色 A】請發起對話：依提示念出提問：`;
+                    lblBubbleAText.innerText = (activeChallengeType === 'timed') ? "請依提示念出提問句子" : (curRound.aText || "");
 
                     const activeHint = curRound.axText || curRound.aText;
                     if (activeHint && activeHint.trim()) {
@@ -6913,22 +6123,22 @@ function traceUndo() {
                         hintBubble.style.display = 'none';
                     }
                 } else {
-                    // 練習模式：直接顯示完整句子
                     instructionTopElem.innerText = `【角色 A】請發起對話：念出提問句子：`;
                     hintBubble.style.display = 'none';
-                    targetTextElem.innerText = curRound.aText || curRound.axText;
-                    transElem.innerText = curRound.zh_tw || "";
+                    lblBubbleAText.innerText = curRound.aText || curRound.axText;
                 }
             } else {
-                // 角色 B 狀態
-                if (bottomPartnerBubble) bottomPartnerBubble.style.display = 'none';
+                // 第二階段：擔任角色 B (聽 A 我念 B)
+                rowBubbleA.style.display = 'flex';
+                lblBubbleAText.innerText = curRound.aText;
+                if (btnPlayA) btnPlayA.style.display = 'inline-flex';
 
-                // 入門模式與挑戰模式：均以 b1x 作為提示，不使用 hint_b_zh/en/jp
+                rowBubbleB.style.display = 'flex';
+                if (btnPlayB) btnPlayB.style.display = 'none';
+
                 if (activeChallengeType === 'entry' || activeChallengeType === 'timed') {
-                    if (topPartnerBubble) topPartnerBubble.style.display = 'none';
-                    instructionTopElem.innerText = `【角色 B】請聽對方提問，並依提示念出回應：`;
-                    targetTextElem.innerText = "請根據提示回答";
-                    transElem.innerText = "";
+                    instructionTopElem.innerText = `【角色 B】請聽對方提問，並依提示回答：`;
+                    lblBubbleBText.innerText = "請根據提示回答";
 
                     const activeBHint = curRound.bxText || curRound.bText;
                     if (activeBHint && activeBHint.trim()) {
@@ -6939,18 +6149,9 @@ function traceUndo() {
                         hintBubble.style.display = 'none';
                     }
                 } else {
-                    // 練習模式：上方顯示提問方對話，下方顯示完整回答
-                    hintBubble.style.display = 'none';
                     instructionTopElem.innerText = `【角色 B】對方提問如下，請念出你的回答：`;
-                    
-                    if (topPartnerBubble) {
-                        topPartnerBubble.style.display = 'block';
-                        document.getElementById('lbl-top-partner-title').innerText = `對方 (Speaker A) 提問：`;
-                        document.getElementById('lbl-top-partner-text').innerText = curRound.aText;
-                    }
-                    
-                    targetTextElem.innerText = curRound.bText || curRound.bxText;
-                    transElem.innerText = curRound.zh_tw || "";
+                    hintBubble.style.display = 'none';
+                    lblBubbleBText.innerText = curRound.bText || curRound.bxText;
                 }
 
                 if (autoPlayOpponent) setTimeout(() => playAudioOrTTS(curRound.aAudio, curRound.aText, 0.85), 350);
@@ -6971,32 +6172,27 @@ function traceUndo() {
             markQuestionAnswered(globalIndex);
 
             const curRound = chatRounds[chatRoundIndex];
-            const targetTextElem = document.getElementById('lbl-chat-target-text');
+            const lblBubbleAText = document.getElementById('lbl-chat-bubble-a-text');
+            const lblBubbleBText = document.getElementById('lbl-chat-bubble-b-text');
+            const rowBubbleB = document.getElementById('row-chat-bubble-b');
+            const btnPlayB = document.getElementById('btn-bubble-play-b');
 
             if (chatRole === 'A') {
                 document.getElementById('lbl-chat-score').innerText = "🎉 提問合格！";
                 document.getElementById('lbl-chat-score').style.color = "#58cc02";
-                targetTextElem.innerText = curRound.aText;
+                lblBubbleAText.innerText = curRound.aText;
                 
-                const bottomPartnerBubble = document.getElementById('chat-partner-bubble');
-                if (bottomPartnerBubble) {
-                    bottomPartnerBubble.style.display = 'block';
-                    document.getElementById('lbl-partner-title').innerText = `對方 (Speaker B) 回覆：`;
-                    document.getElementById('lbl-partner-text').innerText = curRound.bText;
-                }
+                // 提問成功後展示對方 (Speaker B) 的回答氣泡與播放鈕 (參考圖 2)
+                rowBubbleB.style.display = 'flex';
+                lblBubbleBText.innerText = curRound.bText;
+                if (btnPlayB) btnPlayB.style.display = 'inline-flex';
                 
                 setTimeout(() => playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85), 400);
             } else {
                 document.getElementById('lbl-chat-score').innerText = "🎉 回應合格！";
                 document.getElementById('lbl-chat-score').style.color = "#58cc02";
-                targetTextElem.innerText = curRound.bText;
-                
-                const topPartnerBubble = document.getElementById('chat-top-partner-bubble');
-                if (topPartnerBubble) {
-                    topPartnerBubble.style.display = 'block';
-                    document.getElementById('lbl-top-partner-title').innerText = `對方 (Speaker A) 提問：`;
-                    document.getElementById('lbl-top-partner-text').innerText = curRound.aText;
-                }
+                lblBubbleBText.innerText = curRound.bText;
+                if (btnPlayB) btnPlayB.style.display = 'inline-flex';
             }
         }
 
@@ -7014,7 +6210,6 @@ function traceUndo() {
             }
             chatRole = 'B';
             chatRoundIndex = 0;
-            updateChatRoleBadge();
             displayChatRound();
         }
 
@@ -7263,16 +6458,19 @@ function traceUndo() {
                             document.getElementById('lbl-chat-score').innerHTML = `慢慢唸，下次就能成功過關囉！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${expectedText}】</span>`;
                             document.getElementById('lbl-chat-score').style.color = "#ff4b4b";
 
-                            const targetTextElem = document.getElementById('lbl-chat-target-text');
-                            targetTextElem.innerText = expectedText;
+                            const lblBubbleAText = document.getElementById('lbl-chat-bubble-a-text');
+                            const lblBubbleBText = document.getElementById('lbl-chat-bubble-b-text');
+                            const rowBubbleB = document.getElementById('row-chat-bubble-b');
+                            const btnPlayB = document.getElementById('btn-bubble-play-b');
 
-                            if (chatRole === 'B') {
-                                const topPartnerBubble = document.getElementById('chat-top-partner-bubble');
-                                if (topPartnerBubble) {
-                                    topPartnerBubble.style.display = 'block';
-                                    document.getElementById('lbl-top-partner-title').innerText = `對方 (Speaker A) 提問：`;
-                                    document.getElementById('lbl-top-partner-text').innerText = curRound.aText;
-                                }
+                            if (chatRole === 'A') {
+                                lblBubbleAText.innerText = expectedText;
+                                rowBubbleB.style.display = 'flex';
+                                lblBubbleBText.innerText = curRound.bText;
+                                if (btnPlayB) btnPlayB.style.display = 'inline-flex';
+                            } else {
+                                lblBubbleBText.innerText = expectedText;
+                                if (btnPlayB) btnPlayB.style.display = 'inline-flex';
                             }
 
                             isCurrentQuestionAnswered = true;
