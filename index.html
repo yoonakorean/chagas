@@ -836,7 +836,8 @@
         .doors-opened .gate-unlock-shine { opacity: 1; transform: scale(2.2); }
         .gate-unlock-title { color: #ffffff; font-size: 1.6rem; font-weight: 900; letter-spacing: 1px; margin-bottom: 6px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .gate-unlock-sub { color: #cbd5e1; font-size: 0.95rem; font-weight: bold; margin-bottom: 24px; }
-/* 角色切換專屬動畫 Modal 樣式 */
+
+        /* 角色切換專屬動畫 Modal 樣式 */
         #role-switch-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(8px);
@@ -887,8 +888,7 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-
-        /* ================= 3D 單字翻轉卡專屬樣式 ================= */
+/* ================= 3D 單字翻轉卡專屬樣式 ================= */
         .fullscreen-stage {
             position: fixed; inset: 0; background: #fbfbfa; z-index: 999999;
             display: none; flex-direction: column; overflow: hidden;
@@ -900,7 +900,7 @@
         }
         .stage-return {
             display: flex; align-items: center; gap: 6px; color: #64748b;
-            font-size: 0.85rem; font-weight: 800; cursor: border; border: none; background: none;
+            font-size: 0.85rem; font-weight: 800; cursor: pointer; border: none; background: none;
         }
         .stage-counter { font-size: 0.82rem; font-weight: 800; color: #94a3b8; }
 
@@ -1397,20 +1397,20 @@
     <!-- 角色切換專屬動畫 Modal -->
     <div id="role-switch-modal">
         <div class="role-switch-anim-box">
-            <div class="role-avatar-circle role-b-circle" id="modal-anim-avatar-b">
-                <i class="fa-solid fa-user"></i>
+            <div class="role-avatar-circle role-a-circle" id="modal-anim-avatar-a">
+                <i class="fa-solid fa-user-tie"></i>
             </div>
             <div class="role-switch-arrow">
                 <i class="fa-solid fa-arrow-right-arrow-left"></i>
             </div>
-            <div class="role-avatar-circle role-a-circle" id="modal-anim-avatar-a">
-                <i class="fa-solid fa-user-tie"></i>
+            <div class="role-avatar-circle role-b-circle" id="modal-anim-avatar-b">
+                <i class="fa-solid fa-user"></i>
             </div>
         </div>
         <div class="role-switch-modal-title">🎉 第一階段完成！</div>
-        <div class="role-switch-modal-desc">接下來換你問問看囉！</div>
-        <button class="btn-role-switch-continue" onclick="proceedToRoleA()">
-            <i class="fa-solid fa-play"></i> 開始擔任提問方
+        <div class="role-switch-modal-desc">接下來換你擔任回應方囉！</div>
+        <button class="btn-role-switch-continue" onclick="proceedToRoleB()">
+            <i class="fa-solid fa-play"></i> 開始擔任回應方
         </button>
     </div>
 
@@ -1588,8 +1588,7 @@
             </div>
         </div>
     </div>
-
-    <!-- 依關卡挑選單字卡彈窗 -->
+<!-- 依關卡挑選單字卡彈窗 -->
     <div id="modal-select-flashcard-stage" class="custom-modal">
         <div class="custom-modal-card" style="padding: 22px 18px;">
             <div class="close-icon-circle" onclick="closeModal('modal-select-flashcard-stage')"><i class="fa-solid fa-xmark"></i></div>
@@ -1842,7 +1841,8 @@
             <button class="ctrl-btn" id="btn-flashcard-next" onclick="stepFlashcard(1)" aria-label="下一個"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
     </div>
-<!-- 主介面容器 -->
+
+    <!-- 主介面容器 -->
     <div class="shadowing-card">
         
         <!-- 上方狀態列 -->
@@ -1965,7 +1965,7 @@
                 </div>
             </div>
 
-            <!-- 步驟 6-A：Sentence 句子跟讀畫面 -->
+            <!-- 步驟 6-A：Sentence 句子跟讀畫面 (已徹底移除聽錄音按鈕) -->
             <div id="step-quiz-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-shadow-mode-title">句子跟讀</div>
@@ -1993,9 +1993,6 @@
                     <button class="btn-circle btn-mic-reset" id="btn-reset-shadow" onclick="forceResetMicrophoneSession()" title="麥克風無聲音？點此重置">
                         <i class="fa-solid fa-rotate"></i>
                     </button>
-                    <button class="btn-circle" id="btn-play-user-record" onclick="playUserRecording()" style="display:none; background:#10b981; box-shadow:0 4px 0 #059669;" title="播放我的發音">
-                        <i class="fa-solid fa-headphones"></i>
-                    </button>
                 </div>
                 <div class="result-box">
                     <div>辨識結果：<span id="lbl-recognized-text" style="font-weight: bold; color: #374151;">-</span></div>
@@ -2013,7 +2010,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 步驟 6-G：句子問答畫面 (對話挑戰) -->
+            <!-- 步驟 6-G：句子問答畫面 (對話挑戰：先 A 後 B 順序呈現) -->
             <div id="step-quiz-sentence-chat" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-chat-mode-title">對話挑戰</div>
@@ -2031,10 +2028,10 @@
                     <div class="timer-progress-bar" id="bar-progress-chat"></div>
                 </div>
 
-                <!-- 角色狀態指示標籤 -->
+                <!-- 角色狀態指示標籤：先角色 A，再角色 B -->
                 <div class="role-switch-box" style="margin-top: 4px;">
-                    <div class="btn-role" id="btn-chat-role-b">第一階段：角色 B (聽 A 我念 B)</div>
-                    <div class="btn-role" id="btn-chat-role-a">第二階段：角色 A (我念 A 聽 B)</div>
+                    <div class="btn-role" id="btn-chat-role-a">第一階段：角色 A (我念 A 聽 B)</div>
+                    <div class="btn-role" id="btn-chat-role-b">第二階段：角色 B (聽 A 我念 B)</div>
                 </div>
 
                 <div>
@@ -2052,11 +2049,11 @@
                     <div style="font-size: 1.25rem; font-weight: bold; color: #0f172a;" id="lbl-top-partner-text">...</div>
                 </div>
 
-                <!-- 依需求對調：主要文字框置於上方 (角色 A 時顯示挑戰提問句；角色 B 時顯示請根據提示回答) -->
+                <!-- 主要文字框置於上方 (角色 A 時顯示提問句；角色 B 時顯示提示回答句) -->
                 <div class="target-text" id="lbl-chat-target-text">載入中...</div>
                 <div class="translation-text" id="lbl-chat-translation">...</div>
 
-                <!-- 依需求對調：黃色提示框置於下方，並顯示 a1x / b1x 內容 -->
+                <!-- 黃色提示框置於下方，顯示 a1x / b1x 內容 -->
                 <div id="chat-a-hint-bubble" style="display: none; background: #fef3c7; border: 1.5px solid #fde68a; border-radius: 14px; padding: 10px; margin: 10px 0; text-align: left;">
                     <div style="font-size: 0.85rem; color: #b45309; font-weight: 800; margin-bottom: 2px;" id="lbl-chat-a-hint-title">提示：</div>
                     <div style="font-size: 1.15rem; font-weight: bold; color: #92400e;" id="lbl-chat-a-hint-text">...</div>
@@ -2154,8 +2151,7 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-
-            <!-- 步驟 6-H：0A 字母臨摹畫面 -->
+<!-- 步驟 6-H：0A 字母臨摹畫面 -->
             <div id="step-quiz-trace" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-trace-title">字母臨摹</div>
@@ -2425,7 +2421,8 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-<!-- 核心邏輯腳本開始 -->
+
+    <!-- 核心邏輯腳本開始 -->
     <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -2476,10 +2473,10 @@
         let userRecordedAudioUrl = null;
         let lastRecognizedSpeechText = "";
 
-        // 對話挑戰變數：預設先跑角色 B，再接角色 A
+        // 對話挑戰變數：先擔任角色 A，全部完成後再擔任角色 B
         let chatRounds = [];
         let chatRoundIndex = 0;
-        let chatRole = 'B';
+        let chatRole = 'A';
         let isChatChallengeMode = false;
         let chatRoundPassed = false;
         let wordQuestions = [];
@@ -2595,9 +2592,9 @@
             'sentence_chat': {
                 title: '💬 對話挑戰玩法說明',
                 content: `
-                    <strong>1. 雙向訓練：</strong> 挑戰全程一律先由【角色 B】開始（聽 Speaker A 念出回答），全部完成後自動進入【角色 A】（發起提問聆聽回覆）。<br>
+                    <strong>1. 雙向訓練：</strong> 挑戰全程一律先由【角色 A】開始（發起提問聆聽回覆），全部完成後自動進入【角色 B】（聽 Speaker A 念出回答）。<br>
                     <strong>2. 一問一答：</strong> 當輪到角色 A 提問完畢且發音合格後，對方的回覆框會自然出現在下方。<br>
-                    <strong>3. 依序通關：</strong> 需連續完成角色 B 與角色 A 兩輪練習，才能完成整組對話挑戰！
+                    <strong>3. 依序通關：</strong> 需連續完成角色 A 與角色 B 兩輪練習，才能完成整組對話挑戰！
                 `
             }
         };
@@ -2619,8 +2616,7 @@
             closeModal('modal-guide-detail');
             openModal('modal-guide-modes');
         }
-
-        function katakanaToHiragana(str) {
+function katakanaToHiragana(str) {
             return (str || '').replace(/[\u30A1-\u30F6]/g, function(match) {
                 return String.fromCharCode(match.charCodeAt(0) - 0x60);
             });
@@ -2996,7 +2992,7 @@
             playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85);
         }
 
-        // 隱藏錄音與重置按鈕，僅保留播放音檔按鈕（評分送出後或合格後調用）
+        // 隱藏錄音與重置按鈕，僅保留播放音檔按鈕
         function hideRecordingControls() {
             const activeMode = currentConfig.mode;
             if (activeMode === 'sentence_chat') {
@@ -3086,7 +3082,8 @@
                 userRecordedAudioUrl = null;
             }
         }
-function showIslandLoading(subText = "🏝️ 島嶼生成中，正在同步最新地圖...", progressPct = 30) {
+
+        function showIslandLoading(subText = "🏝️ 島嶼生成中，正在同步最新地圖...", progressPct = 30) {
             const overlay = document.getElementById('game-loading-overlay');
             const subElem = document.getElementById('lbl-island-loading-sub');
             const bar = document.getElementById('island-loading-bar');
@@ -3318,8 +3315,7 @@ function showIslandLoading(subText = "🏝️ 島嶼生成中，正在同步最�
                 return null;
             }
         }
-
-        async function verifyAndSyncUser(user, isInteractive = false) {
+async function verifyAndSyncUser(user, isInteractive = false) {
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
                 if (!gasResult || gasResult.status !== "success") {
@@ -3470,7 +3466,8 @@ function showIslandLoading(subText = "🏝️ 島嶼生成中，正在同步最�
                 renderAllLessonsForLevel(currentConfig.level);
             }, 1900);
         }
-function renderCandyRoadmap(unitId, filteredByLevel, units) {
+
+        function renderCandyRoadmap(unitId, filteredByLevel, units) {
             const nodesContainer = document.getElementById('roadmap-nodes-list');
             const svgCanvas = document.getElementById('roadmap-svg-canvas');
             nodesContainer.innerHTML = "";
@@ -5363,7 +5360,8 @@ document.getElementById('btn-save-nickname').onclick = async () => {
                 finishGrammarTask();
             }
         }
-function extractPureAnswer(questionText, rawAnswerText) {
+
+        function extractPureAnswer(questionText, rawAnswerText) {
             if (!rawAnswerText) return "";
             let q = (questionText || "").replace(/_+/g, "___").trim();
             let a = String(rawAnswerText).trim();
@@ -5853,8 +5851,7 @@ function extractPureAnswer(questionText, rawAnswerText) {
                 drawCurrentStrokeGuide(curItem);
             }
         }
-
-        function traceUndo() {
+function traceUndo() {
             if (isCurrentQuestionAnswered) return;
             if (traceStrokes.length > 0) {
                 traceStrokes.pop();
@@ -6395,7 +6392,8 @@ function extractPureAnswer(questionText, rawAnswerText) {
                 }
             }
         }
-function displayQuestion() {
+
+        function displayQuestion() {
             stopSpeechRecognition();
             resetSpeechEvalButtons();
             restoreRecordingControls();
@@ -6799,7 +6797,7 @@ function displayQuestion() {
             return false;
         }
 
-        /* ================= 對話挑戰：先 B 後 A 全流程與一問一答排列核心 ================= */
+        /* ================= 對話挑戰：先 A 後 B 全流程與提示欄位修正 ================= */
         function startSentenceChatChallenge() {
             stopSpeechRecognition();
             stopChallengeTimer();
@@ -6830,13 +6828,7 @@ function displayQuestion() {
                         bxText: (d.b1x || bText).trim(),
                         aAudio: d.a1_audio || d.audio_url || '',
                         bAudio: d.b1_audio || d.audio_url || '',
-                        zh_tw: d.zh_tw || d.zh || '',
-                        hintZh: d.hint_zh || '',
-                        hintEn: d.hint_en || '',
-                        hintJp: d.hint_jp || '',
-                        hintBZh: d.hint_b_zh || d.hint_zh || '',
-                        hintBEn: d.hint_b_en || d.hint_en || '',
-                        hintBJp: d.hint_b_jp || d.hint_jp || ''
+                        zh_tw: d.zh_tw || d.zh || ''
                     });
                 }
             });
@@ -6847,7 +6839,8 @@ function displayQuestion() {
             totalChallengeQuestions = chatRounds.length * 2;
             pointsPerQuestion = totalChallengeQuestions > 0 ? (100 / totalChallengeQuestions) : 10;
             
-            chatRole = 'B';
+            // 先由角色 A 開始
+            chatRole = 'A';
             isChatChallengeMode = (activeChallengeType === 'timed' || (activeChallengeType === 'entry' && !is0ALevel));
 
             updateChatRoleBadge();
@@ -6859,12 +6852,12 @@ function displayQuestion() {
         function updateChatRoleBadge() {
             const roleAElem = document.getElementById('btn-chat-role-a');
             const roleBElem = document.getElementById('btn-chat-role-b');
-            if (chatRole === 'B') {
-                if (roleBElem) { roleBElem.classList.add('active'); roleBElem.innerText = "當前：第一階段 角色 B (聽 A 我念 B)"; }
-                if (roleAElem) { roleAElem.classList.remove('active'); roleAElem.innerText = "下一階段：角色 A (我念 A 聽 B)"; }
+            if (chatRole === 'A') {
+                if (roleAElem) { roleAElem.classList.add('active'); roleAElem.innerText = "當前：第一階段 角色 A (我念 A 聽 B)"; }
+                if (roleBElem) { roleBElem.classList.remove('active'); roleBElem.innerText = "下一階段：角色 B (聽 A 我念 B)"; }
             } else {
-                if (roleAElem) { roleAElem.classList.add('active'); roleAElem.innerText = "當前：第二階段 角色 A (我念 A 聽 B)"; }
-                if (roleBElem) { roleBElem.classList.remove('active'); roleBElem.innerText = "✔ 第一階段 角色 B (已完成)"; }
+                if (roleBElem) { roleBElem.classList.add('active'); roleBElem.innerText = "當前：第二階段 角色 B (聽 A 我念 B)"; }
+                if (roleAElem) { roleAElem.classList.remove('active'); roleAElem.innerText = "✔ 第一階段 角色 A (已完成)"; }
             }
         }
 
@@ -6882,7 +6875,7 @@ function displayQuestion() {
             const nextBtnChat = document.getElementById('btn-chat-next');
             if (nextBtnChat) nextBtnChat.style.display = 'none';
 
-            const rolePhaseText = (chatRole === 'B') ? `【第一階段·角色 B】` : `【第二階段·角色 A】`;
+            const rolePhaseText = (chatRole === 'A') ? `【第一階段·角色 A】` : `【第二階段·角色 B】`;
             document.getElementById('lbl-chat-progress').innerText = `${rolePhaseText} ${chatRoundIndex + 1} / ${roundTotal}`;
             document.getElementById('lbl-chat-recognized-text').innerText = "-";
             document.getElementById('lbl-chat-score').innerText = "判定結果：--";
@@ -6904,10 +6897,11 @@ function displayQuestion() {
                 if (topPartnerBubble) topPartnerBubble.style.display = 'none';
                 if (bottomPartnerBubble) bottomPartnerBubble.style.display = 'none';
                 
-                if (activeChallengeType === 'entry') {
-                    // 入門模式 角色 A：位置互換 + 提示黃色框顯示 a1x 欄位資料
+                // 入門模式與挑戰模式：均以 a1x 作為提示，不使用 hint_zh/en/jp
+                if (activeChallengeType === 'entry' || activeChallengeType === 'timed') {
                     instructionTopElem.innerText = `【角色 A】請發起對話：依關鍵字提示念出提問：`;
-                    targetTextElem.innerText = "挑戰模式中，請念出完整提問句子";
+                    targetTextElem.innerText = (activeChallengeType === 'timed') ? "挑戰模式中，請念出完整提問句子" : (curRound.aText || "");
+                    targetTextElem.style.visibility = (activeChallengeType === 'timed') ? "visible" : "visible";
                     transElem.innerText = "";
 
                     const activeHint = curRound.axText || curRound.aText;
@@ -6918,24 +6912,8 @@ function displayQuestion() {
                     } else {
                         hintBubble.style.display = 'none';
                     }
-                } else if (activeChallengeType === 'timed') {
-                    // 挑戰模式 角色 A
-                    instructionTopElem.innerText = `【角色 A】請發起對話：依關鍵字提示念出提問：`;
-                    targetTextElem.innerText = "挑戰模式中，請念出完整提問句子";
-                    transElem.innerText = "";
-
-                    const activeHint = (currentConfig.lang === 'en') ? (curRound.hintEn || curRound.hintZh) :
-                                       (currentConfig.lang === 'ja') ? (curRound.hintJp || curRound.hintZh) : curRound.hintZh;
-
-                    if (activeHint && activeHint.trim()) {
-                        document.getElementById('lbl-chat-a-hint-title').innerText = "提示：";
-                        document.getElementById('lbl-chat-a-hint-text').innerText = activeHint.trim();
-                        hintBubble.style.display = 'block';
-                    } else {
-                        hintBubble.style.display = 'none';
-                    }
                 } else {
-                    // 練習模式：直接顯示角色 A 整句
+                    // 練習模式：直接顯示完整句子
                     instructionTopElem.innerText = `【角色 A】請發起對話：念出提問句子：`;
                     hintBubble.style.display = 'none';
                     targetTextElem.innerText = curRound.aText || curRound.axText;
@@ -6945,8 +6923,8 @@ function displayQuestion() {
                 // 角色 B 狀態
                 if (bottomPartnerBubble) bottomPartnerBubble.style.display = 'none';
 
-                if (activeChallengeType === 'entry') {
-                    // 入門模式 角色 B：位置互換 + 提示黃色框顯示 b1x 欄位資料
+                // 入門模式與挑戰模式：均以 b1x 作為提示，不使用 hint_b_zh/en/jp
+                if (activeChallengeType === 'entry' || activeChallengeType === 'timed') {
                     if (topPartnerBubble) topPartnerBubble.style.display = 'none';
                     instructionTopElem.innerText = `【角色 B】請聽對方提問，並依提示念出回應：`;
                     targetTextElem.innerText = "請根據提示回答";
@@ -6960,26 +6938,8 @@ function displayQuestion() {
                     } else {
                         hintBubble.style.display = 'none';
                     }
-                } else if (activeChallengeType === 'timed') {
-                    // 挑戰模式 角色 B
-                    if (topPartnerBubble) topPartnerBubble.style.display = 'none';
-                    instructionTopElem.innerText = `【角色 B】請聽對方提問，並依提示念出回應：`;
-                    targetTextElem.innerText = "請根據提示回答";
-                    transElem.innerText = "";
-
-                    const activeBHint = (currentConfig.lang === 'en') ? (curRound.hintBEn || curRound.hintEn || curRound.hintBZh || curRound.hintZh) :
-                                        (currentConfig.lang === 'ja') ? (curRound.hintBJp || curRound.hintJp || curRound.hintBZh || curRound.hintZh) :
-                                        (curRound.hintBZh || curRound.hintZh || curRound.zh_tw || "");
-
-                    if (activeBHint && activeBHint.trim()) {
-                        document.getElementById('lbl-chat-a-hint-title').innerText = "提示：";
-                        document.getElementById('lbl-chat-a-hint-text').innerText = activeBHint.trim();
-                        hintBubble.style.display = 'block';
-                    } else {
-                        hintBubble.style.display = 'none';
-                    }
                 } else {
-                    // 練習模式：角色 A 說的話直接在上方顯示（含獨立發音按鈕），主要文字處直接顯示角色 B 整句
+                    // 練習模式：上方顯示提問方對話，下方顯示完整回答
                     hintBubble.style.display = 'none';
                     instructionTopElem.innerText = `【角色 B】對方提問如下，請念出你的回答：`;
                     
@@ -7007,7 +6967,7 @@ function displayQuestion() {
             chatRoundPassed = true;
             hideRecordingControls();
 
-            const globalIndex = (chatRole === 'B') ? chatRoundIndex : (chatRounds.length + chatRoundIndex);
+            const globalIndex = (chatRole === 'A') ? chatRoundIndex : (chatRounds.length + chatRoundIndex);
             markQuestionAnswered(globalIndex);
 
             const curRound = chatRounds[chatRoundIndex];
@@ -7047,12 +7007,12 @@ function displayQuestion() {
             }
         }
 
-        function proceedToRoleA() {
+        function proceedToRoleB() {
             const modal = document.getElementById('role-switch-modal');
             if (modal) {
                 modal.classList.remove('show');
             }
-            chatRole = 'A';
+            chatRole = 'B';
             chatRoundIndex = 0;
             updateChatRoleBadge();
             displayChatRound();
@@ -7062,7 +7022,7 @@ function displayQuestion() {
             if (chatRoundIndex < chatRounds.length - 1) { 
                 chatRoundIndex++; 
                 displayChatRound(); 
-            } else if (chatRole === 'B') {
+            } else if (chatRole === 'A') {
                 triggerRoleSwitchAnimation();
             }
         }
@@ -7098,7 +7058,7 @@ function displayQuestion() {
                         userRecordedAudioUrl = URL.createObjectURL(audioBlob);
 
                         const isWord = (currentConfig.mode === 'word_shadow');
-                        const playBtn = isWord ? document.getElementById('btn-word-shadow-play-user-record') : document.getElementById('btn-play-user-record');
+                        const playBtn = isWord ? document.getElementById('btn-word-shadow-play-user-record') : null;
                         const evalBtn = isWord ? document.getElementById('btn-word-shadow-submit-speech-eval') : document.getElementById('btn-submit-speech-eval');
                         if (playBtn) playBtn.style.display = 'inline-flex';
                         if (evalBtn) evalBtn.style.display = 'block';
@@ -7132,7 +7092,7 @@ function displayQuestion() {
         function resetSpeechEvalButtons() {
             lastRecognizedSpeechText = "";
             revokeUserAudioUrl();
-            ['btn-play-user-record', 'btn-word-shadow-play-user-record'].forEach(id => {
+            ['btn-word-shadow-play-user-record'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
@@ -7316,7 +7276,7 @@ function displayQuestion() {
                             }
 
                             isCurrentQuestionAnswered = true;
-                            const globalIndex = (chatRole === 'B') ? chatRoundIndex : (chatRounds.length + chatRoundIndex);
+                            const globalIndex = (chatRole === 'A') ? chatRoundIndex : (chatRounds.length + chatRoundIndex);
                             if (globalIndex < totalChallengeQuestions - 1) {
                                 const nextBtn = document.getElementById('btn-chat-next');
                                 if (nextBtn) nextBtn.style.display = 'inline-block';
