@@ -888,7 +888,8 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-/* ================= 現代即時通訊對話框風格 (參考圖 2) ================= */
+
+        /* ================= 現代即時通訊對話框風格 ================= */
         .chat-dialog-stage {
             display: flex;
             flex-direction: column;
@@ -1016,8 +1017,7 @@
             transform: scale(0.9);
             background: #0f172a;
         }
-
-        /* ================= 3D 單字翻轉卡專屬樣式 ================= */
+/* ================= 3D 單字翻轉卡專屬樣式 ================= */
         .fullscreen-stage {
             position: fixed; inset: 0; background: #fbfbfa; z-index: 999999;
             display: none; flex-direction: column; overflow: hidden;
@@ -1666,8 +1666,7 @@
             </div>
         </div>
     </div>
-
-    <!-- 選擇課程程度 Modal -->
+<!-- 選擇課程程度 Modal -->
     <div id="modal-select-initial-level" class="custom-modal">
         <div class="custom-modal-card">
             <div class="close-icon-circle" id="btn-close-level-modal" onclick="closeModal('modal-select-initial-level')"><i class="fa-solid fa-xmark"></i></div>
@@ -1711,7 +1710,8 @@
             </div>
         </div>
     </div>
-<!-- 依關卡挑選單字卡彈窗 -->
+
+    <!-- 依關卡挑選單字卡彈窗 -->
     <div id="modal-select-flashcard-stage" class="custom-modal">
         <div class="custom-modal-card" style="padding: 22px 18px;">
             <div class="close-icon-circle" onclick="closeModal('modal-select-flashcard-stage')"><i class="fa-solid fa-xmark"></i></div>
@@ -2088,7 +2088,7 @@
                 </div>
             </div>
 
-            <!-- 步驟 6-A：Sentence 句子跟讀畫面 (已徹底移除聽錄音按鈕) -->
+            <!-- 步驟 6-A：Sentence 句子跟讀畫面 -->
             <div id="step-quiz-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-shadow-mode-title">句子跟讀</div>
@@ -2133,7 +2133,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 步驟 6-G：對話挑戰畫面 (已刪除紅圈角色標籤，改為圖 2 的現代對話氣泡) -->
+            <!-- 步驟 6-G：對話挑戰畫面 -->
             <div id="step-quiz-sentence-chat" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-chat-mode-title">對話挑戰</div>
@@ -2151,14 +2151,12 @@
                     <div class="timer-progress-bar" id="bar-progress-chat"></div>
                 </div>
 
-                <!-- 頂部指引徽章 (原紅圈的冗餘指示標籤已在此完全刪除) -->
                 <div>
                     <div class="instruction-badge-bar" id="lbl-chat-instruction-top">請依指引念出句子：</div>
                 </div>
 
-                <!-- 對話氣泡舞台 (依第二張圖風格呈現：上方天藍色氣泡，下方米黃色氣泡 + 黑色圓形播放鈕) -->
+                <!-- 對話氣泡舞台 -->
                 <div class="chat-dialog-stage">
-                    <!-- 對話提問方 A (天藍色氣泡，朝左箭頭) -->
                     <div class="chat-bubble-row bubble-row-left" id="row-chat-bubble-a">
                         <div class="chat-msg-bubble bubble-a" id="bubble-chat-a">
                             <span id="lbl-chat-bubble-a-text">...</span>
@@ -2168,7 +2166,6 @@
                         </div>
                     </div>
 
-                    <!-- 對話回答方 B (米黃色氣泡，朝右箭頭，附帶黑色圓形播放鈕與人物裝飾) -->
                     <div class="chat-bubble-row bubble-row-right" id="row-chat-bubble-b" style="display: none;">
                         <div class="chat-msg-bubble bubble-b" id="bubble-chat-b">
                             <span id="lbl-chat-bubble-b-text">...</span>
@@ -2182,7 +2179,7 @@
                     </div>
                 </div>
 
-                <!-- 關鍵字提示氣泡 (黃色框：純顯示 a1x / b1x 內容) -->
+                <!-- 關鍵字提示氣泡 -->
                 <div id="chat-a-hint-bubble" style="display: none; background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 14px; padding: 10px 14px; margin: 4px auto 12px auto; max-width: 440px; text-align: left;">
                     <div style="font-size: 0.85rem; color: #b45309; font-weight: 800; margin-bottom: 2px;" id="lbl-chat-a-hint-title">提示：</div>
                     <div style="font-size: 1.15rem; font-weight: bold; color: #92400e;" id="lbl-chat-a-hint-text">...</div>
@@ -2200,6 +2197,11 @@
                     <div>辨識結果：<span id="lbl-chat-recognized-text" style="font-weight: bold; color: #374151;">-</span></div>
                     <div class="score-badge" id="lbl-chat-score">判定結果：--</div>
                 </div>
+
+                <!-- 對話挑戰手動比對發音按鈕 -->
+                <button class="btn-confirm" id="btn-chat-submit-speech-eval" onclick="evaluateUserSpeech()" style="display:none; margin-top:10px; background:var(--duo-blue); border-bottom-color:var(--duo-blue-shadow);">
+                    <i class="fa-solid fa-magnifying-glass"></i> 比對發音並評分
+                </button>
 
                 <div class="nav-controls">
                     <span class="lbl-progress" id="lbl-chat-progress">0 / 0</span>
@@ -2733,7 +2735,8 @@
             closeModal('modal-guide-detail');
             openModal('modal-guide-modes');
         }
-function katakanaToHiragana(str) {
+
+        function katakanaToHiragana(str) {
             return (str || '').replace(/[\u30A1-\u30F6]/g, function(match) {
                 return String.fromCharCode(match.charCodeAt(0) - 0x60);
             });
@@ -2862,8 +2865,7 @@ function katakanaToHiragana(str) {
             }
             return Array.from(candidates);
         }
-
-        const LANG_MUTUAL_MAP = {
+const LANG_MUTUAL_MAP = {
             'zh': 'chinese',
             'en': 'english',
             'ja': 'japanese',
@@ -3187,6 +3189,9 @@ function katakanaToHiragana(str) {
                 scoreLbl.innerText = "判定結果：--";
                 scoreLbl.style.color = "var(--duo-blue)";
             }
+
+            const chatEvalBtn = document.getElementById('btn-chat-submit-speech-eval');
+            if (chatEvalBtn) chatEvalBtn.style.display = 'none';
         }
 
         function revokeUserAudioUrl() {
@@ -3584,8 +3589,7 @@ function katakanaToHiragana(str) {
                 renderAllLessonsForLevel(currentConfig.level);
             }, 1900);
         }
-
-        function renderCandyRoadmap(unitId, filteredByLevel, units) {
+function renderCandyRoadmap(unitId, filteredByLevel, units) {
             const nodesContainer = document.getElementById('roadmap-nodes-list');
             const svgCanvas = document.getElementById('roadmap-svg-canvas');
             nodesContainer.innerHTML = "";
@@ -5386,7 +5390,6 @@ document.getElementById('btn-save-nickname').onclick = async () => {
             const listExample = document.getElementById('container-grammar-example-list');
             listExample.innerHTML = "";
 
-            // 只要 example 欄位中有資料，即自動生成播放按鈕，不需要額外輸入 yes
             if (rawExample) {
                 const exArr = rawExample.split('/').map(s => s.trim()).filter(Boolean);
                 if (exArr.length > 0) {
@@ -5969,7 +5972,8 @@ function startTypewriter(text) {
                 drawCurrentStrokeGuide(curItem);
             }
         }
-function traceUndo() {
+
+        function traceUndo() {
             if (isCurrentQuestionAnswered) return;
             if (traceStrokes.length > 0) {
                 traceStrokes.pop();
@@ -6318,7 +6322,7 @@ function traceUndo() {
                     playWordAudio();
                     markQuestionAnswered(wordIndex);
                 } else {
-                    scoreBadge.innerHTML = `太可惜了 繼續加油！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${correctKorean}】</span>`;
+                    scoreBadge.innerHTML = `太可惜了 繼續加油！`;
                     scoreBadge.style.color = "#ff4b4b";
                     targetTextElem.innerText = correctKorean;
                     targetTextElem.style.visibility = "visible";
@@ -6358,7 +6362,7 @@ function traceUndo() {
                     playWordAudio();
                     markQuestionAnswered(wordIndex);
                 } else {
-                    scoreBadge.innerHTML = `太可惜了 繼續加油！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${correctMeaning}】</span>`;
+                    scoreBadge.innerHTML = `太可惜了 繼續加油！`;
                     scoreBadge.style.color = "#ff4b4b";
                     targetTextElem.innerText = item.text || "";
                     targetTextElem.style.visibility = "visible";
@@ -6914,7 +6918,8 @@ function traceUndo() {
             }
             return false;
         }
-/* ================= 對話挑戰：先 A 後 B 全流程、現代氣泡框與提示欄位修正 ================= */
+
+        /* ================= 對話挑戰：先 A 後 B 全流程、現代氣泡框與提示欄位修正 ================= */
         function startSentenceChatChallenge() {
             stopSpeechRecognition();
             stopChallengeTimer();
@@ -6956,7 +6961,6 @@ function traceUndo() {
             totalChallengeQuestions = chatRounds.length * 2;
             pointsPerQuestion = totalChallengeQuestions > 0 ? (100 / totalChallengeQuestions) : 10;
             
-            // 先由角色 A 開始
             chatRole = 'A';
             isChatChallengeMode = (activeChallengeType === 'timed' || (activeChallengeType === 'entry' && !is0ALevel));
 
@@ -6979,6 +6983,9 @@ function traceUndo() {
             const nextBtnChat = document.getElementById('btn-chat-next');
             if (nextBtnChat) nextBtnChat.style.display = 'none';
 
+            const evalBtnChat = document.getElementById('btn-chat-submit-speech-eval');
+            if (evalBtnChat) evalBtnChat.style.display = 'none';
+
             const rolePhaseText = (chatRole === 'A') ? `【第一階段·角色 A】` : `【第二階段·角色 B】`;
             document.getElementById('lbl-chat-progress').innerText = `${rolePhaseText} ${chatRoundIndex + 1} / ${roundTotal}`;
             document.getElementById('lbl-chat-recognized-text').innerText = "-";
@@ -7000,7 +7007,6 @@ function traceUndo() {
             if (playAudioBtn) playAudioBtn.style.display = 'flex';
 
             if (chatRole === 'A') {
-                // 第一階段：擔任角色 A (我念 A 聽 B)
                 rowBubbleA.style.display = 'flex';
                 rowBubbleB.style.display = 'none';
                 if (btnPlayA) btnPlayA.style.display = 'none';
@@ -7023,7 +7029,6 @@ function traceUndo() {
                     lblBubbleAText.innerText = curRound.aText || curRound.axText;
                 }
             } else {
-                // 第二階段：擔任角色 B (聽 A 我念 B)
                 rowBubbleA.style.display = 'flex';
                 lblBubbleAText.innerText = curRound.aText;
                 if (btnPlayA) btnPlayA.style.display = 'inline-flex';
@@ -7077,7 +7082,6 @@ function traceUndo() {
                 document.getElementById('lbl-chat-score').style.color = "#58cc02";
                 lblBubbleAText.innerText = curRound.aText;
                 
-                // 提問成功後展示對方 (Speaker B) 的回答氣泡與播放鈕 (參考圖 2)
                 rowBubbleB.style.display = 'flex';
                 lblBubbleBText.innerText = curRound.bText;
                 if (btnPlayB) btnPlayB.style.display = 'inline-flex';
@@ -7149,7 +7153,9 @@ function traceUndo() {
 
                         const isWord = (currentConfig.mode === 'word_shadow');
                         const playBtn = isWord ? document.getElementById('btn-word-shadow-play-user-record') : null;
-                        const evalBtn = isWord ? document.getElementById('btn-word-shadow-submit-speech-eval') : document.getElementById('btn-submit-speech-eval');
+                        const evalBtn = isWord ? document.getElementById('btn-word-shadow-submit-speech-eval') : 
+                                        (currentConfig.mode === 'sentence_chat') ? document.getElementById('btn-chat-submit-speech-eval') :
+                                        document.getElementById('btn-submit-speech-eval');
                         if (playBtn) playBtn.style.display = 'inline-flex';
                         if (evalBtn) evalBtn.style.display = 'block';
                     }
@@ -7186,7 +7192,7 @@ function traceUndo() {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
-            ['btn-submit-speech-eval', 'btn-word-shadow-submit-speech-eval'].forEach(id => {
+            ['btn-submit-speech-eval', 'btn-word-shadow-submit-speech-eval', 'btn-chat-submit-speech-eval'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
@@ -7196,6 +7202,47 @@ function traceUndo() {
             if (!lastRecognizedSpeechText) return alert("尚未取得辨識結果，請重新錄音！");
 
             hideRecordingControls();
+
+            if (currentConfig.mode === 'sentence_chat') {
+                const curRound = chatRounds[chatRoundIndex];
+                if (!curRound) return;
+                const expectedText = (chatRole === 'A') ? curRound.aText : curRound.bText;
+
+                if (isSpeechPass(expectedText, lastRecognizedSpeechText, curRound)) {
+                    handleChatSpeechSuccess(lastRecognizedSpeechText);
+                } else {
+                    document.getElementById('lbl-chat-score').innerHTML = `慢慢唸，下次就能成功過關囉！`;
+                    document.getElementById('lbl-chat-score').style.color = "#ff4b4b";
+
+                    const lblBubbleAText = document.getElementById('lbl-chat-bubble-a-text');
+                    const lblBubbleBText = document.getElementById('lbl-chat-bubble-b-text');
+                    const rowBubbleB = document.getElementById('row-chat-bubble-b');
+                    const btnPlayB = document.getElementById('btn-bubble-play-b');
+
+                    if (chatRole === 'A') {
+                        lblBubbleAText.innerText = expectedText;
+                        rowBubbleB.style.display = 'flex';
+                        lblBubbleBText.innerText = curRound.bText;
+                        if (btnPlayB) btnPlayB.style.display = 'inline-flex';
+                    } else {
+                        lblBubbleBText.innerText = expectedText;
+                        if (btnPlayB) btnPlayB.style.display = 'inline-flex';
+                    }
+
+                    isCurrentQuestionAnswered = true;
+                    const globalIndex = (chatRole === 'A') ? chatRoundIndex : (chatRounds.length + chatRoundIndex);
+                    if (globalIndex < totalChallengeQuestions - 1) {
+                        const nextBtn = document.getElementById('btn-chat-next');
+                        if (nextBtn) nextBtn.style.display = 'inline-block';
+                    } else {
+                        document.getElementById('btn-finish-chat').style.display = 'block';
+                    }
+                }
+
+                const evalBtn = document.getElementById('btn-chat-submit-speech-eval');
+                if (evalBtn) evalBtn.style.display = 'none';
+                return;
+            }
 
             const isWord = (currentConfig.mode === 'word_shadow');
             const currentQ = isWord ? wordQuestions[wordIndex] : questions[currentIndex];
@@ -7230,7 +7277,7 @@ function traceUndo() {
                     markQuestionAnswered(currentIndex);
                 }
             } else {
-                scoreBadge.innerHTML = `慢慢唸，下次就能成功過關囉！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${targetText}】</span>`;
+                scoreBadge.innerHTML = `慢慢唸，下次就能成功過關囉！`;
                 scoreBadge.style.color = "#ff4b4b";
 
                 if (isWord) {
@@ -7342,42 +7389,12 @@ function traceUndo() {
                 lastRecognizedSpeechText = userSpeech;
 
                 if (currentConfig.mode === 'sentence_chat') {
-                    hideRecordingControls();
                     document.getElementById('lbl-chat-recognized-text').innerText = userSpeech;
-                    const curRound = chatRounds[chatRoundIndex];
-                    if (curRound) {
-                        const expectedText = (chatRole === 'A') ? curRound.aText : curRound.bText;
-                        if (isSpeechPass(expectedText, userSpeech, curRound)) {
-                            handleChatSpeechSuccess(userSpeech);
-                        } else {
-                            document.getElementById('lbl-chat-score').innerHTML = `慢慢唸，下次就能成功過關囉！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${expectedText}】</span>`;
-                            document.getElementById('lbl-chat-score').style.color = "#ff4b4b";
+                    document.getElementById('lbl-chat-score').innerText = "發音已收錄！可點擊下方比對評分，或重新點擊錄音鍵覆蓋";
+                    document.getElementById('lbl-chat-score').style.color = "var(--duo-blue)";
 
-                            const lblBubbleAText = document.getElementById('lbl-chat-bubble-a-text');
-                            const lblBubbleBText = document.getElementById('lbl-chat-bubble-b-text');
-                            const rowBubbleB = document.getElementById('row-chat-bubble-b');
-                            const btnPlayB = document.getElementById('btn-bubble-play-b');
-
-                            if (chatRole === 'A') {
-                                lblBubbleAText.innerText = expectedText;
-                                rowBubbleB.style.display = 'flex';
-                                lblBubbleBText.innerText = curRound.bText;
-                                if (btnPlayB) btnPlayB.style.display = 'inline-flex';
-                            } else {
-                                lblBubbleBText.innerText = expectedText;
-                                if (btnPlayB) btnPlayB.style.display = 'inline-flex';
-                            }
-
-                            isCurrentQuestionAnswered = true;
-                            const globalIndex = (chatRole === 'A') ? chatRoundIndex : (chatRounds.length + chatRoundIndex);
-                            if (globalIndex < totalChallengeQuestions - 1) {
-                                const nextBtn = document.getElementById('btn-chat-next');
-                                if (nextBtn) nextBtn.style.display = 'inline-block';
-                            } else {
-                                document.getElementById('btn-finish-chat').style.display = 'block';
-                            }
-                        }
-                    }
+                    const evalBtn = document.getElementById('btn-chat-submit-speech-eval');
+                    if (evalBtn) evalBtn.style.display = 'block';
                 } else if (currentConfig.mode === 'word_shadow') {
                     hideRecordingControls();
                     document.getElementById('lbl-word-shadow-recognized-text').innerText = userSpeech;
