@@ -493,7 +493,7 @@
             transition: transform 0.1s ease;
         }
         .btn-example-item-audio:active { transform: scale(0.9); }
-.grammar-bottom-actions-container {
+        .grammar-bottom-actions-container {
             position: absolute;
             bottom: -6px;
             left: 0;
@@ -962,6 +962,7 @@
             color: #0c4a6e;
             border-bottom-left-radius: 4px;
             text-align: left;
+            cursor: pointer;
         }
         .chat-msg-bubble.bubble-a::after {
             content: "";
@@ -974,6 +975,35 @@
             border-width: 6px 10px 6px 0;
             border-color: transparent #bae6fd transparent transparent;
         }
+
+        /* 聽力模式下的波形語音條容器 */
+        .audio-wave-bar {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 2px 4px;
+        }
+        .audio-wave-icon {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 28px;
+        }
+        .audio-wave-icon span {
+            width: 3.5px;
+            background: #0c4a6e;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .audio-wave-icon span:nth-child(1) { height: 10px; }
+        .audio-wave-icon span:nth-child(2) { height: 18px; }
+        .audio-wave-icon span:nth-child(3) { height: 26px; }
+        .audio-wave-icon span:nth-child(4) { height: 16px; }
+        .audio-wave-icon span:nth-child(5) { height: 22px; }
+        .audio-wave-icon span:nth-child(6) { height: 12px; }
+        .audio-wave-icon span:nth-child(7) { height: 18px; }
+        .audio-wave-icon span:nth-child(8) { height: 8px; }
 
         /* 回答方 B：暖米黃色氣泡，朝右箭頭 */
         .chat-msg-bubble.bubble-b {
@@ -1016,8 +1046,7 @@
             transform: scale(0.9);
             background: #0f172a;
         }
-
-        /* ================= 3D 單字翻轉卡專屬樣式 ================= */
+/* ================= 3D 單字翻轉卡專屬樣式 ================= */
         .fullscreen-stage {
             position: fixed; inset: 0; background: #fbfbfa; z-index: 999999;
             display: none; flex-direction: column; overflow: hidden;
@@ -1504,7 +1533,8 @@
             <div class="island-progress-fill" id="island-loading-bar"></div>
         </div>
     </div>
-<!-- 解鎖大門全螢幕動畫過場 Modal -->
+
+    <!-- 解鎖大門全螢幕動畫過場 Modal -->
     <div id="gate-unlock-modal">
         <div class="gate-doors-wrapper" id="doors-wrapper-anim">
             <div class="gate-unlock-shine"></div>
@@ -1665,8 +1695,7 @@
             </div>
         </div>
     </div>
-
-    <!-- 選擇課程程度 Modal -->
+<!-- 選擇課程程度 Modal -->
     <div id="modal-select-initial-level" class="custom-modal">
         <div class="custom-modal-card">
             <div class="close-icon-circle" id="btn-close-level-modal" onclick="closeModal('modal-select-initial-level')"><i class="fa-solid fa-xmark"></i></div>
@@ -1992,7 +2021,8 @@
                 <i class="fa-solid fa-caret-down" style="font-size: 0.75rem; color: #9ca3af;"></i>
             </div>
         </div>
-<!-- 中間滾動主區塊 -->
+
+        <!-- 中間滾動主區塊 -->
         <div id="learning-content-view">
 
             <!-- 0. 全新開場畫面 -->
@@ -2157,7 +2187,7 @@
                 <!-- 對話氣泡舞台 -->
                 <div class="chat-dialog-stage">
                     <div class="chat-bubble-row bubble-row-left" id="row-chat-bubble-a">
-                        <div class="chat-msg-bubble bubble-a" id="bubble-chat-a">
+                        <div class="chat-msg-bubble bubble-a" id="bubble-chat-a" onclick="handleBubbleAClick()">
                             <span id="lbl-chat-bubble-a-text">...</span>
                             <button class="chat-bubble-play-btn" id="btn-bubble-play-a" onclick="playSpeakerAAudio(event)" title="播放提問發音" style="display:none;">
                                 <i class="fa-solid fa-play"></i>
@@ -2208,8 +2238,7 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-
-            <!-- 步驟 6-B：字塊重組畫面 -->
+<!-- 步驟 6-B：字塊重組畫面 -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-blocks-mode-title">字塊重組</div>
@@ -2541,7 +2570,8 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-<!-- 核心邏輯腳本開始 -->
+
+    <!-- 核心邏輯腳本開始 -->
     <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -2598,6 +2628,8 @@
         let chatRole = 'A';
         let isChatChallengeMode = false;
         let chatRoundPassed = false;
+        let isBubbleARevealed = false; // 角色 B 模式下是否點擊藍色框框揭示文字
+
         let wordQuestions = [];
         let wordIndex = 0;
         let currentWordPronMode = 'kr_pron';
@@ -2641,8 +2673,7 @@
         let idleTimer = null;
         const IDLE_LIMIT_MS = 90 * 1000;
         let isIdlePaused = false;
-
-        const GUIDE_DETAILS_MAP = {
+const GUIDE_DETAILS_MAP = {
             'grammar': {
                 title: '📘 關卡任務玩法說明',
                 content: `
@@ -6973,11 +7004,43 @@ function startMainQuiz() {
             if (activeChallengeType === 'timed') startChallengeTimer('chat');
         }
 
+        // 點擊藍色框框切換顯示原本句子（小提示）
+        function handleBubbleAClick() {
+            if (chatRole === 'B' && activeChallengeType === 'timed' && !chatRoundPassed) {
+                isBubbleARevealed = !isBubbleARevealed;
+                renderSpeakerABubbleContent();
+            }
+        }
+
+        function renderSpeakerABubbleContent() {
+            const curRound = chatRounds[chatRoundIndex];
+            if (!curRound) return;
+            const lblBubbleAText = document.getElementById('lbl-chat-bubble-a-text');
+            const btnPlayA = document.getElementById('btn-bubble-play-a');
+
+            if (chatRole === 'B' && activeChallengeType === 'timed' && !chatRoundPassed && !isBubbleARevealed) {
+                // 挑戰模式且為角色 B：顯示語音播放條與聲波圖樣（考聽力）
+                lblBubbleAText.innerHTML = `
+                    <div class="audio-wave-bar" title="點擊切換查看原句提示">
+                        <div class="audio-wave-icon">
+                            <span></span><span></span><span></span><span></span>
+                            <span></span><span></span><span></span><span></span>
+                        </div>
+                    </div>
+                `;
+                if (btnPlayA) btnPlayA.style.display = 'inline-flex';
+            } else {
+                lblBubbleAText.innerText = curRound.aText;
+                if (btnPlayA) btnPlayA.style.display = (chatRole === 'B') ? 'inline-flex' : 'none';
+            }
+        }
+
         function displayChatRound(autoPlayOpponent = true) {
             stopSpeechRecognition();
             revokeUserAudioUrl();
             restoreRecordingControls();
             isCurrentQuestionAnswered = false;
+            isBubbleARevealed = false;
             if (!chatRounds.length) return;
 
             chatRoundPassed = false;
@@ -6998,7 +7061,6 @@ function startMainQuiz() {
 
             const rowBubbleA = document.getElementById('row-chat-bubble-a');
             const rowBubbleB = document.getElementById('row-chat-bubble-b');
-            const lblBubbleAText = document.getElementById('lbl-chat-bubble-a-text');
             const lblBubbleBText = document.getElementById('lbl-chat-bubble-b-text');
             const btnPlayA = document.getElementById('btn-bubble-play-a');
             const btnPlayB = document.getElementById('btn-bubble-play-b');
@@ -7017,7 +7079,8 @@ function startMainQuiz() {
 
                 if (activeChallengeType === 'entry' || activeChallengeType === 'timed') {
                     instructionTopElem.innerText = `【角色 A】請發起對話：依提示念出提問：`;
-                    lblBubbleAText.innerText = (activeChallengeType === 'timed') ? "請依提示念出提問句子" : (curRound.aText || "");
+                    // 入門與挑戰模式下均不直接顯示整句
+                    document.getElementById('lbl-chat-bubble-a-text').innerText = "請依提示唸出提問句子";
 
                     const activeHint = curRound.axText || curRound.aText;
                     if (activeHint && activeHint.trim()) {
@@ -7030,12 +7093,11 @@ function startMainQuiz() {
                 } else {
                     instructionTopElem.innerText = `【角色 A】請發起對話：念出提問句子：`;
                     hintBubble.style.display = 'none';
-                    lblBubbleAText.innerText = curRound.aText || curRound.axText;
+                    document.getElementById('lbl-chat-bubble-a-text').innerText = curRound.aText || curRound.axText;
                 }
             } else {
                 rowBubbleA.style.display = 'flex';
-                lblBubbleAText.innerText = curRound.aText;
-                if (btnPlayA) btnPlayA.style.display = 'inline-flex';
+                renderSpeakerABubbleContent();
 
                 rowBubbleB.style.display = 'flex';
                 if (btnPlayB) btnPlayB.style.display = 'none';
@@ -7096,6 +7158,8 @@ function startMainQuiz() {
                 document.getElementById('lbl-chat-score').style.color = "#58cc02";
                 lblBubbleBText.innerText = curRound.bText;
                 if (btnPlayB) btnPlayB.style.display = 'inline-flex';
+                // 成功回答後還原角色 A 句子文字顯示
+                lblBubbleAText.innerText = curRound.aText;
             }
         }
 
@@ -7209,6 +7273,12 @@ function startMainQuiz() {
 
             hideRecordingControls();
 
+            // 入門和挑戰模式中，點擊比對發音按鈕後即隱藏提示氣泡
+            if (activeChallengeType === 'entry' || activeChallengeType === 'timed') {
+                const hintBubble = document.getElementById('chat-a-hint-bubble');
+                if (hintBubble) hintBubble.style.display = 'none';
+            }
+
             if (currentConfig.mode === 'sentence_chat') {
                 const curRound = chatRounds[chatRoundIndex];
                 if (!curRound) return;
@@ -7232,6 +7302,7 @@ function startMainQuiz() {
                         if (btnPlayB) btnPlayB.style.display = 'inline-flex';
                     } else {
                         lblBubbleBText.innerText = expectedText;
+                        lblBubbleAText.innerText = curRound.aText;
                         if (btnPlayB) btnPlayB.style.display = 'inline-flex';
                     }
 
@@ -7394,7 +7465,6 @@ function startMainQuiz() {
 
                 lastRecognizedSpeechText = userSpeech;
 
-                // 移除「發音已收錄」藍色文字提示，直接更新辨識文字與顯示比對按鈕
                 if (currentConfig.mode === 'sentence_chat') {
                     document.getElementById('lbl-chat-recognized-text').innerText = userSpeech;
                     const evalBtn = document.getElementById('btn-chat-submit-speech-eval');
