@@ -1011,6 +1011,7 @@
             border-bottom-right-radius: 4px;
             text-align: left;
             margin-left: auto;
+            cursor: pointer;
         }
         .chat-msg-bubble.bubble-b::after {
             content: "";
@@ -1022,6 +1023,10 @@
             border-style: solid;
             border-width: 6px 0 6px 10px;
             border-color: transparent transparent transparent #fef3c7;
+        }
+
+        .chat-msg-bubble.bubble-b .audio-wave-icon span {
+            background: #78350f;
         }
 
         .chat-bubble-play-btn {
@@ -2195,7 +2200,7 @@
                     </div>
 
                     <div class="chat-bubble-row bubble-row-right" id="row-chat-bubble-b" style="display: none;">
-                        <div class="chat-msg-bubble bubble-b" id="bubble-chat-b">
+                        <div class="chat-msg-bubble bubble-b" id="bubble-chat-b" onclick="handleBubbleBClick()">
                             <span id="lbl-chat-bubble-b-text">...</span>
                             <button class="chat-bubble-play-btn" id="btn-bubble-play-b" onclick="playSpeakerBAudio(event)" title="播放回答發音">
                                 <i class="fa-solid fa-play"></i>
@@ -2626,6 +2631,7 @@
         let isChatChallengeMode = false;
         let chatRoundPassed = false;
         let isBubbleARevealed = false; // 角色 B 模式下是否點擊藍色框框揭示文字
+        let isBubbleBRevealed = false; // 角色 B 模式下比對答案後點擊黃色框框是否揭示正確文字
 
         let wordQuestions = [];
         let wordIndex = 0;
@@ -7017,11 +7023,25 @@ document.getElementById('btn-confirm-add-friend').onclick = async () => {
             if (activeChallengeType === 'timed') startChallengeTimer('chat');
         }
 
-        // 點擊藍色框框切換顯示原本句子（小提示）
+        // 點擊藍色框框切換顯示原本句子（比對答案後才能點擊切換）
         function handleBubbleAClick() {
-            if (chatRole === 'B' && activeChallengeType === 'timed' && !chatRoundPassed) {
+            if (chatRole === 'B' && activeChallengeType === 'timed') {
+                if (!chatRoundPassed && !isCurrentQuestionAnswered) {
+                    return; // 尚未比對答案前禁止切換
+                }
                 isBubbleARevealed = !isBubbleARevealed;
                 renderSpeakerABubbleContent();
+            }
+        }
+
+        // 點擊黃色框框切換顯示原本正確回答句子（比對答案後才能點擊切換）
+        function handleBubbleBClick() {
+            if (chatRole === 'B' && activeChallengeType === 'timed') {
+                if (!chatRoundPassed && !isCurrentQuestionAnswered) {
+                    return; // 尚未比對答案前禁止點擊
+                }
+                isBubbleBRevealed = !isBubbleBRevealed;
+                renderSpeakerBBubbleContent();
             }
         }
 
@@ -7031,22 +7051,56 @@ document.getElementById('btn-confirm-add-friend').onclick = async () => {
             const lblBubbleAText = document.getElementById('lbl-chat-bubble-a-text');
             const btnPlayA = document.getElementById('btn-bubble-play-a');
 
-            if (chatRole === 'B' && activeChallengeType === 'timed' && !chatRoundPassed && !isBubbleARevealed) {
-                // 挑戰模式且為角色 B：顯示語音播放條與聲波圖樣（考聽力）
+            // 挑戰模式且為角色 B：在比對答案前，或比對後尚未手動點擊揭示時，顯示聲波條
+            const isRevealed = (chatRoundPassed || isCurrentQuestionAnswered) && isBubbleARevealed;
+
+            if (chatRole === 'B' && activeChallengeType === 'timed' && !isRevealed) {
                 lblBubbleAText.innerHTML = `
-                    <div class="audio-wave-bar" title="點擊切換查看原句提示">
+                    <div class="audio-wave-bar" title="比對答案後點擊可切換查看原句提示">
                         <div class="audio-wave-icon">
                             <span></span><span></span><span></span><span></span>
                             <span></span><span></span><span></span><span></span>
                         </div>
                     </div>
                 `;
-                // 挑戰模式下隱藏播放音按鈕
                 if (btnPlayA) btnPlayA.style.display = 'none';
             } else {
                 lblBubbleAText.innerText = curRound.aText;
-                // 挑戰模式下隱藏播放音按鈕
-                if (btnPlayA) btnPlayA.style.display = (activeChallengeType === 'timed') ? 'none' : ((chatRole === 'B') ? 'inline-flex' : 'none');
+                if (btnPlayA) btnPlayA.style.display = 'none'; // 挑戰模式一律隱藏播放音檔按鈕
+            }
+        }
+
+        function renderSpeakerBBubbleContent() {
+            const curRound = chatRounds[chatRoundIndex];
+            if (!curRound) return;
+            const lblBubbleBText = document.getElementById('lbl-chat-bubble-b-text');
+            const btnPlayB = document.getElementById('btn-bubble-play-b');
+
+            if (chatRole === 'B' && activeChallengeType === 'timed') {
+                if (chatRoundPassed || isCurrentQuestionAnswered) {
+                    if (!isBubbleBRevealed) {
+                        // 檢查答案後：黃色框框預設顯示聲波波形與播放按鈕
+                        lblBubbleBText.innerHTML = `
+                            <div class="audio-wave-bar" title="點擊顯示正確句子">
+                                <div class="audio-wave-icon">
+                                    <span></span><span></span><span></span><span></span>
+                                    <span></span><span></span><span></span><span></span>
+                                </div>
+                            </div>
+                        `;
+                        if (btnPlayB) btnPlayB.style.display = 'inline-flex';
+                    } else {
+                        // 點擊後展開顯示正確文字句子
+                        lblBubbleBText.innerText = curRound.bText;
+                        if (btnPlayB) btnPlayB.style.display = 'inline-flex';
+                    }
+                } else {
+                    lblBubbleBText.innerText = "請根據提示回答";
+                    if (btnPlayB) btnPlayB.style.display = 'none';
+                }
+            } else {
+                lblBubbleBText.innerText = curRound.bText || curRound.bxText;
+                if (btnPlayB) btnPlayB.style.display = (activeChallengeType === 'timed') ? 'none' : 'inline-flex';
             }
         }
 
@@ -7056,6 +7110,7 @@ document.getElementById('btn-confirm-add-friend').onclick = async () => {
             restoreRecordingControls();
             isCurrentQuestionAnswered = false;
             isBubbleARevealed = false;
+            isBubbleBRevealed = false;
             if (!chatRounds.length) return;
 
             chatRoundPassed = false;
@@ -7076,7 +7131,6 @@ document.getElementById('btn-confirm-add-friend').onclick = async () => {
 
             const rowBubbleA = document.getElementById('row-chat-bubble-a');
             const rowBubbleB = document.getElementById('row-chat-bubble-b');
-            const lblBubbleBText = document.getElementById('lbl-chat-bubble-b-text');
             const btnPlayA = document.getElementById('btn-bubble-play-a');
             const btnPlayB = document.getElementById('btn-bubble-play-b');
             const hintBubble = document.getElementById('chat-a-hint-bubble');
@@ -7095,7 +7149,6 @@ document.getElementById('btn-confirm-add-friend').onclick = async () => {
 
                 if (activeChallengeType === 'entry' || activeChallengeType === 'timed') {
                     instructionTopElem.innerText = `【角色 A】請發起對話：依提示念出提問：`;
-                    // 入門與挑戰模式下均不直接顯示整句
                     document.getElementById('lbl-chat-bubble-a-text').innerText = "請依提示唸出提問句子";
 
                     const activeHint = curRound.axText || curRound.aText;
@@ -7116,12 +7169,10 @@ document.getElementById('btn-confirm-add-friend').onclick = async () => {
                 renderSpeakerABubbleContent();
 
                 rowBubbleB.style.display = 'flex';
-                if (btnPlayB) btnPlayB.style.display = 'none';
+                renderSpeakerBBubbleContent();
 
                 if (activeChallengeType === 'entry' || activeChallengeType === 'timed') {
                     instructionTopElem.innerText = `【角色 B】請聽對方提問，並依提示回答：`;
-                    lblBubbleBText.innerText = "請根據提示回答";
-
                     const activeBHint = curRound.bxText || curRound.bText;
                     if (activeBHint && activeBHint.trim()) {
                         document.getElementById('lbl-chat-a-hint-title').innerText = "提示：";
@@ -7133,7 +7184,6 @@ document.getElementById('btn-confirm-add-friend').onclick = async () => {
                 } else {
                     instructionTopElem.innerText = `【角色 B】對方提問如下，請念出你的回答：`;
                     hintBubble.style.display = 'none';
-                    lblBubbleBText.innerText = curRound.bText || curRound.bxText;
                 }
 
                 if (autoPlayOpponent && activeChallengeType !== 'timed') {
@@ -7168,7 +7218,6 @@ document.getElementById('btn-confirm-add-friend').onclick = async () => {
                 
                 rowBubbleB.style.display = 'flex';
                 lblBubbleBText.innerText = curRound.bText;
-                // 挑戰模式下隱藏播放按鈕
                 if (btnPlayB) btnPlayB.style.display = (activeChallengeType === 'timed') ? 'none' : 'inline-flex';
                 
                 if (activeChallengeType !== 'timed') {
@@ -7177,11 +7226,9 @@ document.getElementById('btn-confirm-add-friend').onclick = async () => {
             } else {
                 document.getElementById('lbl-chat-score').innerText = "🎉 回應合格！";
                 document.getElementById('lbl-chat-score').style.color = "#58cc02";
-                lblBubbleBText.innerText = curRound.bText;
-                // 挑戰模式下隱藏播放按鈕
-                if (btnPlayB) btnPlayB.style.display = (activeChallengeType === 'timed') ? 'none' : 'inline-flex';
-                // 成功回答後還原角色 A 句子文字顯示
-                lblBubbleAText.innerText = curRound.aText;
+                
+                renderSpeakerABubbleContent();
+                renderSpeakerBBubbleContent();
             }
         }
 
@@ -7293,25 +7340,24 @@ document.getElementById('btn-confirm-add-friend').onclick = async () => {
                     document.getElementById('lbl-chat-score').innerHTML = `慢慢唸，下次就能成功過關囉！`;
                     document.getElementById('lbl-chat-score').style.color = "#ff4b4b";
 
-                    const lblBubbleAText = document.getElementById('lbl-chat-bubble-a-text');
-                    const lblBubbleBText = document.getElementById('lbl-chat-bubble-b-text');
-                    const rowBubbleB = document.getElementById('row-chat-bubble-b');
-                    const btnPlayB = document.getElementById('btn-bubble-play-b');
+                    isCurrentQuestionAnswered = true;
 
                     if (chatRole === 'A') {
+                        const lblBubbleAText = document.getElementById('lbl-chat-bubble-a-text');
+                        const lblBubbleBText = document.getElementById('lbl-chat-bubble-b-text');
+                        const rowBubbleB = document.getElementById('row-chat-bubble-b');
+                        const btnPlayB = document.getElementById('btn-bubble-play-b');
+
                         lblBubbleAText.innerText = expectedText;
                         rowBubbleB.style.display = 'flex';
                         lblBubbleBText.innerText = curRound.bText;
-                        // 挑戰模式下隱藏播放按鈕
                         if (btnPlayB) btnPlayB.style.display = (activeChallengeType === 'timed') ? 'none' : 'inline-flex';
                     } else {
-                        lblBubbleBText.innerText = expectedText;
-                        lblBubbleAText.innerText = curRound.aText;
-                        // 挑戰模式下隱藏播放按鈕
-                        if (btnPlayB) btnPlayB.style.display = (activeChallengeType === 'timed') ? 'none' : 'inline-flex';
+                        // 角色 B 答錯：藍色框框允許點擊切換，黃色框框顯示聲波波形與播放按鈕，點擊後揭示文字
+                        renderSpeakerABubbleContent();
+                        renderSpeakerBBubbleContent();
                     }
 
-                    isCurrentQuestionAnswered = true;
                     const globalIndex = (chatRole === 'A') ? chatRoundIndex : (chatRounds.length + chatRoundIndex);
                     if (globalIndex < totalChallengeQuestions - 1) {
                         const nextBtn = document.getElementById('btn-chat-next');
