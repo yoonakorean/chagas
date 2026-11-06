@@ -1017,7 +1017,7 @@
             transform: scale(0.9);
             background: #0f172a;
         }
-        /* ================= 3D 單字翻轉卡專屬樣式 ================= */
+/* ================= 3D 單字翻轉卡專屬樣式 ================= */
         .fullscreen-stage {
             position: fixed; inset: 0; background: #fbfbfa; z-index: 999999;
             display: none; flex-direction: column; overflow: hidden;
@@ -1315,7 +1315,7 @@
         .nav-controls .btn-nav-next {
             position: absolute; right: 0; top: 50%; transform: translateY(-50%); background: var(--duo-blue); 
             color: white; border: none; border-bottom: 3.5px solid var(--duo-blue-shadow); padding: 8px 16px; border-radius: 12px; 
-            cursor: font-weight: 800; font-size: 0.92rem; display: none; animation: nextBtnPopIn 0.18s ease-out forwards;
+            cursor: pointer; font-weight: 800; font-size: 0.92rem; display: none; animation: nextBtnPopIn 0.18s ease-out forwards;
         }
         @keyframes nextBtnPopIn {
             from { transform: translateY(-50%) scale(0.88); opacity: 0; }
@@ -1666,8 +1666,7 @@
             </div>
         </div>
     </div>
-
-    <!-- 選擇課程程度 Modal -->
+<!-- 選擇課程程度 Modal -->
     <div id="modal-select-initial-level" class="custom-modal">
         <div class="custom-modal-card">
             <div class="close-icon-circle" id="btn-close-level-modal" onclick="closeModal('modal-select-initial-level')"><i class="fa-solid fa-xmark"></i></div>
@@ -2643,7 +2642,8 @@
         let idleTimer = null;
         const IDLE_LIMIT_MS = 90 * 1000;
         let isIdlePaused = false;
-const GUIDE_DETAILS_MAP = {
+
+        const GUIDE_DETAILS_MAP = {
             'grammar': {
                 title: '📘 關卡任務玩法說明',
                 content: `
@@ -2713,8 +2713,7 @@ const GUIDE_DETAILS_MAP = {
                 content: `
                     <strong>1. 雙向訓練：</strong> 挑戰全程一律先由【角色 A】開始（發起提問聆聽回覆），全部完成後自動進入【角色 B】（聽對方提問念出回答）。<br>
                     <strong>2. 氣泡對話：</strong> 畫面以生動的氣泡對話框呈現（上方天藍色為提問、下方米黃色為回答）。<br>
-                    <strong>3. 隨機題序：</strong> 挑戰模式下，角色 A 與角色 B 各自題目順序皆會隨機打亂，加深對話靈活反應。<br>
-                    <strong>4. 依序通關：</strong> 需連續完成角色 A 與角色 B 兩輪練習，才能完成整組對話挑戰！
+                    <strong>3. 依序通關：</strong> 需連續完成角色 A 與角色 B 兩輪練習，才能完成整組對話挑戰！
                 `
             }
         };
@@ -2866,8 +2865,7 @@ const GUIDE_DETAILS_MAP = {
             }
             return Array.from(candidates);
         }
-
-        const LANG_MUTUAL_MAP = {
+const LANG_MUTUAL_MAP = {
             'zh': 'chinese',
             'en': 'english',
             'ja': 'japanese',
@@ -5236,7 +5234,74 @@ document.getElementById('btn-save-nickname').onclick = async () => {
                 bestTime: result.bestTime
             });
         }
-function cleanInitialWhitespace(str) {
+
+        async function finishGrammarTask() {
+            clearIdleTimer();
+            stopSpeechRecognition();
+            stopChallengeTimer();
+            await recordSessionFocusTime();
+
+            if (currentUser && window.currentUserData) {
+                await processDailyCheckIn(currentUser, window.currentUserData);
+            }
+
+            const lessonKey = `${currentConfig.category}_${currentConfig.level}_${currentConfig.unit_id}_${currentConfig.lesson}_grammar`;
+            let completedList = (window.currentUserData && Array.isArray(window.currentUserData.completedLessons)) ? window.currentUserData.completedLessons : [];
+
+            if (!completedList.includes(lessonKey)) {
+                completedList.push(lessonKey);
+                window.currentUserData.completedLessons = completedList;
+                await addXP(60);
+                if (currentUser) {
+                    try {
+                        await db.collection("users").doc(currentUser.uid).set({ completedLessons: completedList }, { merge: true });
+                    } catch (err) {
+                        console.error("儲存通關紀錄失敗:", err);
+                    }
+                }
+            }
+            openModal('modal-grammar-complete');
+        }
+
+        function selectLessonAndMode(lesson, mode) {
+            stopSpeechRecognition(); 
+            stopChallengeTimer();
+            revokeUserAudioUrl();
+            currentConfig.lesson = lesson;
+            currentConfig.mode = mode;
+            resetChallengeProgress();
+
+            challengeSessionStartTime = Date.now();
+            isIdlePaused = false;
+            resetIdleTimer();
+
+            if (currentUser) ProgressModel.updateUnitProgress(currentUser.uid, currentConfig.unit_id, lesson);
+
+            if (mode === 'grammar') {
+                const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+                const matchGrammar = globalGrammarData.find(g => 
+                    normalizeLevelStr(getItemField(g, 'level')) === targetLevelNormalized &&
+                    String(getItemField(g, 'unit_id')) === String(currentConfig.unit_id) &&
+                    String(getItemField(g, 'lesson')) === String(lesson)
+                );
+
+                if (matchGrammar && ((matchGrammar.dialogs && matchGrammar.dialogs.length) || (matchGrammar.quizzes && matchGrammar.quizzes.length))) {
+                    startGrammarChallenge(matchGrammar);
+                } else {
+                    alert("此關卡目前沒有設定獨立語法觀念喔！");
+                }
+            } else if (mode === 'trace') {
+                startTraceChallenge();
+            } else if (mode === 'sentence_chat') {
+                startSentenceChatChallenge();
+            } else if (mode.startsWith('word_')) {
+                startWordChallenge(mode);
+            } else {
+                startMainQuiz();
+            }
+        }
+
+        function cleanInitialWhitespace(str) {
             return (str || '').replace(/^[\s\r\n\t\u3000\u00A0\uFEFF]+/g, '').trimEnd();
         }
 
@@ -5352,8 +5417,7 @@ function cleanInitialWhitespace(str) {
                 boxExample.style.display = 'none';
             }
         }
-
-        function startTypewriter(text) {
+function startTypewriter(text) {
             if (typewriterTimer) clearInterval(typewriterTimer);
             const box = document.getElementById('lbl-grammar-dialog');
             const container = document.getElementById('box-grammar-dialog-main');
@@ -6329,7 +6393,8 @@ function cleanInitialWhitespace(str) {
                 displayWordQuestion(); 
             } 
         }
-function startMainQuiz() {
+
+        function startMainQuiz() {
             stopSpeechRecognition();
             stopChallengeTimer();
             resetSpeechEvalButtons();
@@ -6854,7 +6919,7 @@ function startMainQuiz() {
             return false;
         }
 
-        /* ================= 對話挑戰：先 A 後 B、題目各自隨機打亂 ================= */
+        /* ================= 對話挑戰：先 A 後 B 全流程、現代氣泡框與提示欄位修正 ================= */
         function startSentenceChatChallenge() {
             stopSpeechRecognition();
             stopChallengeTimer();
@@ -6891,11 +6956,6 @@ function startMainQuiz() {
             });
 
             if (chatRounds.length === 0) return alert("此關卡 dialogue 分頁無題目資料！");
-
-            // 挑戰模式 (timed) 或設定下：題目打亂順序 (角色 A 專屬打亂順序)
-            if (activeChallengeType === 'timed') {
-                chatRounds = shuffleArray(chatRounds);
-            }
 
             chatRoundIndex = 0;
             totalChallengeQuestions = chatRounds.length * 2;
@@ -7049,10 +7109,6 @@ function startMainQuiz() {
             }
             chatRole = 'B';
             chatRoundIndex = 0;
-            // 角色 A 完成切換到角色 B 時，若為挑戰模式則將題目再次獨立隨機打亂
-            if (activeChallengeType === 'timed') {
-                chatRounds = shuffleArray(chatRounds);
-            }
             displayChatRound();
         }
 
@@ -7334,17 +7390,23 @@ function startMainQuiz() {
 
                 if (currentConfig.mode === 'sentence_chat') {
                     document.getElementById('lbl-chat-recognized-text').innerText = userSpeech;
+                    document.getElementById('lbl-chat-score').innerText = "發音已收錄！可點擊下方比對評分，或重新點擊錄音鍵覆蓋";
+                    document.getElementById('lbl-chat-score').style.color = "var(--duo-blue)";
 
                     const evalBtn = document.getElementById('btn-chat-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
                 } else if (currentConfig.mode === 'word_shadow') {
                     hideRecordingControls();
                     document.getElementById('lbl-word-shadow-recognized-text').innerText = userSpeech;
+                    document.getElementById('lbl-word-shadow-score').innerText = "發音已收錄！可點擊下方比對評分";
+                    document.getElementById('lbl-word-shadow-score').style.color = "var(--duo-blue)";
 
                     const evalBtn = document.getElementById('btn-word-shadow-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
                 } else {
                     document.getElementById('lbl-recognized-text').innerText = userSpeech;
+                    document.getElementById('lbl-score').innerText = "發音已收錄！可點擊下方比對評分，或重新點擊錄音鍵覆蓋";
+                    document.getElementById('lbl-score').style.color = "var(--duo-blue)";
 
                     const evalBtn = document.getElementById('btn-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
