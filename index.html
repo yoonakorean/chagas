@@ -493,8 +493,7 @@
             transition: transform 0.1s ease;
         }
         .btn-example-item-audio:active { transform: scale(0.9); }
-
-        .grammar-bottom-actions-container {
+.grammar-bottom-actions-container {
             position: absolute;
             bottom: -6px;
             left: 0;
@@ -1017,7 +1016,8 @@
             transform: scale(0.9);
             background: #0f172a;
         }
-/* ================= 3D 單字翻轉卡專屬樣式 ================= */
+
+        /* ================= 3D 單字翻轉卡專屬樣式 ================= */
         .fullscreen-stage {
             position: fixed; inset: 0; background: #fbfbfa; z-index: 999999;
             display: none; flex-direction: column; overflow: hidden;
@@ -1504,8 +1504,7 @@
             <div class="island-progress-fill" id="island-loading-bar"></div>
         </div>
     </div>
-
-    <!-- 解鎖大門全螢幕動畫過場 Modal -->
+<!-- 解鎖大門全螢幕動畫過場 Modal -->
     <div id="gate-unlock-modal">
         <div class="gate-doors-wrapper" id="doors-wrapper-anim">
             <div class="gate-unlock-shine"></div>
@@ -1666,7 +1665,8 @@
             </div>
         </div>
     </div>
-<!-- 選擇課程程度 Modal -->
+
+    <!-- 選擇課程程度 Modal -->
     <div id="modal-select-initial-level" class="custom-modal">
         <div class="custom-modal-card">
             <div class="close-icon-circle" id="btn-close-level-modal" onclick="closeModal('modal-select-initial-level')"><i class="fa-solid fa-xmark"></i></div>
@@ -1992,8 +1992,7 @@
                 <i class="fa-solid fa-caret-down" style="font-size: 0.75rem; color: #9ca3af;"></i>
             </div>
         </div>
-
-        <!-- 中間滾動主區塊 -->
+<!-- 中間滾動主區塊 -->
         <div id="learning-content-view">
 
             <!-- 0. 全新開場畫面 -->
@@ -2271,7 +2270,8 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-<!-- 步驟 6-H：0A 字母臨摹畫面 -->
+
+            <!-- 步驟 6-H：0A 字母臨摹畫面 -->
             <div id="step-quiz-trace" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-trace-title">字母臨摹</div>
@@ -2541,8 +2541,7 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-
-    <!-- 核心邏輯腳本開始 -->
+<!-- 核心邏輯腳本開始 -->
     <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -2593,7 +2592,7 @@
         let userRecordedAudioUrl = null;
         let lastRecognizedSpeechText = "";
 
-        // 對話挑戰變數：先擔任角色 A，全部完成後再接角色 B
+        // 對話挑戰變數：先擔任角色 A，全部完成後再切換角色 B
         let chatRounds = [];
         let chatRoundIndex = 0;
         let chatRole = 'A';
@@ -2865,7 +2864,8 @@
             }
             return Array.from(candidates);
         }
-const LANG_MUTUAL_MAP = {
+
+        const LANG_MUTUAL_MAP = {
             'zh': 'chinese',
             'en': 'english',
             'ja': 'japanese',
@@ -3437,8 +3437,7 @@ const LANG_MUTUAL_MAP = {
                 return null;
             }
         }
-
-        async function verifyAndSyncUser(user, isInteractive = false) {
+async function verifyAndSyncUser(user, isInteractive = false) {
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
                 if (!gasResult || gasResult.status !== "success") {
@@ -3589,7 +3588,8 @@ const LANG_MUTUAL_MAP = {
                 renderAllLessonsForLevel(currentConfig.level);
             }, 1900);
         }
-function renderCandyRoadmap(unitId, filteredByLevel, units) {
+
+        function renderCandyRoadmap(unitId, filteredByLevel, units) {
             const nodesContainer = document.getElementById('roadmap-nodes-list');
             const svgCanvas = document.getElementById('roadmap-svg-canvas');
             nodesContainer.innerHTML = "";
@@ -4456,7 +4456,8 @@ function renderCandyRoadmap(unitId, filteredByLevel, units) {
                 courseContainer.innerHTML = "<span class='course-pill'>尚無開通課程</span>";
             }
         }
-document.getElementById('btn-save-nickname').onclick = async () => {
+
+        document.getElementById('btn-save-nickname').onclick = async () => {
             const newName = document.getElementById('input-edit-nickname').value.trim();
             const errDiv = document.getElementById('edit-nickname-error-msg');
             const btnSave = document.getElementById('btn-save-nickname');
@@ -6393,8 +6394,7 @@ function startTypewriter(text) {
                 displayWordQuestion(); 
             } 
         }
-
-        function startMainQuiz() {
+function startMainQuiz() {
             stopSpeechRecognition();
             stopChallengeTimer();
             resetSpeechEvalButtons();
@@ -6919,7 +6919,7 @@ function startTypewriter(text) {
             return false;
         }
 
-        /* ================= 對話挑戰：先 A 後 B 全流程、現代氣泡框與提示欄位修正 ================= */
+        /* ================= 對話挑戰：先 A 打亂，全部完成切換 B 再次打亂 ================= */
         function startSentenceChatChallenge() {
             stopSpeechRecognition();
             stopChallengeTimer();
@@ -6938,11 +6938,12 @@ function startTypewriter(text) {
                 String(getItemField(d, 'lesson')).trim() === String(currentConfig.lesson).trim()
             );
 
+            let extractedRounds = [];
             rows.forEach((d, idx) => {
                 const aText = (d.a1 || '').trim();
                 const bText = (d.b1 || '').trim();
                 if (aText || bText) {
-                    chatRounds.push({
+                    extractedRounds.push({
                         roundNum: idx + 1,
                         aText: aText,
                         bText: bText,
@@ -6955,7 +6956,10 @@ function startTypewriter(text) {
                 }
             });
 
-            if (chatRounds.length === 0) return alert("此關卡 dialogue 分頁無題目資料！");
+            if (extractedRounds.length === 0) return alert("此關卡 dialogue 分頁無題目資料！");
+
+            // 角色 A：題目順序隨機打亂
+            chatRounds = shuffleArray(extractedRounds);
 
             chatRoundIndex = 0;
             totalChallengeQuestions = chatRounds.length * 2;
@@ -7109,6 +7113,8 @@ function startTypewriter(text) {
             }
             chatRole = 'B';
             chatRoundIndex = 0;
+            // 角色 A 完成後切換到角色 B，將題目順序再次隨機打亂
+            chatRounds = shuffleArray(chatRounds);
             displayChatRound();
         }
 
@@ -7388,26 +7394,18 @@ function startTypewriter(text) {
 
                 lastRecognizedSpeechText = userSpeech;
 
+                // 移除「發音已收錄」藍色文字提示，直接更新辨識文字與顯示比對按鈕
                 if (currentConfig.mode === 'sentence_chat') {
                     document.getElementById('lbl-chat-recognized-text').innerText = userSpeech;
-                    document.getElementById('lbl-chat-score').innerText = "發音已收錄！可點擊下方比對評分，或重新點擊錄音鍵覆蓋";
-                    document.getElementById('lbl-chat-score').style.color = "var(--duo-blue)";
-
                     const evalBtn = document.getElementById('btn-chat-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
                 } else if (currentConfig.mode === 'word_shadow') {
                     hideRecordingControls();
                     document.getElementById('lbl-word-shadow-recognized-text').innerText = userSpeech;
-                    document.getElementById('lbl-word-shadow-score').innerText = "發音已收錄！可點擊下方比對評分";
-                    document.getElementById('lbl-word-shadow-score').style.color = "var(--duo-blue)";
-
                     const evalBtn = document.getElementById('btn-word-shadow-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
                 } else {
                     document.getElementById('lbl-recognized-text').innerText = userSpeech;
-                    document.getElementById('lbl-score').innerText = "發音已收錄！可點擊下方比對評分，或重新點擊錄音鍵覆蓋";
-                    document.getElementById('lbl-score').style.color = "var(--duo-blue)";
-
                     const evalBtn = document.getElementById('btn-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
                 }
