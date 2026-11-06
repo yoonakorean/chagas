@@ -835,8 +835,7 @@
         .doors-opened .gate-unlock-shine { opacity: 1; transform: scale(2.2); }
         .gate-unlock-title { color: #ffffff; font-size: 1.6rem; font-weight: 900; letter-spacing: 1px; margin-bottom: 6px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .gate-unlock-sub { color: #cbd5e1; font-size: 0.95rem; font-weight: bold; margin-bottom: 24px; }
-
-        /* 角色切換專屬動畫 Modal 樣式 */
+/* 角色切換專屬動畫 Modal 樣式 */
         #role-switch-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(8px);
@@ -1046,7 +1045,8 @@
             transform: scale(0.9);
             background: #0f172a;
         }
-/* ================= 3D 單字翻轉卡專屬樣式 ================= */
+
+        /* ================= 3D 單字翻轉卡專屬樣式 ================= */
         .fullscreen-stage {
             position: fixed; inset: 0; background: #fbfbfa; z-index: 999999;
             display: none; flex-direction: column; overflow: hidden;
@@ -1599,8 +1599,7 @@
             <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 10px;" class="hidden"></div>
         </div>
     </div>
-
-    <!-- 忘記密碼 Modal -->
+<!-- 忘記密碼 Modal -->
     <div id="modal-forgot-password" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
@@ -1695,7 +1694,8 @@
             </div>
         </div>
     </div>
-<!-- 選擇課程程度 Modal -->
+
+    <!-- 選擇課程程度 Modal -->
     <div id="modal-select-initial-level" class="custom-modal">
         <div class="custom-modal-card">
             <div class="close-icon-circle" id="btn-close-level-modal" onclick="closeModal('modal-select-initial-level')"><i class="fa-solid fa-xmark"></i></div>
@@ -2161,8 +2161,7 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-
-            <!-- 步驟 6-G：對話挑戰畫面 -->
+<!-- 步驟 6-G：對話挑戰畫面 -->
             <div id="step-quiz-sentence-chat" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-chat-mode-title">對話挑戰</div>
@@ -2238,7 +2237,8 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-<!-- 步驟 6-B：字塊重組畫面 -->
+
+            <!-- 步驟 6-B：字塊重組畫面 -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-blocks-mode-title">字塊重組</div>
@@ -2386,9 +2386,6 @@
                     <button class="btn-circle btn-record" id="btn-word-shadow-start-record" onclick="toggleRecording()"><i class="fa-solid fa-microphone"></i></button>
                     <button class="btn-circle btn-mic-reset" id="btn-reset-word-shadow" onclick="forceResetMicrophoneSession()" title="麥克風無聲音？點此重置">
                         <i class="fa-solid fa-rotate"></i>
-                    </button>
-                    <button class="btn-circle" id="btn-word-shadow-play-user-record" onclick="playUserRecording()" style="display:none; background:#10b981; box-shadow:0 4px 0 #059669;" title="播放我的發音">
-                        <i class="fa-solid fa-headphones"></i>
                     </button>
                 </div>
                 <div class="result-box">
@@ -3142,7 +3139,7 @@ const GUIDE_DETAILS_MAP = {
             playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85);
         }
 
-        // 隱藏錄音與重置按鈕，僅保留播放音檔按鈕
+        // 隱藏錄音與重置按鈕，僅保留播放音檔按鈕（若非單字跟讀模式）
         function hideRecordingControls() {
             const activeMode = currentConfig.mode;
             if (activeMode === 'sentence_chat') {
@@ -3151,10 +3148,11 @@ const GUIDE_DETAILS_MAP = {
                 if (recBtn) recBtn.style.display = 'none';
                 if (resetBtn) resetBtn.style.display = 'none';
             } else if (activeMode === 'word_shadow') {
+                // 單字跟讀模式允許重新錄音，不隱藏麥克風
                 const recBtn = document.getElementById('btn-word-shadow-start-record');
                 const resetBtn = document.getElementById('btn-reset-word-shadow');
-                if (recBtn) recBtn.style.display = 'none';
-                if (resetBtn) resetBtn.style.display = 'none';
+                if (recBtn) { recBtn.style.display = 'inline-flex'; recBtn.disabled = false; }
+                if (resetBtn) resetBtn.style.display = 'inline-flex';
             } else if (activeMode === 'shadow') {
                 const recBtn = document.getElementById('btn-start-record');
                 const resetBtn = document.getElementById('btn-reset-shadow');
@@ -3977,8 +3975,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 selectLessonAndMode(pendingLesson, pendingMode);
             }
         }
-
-        async function saveChallengeScoreRecord(finalScore, elapsedSeconds = null) {
+async function saveChallengeScoreRecord(finalScore, elapsedSeconds = null) {
             const starInfo = calculateStars(finalScore);
             const key = getRecordKey(currentConfig.lesson, currentConfig.mode, activeChallengeType);
             const existingRecord = getStoredBestRecord(currentConfig.lesson, currentConfig.mode, activeChallengeType);
@@ -3986,8 +3983,9 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             const bestStars = existingRecord ? Math.max(existingRecord.stars, starInfo.stars) : starInfo.stars;
             const bestStarLabel = calculateStars(bestScore).label;
 
+            // 只有至少獲得一顆星以上才記錄耗時
             let bestTime = existingRecord ? (existingRecord.bestTime || null) : null;
-            if (elapsedSeconds !== null && elapsedSeconds > 0) {
+            if (starInfo.stars >= 1 && elapsedSeconds !== null && elapsedSeconds > 0) {
                 if (bestTime === null || elapsedSeconds < bestTime) bestTime = elapsedSeconds;
             }
 
@@ -3997,7 +3995,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 starLabel: bestStarLabel,
                 lastScore: finalScore,
                 bestTime: bestTime,
-                lastTime: elapsedSeconds,
+                lastTime: (starInfo.stars >= 1) ? elapsedSeconds : null,
                 updatedAt: Date.now()
             };
 
@@ -4095,7 +4093,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             const starsCount = starInfo.stars;
 
             document.getElementById('lbl-settlement-score').innerText = `${finalScore} 分`;
-            document.getElementById('lbl-settlement-time').innerText = formatDurationMMSS(elapsedSeconds);
+            document.getElementById('lbl-settlement-time').innerText = (starsCount >= 1) ? formatDurationMMSS(elapsedSeconds) : "--:--";
             document.getElementById('lbl-settlement-best-time').innerText = formatDurationMMSS(bestTime);
 
             const titleElem = document.getElementById('lbl-settlement-title');
@@ -4112,7 +4110,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 subElem.innerText = "獲得一星榮譽 ⭐";
             } else {
                 titleElem.innerText = "💪 挑戰完成！";
-                subElem.innerText = "再接再厲即可奪得星級！";
+                subElem.innerText = "需獲得至少一顆星才會記錄時間喔！";
             }
 
             for (let i = 1; i <= 3; i++) {
@@ -4775,8 +4773,7 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 container.innerHTML = "<div style='text-align:center; color:#ef4444; padding:20px 0;'>載入好友資料失敗，請確認網路！</div>";
             }
         }
-
-        document.getElementById('btn-confirm-add-friend').onclick = async () => {
+document.getElementById('btn-confirm-add-friend').onclick = async () => {
             const input = document.getElementById('input-friend-email');
             const errDiv = document.getElementById('add-friend-error-msg');
             const targetEmail = input.value.trim().toLowerCase();
@@ -5233,11 +5230,20 @@ async function verifyAndSyncUser(user, isInteractive = false) {
             stopSpeechRecognition();
             stopChallengeTimer();
 
-            const elapsedSeconds = await recordSessionFocusTime();
             const finalScore = Math.min(100, Math.round(passedSubQuestions.size * pointsPerQuestion));
+            const starInfo = calculateStars(finalScore);
+
+            // 至少要有一顆星才會記錄專注時間
+            let elapsedSeconds = 0;
+            if (starInfo.stars >= 1) {
+                elapsedSeconds = await recordSessionFocusTime();
+            } else {
+                challengeSessionStartTime = null;
+            }
+
             const result = await saveChallengeScoreRecord(finalScore, elapsedSeconds);
 
-            if (currentUser && window.currentUserData) {
+            if (currentUser && window.currentUserData && starInfo.stars >= 1) {
                 await processDailyCheckIn(currentUser, window.currentUserData);
             }
 
@@ -5449,7 +5455,8 @@ async function verifyAndSyncUser(user, isInteractive = false) {
                 boxExample.style.display = 'none';
             }
         }
-function startTypewriter(text) {
+
+        function startTypewriter(text) {
             if (typewriterTimer) clearInterval(typewriterTimer);
             const box = document.getElementById('lbl-grammar-dialog');
             const container = document.getElementById('box-grammar-dialog-main');
@@ -6225,7 +6232,6 @@ function startTypewriter(text) {
 
             const item = wordQuestions[wordIndex];
             const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
-            const isHard = (activeChallengeType === 'timed' || (activeChallengeType === 'entry' && !is0ALevel));
 
             if (currentConfig.mode === 'word_shadow') {
                 document.getElementById('lbl-word-shadow-progress').innerText = `${wordIndex + 1} / ${wordQuestions.length}`;
@@ -6238,16 +6244,21 @@ function startTypewriter(text) {
                 if (nextBtn) nextBtn.style.display = 'none';
                 if (recordBtn) recordBtn.disabled = false;
 
-                if (isHard) {
+                // 單字跟讀挑戰模式下保留中文翻譯，讓玩家清楚題意
+                const trans = getWordTranslation(item);
+                transElem.innerText = trans ? `${trans}` : "";
+
+                if (activeChallengeType === 'timed') {
                     targetTextElem.innerText = item.text || "";
                     targetTextElem.style.visibility = "hidden";
-                    transElem.innerText = "";
-                    if (playAudioBtn) playAudioBtn.style.display = (activeChallengeType === 'timed') ? 'none' : 'flex';
+                    if (playAudioBtn) playAudioBtn.style.display = 'none';
+                } else if (activeChallengeType === 'entry' && !is0ALevel) {
+                    targetTextElem.innerText = item.text || "";
+                    targetTextElem.style.visibility = "hidden";
+                    if (playAudioBtn) playAudioBtn.style.display = 'flex';
                 } else {
                     targetTextElem.innerText = item.text || "";
                     targetTextElem.style.visibility = "visible";
-                    const trans = getWordTranslation(item);
-                    transElem.innerText = trans ? `${trans}` : "";
                     if (playAudioBtn) playAudioBtn.style.display = 'flex';
                 }
 
@@ -6264,6 +6275,7 @@ function startTypewriter(text) {
                 const choicesContainer = document.getElementById('container-word-choices');
                 const nextBtn = document.getElementById('btn-word-choice-next');
                 const audioPlayerBtn = document.getElementById('btn-word-choice-play');
+                const isHard = (activeChallengeType === 'timed' || (activeChallengeType === 'entry' && !is0ALevel));
 
                 if (nextBtn) nextBtn.style.display = 'none';
                 if (audioPlayerBtn) {
@@ -6425,7 +6437,8 @@ function startTypewriter(text) {
                 displayWordQuestion(); 
             } 
         }
-function startMainQuiz() {
+
+        function startMainQuiz() {
             stopSpeechRecognition();
             stopChallengeTimer();
             resetSpeechEvalButtons();
@@ -7028,10 +7041,12 @@ function startMainQuiz() {
                         </div>
                     </div>
                 `;
-                if (btnPlayA) btnPlayA.style.display = 'inline-flex';
+                // 挑戰模式下隱藏播放音按鈕
+                if (btnPlayA) btnPlayA.style.display = 'none';
             } else {
                 lblBubbleAText.innerText = curRound.aText;
-                if (btnPlayA) btnPlayA.style.display = (chatRole === 'B') ? 'inline-flex' : 'none';
+                // 挑戰模式下隱藏播放音按鈕
+                if (btnPlayA) btnPlayA.style.display = (activeChallengeType === 'timed') ? 'none' : ((chatRole === 'B') ? 'inline-flex' : 'none');
             }
         }
 
@@ -7070,7 +7085,8 @@ function startMainQuiz() {
             const recordBtn = document.getElementById('btn-chat-start-record');
 
             if (recordBtn) recordBtn.disabled = false;
-            if (playAudioBtn) playAudioBtn.style.display = 'flex';
+            // 對話挑戰挑戰模式中隱藏藍色播放音按鈕
+            if (playAudioBtn) playAudioBtn.style.display = (activeChallengeType === 'timed') ? 'none' : 'flex';
 
             if (chatRole === 'A') {
                 rowBubbleA.style.display = 'flex';
@@ -7120,7 +7136,9 @@ function startMainQuiz() {
                     lblBubbleBText.innerText = curRound.bText || curRound.bxText;
                 }
 
-                if (autoPlayOpponent) setTimeout(() => playAudioOrTTS(curRound.aAudio, curRound.aText, 0.85), 350);
+                if (autoPlayOpponent && activeChallengeType !== 'timed') {
+                    setTimeout(() => playAudioOrTTS(curRound.aAudio, curRound.aText, 0.85), 350);
+                }
             }
         }
 
@@ -7150,14 +7168,18 @@ function startMainQuiz() {
                 
                 rowBubbleB.style.display = 'flex';
                 lblBubbleBText.innerText = curRound.bText;
-                if (btnPlayB) btnPlayB.style.display = 'inline-flex';
+                // 挑戰模式下隱藏播放按鈕
+                if (btnPlayB) btnPlayB.style.display = (activeChallengeType === 'timed') ? 'none' : 'inline-flex';
                 
-                setTimeout(() => playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85), 400);
+                if (activeChallengeType !== 'timed') {
+                    setTimeout(() => playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85), 400);
+                }
             } else {
                 document.getElementById('lbl-chat-score').innerText = "🎉 回應合格！";
                 document.getElementById('lbl-chat-score').style.color = "#58cc02";
                 lblBubbleBText.innerText = curRound.bText;
-                if (btnPlayB) btnPlayB.style.display = 'inline-flex';
+                // 挑戰模式下隱藏播放按鈕
+                if (btnPlayB) btnPlayB.style.display = (activeChallengeType === 'timed') ? 'none' : 'inline-flex';
                 // 成功回答後還原角色 A 句子文字顯示
                 lblBubbleAText.innerText = curRound.aText;
             }
@@ -7222,11 +7244,9 @@ function startMainQuiz() {
                         userRecordedAudioUrl = URL.createObjectURL(audioBlob);
 
                         const isWord = (currentConfig.mode === 'word_shadow');
-                        const playBtn = isWord ? document.getElementById('btn-word-shadow-play-user-record') : null;
                         const evalBtn = isWord ? document.getElementById('btn-word-shadow-submit-speech-eval') : 
                                         (currentConfig.mode === 'sentence_chat') ? document.getElementById('btn-chat-submit-speech-eval') :
                                         document.getElementById('btn-submit-speech-eval');
-                        if (playBtn) playBtn.style.display = 'inline-flex';
                         if (evalBtn) evalBtn.style.display = 'block';
                     }
                     if (mediaRecorder && mediaRecorder.stream) {
@@ -7242,26 +7262,9 @@ function startMainQuiz() {
             }
         }
 
-        function playUserRecording() {
-            if (userRecordedAudioUrl) {
-                const audio = new Audio(userRecordedAudioUrl);
-                audio.volume = 1.0;
-                audio.play().catch(err => {
-                    console.error("播放錄音失敗：", err);
-                    alert("錄音播放失敗，若使用手機請確認是否開啟靜音開關！");
-                });
-            } else {
-                alert("尚未錄製到發音，請再念一次試試！");
-            }
-        }
-
         function resetSpeechEvalButtons() {
             lastRecognizedSpeechText = "";
             revokeUserAudioUrl();
-            ['btn-word-shadow-play-user-record'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'none';
-            });
             ['btn-submit-speech-eval', 'btn-word-shadow-submit-speech-eval', 'btn-chat-submit-speech-eval'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
@@ -7299,11 +7302,13 @@ function startMainQuiz() {
                         lblBubbleAText.innerText = expectedText;
                         rowBubbleB.style.display = 'flex';
                         lblBubbleBText.innerText = curRound.bText;
-                        if (btnPlayB) btnPlayB.style.display = 'inline-flex';
+                        // 挑戰模式下隱藏播放按鈕
+                        if (btnPlayB) btnPlayB.style.display = (activeChallengeType === 'timed') ? 'none' : 'inline-flex';
                     } else {
                         lblBubbleBText.innerText = expectedText;
                         lblBubbleAText.innerText = curRound.aText;
-                        if (btnPlayB) btnPlayB.style.display = 'inline-flex';
+                        // 挑戰模式下隱藏播放按鈕
+                        if (btnPlayB) btnPlayB.style.display = (activeChallengeType === 'timed') ? 'none' : 'inline-flex';
                     }
 
                     isCurrentQuestionAnswered = true;
@@ -7470,7 +7475,7 @@ function startMainQuiz() {
                     const evalBtn = document.getElementById('btn-chat-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
                 } else if (currentConfig.mode === 'word_shadow') {
-                    hideRecordingControls();
+                    // 單字跟讀模式允許重新錄音，不隱藏麥克風
                     document.getElementById('lbl-word-shadow-recognized-text').innerText = userSpeech;
                     const evalBtn = document.getElementById('btn-word-shadow-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
@@ -7484,7 +7489,6 @@ function startMainQuiz() {
         }
 
         function toggleRecording() {
-            if (isCurrentQuestionAnswered) return;
             if (isToggling) return;
             isToggling = true;
 
