@@ -2166,7 +2166,8 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-<!-- 步驟 6-G：對話挑戰畫面 -->
+
+            <!-- 步驟 6-G：對話挑戰畫面 -->
             <div id="step-quiz-sentence-chat" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-chat-mode-title">對話挑戰</div>
@@ -2242,8 +2243,7 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-
-            <!-- 步驟 6-B：字塊重組畫面 -->
+<!-- 步驟 6-B：字塊重組畫面 -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-blocks-mode-title">字塊重組</div>
@@ -3154,7 +3154,6 @@ const GUIDE_DETAILS_MAP = {
                 if (recBtn) recBtn.style.display = 'none';
                 if (resetBtn) resetBtn.style.display = 'none';
             } else if (activeMode === 'word_shadow') {
-                // 單字跟讀模式允許重新錄音，不隱藏麥克風
                 const recBtn = document.getElementById('btn-word-shadow-start-record');
                 const resetBtn = document.getElementById('btn-reset-word-shadow');
                 if (recBtn) { recBtn.style.display = 'inline-flex'; recBtn.disabled = false; }
@@ -3472,7 +3471,8 @@ const GUIDE_DETAILS_MAP = {
                 return null;
             }
         }
-async function verifyAndSyncUser(user, isInteractive = false) {
+
+        async function verifyAndSyncUser(user, isInteractive = false) {
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
                 if (!gasResult || gasResult.status !== "success") {
@@ -4658,8 +4658,7 @@ async function saveChallengeScoreRecord(finalScore, elapsedSeconds = null) {
                 loadFriendsLeaderboardData();
             }
         }
-
-        async function loadLeaderboardData() {
+async function loadLeaderboardData() {
             const container = document.getElementById('leaderboard-list-container');
             container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>載入排行榜中...</div>";
             try {
@@ -4779,7 +4778,8 @@ async function saveChallengeScoreRecord(finalScore, elapsedSeconds = null) {
                 container.innerHTML = "<div style='text-align:center; color:#ef4444; padding:20px 0;'>載入好友資料失敗，請確認網路！</div>";
             }
         }
-document.getElementById('btn-confirm-add-friend').onclick = async () => {
+
+        document.getElementById('btn-confirm-add-friend').onclick = async () => {
             const input = document.getElementById('input-friend-email');
             const errDiv = document.getElementById('add-friend-error-msg');
             const targetEmail = input.value.trim().toLowerCase();
@@ -6886,8 +6886,7 @@ document.getElementById('btn-confirm-add-friend').onclick = async () => {
                 displayQuestion(); 
             } 
         }
-
-        function speakTTS(text, rate = 0.85) {
+function speakTTS(text, rate = 0.85) {
             if (!text) return;
             stopSpeechRecognition();
             const synth = window.speechSynthesis;
@@ -7063,10 +7062,11 @@ document.getElementById('btn-confirm-add-friend').onclick = async () => {
                         </div>
                     </div>
                 `;
-                if (btnPlayA) btnPlayA.style.display = 'none';
+                // 藍色框框中的黑色播放按鈕在角色 B 聽力階段保留顯示
+                if (btnPlayA) btnPlayA.style.display = 'inline-flex';
             } else {
                 lblBubbleAText.innerText = curRound.aText;
-                if (btnPlayA) btnPlayA.style.display = 'none'; // 挑戰模式一律隱藏播放音檔按鈕
+                if (btnPlayA) btnPlayA.style.display = (chatRole === 'B') ? 'inline-flex' : 'none';
             }
         }
 
@@ -7100,7 +7100,8 @@ document.getElementById('btn-confirm-add-friend').onclick = async () => {
                 }
             } else {
                 lblBubbleBText.innerText = curRound.bText || curRound.bxText;
-                if (btnPlayB) btnPlayB.style.display = (activeChallengeType === 'timed') ? 'none' : 'inline-flex';
+                // 回答完成或非挑戰模式下保留黃色框框的黑色播放音檔按鈕
+                if (btnPlayB) btnPlayB.style.display = (chatRoundPassed || activeChallengeType !== 'timed') ? 'inline-flex' : 'none';
             }
         }
 
@@ -7139,7 +7140,7 @@ document.getElementById('btn-confirm-add-friend').onclick = async () => {
             const recordBtn = document.getElementById('btn-chat-start-record');
 
             if (recordBtn) recordBtn.disabled = false;
-            // 對話挑戰挑戰模式中隱藏藍色播放音按鈕
+            // 對話挑戰挑戰模式中隱藏藍色播放音檔按鈕（紅圈標示按鈕）
             if (playAudioBtn) playAudioBtn.style.display = (activeChallengeType === 'timed') ? 'none' : 'flex';
 
             if (chatRole === 'A') {
@@ -7218,11 +7219,11 @@ document.getElementById('btn-confirm-add-friend').onclick = async () => {
                 
                 rowBubbleB.style.display = 'flex';
                 lblBubbleBText.innerText = curRound.bText;
-                if (btnPlayB) btnPlayB.style.display = (activeChallengeType === 'timed') ? 'none' : 'inline-flex';
+                // 角色 A 回答正確後，出現的黃色框框要有黑色播放音檔按鈕
+                if (btnPlayB) btnPlayB.style.display = 'inline-flex';
                 
-                if (activeChallengeType !== 'timed') {
-                    setTimeout(() => playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85), 400);
-                }
+                // 正確完畢後自動播放黃色框框音檔
+                setTimeout(() => playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85), 400);
             } else {
                 document.getElementById('lbl-chat-score').innerText = "🎉 回應合格！";
                 document.getElementById('lbl-chat-score').style.color = "#58cc02";
@@ -7351,7 +7352,7 @@ document.getElementById('btn-confirm-add-friend').onclick = async () => {
                         lblBubbleAText.innerText = expectedText;
                         rowBubbleB.style.display = 'flex';
                         lblBubbleBText.innerText = curRound.bText;
-                        if (btnPlayB) btnPlayB.style.display = (activeChallengeType === 'timed') ? 'none' : 'inline-flex';
+                        if (btnPlayB) btnPlayB.style.display = 'inline-flex';
                     } else {
                         // 角色 B 答錯：藍色框框允許點擊切換，黃色框框顯示聲波波形與播放按鈕，點擊後揭示文字
                         renderSpeakerABubbleContent();
@@ -7521,7 +7522,6 @@ document.getElementById('btn-confirm-add-friend').onclick = async () => {
                     const evalBtn = document.getElementById('btn-chat-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
                 } else if (currentConfig.mode === 'word_shadow') {
-                    // 單字跟讀模式允許重新錄音，不隱藏麥克風
                     document.getElementById('lbl-word-shadow-recognized-text').innerText = userSpeech;
                     const evalBtn = document.getElementById('btn-word-shadow-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
