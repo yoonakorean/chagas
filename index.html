@@ -2410,7 +2410,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-word-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 步驟 6-F：通用單字選擇題畫面 -->
+            <!-- 步驟 6-F：通用單字選擇題畫面 (支援點選與挑戰模式下的鍵盤輸入) -->
             <div id="step-quiz-word-choice" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-word-choice-title" id="lbl-word-choice-title">單字選擇</div>
@@ -2437,7 +2437,16 @@
                 <div class="target-text" id="lbl-word-choice-text">  </div>
                 <div id="lbl-word-choice-sub"></div>
                 
+                <!-- 點選選項模式容器 -->
                 <div class="vocab-choice-list" id="container-word-choices"></div>
+
+                <!-- 挑戰模式專屬：鍵盤打字輸入容器 -->
+                <div id="area-word-choice-type" style="display: none; width: 100%; max-width: 360px; margin: 10px auto;">
+                    <input type="text" id="input-word-choice-typed" class="vocab-input" placeholder="請輸入答案並按 Enter 送出..." autocomplete="off" autocorrect="off" autocapitalize="none">
+                    <button class="btn-confirm" id="btn-submit-word-choice-typed" onclick="submitWordChoiceTypedAnswer()" style="margin-top: 6px;">
+                        <i class="fa-solid fa-check"></i> 送出答案
+                    </button>
+                </div>
                 
                 <div class="result-box" style="margin-top: 12px;"><div class="score-badge" id="lbl-word-choice-score">判定結果：--</div></div>
                 
@@ -2714,9 +2723,9 @@ const GUIDE_DETAILS_MAP = {
                 content: `
                     <strong>1. 查看題目：</strong> 觀察畫面中央出現的單字題目與語音發音。<br>
                     <strong>2. 聽音辨義：</strong> 點擊喇叭按鈕多聽幾次外語標準聲調示範。<br>
-                    <strong>3. 挑選選項：</strong> 從下方選項卡片中點選正確的翻譯或相對應拼字。<br>
-                    <strong>4. 即時反饋：</strong> 點選後系統會立刻判定對錯，答對會出現鼓勵讚賞。<br>
-                    <strong>5. 錯題標記：</strong> 若選錯系統會自動以綠色高亮外框把正確答案標註出來。<br>
+                    <strong>3. 模式作答：</strong> 練習與入門模式下直接點選選項卡片；挑戰模式下則使用鍵盤敲入正確答案並按 Enter 送出！<br>
+                    <strong>4. 即時反饋：</strong> 系統會立刻判定對錯，答對會出現鼓勵讚賞。<br>
+                    <strong>5. 錯題標記：</strong> 若選錯或打錯系統會自動標註正確答案並播放發音示範。<br>
                     <strong>6. 累積分數：</strong> 連續答對題目即可提高本次挑戰總星級！
                 `
             },
@@ -2734,10 +2743,10 @@ const GUIDE_DETAILS_MAP = {
             'blocks': {
                 title: '🧩 字塊重組玩法說明',
                 content: `
-                    <strong>1. 理解語意：</strong> 閱讀題目的中文翻譯並聆聽題目語音示範。<br>
-                    <strong>2. 多元作答：</strong> 點擊「切換為鍵盤打字 / 切換為點選字塊」按鈕自由切換模式。<br>
-                    <strong>3. 拖曳換位：</strong> 點選字塊後若順序有誤，可直接拖拉上方字塊更換位置，點擊亦可退回。<br>
-                    <strong>4. 鍵盤輸入：</strong> 切換到打字模式可直接在鍵盤上敲入外語答案，並支援 Enter 鍵快速送出。<br>
+                    <strong>1. 聽音辨義：</strong> 挑戰模式與入門模式預設播放音檔，隱藏中文翻譯；回答完畢後將自動顯示完整翻譯與正解！<br>
+                    <strong>2. 鍵盤輸入：</strong> 挑戰模式強制鎖定為鍵盤打字輸入作答，挑戰打字手速與拼寫精準度！<br>
+                    <strong>3. 自由切換：</strong> 練習與入門模式可點選檢查答案旁的鍵盤/字塊圖標自由切換作答方式。<br>
+                    <strong>4. 拖曳換位：</strong> 點選字塊後若順序有誤，可直接拖拉更換位置，點擊亦可退回。<br>
                     <strong>5. 檢查答案：</strong> 組出或打出完整句子後點擊綠色「檢查答案」按鈕。<br>
                     <strong>6. 智慧判定：</strong> 系統同時支援整句與發音分解字塊的比對判定！
                 `
@@ -6278,6 +6287,9 @@ async function loadLeaderboardData() {
                 const targetTextElem = document.getElementById('lbl-word-choice-text');
                 const choiceSubElem = document.getElementById('lbl-word-choice-sub');
                 const choicesContainer = document.getElementById('container-word-choices');
+                const typeArea = document.getElementById('area-word-choice-type');
+                const typeInput = document.getElementById('input-word-choice-typed');
+                const typeSubmitBtn = document.getElementById('btn-submit-word-choice-typed');
                 const nextBtn = document.getElementById('btn-word-choice-next');
                 const audioPlayerBtn = document.getElementById('btn-word-choice-play');
                 const isHard = (activeChallengeType === 'timed' || (activeChallengeType === 'entry' && !is0ALevel));
@@ -6287,8 +6299,31 @@ async function loadLeaderboardData() {
                     audioPlayerBtn.style.visibility = 'visible';
                     audioPlayerBtn.style.pointerEvents = 'auto';
                 }
+                
+                // 挑戰模式：隱藏點選按鈕，顯示鍵盤輸入框
+                if (activeChallengeType === 'timed') {
+                    if (choicesContainer) choicesContainer.style.display = 'none';
+                    if (typeArea) typeArea.style.display = 'block';
+                    if (typeInput) {
+                        typeInput.value = "";
+                        typeInput.disabled = false;
+                        typeInput.onkeydown = (e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                submitWordChoiceTypedAnswer();
+                            }
+                        };
+                        setTimeout(() => typeInput.focus(), 80);
+                    }
+                    if (typeSubmitBtn) typeSubmitBtn.disabled = false;
+                    document.getElementById('lbl-word-choice-score').innerText = "請在下方鍵盤打字輸入答案：";
+                } else {
+                    if (choicesContainer) choicesContainer.style.display = 'flex';
+                    if (typeArea) typeArea.style.display = 'none';
+                    document.getElementById('lbl-word-choice-score').innerText = "請選出正確的選項：";
+                }
+
                 choicesContainer.innerHTML = "";
-                document.getElementById('lbl-word-choice-score').innerText = "請選出正確的選項：";
                 document.getElementById('lbl-word-choice-score').style.color = "#58cc02";
 
                 let pool = [];
@@ -6331,16 +6366,34 @@ async function loadLeaderboardData() {
                     pool = shuffleArray([correctMeaning, ...shuffledWrongs]);
                 }
 
-                pool.forEach(optVal => {
-                    const btn = document.createElement('button');
-                    btn.className = 'btn-vocab-choice';
-                    btn.innerText = optVal;
-                    btn.onclick = () => checkWordChoiceAnswer(optVal);
-                    choicesContainer.appendChild(btn);
-                });
+                if (activeChallengeType !== 'timed') {
+                    pool.forEach(optVal => {
+                        const btn = document.createElement('button');
+                        btn.className = 'btn-vocab-choice';
+                        btn.innerText = optVal;
+                        btn.onclick = () => checkWordChoiceAnswer(optVal);
+                        choicesContainer.appendChild(btn);
+                    });
+                }
 
                 playWordAudio();
             }
+        }
+
+        // 單字選擇挑戰模式專用：鍵盤輸入答案提交檢查
+        function submitWordChoiceTypedAnswer() {
+            if (isCurrentQuestionAnswered) return;
+            const inputElem = document.getElementById('input-word-choice-typed');
+            const val = inputElem ? inputElem.value.trim() : "";
+            if (!val) {
+                alert("請於輸入框內鍵入答案！");
+                return;
+            }
+            if (inputElem) inputElem.disabled = true;
+            const typeSubmitBtn = document.getElementById('btn-submit-word-choice-typed');
+            if (typeSubmitBtn) typeSubmitBtn.disabled = true;
+
+            checkWordChoiceAnswer(val);
         }
 
         function checkWordChoiceAnswer(selectedText) {
@@ -6356,9 +6409,13 @@ async function loadLeaderboardData() {
             const audioPlayerBtn = document.getElementById('btn-word-choice-play');
             if (audioPlayerBtn) { audioPlayerBtn.style.visibility = 'visible'; audioPlayerBtn.style.pointerEvents = 'auto'; }
 
+            const cleanInput = cleanStringForCompare(selectedText);
+
             if (is0ALevel) {
                 const correctKorean = (item.text || '').trim();
-                if (selectedText.trim() === correctKorean) {
+                const cleanCorrect = cleanStringForCompare(correctKorean);
+
+                if (cleanInput === cleanCorrect) {
                     scoreBadge.innerText = getRandomPraise();
                     scoreBadge.style.color = "#58cc02";
                     targetTextElem.innerText = correctKorean;
@@ -6371,7 +6428,7 @@ async function loadLeaderboardData() {
                     playWordAudio();
                     markQuestionAnswered(wordIndex);
                 } else {
-                    scoreBadge.innerHTML = `太可惜了 繼續加油！`;
+                    scoreBadge.innerHTML = `太可惜了 繼續加油！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${correctKorean}】</span>`;
                     scoreBadge.style.color = "#ff4b4b";
                     targetTextElem.innerText = correctKorean;
                     targetTextElem.style.visibility = "visible";
@@ -6399,7 +6456,13 @@ async function loadLeaderboardData() {
                                        (userLang === 'ja') ? (item.ja || item.jp || item.zh_tw || item.zh || '').trim() :
                                        (item.zh_tw || item.zh || '').trim();
 
-                if (selectedText.trim() === correctMeaning) {
+                const cleanMeaning = cleanStringForCompare(correctMeaning);
+                const cleanWordText = cleanStringForCompare(item.text);
+
+                // 鍵盤輸入時，輸入翻譯或外語原文均視為正確
+                const isCorrect = (cleanInput === cleanMeaning) || (activeChallengeType === 'timed' && cleanInput === cleanWordText);
+
+                if (isCorrect) {
                     scoreBadge.innerText = getRandomPraise();
                     scoreBadge.style.color = "#58cc02";
                     targetTextElem.innerText = item.text || "";
@@ -6411,7 +6474,7 @@ async function loadLeaderboardData() {
                     playWordAudio();
                     markQuestionAnswered(wordIndex);
                 } else {
-                    scoreBadge.innerHTML = `太可惜了 繼續加油！`;
+                    scoreBadge.innerHTML = `太可惜了 繼續加油！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${correctMeaning}】</span>`;
                     scoreBadge.style.color = "#ff4b4b";
                     targetTextElem.innerText = item.text || "";
                     targetTextElem.style.visibility = "visible";
@@ -6645,15 +6708,13 @@ async function loadLeaderboardData() {
                     }
                 }
 
+                // 字塊重組挑戰模式：跟入門模式一樣播放音檔，預設隱藏翻譯，顯示播放按鈕
                 if (activeChallengeType === 'practice' || (is0ALevel && activeChallengeType === 'entry')) {
                     transElem.innerText = q.translation || "";
                     if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
-                } else if (activeChallengeType === 'entry') {
+                } else if (activeChallengeType === 'entry' || activeChallengeType === 'timed') {
                     transElem.innerText = "";
                     if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
-                } else if (activeChallengeType === 'timed') {
-                    transElem.innerText = q.translation || "";
-                    if (playAudioBtn) playAudioBtn.style.display = 'none';
                 }
 
                 document.getElementById('lbl-block-score').innerText = "請選取字塊或鍵盤輸入作答";
@@ -6670,7 +6731,9 @@ async function loadLeaderboardData() {
                 selectedBlockIndices = [];
                 renderBlocks();
                 switchBlockInputMode(blockInputMode);
-                if (activeChallengeType !== 'timed') playBlockAudio();
+                
+                // 挑戰模式與入門模式皆自動播放音檔
+                playBlockAudio();
             }
         }
 
@@ -6846,11 +6909,15 @@ async function loadLeaderboardData() {
 
             const scoreBadge = document.getElementById('lbl-block-score');
 
-            if (activeChallengeType === 'timed') {
-                const playAudioBtn = document.getElementById('btn-play-block-audio');
-                if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
-                playBlockAudio();
+            // 回答後一律顯示完整中文翻譯
+            const transElem = document.getElementById('lbl-block-translation');
+            if (transElem) {
+                transElem.innerText = q.translation || "";
             }
+
+            const playAudioBtn = document.getElementById('btn-play-block-audio');
+            if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
+            playBlockAudio();
 
             const cleanUser = cleanStringForCompare(userSentence);
             const cleanFull = cleanStringForCompare(q.fullText);
@@ -6862,7 +6929,6 @@ async function loadLeaderboardData() {
             if (isMatchFull || isMatchVoice) {
                 scoreBadge.innerText = `🎉 完全正確！${(q.voice && q.voice.trim()) ? ` [${q.voice.trim()}]` : ''}`;
                 scoreBadge.style.color = "#58cc02";
-                if (activeChallengeType !== 'timed') playBlockAudio();
                 markQuestionAnswered(currentIndex);
             } else {
                 scoreBadge.innerHTML = `太可惜了 繼續加油！<br><span style="color:#b91c1c; font-size:1.05rem;">正確答案是：【${q.fullText}】</span>`;
