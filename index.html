@@ -1207,7 +1207,7 @@
         .nav-pill-btn.active { background: var(--duo-blue); color: white; border-color: var(--duo-blue); }
 
         .tab-segmented {
-            display: flex background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 14px;
+            display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 14px;
         }
         .tab-segmented-item {
             flex: 1; padding: 8px 10px; border: none; background: transparent; font-weight: bold;
@@ -1407,28 +1407,41 @@
             opacity: 0.45;
         }
 
-        .block-mode-toggle-wrap {
+        /* 檢查答案與切換按鈕平行排版列 */
+        .block-action-parallel-row {
             display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-        .btn-block-mode-toggle {
-            padding: 7px 16px;
-            border-radius: 20px;
-            border: 2px solid #bae6fd;
-            background: #f0f9ff;
-            font-weight: 800;
-            cursor: pointer;
-            font-size: 0.88rem;
-            color: var(--duo-blue);
-            transition: all 0.15s ease;
-            display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 10px;
+            width: 100%;
+            margin-top: 10px;
+            box-sizing: border-box;
         }
-        .btn-block-mode-toggle:active {
+
+        /* 與檢查答案平行的鍵盤/字塊切換圖標按鈕 */
+        .btn-block-mode-icon-btn {
+            width: 52px;
+            height: 48px;
+            border-radius: 14px;
+            border: 2px solid #cbd5e1;
+            border-bottom: 4px solid #94a3b8;
+            background: #e2e8f0;
+            color: #475569;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.1s ease;
+            box-sizing: border-box;
+        }
+        .btn-block-mode-icon-btn:hover {
+            border-color: #94a3b8;
+            color: #1e293b;
+        }
+        .btn-block-mode-icon-btn:active {
             transform: translateY(2px);
+            border-bottom-width: 2px;
         }
 
         .vocab-input {
@@ -2156,7 +2169,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 步驟 6-G：對話挑戰畫面 (包含左右兩側機器人頭像架構) -->
+            <!-- 步驟 6-G：對話挑戰畫面 -->
             <div id="step-quiz-sentence-chat" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-chat-mode-title">對話挑戰</div>
@@ -2235,7 +2248,7 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-<!-- 步驟 6-B：字塊重組畫面 -->
+<!-- 步驟 6-B：字塊重組畫面 (已移除三個紅圈元素，切換按鈕移至下方與檢查答案平行) -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-blocks-mode-title">字塊重組</div>
@@ -2257,27 +2270,17 @@
                     請將聽到的字母音依序找出來
                 </div>
 
-                <div class="block-mode-toggle-wrap">
-                    <button class="btn-block-mode-toggle" id="btn-block-mode-toggle" onclick="toggleBlockInputMode()">
-                        <i class="fa-solid fa-keyboard"></i>
-                        <span id="lbl-block-mode-text">切換為鍵盤打字</span>
-                    </button>
-                </div>
-
                 <div style="margin: 8px 0;">
                     <button class="btn-circle btn-listen" id="btn-play-block-audio" onclick="playBlockAudio()" style="margin: 0 auto;"><i class="fa-solid fa-volume-high"></i></button>
                 </div>
                 <div class="translation-text" id="lbl-block-translation">...</div>
 
                 <div id="area-block-click-mode">
-                    <p style="font-size: 0.85rem; color: #9ca3af; text-align: center; margin: 0;">排列結果 (可拖拉更換位置)：</p>
                     <div id="zone-answer" class="block-zone"></div>
-                    <p style="font-size: 0.85rem; color: #9ca3af; text-align: center; margin: 0;">點擊字塊組句：</p>
                     <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
                 </div>
 
                 <div id="area-block-type-mode" style="display: none;">
-                    <p style="font-size: 0.85rem; color: #9ca3af; text-align: center; margin: 0 0 4px 0;">請用鍵盤輸入完整的正確句子：</p>
                     <input type="text" id="input-block-typed" class="vocab-input" placeholder="直接在此輸入外語答案..." autocomplete="off" autocorrect="off" autocapitalize="none">
                     <div id="zone-options-type-hint" class="block-zone" style="display: none !important;"></div>
                 </div>
@@ -2286,9 +2289,15 @@
                     <div class="score-badge" id="lbl-block-score">請選取字塊或鍵盤輸入作答</div>
                 </div>
 
-                <button class="btn-confirm" id="btn-check-block" onclick="checkBlockAnswer()" style="margin-top: 10px;">
-                    <i class="fa-solid fa-check"></i> 檢查答案
-                </button>
+                <!-- 檢查答案與切換鍵盤按鈕平行排版行 -->
+                <div class="block-action-parallel-row">
+                    <button class="btn-confirm" id="btn-check-block" onclick="checkBlockAnswer()" style="flex: 1; margin-top: 0;">
+                        <i class="fa-solid fa-check"></i> 檢查答案
+                    </button>
+                    <button class="btn-block-mode-icon-btn" id="btn-block-mode-toggle" onclick="toggleBlockInputMode()" title="切換作答方式">
+                        <i class="fa-solid fa-keyboard" id="icon-block-mode"></i>
+                    </button>
+                </div>
 
                 <div class="nav-controls">
                     <span class="lbl-blocks-progress" id="lbl-blocks-progress">0 / 0</span>
@@ -5231,7 +5240,6 @@ async function loadLeaderboardData() {
             const finalScore = Math.min(100, Math.round(passedSubQuestions.size * pointsPerQuestion));
             const starInfo = calculateStars(finalScore);
 
-            // 至少要有一顆星才會記錄專注時間
             let elapsedSeconds = 0;
             if (starInfo.stars >= 1) {
                 elapsedSeconds = await recordSessionFocusTime();
@@ -6242,7 +6250,6 @@ async function loadLeaderboardData() {
                 if (nextBtn) nextBtn.style.display = 'none';
                 if (recordBtn) recordBtn.disabled = false;
 
-                // 單字跟讀挑戰模式下保留中文翻譯，讓玩家清楚題意
                 const trans = getWordTranslation(item);
                 transElem.innerText = trans ? `${trans}` : "";
 
@@ -6522,13 +6529,15 @@ async function loadLeaderboardData() {
         }
 
         function toggleBlockInputMode() {
+            // 挑戰模式強制只能鍵盤輸入，不允許切換為點選字塊
+            if (activeChallengeType === 'timed') return;
             const newMode = (blockInputMode === 'click') ? 'type' : 'click';
             switchBlockInputMode(newMode);
         }
 
         function switchBlockInputMode(mode) {
             blockInputMode = mode;
-            const toggleBtn = document.getElementById('btn-block-mode-toggle');
+            const toggleIcon = document.getElementById('icon-block-mode');
             const areaClick = document.getElementById('area-block-click-mode');
             const areaType = document.getElementById('area-block-type-mode');
             const typedInput = document.getElementById('input-block-typed');
@@ -6541,11 +6550,11 @@ async function loadLeaderboardData() {
             }
 
             if (mode === 'click') {
-                if (toggleBtn) toggleBtn.innerHTML = '<i class="fa-solid fa-keyboard"></i><span id="lbl-block-mode-text">切換為鍵盤打字</span>';
+                if (toggleIcon) toggleIcon.className = "fa-solid fa-keyboard";
                 if (areaClick) areaClick.style.display = 'block';
                 if (areaType) areaType.style.display = 'none';
             } else {
-                if (toggleBtn) toggleBtn.innerHTML = '<i class="fa-solid fa-cubes"></i><span id="lbl-block-mode-text">切換為點選字塊</span>';
+                if (toggleIcon) toggleIcon.className = "fa-solid fa-cubes";
                 if (areaClick) areaClick.style.display = 'none';
                 if (areaType) areaType.style.display = 'block';
                 
@@ -6611,6 +6620,8 @@ async function loadLeaderboardData() {
                 const transElem = document.getElementById('lbl-block-translation');
                 const playAudioBtn = document.getElementById('btn-play-block-audio');
                 const checkBlockBtn = document.getElementById('btn-check-block');
+                const modeToggleBtn = document.getElementById('btn-block-mode-toggle');
+
                 if (checkBlockBtn) checkBlockBtn.disabled = false;
 
                 const typedInput = document.getElementById('input-block-typed');
@@ -6647,6 +6658,14 @@ async function loadLeaderboardData() {
 
                 document.getElementById('lbl-block-score').innerText = "請選取字塊或鍵盤輸入作答";
                 document.getElementById('lbl-block-score').style.color = "#58cc02";
+
+                // 字塊重組挑戰模式：強制只能用鍵盤輸入，並隱藏切換按鈕
+                if (activeChallengeType === 'timed') {
+                    blockInputMode = 'type';
+                    if (modeToggleBtn) modeToggleBtn.style.display = 'none';
+                } else {
+                    if (modeToggleBtn) modeToggleBtn.style.display = 'inline-flex';
+                }
 
                 selectedBlockIndices = [];
                 renderBlocks();
