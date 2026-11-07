@@ -1207,7 +1207,7 @@
         .nav-pill-btn.active { background: var(--duo-blue); color: white; border-color: var(--duo-blue); }
 
         .tab-segmented {
-            display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 14px;
+            display: flex background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 14px;
         }
         .tab-segmented-item {
             flex: 1; padding: 8px 10px; border: none; background: transparent; font-weight: bold;
@@ -1604,7 +1604,8 @@
             <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 10px;" class="hidden"></div>
         </div>
     </div>
-<!-- 忘記密碼 Modal -->
+
+    <!-- 忘記密碼 Modal -->
     <div id="modal-forgot-password" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
@@ -1699,19 +1700,7 @@
             </div>
         </div>
     </div>
-
-    <!-- 選擇課程程度 Modal -->
-    <div id="modal-select-initial-level" class="custom-modal">
-        <div class="custom-modal-card">
-            <div class="close-icon-circle" id="btn-close-level-modal" onclick="closeModal('modal-select-initial-level')"><i class="fa-solid fa-xmark"></i></div>
-            <h3 style="margin: 4px 0 8px 0; color: #1f2937; font-size: 1.2rem; font-weight: 800;">選擇程度</h3>
-            <p style="font-size: 0.85rem; color: #64748b; margin: 0 0 10px 0;">切換您要挑戰的課程級別</p>
-            <select id="initial-level-select" class="level-select-box"></select>
-            <button id="btn-confirm-initial-level" class="btn-3d btn-3d-primary" style="width: 100%; padding: 10px; margin-top: 4px;">確定切換</button>
-        </div>
-    </div>
-
-    <!-- 模式選擇彈窗 -->
+<!-- 模式選擇彈窗 -->
     <div id="modal-select-mode-type" class="custom-modal">
         <div class="custom-modal-card" style="padding: 24px 18px;">
             <div class="close-icon-circle" onclick="closeModal('modal-select-mode-type')"><i class="fa-solid fa-xmark"></i></div>
@@ -2167,7 +2156,7 @@
                 <button class="btn-finish-challenge" id="btn-finish-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
 
-            <!-- 步驟 6-G：對話挑戰畫面 -->
+            <!-- 步驟 6-G：對話挑戰畫面 (包含左右兩側機器人頭像架構) -->
             <div id="step-quiz-sentence-chat" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-chat-mode-title">對話挑戰</div>
@@ -2189,9 +2178,12 @@
                     <div class="instruction-badge-bar" id="lbl-chat-instruction-top">請依指引念出句子：</div>
                 </div>
 
-                <!-- 對話氣泡舞台 -->
+                <!-- 對話氣泡舞台：包含左側 (A) 與右側 (B) 的頭像架構 -->
                 <div class="chat-dialog-stage">
                     <div class="chat-bubble-row bubble-row-left" id="row-chat-bubble-a">
+                        <div class="chat-bubble-avatar" id="avatar-chat-a" style="display: none;">
+                            <img src="images/avatar.png" onerror="this.onerror=null; this.src='https://api.dicebear.com/7.x/bottts/svg?seed=Yoona';" alt="User">
+                        </div>
                         <div class="chat-msg-bubble bubble-a" id="bubble-chat-a" onclick="handleBubbleAClick()">
                             <span id="lbl-chat-bubble-a-text">...</span>
                             <button class="chat-bubble-play-btn" id="btn-bubble-play-a" onclick="playSpeakerAAudio(event)" title="播放提問發音" style="display:none;">
@@ -6924,12 +6916,15 @@ function speakTTS(text, rate = 0.85) {
                     const cClean = cleanStringForCompare(cand);
                     const cHiragana = katakanaToHiragana(cClean);
 
-                    if (cClean === sClean || cClean.includes(sClean) || sClean.includes(cClean)) {
+                    const lenRatio = sClean.length / Math.max(1, cClean.length);
+                    if (cClean === sClean || sClean.includes(cClean) || (cClean.includes(sClean) && lenRatio >= 0.80)) {
                         return true;
                     }
 
+                    const kanaRatio = spokenHiragana.length / Math.max(1, cHiragana.length);
                     if (cHiragana === spokenAsKana || cHiragana === spokenHiragana ||
-                        cHiragana.includes(spokenAsKana) || spokenAsKana.includes(cHiragana)) {
+                        spokenAsKana.includes(cHiragana) || spokenHiragana.includes(cHiragana) ||
+                        (cHiragana.includes(spokenAsKana) && kanaRatio >= 0.80)) {
                         return true;
                     }
                 }
@@ -6941,7 +6936,10 @@ function speakTTS(text, rate = 0.85) {
                 const tClean = cleanStringForCompare(cand);
                 if (!tClean) continue;
 
-                if (tClean === sClean || tClean.includes(sClean) || sClean.includes(tClean)) {
+                // 核心判定門檻：唸出的長度比例必須達到目標句子的 80% 以上，避免只唸後半句即通過
+                const lenRatio = sClean.length / Math.max(1, tClean.length);
+
+                if (tClean === sClean || sClean.includes(tClean) || (tClean.includes(sClean) && lenRatio >= 0.80)) {
                     return true;
                 }
 
@@ -6953,7 +6951,8 @@ function speakTTS(text, rate = 0.85) {
                         tAlt = tAlt.replaceAll(k, v);
                         sAlt = sAlt.replaceAll(k, v);
                     }
-                    if (tAlt === sAlt || tAlt.includes(sAlt) || sAlt.includes(tAlt)) return true;
+                    const altRatio = sAlt.length / Math.max(1, tAlt.length);
+                    if (tAlt === sAlt || sAlt.includes(tAlt) || (tAlt.includes(sAlt) && altRatio >= 0.80)) return true;
 
                     const nativeVariations = [[/하나/g, '한'], [/둘/g, '두'], [/셋/g, '세'], [/넷/g, '네']];
                     let tVar = tClean;
@@ -6962,7 +6961,8 @@ function speakTTS(text, rate = 0.85) {
                         tVar = tVar.replace(reg, rep);
                         sVar = sVar.replace(reg, rep);
                     }
-                    if (tVar === sVar || tVar.includes(sVar) || sVar.includes(tVar)) return true;
+                    const varRatio = sVar.length / Math.max(1, tVar.length);
+                    if (tVar === sVar || sVar.includes(tVar) || (tVar.includes(sVar) && varRatio >= 0.80)) return true;
                 }
             }
             return false;
@@ -7062,7 +7062,6 @@ function speakTTS(text, rate = 0.85) {
                         </div>
                     </div>
                 `;
-                // 藍色框框中的黑色播放按鈕在角色 B 聽力階段保留顯示
                 if (btnPlayA) btnPlayA.style.display = 'inline-flex';
             } else {
                 lblBubbleAText.innerText = curRound.aText;
@@ -7079,7 +7078,6 @@ function speakTTS(text, rate = 0.85) {
             if (chatRole === 'B' && activeChallengeType === 'timed') {
                 if (chatRoundPassed || isCurrentQuestionAnswered) {
                     if (!isBubbleBRevealed) {
-                        // 檢查答案後：黃色框框預設顯示聲波波形與播放按鈕
                         lblBubbleBText.innerHTML = `
                             <div class="audio-wave-bar" title="點擊顯示正確句子">
                                 <div class="audio-wave-icon">
@@ -7090,7 +7088,6 @@ function speakTTS(text, rate = 0.85) {
                         `;
                         if (btnPlayB) btnPlayB.style.display = 'inline-flex';
                     } else {
-                        // 點擊後展開顯示正確文字句子
                         lblBubbleBText.innerText = curRound.bText;
                         if (btnPlayB) btnPlayB.style.display = 'inline-flex';
                     }
@@ -7100,7 +7097,6 @@ function speakTTS(text, rate = 0.85) {
                 }
             } else {
                 lblBubbleBText.innerText = curRound.bText || curRound.bxText;
-                // 回答完成或非挑戰模式下保留黃色框框的黑色播放音檔按鈕
                 if (btnPlayB) btnPlayB.style.display = (chatRoundPassed || activeChallengeType !== 'timed') ? 'inline-flex' : 'none';
             }
         }
@@ -7132,6 +7128,8 @@ function speakTTS(text, rate = 0.85) {
 
             const rowBubbleA = document.getElementById('row-chat-bubble-a');
             const rowBubbleB = document.getElementById('row-chat-bubble-b');
+            const avatarA = document.getElementById('avatar-chat-a');
+            const avatarB = document.getElementById('avatar-chat-b');
             const btnPlayA = document.getElementById('btn-bubble-play-a');
             const btnPlayB = document.getElementById('btn-bubble-play-b');
             const hintBubble = document.getElementById('chat-a-hint-bubble');
@@ -7140,10 +7138,13 @@ function speakTTS(text, rate = 0.85) {
             const recordBtn = document.getElementById('btn-chat-start-record');
 
             if (recordBtn) recordBtn.disabled = false;
-            // 對話挑戰挑戰模式中隱藏藍色播放音檔按鈕（紅圈標示按鈕）
             if (playAudioBtn) playAudioBtn.style.display = (activeChallengeType === 'timed') ? 'none' : 'flex';
 
+            // 動態控制機器人頭像位置：角色 A 在藍色框左側，角色 B 在黃色框右側
             if (chatRole === 'A') {
+                if (avatarA) avatarA.style.display = 'flex';
+                if (avatarB) avatarB.style.display = 'none';
+
                 rowBubbleA.style.display = 'flex';
                 rowBubbleB.style.display = 'none';
                 if (btnPlayA) btnPlayA.style.display = 'none';
@@ -7166,6 +7167,9 @@ function speakTTS(text, rate = 0.85) {
                     document.getElementById('lbl-chat-bubble-a-text').innerText = curRound.aText || curRound.axText;
                 }
             } else {
+                if (avatarA) avatarA.style.display = 'none';
+                if (avatarB) avatarB.style.display = 'flex';
+
                 rowBubbleA.style.display = 'flex';
                 renderSpeakerABubbleContent();
 
@@ -7219,10 +7223,8 @@ function speakTTS(text, rate = 0.85) {
                 
                 rowBubbleB.style.display = 'flex';
                 lblBubbleBText.innerText = curRound.bText;
-                // 角色 A 回答正確後，出現的黃色框框要有黑色播放音檔按鈕
                 if (btnPlayB) btnPlayB.style.display = 'inline-flex';
                 
-                // 正確完畢後自動播放黃色框框音檔
                 setTimeout(() => playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85), 400);
             } else {
                 document.getElementById('lbl-chat-score').innerText = "🎉 回應合格！";
@@ -7247,7 +7249,6 @@ function speakTTS(text, rate = 0.85) {
             }
             chatRole = 'B';
             chatRoundIndex = 0;
-            // 角色 A 完成後切換到角色 B，將題目順序再次隨機打亂
             chatRounds = shuffleArray(chatRounds);
             displayChatRound();
         }
@@ -7324,7 +7325,6 @@ function speakTTS(text, rate = 0.85) {
 
             hideRecordingControls();
 
-            // 入門和挑戰模式中，點擊比對發音按鈕後即隱藏提示氣泡
             if (activeChallengeType === 'entry' || activeChallengeType === 'timed') {
                 const hintBubble = document.getElementById('chat-a-hint-bubble');
                 if (hintBubble) hintBubble.style.display = 'none';
@@ -7354,7 +7354,6 @@ function speakTTS(text, rate = 0.85) {
                         lblBubbleBText.innerText = curRound.bText;
                         if (btnPlayB) btnPlayB.style.display = 'inline-flex';
                     } else {
-                        // 角色 B 答錯：藍色框框允許點擊切換，黃色框框顯示聲波波形與播放按鈕，點擊後揭示文字
                         renderSpeakerABubbleContent();
                         renderSpeakerBBubbleContent();
                     }
