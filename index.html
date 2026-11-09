@@ -835,7 +835,8 @@
         .doors-opened .gate-unlock-shine { opacity: 1; transform: scale(2.2); }
         .gate-unlock-title { color: #ffffff; font-size: 1.6rem; font-weight: 900; letter-spacing: 1px; margin-bottom: 6px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .gate-unlock-sub { color: #cbd5e1; font-size: 0.95rem; font-weight: bold; margin-bottom: 24px; }
-/* 角色切換專屬動畫 Modal 樣式 */
+
+        /* 角色切換專屬動畫 Modal 樣式 */
         #role-switch-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(8px);
@@ -2077,7 +2078,7 @@
                 </div>
             </div>
 
-            <!-- 步驟 5.5：語法介紹教室 -->
+            <!-- 步驟 5.5：語法介紹教室（小試身手新增鍵盤打字輸入切換按鈕與輸入框） -->
             <div id="step-grammar" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-lesson')"><i class="fa-solid fa-arrow-left"></i> 回闖關地圖</button>
@@ -2110,21 +2111,37 @@
 
                 <div id="area-grammar-quiz" style="display: none; margin-top: 15px; padding: 0 2px; box-sizing: border-box; width: 100%;">
                     <h3 style="margin-top: 0; color: var(--duo-dark); text-align: center; font-size: 1.15rem;"><i class="fa-solid fa-pen-to-square"></i> 小試身手</h3>
-                    <p id="lbl-grammar-instruction" style="font-size: 0.9rem; color: #6b7280; text-align: center; margin-bottom: 10px;">請點擊下方字塊填入正確答案：</p>
+                    <p id="lbl-grammar-instruction" style="font-size: 0.9rem; color: #6b7280; text-align: center; margin-bottom: 10px;">請點擊下方字塊或使用鍵盤填入正確答案：</p>
                     <div id="container-grammar-questions" style="width: 100%; box-sizing: border-box; text-align: left !important;"></div>
+                    
+                    <!-- 點選字塊模式 -->
                     <div id="grammar-choices-wrapper">
                         <p style="font-size: 0.9rem; color: #6b7280; text-align: center; margin: 15px 0 5px 0;">選項：</p>
                         <div id="container-grammar-choices" style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;"></div>
                     </div>
-                    <button class="btn-confirm btn-grammar-action-narrow" id="btn-check-grammar" onclick="checkGrammarQuiz()"><i class="fa-solid fa-check"></i> 送出答案</button>
+
+                    <!-- 鍵盤輸入打字模式 -->
+                    <div id="grammar-type-wrapper" style="display: none; width: 100%; max-width: 360px; margin: 12px auto 6px auto;">
+                        <input type="text" id="input-grammar-typed" class="vocab-input" placeholder="在當前填空打字，按 Enter 送出..." autocomplete="off" autocorrect="off" autocapitalize="none">
+                    </div>
+
+                    <!-- 檢查答案與切換鍵盤按鈕平行排版行 -->
+                    <div class="block-action-parallel-row" style="margin-top: 12px;">
+                        <button class="btn-confirm btn-grammar-action-narrow" id="btn-check-grammar" onclick="checkGrammarQuiz()" style="flex: 1; margin-top: 0;">
+                            <i class="fa-solid fa-check"></i> 送出答案
+                        </button>
+                        <button class="btn-block-mode-icon-btn" id="btn-grammar-mode-toggle" onclick="toggleGrammarInputMode()" title="切換作答方式 (字塊 / 鍵盤)">
+                            <i class="fa-solid fa-keyboard" id="icon-grammar-mode"></i>
+                        </button>
+                    </div>
+
                     <div class="result-box" id="box-grammar-result" style="display: none; margin-top: 15px;">
                         <div id="lbl-grammar-result-text" style="font-size: 1.05rem; font-weight: bold;"></div>
                         <button class="btn-confirm" id="btn-grammar-action"></button>
                     </div>
                 </div>
             </div>
-
-            <!-- 步驟 6-A：Sentence 句子跟讀畫面 -->
+<!-- 步驟 6-A：Sentence 句子跟讀畫面 -->
             <div id="step-quiz-shadow" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-shadow-mode-title">句子跟讀</div>
@@ -2248,7 +2265,8 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-<!-- 步驟 6-B：字塊重組畫面 (已移除三個紅圈元素，切換按鈕移至下方與檢查答案平行) -->
+
+            <!-- 步驟 6-B：字塊重組畫面 (動態標題列與鍵盤/字塊切換按鈕) -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-blocks-mode-title">字塊重組</div>
@@ -2267,7 +2285,7 @@
                 </div>
 
                 <div id="lbl-blocks-instruction-title" class="instruction-badge-bar" style="display: none;">
-                    請將聽到的字母音依序找出來
+                    請將聽到的內容完成句子
                 </div>
 
                 <div style="margin: 8px 0;">
@@ -2294,7 +2312,7 @@
                     <button class="btn-confirm" id="btn-check-block" onclick="checkBlockAnswer()" style="flex: 1; margin-top: 0;">
                         <i class="fa-solid fa-check"></i> 檢查答案
                     </button>
-                    <button class="btn-block-mode-icon-btn" id="btn-block-mode-toggle" onclick="toggleBlockInputMode()" title="切換作答方式">
+                    <button class="btn-block-mode-icon-btn" id="btn-block-mode-toggle" onclick="toggleBlockInputMode()" title="切換作答方式 (字塊 / 鍵盤)">
                         <i class="fa-solid fa-keyboard" id="icon-block-mode"></i>
                     </button>
                 </div>
@@ -2582,8 +2600,7 @@
         </div>
 
     </div> <!-- shadowing-card 結束 -->
-
-    <!-- 核心邏輯腳本開始 -->
+<!-- 核心邏輯腳本開始 -->
     <script>
         const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -2634,14 +2651,14 @@
         let userRecordedAudioUrl = null;
         let lastRecognizedSpeechText = "";
 
-        // 對話挑戰變數：先擔任角色 A，全部完成後再切換角色 B
+        // 對話挑戰變數
         let chatRounds = [];
         let chatRoundIndex = 0;
         let chatRole = 'A';
         let isChatChallengeMode = false;
         let chatRoundPassed = false;
-        let isBubbleARevealed = false; // 角色 B 模式下是否點擊藍色框框揭示文字
-        let isBubbleBRevealed = false; // 角色 B 模式下比對答案後點擊黃色框框是否揭示正確文字
+        let isBubbleARevealed = false;
+        let isBubbleBRevealed = false;
 
         let wordQuestions = [];
         let wordIndex = 0;
@@ -2679,6 +2696,7 @@
         let currentFullDialogText = "";
         let grammarQuizIndex = 0;
         let isGrammarQuizSubmitted = false;
+        let grammarInputMode = 'click'; // 'click' 或 'type'
 
         let currentRankSubTab = 'global';
         let fireworksAnimationId = null;
@@ -2686,14 +2704,15 @@
         let idleTimer = null;
         const IDLE_LIMIT_MS = 90 * 1000;
         let isIdlePaused = false;
-const GUIDE_DETAILS_MAP = {
+
+        const GUIDE_DETAILS_MAP = {
             'grammar': {
                 title: '📘 關卡任務玩法說明',
                 content: `
                     <strong>1. 觀念導讀：</strong> 進入關卡後會先播放語法說明與對話情境，點擊對話框可立即完成文字打字機。<br>
                     <strong>2. 例句聆聽：</strong> 只要題目內有例句，下方即會自動生成語音播放按鈕，點擊可隨時聆聽標準示範。<br>
                     <strong>3. 進入測驗：</strong> 觀念讀完後點擊「進入隨堂測驗」展開「小試身手」實戰造句填空。<br>
-                    <strong>4. 填入答案：</strong> 系統會將當前正在作答的題目加上亮藍色外框，點擊下方字塊即可填入空格。<br>
+                    <strong>4. 多元作答：</strong> 支援「點選字塊」或點擊右下方鍵盤圖示切換為「鍵盤打字輸入」，按 Enter 即可快速送出答案！<br>
                     <strong>5. 檢查訂正：</strong> 送出答案後，若答錯會在填空右側單行提示正確答案，並可隨時點擊「再來一次」。<br>
                     <strong>6. 自由重練：</strong> 點擊再來一次可自由選擇「再挑戰一次」重新做題，或「再學習一次」從頭複習觀念！
                 `
@@ -2743,12 +2762,12 @@ const GUIDE_DETAILS_MAP = {
             'blocks': {
                 title: '🧩 字塊重組玩法說明',
                 content: `
-                    <strong>1. 聽音辨義：</strong> 挑戰模式與入門模式預設播放音檔，隱藏中文翻譯；回答完畢後將自動顯示完整翻譯與正解！<br>
-                    <strong>2. 鍵盤輸入：</strong> 挑戰模式強制鎖定為鍵盤打字輸入作答，挑戰打字手速與拼寫精準度！<br>
-                    <strong>3. 自由切換：</strong> 練習與入門模式可點選檢查答案旁的鍵盤/字塊圖標自由切換作答方式。<br>
-                    <strong>4. 拖曳換位：</strong> 點選字塊後若順序有誤，可直接拖拉更換位置，點擊亦可退回。<br>
-                    <strong>5. 檢查答案：</strong> 組出或打出完整句子後點擊綠色「檢查答案」按鈕。<br>
-                    <strong>6. 智慧判定：</strong> 系統同時支援整句與發音分解字塊的比對判定！
+                    <strong>1. 標題引導：</strong> 0A 入門模式顯示「請將聽到的字母依序找出來」，挑戰模式顯示「完成單字」；其他程度入門與練習顯示「請將聽到的內容完成句子」，挑戰模式顯示「完成句子」！<br>
+                    <strong>2. 聽音辨義：</strong> 挑戰模式與入門模式預設播放音檔，隱藏中文翻譯；回答完畢後將自動顯示完整翻譯與正解！<br>
+                    <strong>3. 鍵盤輸入：</strong> 挑戰模式強制鎖定為鍵盤打字輸入作答，挑戰打字手速與拼寫精準度！<br>
+                    <strong>4. 自由切換：</strong> 練習與入門模式可點選檢查答案旁的鍵盤/字塊圖標自由切換作答方式。<br>
+                    <strong>5. 拖曳換位：</strong> 點選字塊後若順序有誤，可直接拖拉更換位置，點擊亦可退回。<br>
+                    <strong>6. 檢查答案：</strong> 組出或打出完整句子後點擊綠色「檢查答案」按鈕！
                 `
             },
             'sentence_chat': {
@@ -3139,7 +3158,6 @@ const GUIDE_DETAILS_MAP = {
             }, { passive: true });
         })();
 
-        // 獨立播放 Speaker A 提問音檔
         function playSpeakerAAudio(event) {
             if (event) event.stopPropagation();
             const curRound = chatRounds[chatRoundIndex];
@@ -3147,7 +3165,6 @@ const GUIDE_DETAILS_MAP = {
             playAudioOrTTS(curRound.aAudio, curRound.aText, 0.85);
         }
 
-        // 獨立播放 Speaker B 回覆音檔
         function playSpeakerBAudio(event) {
             if (event) event.stopPropagation();
             const curRound = chatRounds[chatRoundIndex];
@@ -3155,7 +3172,6 @@ const GUIDE_DETAILS_MAP = {
             playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85);
         }
 
-        // 隱藏錄音與重置按鈕，僅保留播放音檔按鈕（若非單字跟讀模式）
         function hideRecordingControls() {
             const activeMode = currentConfig.mode;
             if (activeMode === 'sentence_chat') {
@@ -3176,7 +3192,6 @@ const GUIDE_DETAILS_MAP = {
             }
         }
 
-        // 題目切換時恢復顯示錄音控制項
         function restoreRecordingControls() {
             const recBtnShadow = document.getElementById('btn-start-record');
             const resetBtnShadow = document.getElementById('btn-reset-shadow');
@@ -3833,8 +3848,7 @@ const GUIDE_DETAILS_MAP = {
                 <path d="${pathD}" fill="none" stroke="#0284c7" stroke-width="8" stroke-linecap="round" stroke-dasharray="14 10" />
             `;
         }
-
-        function resetIdleTimer() {
+function resetIdleTimer() {
             if (isIdlePaused) return;
             if (idleTimer) clearTimeout(idleTimer);
             if (challengeSessionStartTime) {
@@ -3991,7 +4005,8 @@ const GUIDE_DETAILS_MAP = {
                 selectLessonAndMode(pendingLesson, pendingMode);
             }
         }
-async function saveChallengeScoreRecord(finalScore, elapsedSeconds = null) {
+
+        async function saveChallengeScoreRecord(finalScore, elapsedSeconds = null) {
             const starInfo = calculateStars(finalScore);
             const key = getRecordKey(currentConfig.lesson, currentConfig.mode, activeChallengeType);
             const existingRecord = getStoredBestRecord(currentConfig.lesson, currentConfig.mode, activeChallengeType);
@@ -3999,7 +4014,6 @@ async function saveChallengeScoreRecord(finalScore, elapsedSeconds = null) {
             const bestStars = existingRecord ? Math.max(existingRecord.stars, starInfo.stars) : starInfo.stars;
             const bestStarLabel = calculateStars(bestScore).label;
 
-            // 只有至少獲得一顆星以上才記錄耗時
             let bestTime = existingRecord ? (existingRecord.bestTime || null) : null;
             if (starInfo.stars >= 1 && elapsedSeconds !== null && elapsedSeconds > 0) {
                 if (bestTime === null || elapsedSeconds < bestTime) bestTime = elapsedSeconds;
@@ -4668,7 +4682,8 @@ async function saveChallengeScoreRecord(finalScore, elapsedSeconds = null) {
                 loadFriendsLeaderboardData();
             }
         }
-async function loadLeaderboardData() {
+
+        async function loadLeaderboardData() {
             const container = document.getElementById('leaderboard-list-container');
             container.innerHTML = "<div style='text-align:center; color:#94a3b8; padding:20px 0;'>載入排行榜中...</div>";
             try {
@@ -5366,6 +5381,7 @@ async function loadLeaderboardData() {
             currentDialogIndex = 0;
             grammarQuizIndex = 0;
             isGrammarQuizSubmitted = false;
+            grammarInputMode = 'click';
             
             document.getElementById('lbl-grammar-info').innerText = `關卡任務 | Level ${currentConfig.level} - Unit ${currentConfig.unit_id} - Lesson ${currentConfig.lesson}`;
             document.getElementById('area-grammar-quiz').style.display = 'none';
@@ -5570,6 +5586,42 @@ async function loadLeaderboardData() {
                     parentQ.classList.add('focused-q');
                 }
             }
+
+            const typedInput = document.getElementById('input-grammar-typed');
+            if (typedInput && grammarInputMode === 'type') {
+                typedInput.value = userGrammarAnswers[activeBlankIndex] || '';
+                typedInput.placeholder = `請填寫第 ${activeBlankIndex + 1} 空格，按 Enter 下一空...`;
+            }
+        }
+
+        /* 關卡任務小試身手：切換字塊與鍵盤打字輸入模式 */
+        function toggleGrammarInputMode() {
+            grammarInputMode = (grammarInputMode === 'click') ? 'type' : 'click';
+            switchGrammarInputMode(grammarInputMode);
+        }
+
+        function switchGrammarInputMode(mode) {
+            grammarInputMode = mode;
+            const choicesWrapper = document.getElementById('grammar-choices-wrapper');
+            const typeWrapper = document.getElementById('grammar-type-wrapper');
+            const typedInput = document.getElementById('input-grammar-typed');
+            const toggleIcon = document.getElementById('icon-grammar-mode');
+
+            if (mode === 'type') {
+                if (choicesWrapper) choicesWrapper.style.display = 'none';
+                if (typeWrapper) typeWrapper.style.display = 'block';
+                if (toggleIcon) toggleIcon.className = "fa-solid fa-cubes";
+                if (typedInput) {
+                    typedInput.value = userGrammarAnswers[activeBlankIndex] || '';
+                    typedInput.disabled = false;
+                    setTimeout(() => typedInput.focus(), 80);
+                }
+            } else {
+                if (choicesWrapper) choicesWrapper.style.display = 'block';
+                if (typeWrapper) typeWrapper.style.display = 'none';
+                if (toggleIcon) toggleIcon.className = "fa-solid fa-keyboard";
+            }
+            updateActiveGrammarSlotHighlight();
         }
 
         function showGrammarQuizArea() {
@@ -5581,9 +5633,6 @@ async function loadLeaderboardData() {
             document.getElementById('area-grammar-quiz').style.display = 'block';
             document.getElementById('box-grammar-result').style.display = 'none';
 
-            const choicesWrapper = document.getElementById('grammar-choices-wrapper');
-            if (choicesWrapper) choicesWrapper.style.display = 'block';
-
             const instrElem = document.getElementById('lbl-grammar-instruction');
             if (instrElem) instrElem.style.display = 'block';
 
@@ -5594,6 +5643,9 @@ async function loadLeaderboardData() {
                 btnCheck.style.opacity = '1';
                 btnCheck.style.cursor = 'pointer';
             }
+
+            const toggleModeBtn = document.getElementById('btn-grammar-mode-toggle');
+            if (toggleModeBtn) toggleModeBtn.style.display = 'inline-flex';
 
             const quizList = currentGrammarItem.expandedQuizzes || [];
             if (!quizList.length) { finishGrammarTask(); return; }
@@ -5654,6 +5706,24 @@ async function loadLeaderboardData() {
                 cContainer.appendChild(btn);
             });
 
+            const typedInput = document.getElementById('input-grammar-typed');
+            if (typedInput) {
+                typedInput.value = "";
+                typedInput.disabled = false;
+                typedInput.onkeydown = (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const val = typedInput.value.trim();
+                        if (val) {
+                            fillGrammarAnswer(val);
+                        } else if (!userGrammarAnswers.includes('')) {
+                            checkGrammarQuiz();
+                        }
+                    }
+                };
+            }
+
+            switchGrammarInputMode(grammarInputMode);
             setTimeout(updateActiveGrammarSlotHighlight, 50);
         }
 
@@ -5662,6 +5732,13 @@ async function loadLeaderboardData() {
             if (evt) evt.stopPropagation();
             activeBlankIndex = index; 
             updateActiveGrammarSlotHighlight();
+            if (grammarInputMode === 'type') {
+                const typedInput = document.getElementById('input-grammar-typed');
+                if (typedInput) {
+                    typedInput.focus();
+                    typedInput.select();
+                }
+            }
         }
 
         function fillGrammarAnswer(optionText) {
@@ -5673,6 +5750,8 @@ async function loadLeaderboardData() {
             const nextBlank = userGrammarAnswers.findIndex(a => a === '');
             if (nextBlank !== -1) {
                 activeBlankIndex = nextBlank;
+            } else if (activeBlankIndex < userGrammarAnswers.length - 1) {
+                activeBlankIndex++;
             }
             updateActiveGrammarSlotHighlight();
         }
@@ -5681,12 +5760,29 @@ async function loadLeaderboardData() {
             if (isGrammarQuizSubmitted) return;
             const quizList = currentGrammarItem.expandedQuizzes || [];
             if (!quizList.length) return;
+            
+            // 若處於鍵盤輸入狀態且當前空格剛打字未送出，自動收錄
+            if (grammarInputMode === 'type') {
+                const typedInput = document.getElementById('input-grammar-typed');
+                if (typedInput && typedInput.value.trim()) {
+                    userGrammarAnswers[activeBlankIndex] = typedInput.value.trim();
+                    const slot = document.getElementById(`blank-slot-${activeBlankIndex}`);
+                    if (slot) slot.innerText = typedInput.value.trim();
+                }
+            }
+
             if (userGrammarAnswers.includes('')) return alert('請填寫完所有空格後再送出答案！');
 
             isGrammarQuizSubmitted = true;
 
             const choicesWrapper = document.getElementById('grammar-choices-wrapper');
             if (choicesWrapper) choicesWrapper.style.display = 'none';
+
+            const typeWrapper = document.getElementById('grammar-type-wrapper');
+            if (typeWrapper) typeWrapper.style.display = 'none';
+
+            const toggleModeBtn = document.getElementById('btn-grammar-mode-toggle');
+            if (toggleModeBtn) toggleModeBtn.style.display = 'none';
 
             const instrElem = document.getElementById('lbl-grammar-instruction');
             if (instrElem) instrElem.style.display = 'none';
@@ -6148,8 +6244,7 @@ async function loadLeaderboardData() {
                 displayTraceQuestion();
             }
         }
-
-        function getWordTranslation(item) {
+function getWordTranslation(item) {
             if (!item) return "";
             return (currentConfig.lang === 'en') ? (item.en || item.zh_tw || "") :
                    (currentConfig.lang === 'ja') ? (item.ja || item.zh_tw || "") : (item.zh_tw || "");
@@ -6300,7 +6395,6 @@ async function loadLeaderboardData() {
                     audioPlayerBtn.style.pointerEvents = 'auto';
                 }
                 
-                // 挑戰模式：隱藏點選按鈕，顯示鍵盤輸入框
                 if (activeChallengeType === 'timed') {
                     if (choicesContainer) choicesContainer.style.display = 'none';
                     if (typeArea) typeArea.style.display = 'block';
@@ -6380,7 +6474,6 @@ async function loadLeaderboardData() {
             }
         }
 
-        // 單字選擇挑戰模式專用：鍵盤輸入答案提交檢查
         function submitWordChoiceTypedAnswer() {
             if (isCurrentQuestionAnswered) return;
             const inputElem = document.getElementById('input-word-choice-typed');
@@ -6459,7 +6552,6 @@ async function loadLeaderboardData() {
                 const cleanMeaning = cleanStringForCompare(correctMeaning);
                 const cleanWordText = cleanStringForCompare(item.text);
 
-                // 鍵盤輸入時，輸入翻譯或外語原文均視為正確
                 const isCorrect = (cleanInput === cleanMeaning) || (activeChallengeType === 'timed' && cleanInput === cleanWordText);
 
                 if (isCorrect) {
@@ -6551,8 +6643,23 @@ async function loadLeaderboardData() {
                 if (activeChallengeType === 'timed') startChallengeTimer('shadow');
 
             } else {
+                /* 字塊重組標題動態切換：0A 與其他程度在各模式下的標題名稱 */
                 const blocksTitleElem = document.getElementById('lbl-blocks-mode-title');
-                if (blocksTitleElem) blocksTitleElem.innerText = `字塊重組 ${tag}`;
+                if (blocksTitleElem) {
+                    if (is0ALevel) {
+                        if (activeChallengeType === 'timed') {
+                            blocksTitleElem.innerText = `完成單字 ${tag}`;
+                        } else {
+                            blocksTitleElem.innerText = `字塊重組 ${tag}`;
+                        }
+                    } else {
+                        if (activeChallengeType === 'timed') {
+                            blocksTitleElem.innerText = `完成句子 ${tag}`;
+                        } else {
+                            blocksTitleElem.innerText = `字塊重組 ${tag}`;
+                        }
+                    }
+                }
                 goToStep('step-quiz-blocks');
 
                 const rawList = rawBlocksData.filter(i => 
@@ -6592,7 +6699,6 @@ async function loadLeaderboardData() {
         }
 
         function toggleBlockInputMode() {
-            // 挑戰模式強制只能鍵盤輸入，不允許切換為點選字塊
             if (activeChallengeType === 'timed') return;
             const newMode = (blockInputMode === 'click') ? 'type' : 'click';
             switchBlockInputMode(newMode);
@@ -6699,16 +6805,32 @@ async function loadLeaderboardData() {
                     };
                 }
 
+                /* 依據程度與模式動態設定字塊提示指引條文字 */
                 const blocksInstrTitle = document.getElementById('lbl-blocks-instruction-title');
                 if (blocksInstrTitle) {
-                    if (activeChallengeType === 'entry' || activeChallengeType === 'timed') {
-                        blocksInstrTitle.style.display = 'inline-block';
+                    if (is0ALevel) {
+                        if (activeChallengeType === 'entry') {
+                            blocksInstrTitle.innerText = "請將聽到的字母依序找出來";
+                            blocksInstrTitle.style.display = 'inline-block';
+                        } else if (activeChallengeType === 'timed') {
+                            blocksInstrTitle.innerText = "完成單字";
+                            blocksInstrTitle.style.display = 'inline-block';
+                        } else {
+                            blocksInstrTitle.style.display = 'none';
+                        }
                     } else {
-                        blocksInstrTitle.style.display = 'none';
+                        if (activeChallengeType === 'practice' || activeChallengeType === 'entry') {
+                            blocksInstrTitle.innerText = "請將聽到的內容完成句子";
+                            blocksInstrTitle.style.display = 'inline-block';
+                        } else if (activeChallengeType === 'timed') {
+                            blocksInstrTitle.innerText = "完成句子";
+                            blocksInstrTitle.style.display = 'inline-block';
+                        } else {
+                            blocksInstrTitle.style.display = 'none';
+                        }
                     }
                 }
 
-                // 字塊重組挑戰模式：跟入門模式一樣播放音檔，預設隱藏翻譯，顯示播放按鈕
                 if (activeChallengeType === 'practice' || (is0ALevel && activeChallengeType === 'entry')) {
                     transElem.innerText = q.translation || "";
                     if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
@@ -6720,7 +6842,6 @@ async function loadLeaderboardData() {
                 document.getElementById('lbl-block-score').innerText = "請選取字塊或鍵盤輸入作答";
                 document.getElementById('lbl-block-score').style.color = "#58cc02";
 
-                // 字塊重組挑戰模式：強制只能用鍵盤輸入，並隱藏切換按鈕
                 if (activeChallengeType === 'timed') {
                     blockInputMode = 'type';
                     if (modeToggleBtn) modeToggleBtn.style.display = 'none';
@@ -6732,7 +6853,6 @@ async function loadLeaderboardData() {
                 renderBlocks();
                 switchBlockInputMode(blockInputMode);
                 
-                // 挑戰模式與入門模式皆自動播放音檔
                 playBlockAudio();
             }
         }
@@ -6909,7 +7029,6 @@ async function loadLeaderboardData() {
 
             const scoreBadge = document.getElementById('lbl-block-score');
 
-            // 回答後一律顯示完整中文翻譯
             const transElem = document.getElementById('lbl-block-translation');
             if (transElem) {
                 transElem.innerText = q.translation || "";
@@ -6963,7 +7082,8 @@ async function loadLeaderboardData() {
                 displayQuestion(); 
             } 
         }
-function speakTTS(text, rate = 0.85) {
+
+        function speakTTS(text, rate = 0.85) {
             if (!text) return;
             stopSpeechRecognition();
             const synth = window.speechSynthesis;
@@ -7021,7 +7141,6 @@ function speakTTS(text, rate = 0.85) {
                 const tClean = cleanStringForCompare(cand);
                 if (!tClean) continue;
 
-                // 核心判定門檻：唸出的長度比例必須達到目標句子的 80% 以上，避免只唸後半句即通過
                 const lenRatio = sClean.length / Math.max(1, tClean.length);
 
                 if (tClean === sClean || sClean.includes(tClean) || (tClean.includes(sClean) && lenRatio >= 0.80)) {
@@ -7092,7 +7211,6 @@ function speakTTS(text, rate = 0.85) {
 
             if (extractedRounds.length === 0) return alert("此關卡 dialogue 分頁無題目資料！");
 
-            // 角色 A：題目順序隨機打亂
             chatRounds = shuffleArray(extractedRounds);
 
             chatRoundIndex = 0;
@@ -7107,22 +7225,20 @@ function speakTTS(text, rate = 0.85) {
             if (activeChallengeType === 'timed') startChallengeTimer('chat');
         }
 
-        // 點擊藍色框框切換顯示原本句子（比對答案後才能點擊切換）
         function handleBubbleAClick() {
             if (chatRole === 'B' && activeChallengeType === 'timed') {
                 if (!chatRoundPassed && !isCurrentQuestionAnswered) {
-                    return; // 尚未比對答案前禁止切換
+                    return;
                 }
                 isBubbleARevealed = !isBubbleARevealed;
                 renderSpeakerABubbleContent();
             }
         }
 
-        // 點擊黃色框框切換顯示原本正確回答句子（比對答案後才能點擊切換）
         function handleBubbleBClick() {
             if (chatRole === 'B' && activeChallengeType === 'timed') {
                 if (!chatRoundPassed && !isCurrentQuestionAnswered) {
-                    return; // 尚未比對答案前禁止點擊
+                    return;
                 }
                 isBubbleBRevealed = !isBubbleBRevealed;
                 renderSpeakerBBubbleContent();
@@ -7135,7 +7251,6 @@ function speakTTS(text, rate = 0.85) {
             const lblBubbleAText = document.getElementById('lbl-chat-bubble-a-text');
             const btnPlayA = document.getElementById('btn-bubble-play-a');
 
-            // 挑戰模式且為角色 B：在比對答案前，或比對後尚未手動點擊揭示時，顯示聲波條
             const isRevealed = (chatRoundPassed || isCurrentQuestionAnswered) && isBubbleARevealed;
 
             if (chatRole === 'B' && activeChallengeType === 'timed' && !isRevealed) {
@@ -7225,7 +7340,6 @@ function speakTTS(text, rate = 0.85) {
             if (recordBtn) recordBtn.disabled = false;
             if (playAudioBtn) playAudioBtn.style.display = (activeChallengeType === 'timed') ? 'none' : 'flex';
 
-            // 動態控制機器人頭像位置：角色 A 在藍色框左側，角色 B 在黃色框右側
             if (chatRole === 'A') {
                 if (avatarA) avatarA.style.display = 'flex';
                 if (avatarB) avatarB.style.display = 'none';
