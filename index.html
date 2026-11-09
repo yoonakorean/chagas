@@ -835,8 +835,7 @@
         .doors-opened .gate-unlock-shine { opacity: 1; transform: scale(2.2); }
         .gate-unlock-title { color: #ffffff; font-size: 1.6rem; font-weight: 900; letter-spacing: 1px; margin-bottom: 6px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .gate-unlock-sub { color: #cbd5e1; font-size: 0.95rem; font-weight: bold; margin-bottom: 24px; }
-
-        /* 角色切換專屬動畫 Modal 樣式 */
+/* 角色切換專屬動畫 Modal 樣式 */
         #role-switch-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(8px);
@@ -902,7 +901,8 @@
         .ok-char-text {
             color: #1e293b;
         }
-/* ================= 現代即時通訊對話框風格 ================= */
+
+        /* ================= 現代即時通訊對話框風格 ================= */
         .chat-dialog-stage {
             display: flex;
             flex-direction: column;
@@ -1078,7 +1078,7 @@
         }
         .stage-return {
             display: flex; align-items: center; gap: 6px; color: #64748b;
-            font-size: 0.85rem; font-weight: 800; cursor: border: none; background: none;
+            font-size: 0.85rem; font-weight: 800; border: none; background: none; cursor: pointer;
         }
         .stage-counter { font-size: 0.82rem; font-weight: 800; color: #94a3b8; }
 
@@ -1557,7 +1557,7 @@
     </style>
 </head>
 <body>
-    <!-- 全螢幕「小船航行中...」遮罩 -->
+<!-- 全螢幕「小船航行中...」遮罩 -->
     <div id="game-loading-overlay">
         <div class="loading-island-icon"><i class="fa-solid fa-sailboat"></i></div>
         <div class="loading-island-title" id="lbl-island-loading-title" style="font-size: 1.4rem; font-weight: 900; color: #1e293b; margin-bottom: 8px;">🏝️ 冒險地圖載入中...</div>
@@ -1599,7 +1599,7 @@
         </button>
     </div>
 
-    <!-- 右上角程度切換彈窗 (補回並修復) -->
+    <!-- 右上角程度切換彈窗 -->
     <div class="custom-modal" id="modal-select-initial-level">
         <div class="custom-modal-card">
             <div class="close-icon-circle" onclick="closeModal('modal-select-initial-level')"><i class="fa-solid fa-xmark"></i></div>
@@ -1613,7 +1613,8 @@
             </div>
         </div>
     </div>
-<!-- 登入 / 註冊完整彈窗 -->
+
+    <!-- 登入 / 註冊完整彈窗 -->
     <div class="custom-modal" id="login-modal">
         <div class="custom-modal-card">
             <div style="font-size: 2.2rem; color: var(--duo-blue); margin-bottom: 8px;"><i class="fa-solid fa-graduation-cap"></i></div>
@@ -2106,7 +2107,7 @@
                     </div>
                 </div>
 
-                <!-- 步驟 5.5：語法介紹教室（小試身手新增鍵盤打字輸入切換按鈕與輸入框） -->
+                <!-- 步驟 5.5：語法介紹教室 -->
                 <div id="step-grammar" class="step-page">
                     <div class="top-nav">
                         <button class="btn-back-step" onclick="goToStep('step-lesson')"><i class="fa-solid fa-arrow-left"></i> 回闖關地圖</button>
@@ -2204,7 +2205,7 @@
                         <div class="score-badge" id="lbl-score">判定結果：--</div>
                     </div>
 
-                    <!-- 比對答案按鈕：錄音完後出現，點擊後才進行評分 -->
+                    <!-- 比對答案按鈕 -->
                     <button class="btn-confirm" id="btn-submit-speech-eval" onclick="evaluateUserSpeech()" style="display:none; margin-top:10px; background:var(--duo-blue); border-bottom-color:var(--duo-blue-shadow);">
                         <i class="fa-solid fa-magnifying-glass"></i> 比對答案
                     </button>
@@ -2238,7 +2239,7 @@
                         <div class="instruction-badge-bar" id="lbl-chat-instruction-top">請依指引念出句子：</div>
                     </div>
 
-                    <!-- 對話氣泡舞台：包含左側 (A) 與右側 (B) 的頭像架構 -->
+                    <!-- 對話氣泡舞台 -->
                     <div class="chat-dialog-stage">
                         <div class="chat-bubble-row bubble-row-left" id="row-chat-bubble-a">
                             <div class="chat-bubble-avatar" id="avatar-chat-a" style="display: none;">
@@ -2284,7 +2285,7 @@
                         <div class="score-badge" id="lbl-chat-score">判定結果：--</div>
                     </div>
 
-                    <!-- 對話挑戰比對答案按鈕：錄音完後出現，點擊後才進行評分 -->
+                    <!-- 對話挑戰比對答案按鈕 -->
                     <button class="btn-confirm" id="btn-chat-submit-speech-eval" onclick="evaluateUserSpeech()" style="display:none; margin-top:10px; background:var(--duo-blue); border-bottom-color:var(--duo-blue-shadow);">
                         <i class="fa-solid fa-magnifying-glass"></i> 比對答案
                     </button>
@@ -2296,7 +2297,7 @@
                     <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
                 </div>
 
-                <!-- 步驟 6-B：字塊重組畫面 (動態標題列與鍵盤/字塊切換按鈕) -->
+                <!-- 步驟 6-B：字塊重組畫面 -->
                 <div id="step-quiz-blocks" class="step-page">
                     <div class="challenge-top-bar">
                         <div class="lbl-quiz-info" id="lbl-blocks-mode-title">字塊重組</div>
@@ -2337,7 +2338,6 @@
                         <div class="score-badge" id="lbl-block-score">請選取字塊或鍵盤輸入作答</div>
                     </div>
 
-                    <!-- 檢查答案與切換鍵盤按鈕平行排版行 -->
                     <div class="block-action-parallel-row">
                         <button class="btn-confirm" id="btn-check-block" onclick="checkBlockAnswer()" style="flex: 1; margin-top: 0;">
                             <i class="fa-solid fa-check"></i> 檢查答案
@@ -2353,7 +2353,8 @@
                     </div>
                     <button class="btn-finish-challenge" id="btn-finish-blocks" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
                 </div>
-<!-- 步驟 6-H：0A 字母臨摹畫面 -->
+
+                <!-- 步驟 6-H：0A 字母臨摹畫面 -->
                 <div id="step-quiz-trace" class="step-page">
                     <div class="challenge-top-bar">
                         <div class="lbl-quiz-info" id="lbl-trace-title">字母臨摹</div>
@@ -2368,13 +2369,11 @@
 
                     <div class="instruction-badge-bar">請依標準筆順臨摹，系統將驗證每筆軌跡：</div>
 
-                    <!-- 字母提示與發音 -->
                     <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin: 8px 0;">
                         <span id="lbl-trace-char-title" style="font-size:2.2rem; font-weight:900; color:#1e293b;">あ</span>
                         <button class="btn-circle btn-listen" onclick="playTraceAudio()"><i class="fa-solid fa-volume-high"></i></button>
                     </div>
 
-                    <!-- 筆劃進度指示徽章 -->
                     <div style="display:flex; justify-content:center; align-items:center; gap:8px;">
                         <div class="trace-guide-badge" id="lbl-trace-stroke-step">
                             <i class="fa-solid fa-pen"></i> 請寫第 <span id="lbl-trace-current-stroke-num">1</span> 筆 / 共 <span id="lbl-trace-total-strokes">1</span> 筆
@@ -2382,18 +2381,15 @@
                         <div id="trace-stroke-dots-container" style="display:flex; gap:4px; align-items:center;"></div>
                     </div>
 
-                    <!-- 畫布區塊 -->
                     <div style="display:flex; justify-content:center; margin: 4px 0 8px 0;">
                         <div id="trace-canvas-container" class="trace-box-wrapper"></div>
                     </div>
 
-                    <!-- 操作按鈕 -->
                     <div style="display:flex; justify-content:center; gap:10px; margin-bottom:10px;">
                         <button class="btn-3d btn-3d-secondary" onclick="traceUndo()" style="padding:7px 16px; font-size:0.88rem;"><i class="fa-solid fa-rotate-left"></i> 上一筆</button>
                         <button class="btn-3d btn-3d-secondary" onclick="traceReset()" style="padding:7px 16px; font-size:0.88rem;"><i class="fa-solid fa-trash-can"></i> 重寫</button>
                     </div>
 
-                    <!-- 評判結果反饋提示框 -->
                     <div class="result-box" style="margin: 0 auto 10px auto; width: 92%; min-height: 54px;">
                         <div class="score-badge" id="lbl-trace-feedback" style="font-size: 0.95rem;">請依指示由起點開始書寫</div>
                     </div>
@@ -2457,7 +2453,7 @@
                     <button class="btn-finish-challenge" id="btn-finish-word-shadow" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
                 </div>
 
-                <!-- 步驟 6-F：通用單字選擇題畫面 (支援點選與挑戰模式下的鍵盤輸入) -->
+                <!-- 步驟 6-F：通用單字選擇題畫面 -->
                 <div id="step-quiz-word-choice" class="step-page">
                     <div class="challenge-top-bar">
                         <div class="lbl-word-choice-title" id="lbl-word-choice-title">單字選擇</div>
@@ -2484,10 +2480,8 @@
                     <div class="target-text" id="lbl-word-choice-text">  </div>
                     <div id="lbl-word-choice-sub"></div>
                     
-                    <!-- 點選選項模式容器 -->
                     <div class="vocab-choice-list" id="container-word-choices"></div>
 
-                    <!-- 挑戰模式專屬：鍵盤打字輸入容器 -->
                     <div id="area-word-choice-type" style="display: none; width: 100%; max-width: 360px; margin: 10px auto;">
                         <input type="text" id="input-word-choice-typed" class="vocab-input" placeholder="請輸入答案並按 Enter 送出..." autocomplete="off" autocorrect="off" autocapitalize="none">
                         <button class="btn-confirm" id="btn-submit-word-choice-typed" onclick="submitWordChoiceTypedAnswer()" style="margin-top: 6px;">
@@ -2629,8 +2623,7 @@
             </div>
 
         </div> <!-- shadowing-card 結束 -->
-
-        <!-- 核心邏輯腳本開始 -->
+<!-- 核心邏輯腳本開始 -->
         <script>
             const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -2735,6 +2728,51 @@
             const IDLE_LIMIT_MS = 90 * 1000;
             let isIdlePaused = false;
 
+            // 全局音訊播放實例，防止多重重疊並提供健全播放管理
+            let currentAudioInstance = null;
+
+            /**
+             * 關鍵修復：核心音訊播放函式 playAudioOrTTS
+             * 優先播放音訊檔案 (音訊 URL)，若網址無效、空值或播放失敗則自動降級為標準 TTS 語音朗讀
+             */
+            function playAudioOrTTS(audioUrl, fallbackText, rate = 0.85) {
+                stopSpeechRecognition();
+
+                // 停止當前正在發聲的語音合成
+                if (window.speechSynthesis) {
+                    window.speechSynthesis.cancel();
+                }
+
+                // 停止當前正在播放的音訊物件
+                if (currentAudioInstance) {
+                    try {
+                        currentAudioInstance.pause();
+                        currentAudioInstance.currentTime = 0;
+                    } catch (e) {}
+                    currentAudioInstance = null;
+                }
+
+                const cleanUrl = (audioUrl || '').trim();
+                if (cleanUrl && (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://') || cleanUrl.startsWith('data:audio') || cleanUrl.startsWith('blob:'))) {
+                    try {
+                        const audio = new Audio(cleanUrl);
+                        currentAudioInstance = audio;
+                        const playPromise = audio.play();
+                        if (playPromise !== undefined) {
+                            playPromise.catch((err) => {
+                                console.warn("音訊檔案播放受阻或載入失敗，自動切換至 TTS 語音朗讀:", err);
+                                speakTTS(fallbackText, rate);
+                            });
+                        }
+                    } catch (e) {
+                        console.warn("建立 Audio 物件失敗，降級 TTS:", e);
+                        speakTTS(fallbackText, rate);
+                    }
+                } else {
+                    speakTTS(fallbackText, rate);
+                }
+            }
+
             const GUIDE_DETAILS_MAP = {
                 'grammar': {
                     title: '📘 關卡任務玩法說明',
@@ -2829,381 +2867,381 @@
                 closeModal('modal-guide-detail');
                 openModal('modal-guide-modes');
             }
-function katakanaToHiragana(str) {
-            return (str || '').replace(/[\u30A1-\u30F6]/g, function(match) {
-                return String.fromCharCode(match.charCodeAt(0) - 0x60);
-            });
-        }
 
-        function containsKorean(str) {
-            return /[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/.test(str || '');
-        }
-
-        function containsJapanese(str) {
-            return /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(str || '');
-        }
-
-        const KO_COMMON_ENG_MISHEAR_MAP = {
-            'eu': '이유', 'iu': '이유', 'iyou': '이유', 'e u': '이유', 'e.u.': '이유', 'e.u': '이유', 'eyou': '이유',
-            'an': '안', 'ne': '네', 'ye': '예', 'no': '노'
-        };
-
-        function correctKoreanEnglishMishear(text) {
-            let clean = (text || '').toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
-            if (KO_COMMON_ENG_MISHEAR_MAP[clean]) {
-                return KO_COMMON_ENG_MISHEAR_MAP[clean];
-            }
-            return text;
-        }
-
-        const ROMAJI_TO_HIRAGANA_MAP = {
-            'kya':'きゃ','kyu':'きゅ','kyo':'きょ','sha':'しゃ','shu':'しゅ','sho':'しょ',
-            'cha':'ちゃ','chu':'ちゅ','cho':'ちょ','nya':'にゃ','nyu':'にゅ','nyo':'にょ',
-            'hya':'ひゃ','hyu':'ひゅ','hyo':'ひょ','mya':'みゃ','myu':'みゅ','myo':'みょ',
-            'rya':'りゃ','ryu':'りゅ','ryo':'りょ','gya':'ぎゃ','gyu':'ぎゅ','gyo':'ぎょ',
-            'ja':'じゃ','ju':'じゅ','jo':'じょ','bya':'びゃ','byu':'びゅ','byo':'びょ',
-            'pya':'ぴゃ','pyu':'ぴゅ','pyo':'ぴょ','ka':'か','ki':'き','ku':'く','ke':'け','ko':'こ',
-            'sa':'さ','shi':'し','su':'す','se':'せ','so':'そ','ta':'た','chi':'ち','tsu':'つ','te':'て','to':'と',
-            'na':'な','ni':'に','nu':'ぬ','ne':'ね','no':'の','ha':'は','hi':'ひ','fu':'ふ','he':'へ','ho':'ほ',
-            'ma':'ま','mi':'み','mu':'む','me':'め','mo':'モ','ya':'や','yu':'ゆ','yo':'よ',
-            'ra':'ら','ri':'り','ru':'る','re':'れ','ro':'ろ','wa':'わ','wo':'を','nn':'ん',
-            'ga':'が','gi':'ぎ','gu':'ぐ','ge':'げ','go':'ご','za':'ざ','ji':'じ','zu':'ず','ze':'ぜ','zo':'ぞ',
-            'da':'だ','di':'ぢ','du':'づ','de':'де','do':'ど','ba':'ば','bi':'び','bu':'ぶ','be':'べ','bo':'ぼ',
-            'pa':'ぱ','pi':'ぴ','pu':'ぷ','pe':'ぺ','po':'ぽ','a':'あ','i':'い','u':'う','e':'え','o':'お'
-        };
-
-        function romajiToHiragana(text) {
-            let s = (text || '').toLowerCase().replace(/[^a-z]/g, '');
-            for (const [rom, hira] of Object.entries(ROMAJI_TO_HIRAGANA_MAP)) {
-                s = s.replaceAll(rom, hira);
-            }
-            return s;
-        }
-
-        const JP_CORE_KANA_MAP = {
-            'あお': ['青', '蒼'], 'あおい': ['青い', '葵', '蒼い'], 'あか': ['赤', '紅'], 'あかい': ['赤い', '紅い'],
-            'あう': ['会う', '合う', '遭う'], 'あさ': ['朝', '麻'], 'あし': ['足', '腳'], 'あたま': ['頭'],
-            'あめ': ['雨', '飴'], 'いい': ['良い', 'いい'], 'いえ': ['家'], 'いく': ['行く'], 'いぬ': ['犬'],
-            'いま': ['今'], 'うえ': ['上', '大江'], 'おおえ': ['大江'], 'うみ': ['海'], 'えき': ['駅'],
-            'おいしい': ['美味しい'], 'おおきい': ['大きい'], 'おちゃ': ['お茶'], 'おとこ': ['男'], 'おとな': ['大人'],
-            'おんな': ['女'], 'かいしゃ': ['会社'], 'かう': ['買う', '飼う'], 'かお': ['顔'],
-            'かく': ['書く', '描く', '畫く', '掻く'], 'がくせい': ['學生', '学生'], 'がっこう': ['學校', '学校'],
-            'かわ': ['川', '皮'], 'きく': ['聞く', '聴く', '菊'], 'きょう': ['今日'], 'くるま': ['車'],
-            'くち': ['口'], 'さかな': ['魚'], 'した': ['下', '舌'], 'じかん': ['時間'], 'しろ': ['白'],
-            'しろい': ['白い'], 'せんせい': ['先生'], 'そら': ['空'], 'たべる': ['食べる'], 'ちいさい': ['小さい'],
-            'て': ['手'], 'ともだち': ['友達'], 'なまえ': ['名前'], 'にほん': ['日本'], 'にほんじん': ['日本人'],
-            'ねこ': ['猫'], 'のむ': ['飲む'], 'はな': ['花', '鼻'], 'は那す': ['話す'], 'ひと': ['人'],
-            'ほん': ['本'], 'みず': ['水'], 'みみ': ['耳'], 'みる': ['見る', '觀る', '観る'], 'め': ['目'],
-            'やま': ['山'], 'よむ': ['読む'], 'わたし': ['私'], 'ぼく': ['僕']
-        };
-
-        const JP_CORE_KANJI_LOOKUP = {};
-        for (const [kana, list] of Object.entries(JP_CORE_KANA_MAP)) {
-            list.forEach(k => { JP_CORE_KANJI_LOOKUP[k] = kana; });
-        }
-
-        function normalizeToHiragana(text) {
-            if (!text) return '';
-            let res = katakanaToHiragana(text);
-            for (const [kanji, kana] of Object.entries(JP_CORE_KANJI_LOOKUP)) {
-                res = res.replaceAll(kanji, kana);
-            }
-            if (/[a-zA-Z]/.test(res)) {
-                res = romajiToHiragana(res);
-            }
-            return res;
-        }
-
-        function buildJapaneseMatchCandidates(text, currentItem = null) {
-            let candidates = new Set();
-            if (!text) return Array.from(candidates);
-
-            const rawList = String(text).split('/').map(s => s.trim()).filter(Boolean);
-            rawList.forEach(itemStr => {
-                candidates.add(itemStr);
-                const hira = katakanaToHiragana(itemStr);
-                candidates.add(hira);
-
-                if (JP_CORE_KANA_MAP[hira]) {
-                    JP_CORE_KANA_MAP[hira].forEach(k => candidates.add(k));
-                }
-                if (JP_CORE_KANJI_LOOKUP[itemStr]) {
-                    candidates.add(JP_CORE_KANJI_LOOKUP[itemStr]);
-                }
-            });
-
-            if (currentItem) {
-                const checkFields = [currentItem.zh_tw, currentItem.zh, currentItem.hint, currentItem.kr_pron, currentItem.romanization];
-                checkFields.forEach(val => {
-                    if (val && typeof val === 'string') {
-                        const noBrackets = val.replace(/\([^)]*\)|（[^）]*）/g, '').trim();
-                        if (noBrackets) candidates.add(noBrackets);
-
-                        const matches = val.match(/\(([^)]+)\)|（([^）]+)）/g);
-                        if (matches) {
-                            matches.forEach(m => {
-                                const clean = m.replace(/[()（）]/g, '').trim();
-                                if (clean) {
-                                    candidates.add(clean);
-                                    const cleanHira = katakanaToHiragana(clean);
-                                    candidates.add(cleanHira);
-                                    if (JP_CORE_KANA_MAP[cleanHira]) {
-                                        JP_CORE_KANA_MAP[cleanHira].forEach(k => candidates.add(k));
-                                    }
-                                }
-                            });
-                        }
-                    }
+            function katakanaToHiragana(str) {
+                return (str || '').replace(/[\u30A1-\u30F6]/g, function(match) {
+                    return String.fromCharCode(match.charCodeAt(0) - 0x60);
                 });
             }
-            return Array.from(candidates);
-        }
 
-        const LANG_MUTUAL_MAP = {
-            'zh': 'chinese',
-            'en': 'english',
-            'ja': 'japanese',
-            'ko': 'korean'
-        };
-        const LEARN_TO_NATIVE_MAP = {
-            'english': 'en',
-            'japanese': 'ja',
-            'korean': 'ko'
-        };
+            function containsKorean(str) {
+                return /[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/.test(str || '');
+            }
 
-        function syncMutualExclusiveLangs(scope = 'setup') {
-            const nativeSelect = (scope === 'setup') ? document.getElementById('select-native-language') : document.getElementById('select-account-language');
-            const learnSelect = (scope === 'setup') ? document.getElementById('select-setup-learn-lang') : document.getElementById('select-account-learn-language');
+            function containsJapanese(str) {
+                return /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(str || '');
+            }
 
-            if (!nativeSelect || !learnSelect) return;
+            const KO_COMMON_ENG_MISHEAR_MAP = {
+                'eu': '이유', 'iu': '이유', 'iyou': '이유', 'e u': '이유', 'e.u.': '이유', 'e.u': '이유', 'eyou': '이유',
+                'an': '안', 'ne': '네', 'ye': '예', 'no': '노'
+            };
 
-            const selectedNative = nativeSelect.value;
-            const conflictLearnCategory = LANG_MUTUAL_MAP[selectedNative] || '';
-
-            Array.from(learnSelect.options).forEach(opt => {
-                if (opt.value === conflictLearnCategory) {
-                    opt.disabled = true;
-                    opt.style.display = 'none';
-                } else {
-                    opt.disabled = false;
-                    opt.style.display = 'block';
+            function correctKoreanEnglishMishear(text) {
+                let clean = (text || '').toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+                if (KO_COMMON_ENG_MISHEAR_MAP[clean]) {
+                    return KO_COMMON_ENG_MISHEAR_MAP[clean];
                 }
-            });
-
-            if (learnSelect.value === conflictLearnCategory) {
-                const availableOpt = Array.from(learnSelect.options).find(o => !o.disabled);
-                if (availableOpt) learnSelect.value = availableOpt.value;
+                return text;
             }
 
-            const selectedLearn = learnSelect.value;
-            const conflictNativeLang = LEARN_TO_NATIVE_MAP[selectedLearn] || '';
+            const ROMAJI_TO_HIRAGANA_MAP = {
+                'kya':'きゃ','kyu':'きゅ','kyo':'きょ','sha':'しゃ','shu':'しゅ','sho':'しょ',
+                'cha':'ちゃ','chu':'ちゅ','cho':'ちょ','nya':'にゃ','nyu':'にゅ','nyo':'にょ',
+                'hya':'ひゃ','hyu':'ひゅ','hyo':'ひょ','mya':'みゃ','myu':'みゅ','myo':'みょ',
+                'rya':'りゃ','ryu':'りゅ','ryo':'りょ','gya':'ぎゃ','gyu':'ぎゅ','gyo':'ぎょ',
+                'ja':'じゃ','ju':'じゅ','jo':'じょ','bya':'びゃ','byu':'びゅ','byo':'びょ',
+                'pya':'ぴゃ','pyu':'ぴゅ','pyo':'ぴょ','ka':'か','ki':'き','ku':'く','ke':'け','ko':'こ',
+                'sa':'さ','shi':'し','su':'す','se':'せ','so':'そ','ta':'た','chi':'ち','tsu':'つ','te':'て','to':'と',
+                'na':'な','ni':'に','nu':'ぬ','ne':'ね','no':'の','ha':'は','hi':'ひ','fu':'ふ','he':'へ','ho':'ほ',
+                'ma':'ま','mi':'み','mu':'む','me':'め','mo':'モ','ya':'や','yu':'ゆ','yo':'よ',
+                'ra':'ら','ri':'り','ru':'る','re':'れ','ro':'ろ','wa':'わ','wo':'を','nn':'ん',
+                'ga':'が','gi':'ぎ','gu':'ぐ','ge':'げ','go':'ご','za':'ざ','ji':'じ','zu':'ず','ze':'ぜ','zo':'ぞ',
+                'da':'だ','di':'ぢ','du':'づ','de':'де','do':'ど','ba':'ば','bi':'び','bu':'ぶ','be':'べ','bo':'ぼ',
+                'pa':'ぱ','pi':'ぴ','pu':'ぷ','pe':'ぺ','po':'ぽ','a':'あ','i':'い','u':'う','e':'え','o':'お'
+            };
 
-            Array.from(nativeSelect.options).forEach(opt => {
-                if (opt.value === conflictNativeLang) {
-                    opt.disabled = true;
-                    opt.style.display = 'none';
-                } else {
-                    opt.disabled = false;
-                    opt.style.display = 'block';
+            function romajiToHiragana(text) {
+                let s = (text || '').toLowerCase().replace(/[^a-z]/g, '');
+                for (const [rom, hira] of Object.entries(ROMAJI_TO_HIRAGANA_MAP)) {
+                    s = s.replaceAll(rom, hira);
                 }
-            });
-
-            if (nativeSelect.value === conflictNativeLang) {
-                const availableNative = Array.from(nativeSelect.options).find(o => !o.disabled);
-                if (availableNative) nativeSelect.value = availableNative.value;
-            }
-        }
-
-        function openFlashcardStagePicker() {
-            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-            const wordsOfLevel = rawWordData.filter(v => normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized);
-
-            if (!wordsOfLevel.length) {
-                alert(`Level ${currentConfig.level} 目前尚無單字資料！`);
-                return;
+                return s;
             }
 
-            const units = [...new Set(wordsOfLevel.map(w => getItemField(w, 'unit_id')))].filter(Boolean).sort((a,b) => Number(a)-Number(b));
-            const unitSelect = document.getElementById('select-flashcard-unit');
-            unitSelect.innerHTML = '';
-            units.forEach(u => {
-                const opt = document.createElement('option');
-                opt.value = u;
-                opt.innerText = `第 ${u} 階段`;
-                if (String(u) === String(currentConfig.unit_id)) opt.selected = true;
-                unitSelect.appendChild(opt);
-            });
+            const JP_CORE_KANA_MAP = {
+                'あお': ['青', '蒼'], 'あおい': ['青い', '葵', '蒼い'], 'あか': ['赤', '紅'], 'あかい': ['赤い', '紅い'],
+                'あう': ['会う', '合う', '遭う'], 'あさ': ['朝', '麻'], 'あし': ['足', '腳'], 'あたま': ['頭'],
+                'あめ': ['雨', '飴'], 'いい': ['良い', 'いい'], 'いえ': ['家'], 'いく': ['行く'], 'いぬ': ['犬'],
+                'いま': ['今'], 'うえ': ['上', '大江'], 'おおえ': ['大江'], 'うみ': ['海'], 'えき': ['駅'],
+                'おいしい': ['美味しい'], 'おおきい': ['大きい'], 'おちゃ': ['お茶'], 'おとこ': ['男'], 'おとな': ['大人'],
+                'おんな': ['女'], 'かいしゃ': ['会社'], 'かう': ['買う', '飼う'], 'かお': ['顔'],
+                'かく': ['書く', '描く', '畫く', '掻く'], 'がくせい': ['學生', '学生'], 'がっこう': ['學校', '学校'],
+                'かわ': ['川', '皮'], 'きく': ['聞く', '聴く', '菊'], 'きょう': ['今日'], 'くるま': ['車'],
+                'くち': ['口'], 'さかな': ['魚'], 'した': ['下', '舌'], 'じかん': ['時間'], 'しろ': ['白'],
+                'しろい': ['白い'], 'せんせい': ['先生'], 'そら': ['空'], 'たべる': ['食べる'], 'ちいさい': ['小さい'],
+                'て': ['手'], 'ともだち': ['友達'], 'なまえ': ['名前'], 'にほん': ['日本'], 'にほんじん': ['日本人'],
+                'ねこ': ['猫'], 'のむ': ['飲む'], 'はな': ['花', '鼻'], 'は那す': ['話す'], 'ひと': ['人'],
+                'ほん': ['本'], 'みず': ['水'], 'みみ': ['耳'], 'みる': ['見る', '觀る', '観る'], 'め': ['目'],
+                'やま': ['山'], 'よむ': ['読む'], 'わたし': ['私'], 'ぼく': ['僕']
+            };
 
-            renderFlashcardLessonOptions();
-            openModal('modal-select-flashcard-stage');
-        }
-
-        function renderFlashcardLessonOptions() {
-            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-            const selectedUnit = document.getElementById('select-flashcard-unit').value;
-            const wordsOfUnit = rawWordData.filter(v => 
-                normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
-                String(getItemField(v, 'unit_id')).trim() === String(selectedUnit).trim()
-            );
-
-            const lessons = [...new Set(wordsOfUnit.map(w => getItemField(w, 'lesson')))].filter(Boolean).sort((a,b) => Number(a)-Number(b));
-            const lessonSelect = document.getElementById('select-flashcard-lesson');
-            lessonSelect.innerHTML = '';
-            lessons.forEach(l => {
-                const opt = document.createElement('option');
-                opt.value = l;
-                opt.innerText = `第 ${l} 關單字`;
-                if (String(l) === String(currentConfig.lesson)) opt.selected = true;
-                lessonSelect.appendChild(opt);
-            });
-        }
-
-        function confirmLaunchFlashcardStage() {
-            const selectedUnit = document.getElementById('select-flashcard-unit').value;
-            const selectedLesson = document.getElementById('select-flashcard-lesson').value;
-            closeModal('modal-select-flashcard-stage');
-            launchFlashcardForStage(selectedUnit, selectedLesson);
-        }
-
-        function launchFlashcardForStage(unitId, lessonId) {
-            const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
-            flashcardList = rawWordData.filter(v => 
-                normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
-                String(getItemField(v, 'unit_id')).trim() === String(unitId).trim() &&
-                String(getItemField(v, 'lesson')).trim() === String(lessonId).trim()
-            );
-
-            if (!flashcardList.length) {
-                alert(`第 ${unitId} 階段 - 第 ${lessonId} 關暫無單字卡資料！`);
-                return;
+            const JP_CORE_KANJI_LOOKUP = {};
+            for (const [kana, list] of Object.entries(JP_CORE_KANA_MAP)) {
+                list.forEach(k => { JP_CORE_KANJI_LOOKUP[k] = kana; });
             }
 
-            flashcardIndex = 0;
-            flashcardPronMode = 'kr';
-            document.getElementById('stage-vocab-flashcard').classList.add('active');
-            renderFlashcardContent();
-        }
-
-        function closeFlashcardStage() {
-            document.getElementById('stage-vocab-flashcard').classList.remove('active');
-        }
-
-        function toggleFlashcardFlip() {
-            const card = document.getElementById('flip-flashcard');
-            if (card) card.classList.toggle('flipped');
-        }
-
-        function setFlashcardPronMode(mode) {
-            flashcardPronMode = mode;
-            document.getElementById('btn-flashcard-pron-kr').classList.toggle('active', mode === 'kr');
-            document.getElementById('btn-flashcard-pron-roman').classList.toggle('active', mode === 'roman');
-            renderFlashcardPron();
-        }
-
-        function renderFlashcardPron() {
-            if (!flashcardList.length) return;
-            const item = flashcardList[flashcardIndex];
-            const pronElem = document.getElementById('flashcard-front-pron');
-            if (!pronElem) return;
-            if (flashcardPronMode === 'kr') {
-                pronElem.innerText = item.kr_pron ? `[${item.kr_pron}]` : (item.romanization ? `[${item.romanization}]` : '');
-            } else {
-                pronElem.innerText = item.romanization ? `[${item.romanization}]` : (item.kr_pron ? `[${item.kr_pron}]` : '');
-            }
-        }
-
-        function renderFlashcardContent() {
-            if (!flashcardList.length) return;
-            const item = flashcardList[flashcardIndex];
-            const card = document.getElementById('flip-flashcard');
-            if (card) card.classList.remove('flipped');
-
-            document.getElementById('lbl-flashcard-counter').innerText = `${flashcardIndex + 1} / ${flashcardList.length}`;
-            document.getElementById('flashcard-front-pos').innerText = item.pos || '單字';
-            document.getElementById('flashcard-front-word').innerText = item.text || '';
-            renderFlashcardPron();
-
-            document.getElementById('flashcard-back-pos').innerText = item.pos || '單字';
-            document.getElementById('flashcard-back-word').innerText = item.text || '';
-            
-            const trans = getWordTranslation(item);
-            document.getElementById('flashcard-back-meaning').innerText = trans || (item.note || '詳細解釋');
-
-            const exContainer = document.getElementById('flashcard-back-examples');
-            exContainer.innerHTML = '';
-            if (item.example || item.commonExpressions) {
-                const exText = item.example || item.commonExpressions;
-                const exDiv = document.createElement('div');
-                exDiv.className = 'note-expr';
-                exDiv.innerHTML = `
-                    <div class="note-expr-kr">
-                        <span>${exText}</span>
-                        <button class="mini-play" onclick="event.stopPropagation(); speakTTS('${exText}', 0.85);"><i class="fa-solid fa-volume-high"></i></button>
-                    </div>
-                `;
-                exContainer.appendChild(exDiv);
+            function normalizeToHiragana(text) {
+                if (!text) return '';
+                let res = katakanaToHiragana(text);
+                for (const [kanji, kana] of Object.entries(JP_CORE_KANJI_LOOKUP)) {
+                    res = res.replaceAll(kanji, kana);
+                }
+                if (/[a-zA-Z]/.test(res)) {
+                    res = romajiToHiragana(res);
+                }
+                return res;
             }
 
-            document.getElementById('btn-flashcard-prev').disabled = flashcardIndex <= 0;
-            document.getElementById('btn-flashcard-next').disabled = flashcardIndex >= flashcardList.length - 1;
+            function buildJapaneseMatchCandidates(text, currentItem = null) {
+                let candidates = new Set();
+                if (!text) return Array.from(candidates);
 
-            playWordAudioGeneric(item);
-        }
+                const rawList = String(text).split('/').map(s => s.trim()).filter(Boolean);
+                rawList.forEach(itemStr => {
+                    candidates.add(itemStr);
+                    const hira = katakanaToHiragana(itemStr);
+                    candidates.add(hira);
 
-        function stepFlashcard(delta) {
-            const next = flashcardIndex + delta;
-            if (next >= 0 && next < flashcardList.length) {
-                flashcardIndex = next;
+                    if (JP_CORE_KANA_MAP[hira]) {
+                        JP_CORE_KANA_MAP[hira].forEach(k => candidates.add(k));
+                    }
+                    if (JP_CORE_KANJI_LOOKUP[itemStr]) {
+                        candidates.add(JP_CORE_KANJI_LOOKUP[itemStr]);
+                    }
+                });
+
+                if (currentItem) {
+                    const checkFields = [currentItem.zh_tw, currentItem.zh, currentItem.hint, currentItem.kr_pron, currentItem.romanization];
+                    checkFields.forEach(val => {
+                        if (val && typeof val === 'string') {
+                            const noBrackets = val.replace(/\([^)]*\)|（[^）]*）/g, '').trim();
+                            if (noBrackets) candidates.add(noBrackets);
+
+                            const matches = val.match(/\(([^)]+)\)|（([^）]+)）/g);
+                            if (matches) {
+                                matches.forEach(m => {
+                                    const clean = m.replace(/[()（）]/g, '').trim();
+                                    if (clean) {
+                                        candidates.add(clean);
+                                        const cleanHira = katakanaToHiragana(clean);
+                                        candidates.add(cleanHira);
+                                        if (JP_CORE_KANA_MAP[cleanHira]) {
+                                            JP_CORE_KANA_MAP[cleanHira].forEach(k => candidates.add(k));
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+                return Array.from(candidates);
+            }
+
+            const LANG_MUTUAL_MAP = {
+                'zh': 'chinese',
+                'en': 'english',
+                'ja': 'japanese',
+                'ko': 'korean'
+            };
+            const LEARN_TO_NATIVE_MAP = {
+                'english': 'en',
+                'japanese': 'ja',
+                'korean': 'ko'
+            };
+
+            function syncMutualExclusiveLangs(scope = 'setup') {
+                const nativeSelect = (scope === 'setup') ? document.getElementById('select-native-language') : document.getElementById('select-account-language');
+                const learnSelect = (scope === 'setup') ? document.getElementById('select-setup-learn-lang') : document.getElementById('select-account-learn-language');
+
+                if (!nativeSelect || !learnSelect) return;
+
+                const selectedNative = nativeSelect.value;
+                const conflictLearnCategory = LANG_MUTUAL_MAP[selectedNative] || '';
+
+                Array.from(learnSelect.options).forEach(opt => {
+                    if (opt.value === conflictLearnCategory) {
+                        opt.disabled = true;
+                        opt.style.display = 'none';
+                    } else {
+                        opt.disabled = false;
+                        opt.style.display = 'block';
+                    }
+                });
+
+                if (learnSelect.value === conflictLearnCategory) {
+                    const availableOpt = Array.from(learnSelect.options).find(o => !o.disabled);
+                    if (availableOpt) learnSelect.value = availableOpt.value;
+                }
+
+                const selectedLearn = learnSelect.value;
+                const conflictNativeLang = LEARN_TO_NATIVE_MAP[selectedLearn] || '';
+
+                Array.from(nativeSelect.options).forEach(opt => {
+                    if (opt.value === conflictNativeLang) {
+                        opt.disabled = true;
+                        opt.style.display = 'none';
+                    } else {
+                        opt.disabled = false;
+                        opt.style.display = 'block';
+                    }
+                });
+
+                if (nativeSelect.value === conflictNativeLang) {
+                    const availableNative = Array.from(nativeSelect.options).find(o => !o.disabled);
+                    if (availableNative) nativeSelect.value = availableNative.value;
+                }
+            }
+
+            function openFlashcardStagePicker() {
+                const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+                const wordsOfLevel = rawWordData.filter(v => normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized);
+
+                if (!wordsOfLevel.length) {
+                    alert(`Level ${currentConfig.level} 目前尚無單字資料！`);
+                    return;
+                }
+
+                const units = [...new Set(wordsOfLevel.map(w => getItemField(w, 'unit_id')))].filter(Boolean).sort((a,b) => Number(a)-Number(b));
+                const unitSelect = document.getElementById('select-flashcard-unit');
+                unitSelect.innerHTML = '';
+                units.forEach(u => {
+                    const opt = document.createElement('option');
+                    opt.value = u;
+                    opt.innerText = `第 ${u} 階段`;
+                    if (String(u) === String(currentConfig.unit_id)) opt.selected = true;
+                    unitSelect.appendChild(opt);
+                });
+
+                renderFlashcardLessonOptions();
+                openModal('modal-select-flashcard-stage');
+            }
+
+            function renderFlashcardLessonOptions() {
+                const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+                const selectedUnit = document.getElementById('select-flashcard-unit').value;
+                const wordsOfUnit = rawWordData.filter(v => 
+                    normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
+                    String(getItemField(v, 'unit_id')).trim() === String(selectedUnit).trim()
+                );
+
+                const lessons = [...new Set(wordsOfUnit.map(w => getItemField(w, 'lesson')))].filter(Boolean).sort((a,b) => Number(a)-Number(b));
+                const lessonSelect = document.getElementById('select-flashcard-lesson');
+                lessonSelect.innerHTML = '';
+                lessons.forEach(l => {
+                    const opt = document.createElement('option');
+                    opt.value = l;
+                    opt.innerText = `第 ${l} 關單字`;
+                    if (String(l) === String(currentConfig.lesson)) opt.selected = true;
+                    lessonSelect.appendChild(opt);
+                });
+            }
+
+            function confirmLaunchFlashcardStage() {
+                const selectedUnit = document.getElementById('select-flashcard-unit').value;
+                const selectedLesson = document.getElementById('select-flashcard-lesson').value;
+                closeModal('modal-select-flashcard-stage');
+                launchFlashcardForStage(selectedUnit, selectedLesson);
+            }
+
+            function launchFlashcardForStage(unitId, lessonId) {
+                const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
+                flashcardList = rawWordData.filter(v => 
+                    normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized &&
+                    String(getItemField(v, 'unit_id')).trim() === String(unitId).trim() &&
+                    String(getItemField(v, 'lesson')).trim() === String(lessonId).trim()
+                );
+
+                if (!flashcardList.length) {
+                    alert(`第 ${unitId} 階段 - 第 ${lessonId} 關暫無單字卡資料！`);
+                    return;
+                }
+
+                flashcardIndex = 0;
+                flashcardPronMode = 'kr';
+                document.getElementById('stage-vocab-flashcard').classList.add('active');
                 renderFlashcardContent();
             }
-        }
 
-        function playFlashcardAudio(e) {
-            if (e) e.stopPropagation();
-            if (!flashcardList.length) return;
-            playWordAudioGeneric(flashcardList[flashcardIndex]);
-        }
+            function closeFlashcardStage() {
+                document.getElementById('stage-vocab-flashcard').classList.remove('active');
+            }
 
-        function playWordAudioGeneric(item) {
-            if (!item) return;
-            playAudioOrTTS(item.audio_url, item.text, 0.85);
-        }
+            function toggleFlashcardFlip() {
+                const card = document.getElementById('flip-flashcard');
+                if (card) card.classList.toggle('flipped');
+            }
 
-        (function initFlashcardSwipe() {
-            const zone = document.getElementById('flashcard-swipe-zone');
-            if (!zone) return;
-            let startX = 0, startY = 0, tracking = false;
-            zone.addEventListener('touchstart', (e) => {
-                const t = e.touches[0];
-                startX = t.clientX; startY = t.clientY; tracking = true;
-            }, { passive: true });
-            zone.addEventListener('touchend', (e) => {
-                if (!tracking) return;
-                tracking = false;
-                const t = e.changedTouches[0];
-                const dx = t.clientX - startX, dy = t.clientY - startY;
-                if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.4) {
-                    if (dx > 0) stepFlashcard(-1);
-                    else stepFlashcard(1);
+            function setFlashcardPronMode(mode) {
+                flashcardPronMode = mode;
+                document.getElementById('btn-flashcard-pron-kr').classList.toggle('active', mode === 'kr');
+                document.getElementById('btn-flashcard-pron-roman').classList.toggle('active', mode === 'roman');
+                renderFlashcardPron();
+            }
+
+            function renderFlashcardPron() {
+                if (!flashcardList.length) return;
+                const item = flashcardList[flashcardIndex];
+                const pronElem = document.getElementById('flashcard-front-pron');
+                if (!pronElem) return;
+                if (flashcardPronMode === 'kr') {
+                    pronElem.innerText = item.kr_pron ? `[${item.kr_pron}]` : (item.romanization ? `[${item.romanization}]` : '');
+                } else {
+                    pronElem.innerText = item.romanization ? `[${item.romanization}]` : (item.kr_pron ? `[${item.kr_pron}]` : '');
                 }
-            }, { passive: true });
-        })();
+            }
 
-        function playSpeakerAAudio(event) {
-            if (event) event.stopPropagation();
-            const curRound = chatRounds[chatRoundIndex];
-            if (!curRound) return;
-            playAudioOrTTS(curRound.aAudio, curRound.aText, 0.85);
-        }
+            function renderFlashcardContent() {
+                if (!flashcardList.length) return;
+                const item = flashcardList[flashcardIndex];
+                const card = document.getElementById('flip-flashcard');
+                if (card) card.classList.remove('flipped');
 
-        function playSpeakerBAudio(event) {
-            if (event) event.stopPropagation();
-            const curRound = chatRounds[chatRoundIndex];
-            if (!curRound) return;
-            playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85);
-        }
+                document.getElementById('lbl-flashcard-counter').innerText = `${flashcardIndex + 1} / ${flashcardList.length}`;
+                document.getElementById('flashcard-front-pos').innerText = item.pos || '單字';
+                document.getElementById('flashcard-front-word').innerText = item.text || '';
+                renderFlashcardPron();
 
-        function hideRecordingControls() {
+                document.getElementById('flashcard-back-pos').innerText = item.pos || '單字';
+                document.getElementById('flashcard-back-word').innerText = item.text || '';
+                
+                const trans = getWordTranslation(item);
+                document.getElementById('flashcard-back-meaning').innerText = trans || (item.note || '詳細解釋');
+
+                const exContainer = document.getElementById('flashcard-back-examples');
+                exContainer.innerHTML = '';
+                if (item.example || item.commonExpressions) {
+                    const exText = item.example || item.commonExpressions;
+                    const exDiv = document.createElement('div');
+                    exDiv.className = 'note-expr';
+                    exDiv.innerHTML = `
+                        <div class="note-expr-kr">
+                            <span>${exText}</span>
+                            <button class="mini-play" onclick="event.stopPropagation(); speakTTS('${exText.replace(/'/g, "\\'")}', 0.85);"><i class="fa-solid fa-volume-high"></i></button>
+                        </div>
+                    `;
+                    exContainer.appendChild(exDiv);
+                }
+
+                document.getElementById('btn-flashcard-prev').disabled = flashcardIndex <= 0;
+                document.getElementById('btn-flashcard-next').disabled = flashcardIndex >= flashcardList.length - 1;
+
+                playWordAudioGeneric(item);
+            }
+
+            function stepFlashcard(delta) {
+                const next = flashcardIndex + delta;
+                if (next >= 0 && next < flashcardList.length) {
+                    flashcardIndex = next;
+                    renderFlashcardContent();
+                }
+            }
+
+            function playFlashcardAudio(e) {
+                if (e) e.stopPropagation();
+                if (!flashcardList.length) return;
+                playWordAudioGeneric(flashcardList[flashcardIndex]);
+            }
+
+            function playWordAudioGeneric(item) {
+                if (!item) return;
+                playAudioOrTTS(item.audio_url, item.text, 0.85);
+            }
+
+            (function initFlashcardSwipe() {
+                const zone = document.getElementById('flashcard-swipe-zone');
+                if (!zone) return;
+                let startX = 0, startY = 0, tracking = false;
+                zone.addEventListener('touchstart', (e) => {
+                    const t = e.touches[0];
+                    startX = t.clientX; startY = t.clientY; tracking = true;
+                }, { passive: true });
+                zone.addEventListener('touchend', (e) => {
+                    if (!tracking) return;
+                    tracking = false;
+                    const t = e.changedTouches[0];
+                    const dx = t.clientX - startX, dy = t.clientY - startY;
+                    if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+                        if (dx > 0) stepFlashcard(-1);
+                        else stepFlashcard(1);
+                    }
+                }, { passive: true });
+            })();
+
+            function playSpeakerAAudio(event) {
+                if (event) event.stopPropagation();
+                const curRound = chatRounds[chatRoundIndex];
+                if (!curRound) return;
+                playAudioOrTTS(curRound.aAudio, curRound.aText, 0.85);
+            }
+
+            function playSpeakerBAudio(event) {
+                if (event) event.stopPropagation();
+                const curRound = chatRounds[chatRoundIndex];
+                if (!curRound) return;
+                playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85);
+            }
+function hideRecordingControls() {
             const activeMode = currentConfig.mode;
             if (activeMode === 'sentence_chat') {
                 const recBtn = document.getElementById('btn-chat-start-record');
@@ -4756,7 +4794,7 @@ function triggerBottomGrammarAction() {
                     rank++;
                 });
             } catch (e) {
-                container.innerHTML = "<div style='text-align:color:#ef4444; padding:20px 0;'>載入失敗，請確認網路！</div>";
+                container.innerHTML = "<div style='text-align:center; color:#ef4444; padding:20px 0;'>載入失敗，請確認網路！</div>";
             }
         }
 
@@ -5925,8 +5963,7 @@ function triggerBottomGrammarAction() {
                 showGrammarQuizArea();
             }
         }
-
-        /* ================= 字母臨摹 Canvas 控制與筆劃評判 ================= */
+/* ================= 字母臨摹 Canvas 控制與筆劃評判 ================= */
         function initTraceCanvas(curItem) {
             const container = document.getElementById('trace-canvas-container');
             const size = Math.min(270, window.innerWidth - 70);
@@ -6236,7 +6273,7 @@ function triggerBottomGrammarAction() {
         function playTraceAudio() {
             const cur = traceQuestions[traceIndex];
             if (cur) {
-                speakTTS(cur.audio_text || cur.char, 0.85);
+                playAudioOrTTS(cur.audio_url, cur.audio_text || cur.char, 0.85);
             }
         }
 
@@ -7108,6 +7145,7 @@ function triggerBottomGrammarAction() {
         function speakTTS(text, rate = 0.85) {
             if (!text) return;
             stopSpeechRecognition();
+            if (!('speechSynthesis' in window)) return;
             const synth = window.speechSynthesis;
             synth.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
@@ -7491,7 +7529,10 @@ function triggerBottomGrammarAction() {
                 lblBubbleBText.innerText = curRound.bText;
                 if (btnPlayB) btnPlayB.style.display = 'inline-flex';
                 
-                setTimeout(() => playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85), 400);
+                // 修復：角色 A 答對後自動無障礙播放角色 B 音檔或 TTS 語音
+                setTimeout(() => {
+                    playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85);
+                }, 400);
             } else {
                 document.getElementById('lbl-chat-score').innerText = getRandomPassPraise();
                 document.getElementById('lbl-chat-score').style.color = "#58cc02";
@@ -7790,7 +7831,6 @@ function triggerBottomGrammarAction() {
 
                 lastRecognizedSpeechText = userSpeech;
 
-                // 即時呈現辨識結果文字，但不立即自動判定，讓使用者可重新錄音
                 const isWord = (currentConfig.mode === 'word_shadow');
                 const isChat = (currentConfig.mode === 'sentence_chat');
 
