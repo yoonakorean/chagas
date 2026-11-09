@@ -1222,7 +1222,7 @@
         .nav-pill-btn.active { background: var(--duo-blue); color: white; border-color: var(--duo-blue); }
 
         .tab-segmented {
-            display: flex background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 14px;
+            display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 14px;
         }
         .tab-segmented-item {
             flex: 1; padding: 8px 10px; border: none; background: transparent; font-weight: bold;
@@ -1599,20 +1599,6 @@
         </button>
     </div>
 
-    <!-- 右上角程度切換彈窗 (修復點擊失效) -->
-    <div class="custom-modal" id="modal-select-initial-level">
-        <div class="custom-modal-card">
-            <div class="close-icon-circle" onclick="closeModal('modal-select-initial-level')"><i class="fa-solid fa-xmark"></i></div>
-            <div style="font-size: 2.2rem; color: var(--duo-blue); margin-bottom: 8px;"><i class="fa-solid fa-layer-group"></i></div>
-            <h3 style="margin: 0 0 6px 0; font-size: 1.2rem;">切換學習程度</h3>
-            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 14px;">請選擇您想前往的課程程度：</p>
-            <select id="initial-level-select" class="level-select-box"></select>
-            <button class="btn-3d btn-3d-primary" id="btn-confirm-initial-level" style="width: 100%; padding: 11px; margin-top: 6px;">
-                確認切換
-            </button>
-        </div>
-    </div>
-
     <!-- 登入 / 註冊完整彈窗 -->
     <div class="custom-modal" id="login-modal">
         <div class="custom-modal-card">
@@ -1644,6 +1630,102 @@
                 <button id="btn-forgot-password" style="border:none; background:none; color:var(--duo-blue); cursor:pointer; font-size:0.82rem;">忘記密碼？</button>
             </div>
             <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 10px;" class="hidden"></div>
+        </div>
+    </div>
+
+    <!-- 忘記密碼 Modal -->
+    <div id="modal-forgot-password" class="custom-modal">
+        <div class="custom-modal-card">
+            <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
+            <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 10px;">請輸入您的登入 Email，我們將寄送重設密碼信件給您：</p>
+            <input type="email" id="input-forgot-email" placeholder="電子信箱">
+            <div style="display:flex; gap:10px; margin-top:12px;">
+                <button id="btn-send-reset-email" class="btn-3d btn-3d-primary" style="flex:1; padding:10px;">寄送重設信件</button>
+                <button id="btn-cancel-forgot-password" class="btn-3d btn-3d-secondary" style="flex:1; padding:10px;">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 首次登入設定暱稱、學習語言與母語 -->
+    <div id="modal-setup-nickname" class="custom-modal">
+        <div class="custom-modal-card">
+            <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-user-gear" style="color:var(--duo-blue);"></i> 設定學習資訊</h3>
+            <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 8px;">請設定排行榜上顯示的名稱 (2~12字，不可與他人重複)</p>
+            <input type="text" id="input-setup-nickname" placeholder="例如：語言小霸王" maxlength="12" />
+            
+            <p style="font-size: 0.85rem; color: #6b7280; margin: 12px 0 4px; text-align:left;">選擇母語（題意翻譯將以此呈現）</p>
+            <select id="select-native-language" onchange="syncMutualExclusiveLangs('setup')">
+                <option value="zh">繁體中文</option>
+                <option value="en">English</option>
+                <option value="ja">日本語</option>
+            </select>
+
+            <p style="font-size: 0.85rem; color: #6b7280; margin: 12px 0 4px; text-align:left;">想要學習的語言</p>
+            <select id="select-setup-learn-lang" onchange="syncMutualExclusiveLangs('setup')">
+                <option value="korean">🇰🇷 韓文</option>
+                <option value="japanese">🇯🇵 日文</option>
+                <option value="english">🇺🇸 英文</option>
+            </select>
+
+            <div id="setup-nickname-error" style="color: var(--duo-red); font-size: 0.8rem; margin-top: 6px;" class="hidden"></div>
+            <button id="btn-save-initial-nickname" class="btn-3d btn-3d-primary" style="width:100%; padding:10px; margin-top:12px;">完成設定並開始學習</button>
+        </div>
+    </div>
+
+    <!-- 新增好友 Modal -->
+    <div id="modal-add-friend" class="custom-modal">
+        <div class="custom-modal-card">
+            <div class="close-icon-circle" onclick="closeModal('modal-add-friend')"><i class="fa-solid fa-xmark"></i></div>
+            <h3 style="margin-top:0; font-size: 1.2rem; color: var(--duo-blue);"><i class="fa-solid fa-user-plus"></i> 新增好友</h3>
+            <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 10px;">輸入好友的登入 Email，將其加入好友排行榜中互相比較進度：</p>
+            <input type="email" id="input-friend-email" placeholder="好友的電子信箱 (Email)">
+            <div id="add-friend-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 6px;" class="hidden"></div>
+            <div style="display:flex; gap:10px; margin-top:14px;">
+                <button id="btn-confirm-add-friend" class="btn-3d btn-3d-primary" style="flex:1; padding:10px;">確認新增</button>
+                <button class="btn-3d btn-3d-secondary" onclick="closeModal('modal-add-friend')" style="flex:1; padding:10px;">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 學習成就統計 Dashboard Modal -->
+    <div id="modal-streak-dashboard" class="custom-modal">
+        <div class="custom-modal-card">
+            <div class="close-icon-circle" id="btn-close-streak-modal" onclick="closeModal('modal-streak-dashboard')"><i class="fa-solid fa-xmark"></i></div>
+            <h3 style="margin: 2px 0 14px 0; color: #1f2937; font-size: 1.2rem; font-weight: 800;">
+                <i class="fa-solid fa-fire" style="color: var(--duo-fire-red);"></i> 學習成就統計
+            </h3>
+            
+            <div style="display: flex; justify-content: space-around; background: #f9fafb; padding: 12px; border-radius: 16px; margin-bottom: 14px; border: 1px solid #e5e7eb;">
+                <div style="flex: 1;">
+                    <div style="font-size: 0.75rem; color: #6b7280; font-weight: bold;">打卡天數</div>
+                    <div style="font-size: 1.25rem; font-weight: bold; color: var(--duo-fire-red);"><span id="dash-streak-days">1</span> 天</div>
+                </div>
+                <div style="width: 1px; background: #e5e7eb; margin: 0 4px;"></div>
+                <div style="flex: 1;">
+                    <div style="font-size: 0.75rem; color: #6b7280; font-weight: bold;">專注時長</div>
+                    <div style="font-size: 1.15rem; font-weight: bold; color: var(--duo-blue);"><span id="dash-focus-hours">0秒</span></div>
+                </div>
+            </div>
+
+            <div class="calendar-header-ctrl">
+                <div><i class="fa-regular fa-calendar-days" style="color: var(--duo-gold);"></i> 簽到紀錄</div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button class="calendar-nav-btn" id="btn-cal-prev"><i class="fa-solid fa-chevron-left"></i></button>
+                    <span id="lbl-calendar-month-title" style="font-weight: bold; font-size: 0.9rem;">2026年 10月</span>
+                    <button class="calendar-nav-btn" id="btn-cal-next"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="calendar-grid">
+                <div class="calendar-day-header">日</div>
+                <div class="calendar-day-header">一</div>
+                <div class="calendar-day-header">二</div>
+                <div class="calendar-day-header">三</div>
+                <div class="calendar-day-header">四</div>
+                <div class="calendar-day-header">五</div>
+                <div class="calendar-day-header">六</div>
+                <div id="calendar-days-container" style="display: contents;"></div>
+            </div>
         </div>
     </div>
 <!-- 模式選擇彈窗 -->
@@ -2009,7 +2091,7 @@
                 </div>
             </div>
 
-            <!-- 步驟 5.5：語法介紹教室 -->
+            <!-- 步驟 5.5：語法介紹教室（小試身手新增鍵盤打字輸入切換按鈕與輸入框） -->
             <div id="step-grammar" class="step-page">
                 <div class="top-nav">
                     <button class="btn-back-step" onclick="goToStep('step-lesson')"><i class="fa-solid fa-arrow-left"></i> 回闖關地圖</button>
@@ -2107,7 +2189,6 @@
                     <div class="score-badge" id="lbl-score">判定結果：--</div>
                 </div>
 
-                <!-- 點擊才評分按鈕 -->
                 <button class="btn-confirm" id="btn-submit-speech-eval" onclick="evaluateUserSpeech()" style="display:none; margin-top:10px; background:var(--duo-blue); border-bottom-color:var(--duo-blue-shadow);">
                     <i class="fa-solid fa-magnifying-glass"></i> 比對發音並評分
                 </button>
@@ -2141,7 +2222,7 @@
                     <div class="instruction-badge-bar" id="lbl-chat-instruction-top">請依指引念出句子：</div>
                 </div>
 
-                <!-- 對話氣泡舞台 -->
+                <!-- 對話氣泡舞台：包含左側 (A) 與右側 (B) 的頭像架構 -->
                 <div class="chat-dialog-stage">
                     <div class="chat-bubble-row bubble-row-left" id="row-chat-bubble-a">
                         <div class="chat-bubble-avatar" id="avatar-chat-a" style="display: none;">
@@ -2187,7 +2268,7 @@
                     <div class="score-badge" id="lbl-chat-score">判定結果：--</div>
                 </div>
 
-                <!-- 點擊才評分按鈕 -->
+                <!-- 對話挑戰手動比對發音按鈕 -->
                 <button class="btn-confirm" id="btn-chat-submit-speech-eval" onclick="evaluateUserSpeech()" style="display:none; margin-top:10px; background:var(--duo-blue); border-bottom-color:var(--duo-blue-shadow);">
                     <i class="fa-solid fa-magnifying-glass"></i> 比對發音並評分
                 </button>
@@ -2198,7 +2279,8 @@
                 </div>
                 <button class="btn-finish-challenge" id="btn-finish-chat" onclick="finishCurrentChallenge()"><i class="fa-solid fa-trophy"></i> 🎉 完成挑戰並結算星級</button>
             </div>
-<!-- 步驟 6-B：字塊重組畫面 (動態標題列與鍵盤/字塊切換按鈕) -->
+
+            <!-- 步驟 6-B：字塊重組畫面 (動態標題列與鍵盤/字塊切換按鈕) -->
             <div id="step-quiz-blocks" class="step-page">
                 <div class="challenge-top-bar">
                     <div class="lbl-quiz-info" id="lbl-blocks-mode-title">字塊重組</div>
@@ -2349,7 +2431,6 @@
                     <div class="score-badge" id="lbl-word-shadow-score">判定結果：--</div>
                 </div>
 
-                <!-- 點擊才評分按鈕 -->
                 <button class="btn-confirm" id="btn-word-shadow-submit-speech-eval" onclick="evaluateUserSpeech()" style="display:none; margin-top:10px; background:var(--duo-blue); border-bottom-color:var(--duo-blue-shadow);">
                     <i class="fa-solid fa-magnifying-glass"></i> 比對發音並評分
                 </button>
@@ -2665,8 +2746,8 @@
                 content: `
                     <strong>1. 聆聽示範：</strong> 點擊喇叭按鈕聆聽單字正確發音與音調。<br>
                     <strong>2. 開始錄音：</strong> 點擊紅色麥克風圖示後，對準手機清晰念出畫面中的單字。<br>
-                    <strong>3. 停止辨識：</strong> 再次點擊麥克風完成錄音，可多次重錄直到滿意！<br>
-                    <strong>4. 比對評分：</strong> 點擊藍色「比對發音並評分」按鈕送出評分，系統只會標示錯誤的地方！<br>
+                    <strong>3. 停止辨識：</strong> 再次點擊麥克風完成錄音，系統將即時比對語音文字。<br>
+                    <strong>4. 評分判定：</strong> 系統判定發音合格後將自動解鎖並點亮通關下一題。<br>
                     <strong>5. 挑戰結算：</strong> 全數單字完成後將統計耗時並結算星級榮譽！
                 `
             },
@@ -2685,10 +2766,11 @@
                 title: '🎧 句子跟讀玩法說明',
                 content: `
                     <strong>1. 整句聆聽：</strong> 點擊藍色喇叭聆聽整句完整語調與斷句。<br>
-                    <strong>2. 練習開口：</strong> 點擊紅色錄音按鈕模仿念出，錄音完可反覆重錄調整發音。<br>
-                    <strong>3. 比對評分：</strong> 點擊「比對發音並評分」送出評分，系統會精準標示念錯與漏念字詞！<br>
+                    <strong>2. 練習開口：</strong> 點擊紅色錄音按鈕，模仿母語人士的語速念出整句。<br>
+                    <strong>3. 語音比對：</strong> 系統會將錄音轉換為文字並比對核心句子結構。<br>
                     <strong>4. 提示切換：</strong> 入門模式下可參考關鍵字提示，挑戰模式下則全憑聽力發音。<br>
-                    <strong>5. 星級通關：</strong> 80% 以上合格顯示「🏆 太棒了！/ 做得好！」，完成全數句子後結算成績！
+                    <strong>5. 答題進度：</strong> 畫面即時顯示當前題號與總進度。<br>
+                    <strong>6. 星級通關：</strong> 完成全數句子後結算成績並獲取豐富經驗值 (XP)！
                 `
             },
             'blocks': {
@@ -2707,7 +2789,7 @@
                 content: `
                     <strong>1. 雙向訓練：</strong> 挑戰全程一律先由【角色 A】開始（發起提問聆聽回覆），全部完成後自動進入【角色 B】（聽對方提問念出回答）。<br>
                     <strong>2. 氣泡對話：</strong> 畫面以生動的氣泡對話框呈現（上方天藍色為提問、下方米黃色為回答）。<br>
-                    <strong>3. 手動送評：</strong> 念完後點擊「比對發音並評分」，只標示發音錯誤部分，滿 80% 即判定過關！
+                    <strong>3. 依序通關：</strong> 需連續完成角色 A 與角色 B 兩輪練習，才能完成整組對話挑戰！
                 `
             }
         };
@@ -2914,7 +2996,8 @@
                 if (availableNative) nativeSelect.value = availableNative.value;
             }
         }
-function openFlashcardStagePicker() {
+
+        function openFlashcardStagePicker() {
             const targetLevelNormalized = normalizeLevelStr(currentConfig.level);
             const wordsOfLevel = rawWordData.filter(v => normalizeLevelStr(getItemField(v, 'level')) === targetLevelNormalized);
 
@@ -4845,7 +4928,6 @@ function resetIdleTimer() {
             renderStreakCalendar(calendarCurrentDate);
         };
 
-        // 綁定右上角切換程度彈窗與確認切換事件
         let initialLevelSelect = document.getElementById('initial-level-select');
 
         function triggerLevelSelectionModal() {
@@ -4867,34 +4949,25 @@ function resetIdleTimer() {
                 { code: 'JLPT/TOPIK', title: '檢定課程' }
             ];
 
-            if (!initialLevelSelect) initialLevelSelect = document.getElementById('initial-level-select');
-            if (initialLevelSelect) {
-                initialLevelSelect.innerHTML = "";
-                allLevels.forEach(item => {
-                    const opt = document.createElement('option');
-                    opt.value = item.code;
-                    const isUnlocked = userUnlocked.includes(item.code.toUpperCase());
-                    opt.innerText = isUnlocked ? item.title : `🔒 ${item.title} (未開通)`;
-                    opt.disabled = !isUnlocked;
-                    if (item.code.toUpperCase() === (currentConfig.level || '1A').toUpperCase()) opt.selected = true;
-                    initialLevelSelect.appendChild(opt);
-                });
-            }
+            initialLevelSelect.innerHTML = "";
+            allLevels.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.code;
+                const isUnlocked = userUnlocked.includes(item.code.toUpperCase());
+                opt.innerText = isUnlocked ? item.title : `🔒 ${item.title} (未開通)`;
+                opt.disabled = !isUnlocked;
+                if (item.code.toUpperCase() === (currentConfig.level || '1A').toUpperCase()) opt.selected = true;
+                initialLevelSelect.appendChild(opt);
+            });
             openModal('modal-select-initial-level');
         }
 
-        const btnConfirmInitLevel = document.getElementById('btn-confirm-initial-level');
-        if (btnConfirmInitLevel) {
-            btnConfirmInitLevel.onclick = () => {
-                if (!initialLevelSelect) initialLevelSelect = document.getElementById('initial-level-select');
-                if (initialLevelSelect) {
-                    const selectedVal = initialLevelSelect.value;
-                    const selectedText = initialLevelSelect.options[initialLevelSelect.selectedIndex].text;
-                    closeModal('modal-select-initial-level');
-                    selectLevel(selectedVal, selectedText);
-                }
-            };
-        }
+        document.getElementById('btn-confirm-initial-level').onclick = () => {
+            const selectedVal = initialLevelSelect.value;
+            const selectedText = initialLevelSelect.options[initialLevelSelect.selectedIndex].text;
+            closeModal('modal-select-initial-level');
+            selectLevel(selectedVal, selectedText);
+        };
 
         function promptQuitChallenge() {
             document.querySelectorAll('.gear-dropdown').forEach(d => d.classList.remove('show'));
@@ -7044,7 +7117,7 @@ function cleanStringForCompare(str) {
             return clean;
         }
 
-        // 精準計算發音差異：保留原始字元，只將辨識錯誤/漏字部分以紅色底線高亮
+        // 計算兩字串的相似度 (0 ~ 1) 與標記錯誤字 (Diff)
         function computeSpeechDiffAndScore(target, spoken) {
             if (!target) return { pass: false, similarity: 0, html: spoken || "" };
             if (!spoken) return { pass: false, similarity: 0, html: "<span class='err-char-highlight'>(未檢測到發音)</span>" };
@@ -7506,9 +7579,8 @@ function cleanStringForCompare(str) {
             });
         }
 
-        // 手動點擊「比對發音並評分」後才執行判定
         function evaluateUserSpeech() {
-            if (!lastRecognizedSpeechText) return alert("尚未取得辨識結果，請點擊麥克風錄音！");
+            if (!lastRecognizedSpeechText) return alert("尚未取得辨識結果，請重新錄音！");
 
             hideRecordingControls();
 
@@ -7711,26 +7783,39 @@ function cleanStringForCompare(str) {
 
                 lastRecognizedSpeechText = userSpeech;
 
-                // 錄音完成後僅先將辨識文字顯示出來，並展示「比對發音並評分」按鈕，允許學員不滿意時再次重錄！
+                // 即時計算 Diff，將錯誤字標紅呈現
                 const isWord = (currentConfig.mode === 'word_shadow');
                 const isChat = (currentConfig.mode === 'sentence_chat');
+                let expectedTarget = "";
+                if (isChat) {
+                    const curRound = chatRounds[chatRoundIndex];
+                    expectedTarget = curRound ? ((chatRole === 'A') ? curRound.aText : curRound.bText) : "";
+                } else if (isWord) {
+                    const curQ = wordQuestions[wordIndex];
+                    expectedTarget = curQ ? (curQ.text || "") : "";
+                } else {
+                    const curQ = questions[currentIndex];
+                    expectedTarget = curQ ? (curQ.text || "") : "";
+                }
+
+                const diffResult = computeSpeechDiffAndScore(expectedTarget, userSpeech);
 
                 if (isChat) {
-                    document.getElementById('lbl-chat-recognized-text').innerText = userSpeech;
+                    document.getElementById('lbl-chat-recognized-text').innerHTML = diffResult.html;
                     const evalBtn = document.getElementById('btn-chat-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
                 } else if (isWord) {
-                    document.getElementById('lbl-word-shadow-recognized-text').innerText = userSpeech;
+                    document.getElementById('lbl-word-shadow-recognized-text').innerHTML = diffResult.html;
                     const evalBtn = document.getElementById('btn-word-shadow-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
                 } else {
-                    document.getElementById('lbl-recognized-text').innerText = userSpeech;
+                    document.getElementById('lbl-recognized-text').innerHTML = diffResult.html;
                     const evalBtn = document.getElementById('btn-submit-speech-eval');
                     if (evalBtn) evalBtn.style.display = 'block';
                 }
 
-                // 保持錄音按鈕可再次點擊重錄
-                restoreRecordingControls();
+                // 自動比對評判
+                evaluateUserSpeech();
                 stopSpeechRecognition();
             };
         }
