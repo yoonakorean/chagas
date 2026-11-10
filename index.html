@@ -835,8 +835,7 @@
         .doors-opened .gate-unlock-shine { opacity: 1; transform: scale(2.2); }
         .gate-unlock-title { color: #ffffff; font-size: 1.6rem; font-weight: 900; letter-spacing: 1px; margin-bottom: 6px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .gate-unlock-sub { color: #cbd5e1; font-size: 0.95rem; font-weight: bold; margin-bottom: 24px; }
-
-        /* 角色切換專屬動畫 Modal 樣式 */
+/* 角色切換專屬動畫 Modal 樣式 */
         #role-switch-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(8px);
@@ -1555,30 +1554,6 @@
         .bubble-audio-btn:active {
             transform: scale(0.9);
         }
-
-        /* 句子跟讀：挑戰模式下比對後揭示正解區域專屬樣式 */
-        .btn-reveal-answer {
-            background: #ffffff;
-            border: 2px dashed #0284c7;
-            color: #0284c7;
-            font-size: 0.95rem;
-            font-weight: 800;
-            padding: 9px 18px;
-            border-radius: 14px;
-            cursor: pointer;
-            margin: 10px auto 4px auto;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.15s ease;
-        }
-        .btn-reveal-answer:hover {
-            background: #f0f9ff;
-            border-style: solid;
-        }
-        .btn-reveal-answer:active {
-            transform: scale(0.97);
-        }
     </style>
 </head>
 <body>
@@ -2235,16 +2210,6 @@
                         <i class="fa-solid fa-magnifying-glass"></i> 比對答案
                     </button>
 
-                    <!-- 挑戰/入門隱藏模式下，比對後可手動點選顯示正確答案按鈕 -->
-                    <div id="area-reveal-shadow-answer" style="display: none; margin-top: 10px; text-align: center;">
-                        <button class="btn-reveal-answer" id="btn-toggle-reveal-shadow" onclick="toggleRevealShadowCorrectAnswer()">
-                            <i class="fa-solid fa-eye"></i> 顯示正確答案與翻譯
-                        </button>
-                        <button class="btn-circle btn-listen" id="btn-play-shadow-revealed" onclick="playAudio()" style="margin: 8px auto 0 auto; display: none;" title="播放標準發音">
-                            <i class="fa-solid fa-volume-high"></i>
-                        </button>
-                    </div>
-
                     <div class="nav-controls">
                         <span class="lbl-progress" id="lbl-shadow-progress">0 / 0</span>
                         <button class="btn-nav-next" id="btn-next" onclick="nextQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
@@ -2300,7 +2265,8 @@
                             </div>
                         </div>
                     </div>
-<!-- 關鍵字提示氣泡 -->
+
+                    <!-- 關鍵字提示氣泡 -->
                     <div id="chat-a-hint-bubble" style="display: none; background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 14px; padding: 10px 14px; margin: 4px auto 12px auto; max-width: 440px; text-align: left;">
                         <div style="font-size: 0.85rem; color: #b45309; font-weight: 800; margin-bottom: 2px;" id="lbl-chat-a-hint-title">提示：</div>
                         <div style="font-size: 1.15rem; font-weight: bold; color: #92400e;" id="lbl-chat-a-hint-text">...</div>
@@ -2657,8 +2623,7 @@
             </div>
 
         </div> <!-- shadowing-card 結束 -->
-
-        <!-- 核心邏輯腳本開始 -->
+<!-- 核心邏輯腳本開始 -->
         <script>
             const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
 
@@ -2702,7 +2667,6 @@
 
             let isSentenceKeywordMode = false;
             let isSentenceChallengeMode = false;
-            let isSentenceRevealedManually = false; // 用於控制挑戰/入門模式下點擊按鈕手動揭開正解
             let challengeSessionStartTime = null;
 
             let mediaRecorder = null;
@@ -2766,7 +2730,8 @@
 
             // 全局音訊播放實例，防止多重重疊並提供健全播放管理
             let currentAudioInstance = null;
-/**
+
+            /**
              * 關鍵修復：核心音訊播放函式 playAudioOrTTS
              * 優先播放音訊檔案 (音訊 URL)，若網址無效、空值或播放失敗則自動降級為標準 TTS 語音朗讀
              */
@@ -2855,11 +2820,11 @@
                 'shadow': {
                     title: '🎧 句子跟讀玩法說明',
                     content: `
-                        <strong>1. 模式指引：</strong> 練習模式顯示正解與翻譯；入門模式與挑戰模式隱藏正確句子與發音，改以提示引導！<br>
-                        <strong>2. 練習開口：</strong> 點擊紅色錄音按鈕，清晰念出符合提示的句子。<br>
+                        <strong>1. 整句聆聽：</strong> 點擊藍色喇叭聆聽整句完整語調與斷句。<br>
+                        <strong>2. 練習開口：</strong> 點擊紅色錄音按鈕，模仿母語人士的語速念出整句。<br>
                         <strong>3. 自由重錄：</strong> 錄音結束後會顯示辨識結果，未評分前可重複點擊麥克風重新錄音！<br>
-                        <strong>4. 比對答案：</strong> 確認滿意後點擊「比對答案」進行評分！<br>
-                        <strong>5. 隨心看答案：</strong> 評分後不會強迫顯示正解，想確認答案時可點擊「顯示正確答案與翻譯」隨時展開並聽標準發音！<br>
+                        <strong>4. 比對答案：</strong> 確定錄音無誤後點擊「比對答案」進行評分並標記錯字。<br>
+                        <strong>5. 提示切換：</strong> 入門模式下可參考關鍵字提示，挑戰模式下則全憑聽力發音。<br>
                         <strong>6. 星級通關：</strong> 完成全數句子後結算成績並獲取豐富經驗值 (XP)！
                     `
                 },
@@ -3276,347 +3241,346 @@
                 if (!curRound) return;
                 playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85);
             }
+function hideRecordingControls() {
+            const activeMode = currentConfig.mode;
+            if (activeMode === 'sentence_chat') {
+                const recBtn = document.getElementById('btn-chat-start-record');
+                const resetBtn = document.getElementById('btn-reset-chat');
+                if (recBtn) recBtn.style.display = 'none';
+                if (resetBtn) resetBtn.style.display = 'none';
+            } else if (activeMode === 'word_shadow') {
+                const recBtn = document.getElementById('btn-word-shadow-start-record');
+                const resetBtn = document.getElementById('btn-reset-word-shadow');
+                if (recBtn) { recBtn.style.display = 'inline-flex'; recBtn.disabled = false; }
+                if (resetBtn) resetBtn.style.display = 'inline-flex';
+            } else if (activeMode === 'shadow') {
+                const recBtn = document.getElementById('btn-start-record');
+                const resetBtn = document.getElementById('btn-reset-shadow');
+                if (recBtn) recBtn.style.display = 'none';
+                if (resetBtn) resetBtn.style.display = 'none';
+            }
+        }
 
-            function hideRecordingControls() {
-                const activeMode = currentConfig.mode;
-                if (activeMode === 'sentence_chat') {
-                    const recBtn = document.getElementById('btn-chat-start-record');
-                    const resetBtn = document.getElementById('btn-reset-chat');
-                    if (recBtn) recBtn.style.display = 'none';
-                    if (resetBtn) resetBtn.style.display = 'none';
-                } else if (activeMode === 'word_shadow') {
-                    const recBtn = document.getElementById('btn-word-shadow-start-record');
-                    const resetBtn = document.getElementById('btn-reset-word-shadow');
-                    if (recBtn) { recBtn.style.display = 'inline-flex'; recBtn.disabled = false; }
-                    if (resetBtn) resetBtn.style.display = 'inline-flex';
-                } else if (activeMode === 'shadow') {
-                    const recBtn = document.getElementById('btn-start-record');
-                    const resetBtn = document.getElementById('btn-reset-shadow');
-                    if (recBtn) recBtn.style.display = 'none';
-                    if (resetBtn) resetBtn.style.display = 'none';
-                }
+        function restoreRecordingControls() {
+            const recBtnShadow = document.getElementById('btn-start-record');
+            const resetBtnShadow = document.getElementById('btn-reset-shadow');
+            if (recBtnShadow) { recBtnShadow.style.display = 'inline-flex'; recBtnShadow.disabled = false; }
+            if (resetBtnShadow) resetBtnShadow.style.display = 'inline-flex';
+
+            const recBtnChat = document.getElementById('btn-chat-start-record');
+            const resetBtnChat = document.getElementById('btn-reset-chat');
+            if (recBtnChat) { recBtnChat.style.display = 'inline-flex'; recBtnChat.disabled = false; }
+            if (resetBtnChat) resetBtnChat.style.display = 'inline-flex';
+
+            const recBtnWord = document.getElementById('btn-word-shadow-start-record');
+            const resetBtnWord = document.getElementById('btn-reset-word-shadow');
+            if (recBtnWord) { recBtnWord.style.display = 'inline-flex'; recBtnWord.disabled = false; }
+            if (resetBtnWord) resetBtnWord.style.display = 'inline-flex';
+        }
+
+        function forceResetMicrophoneSession() {
+            if (recognition) {
+                try {
+                    recognition.onstart = null;
+                    recognition.onend = null;
+                    recognition.onerror = null;
+                    recognition.onresult = null;
+                    recognition.abort();
+                } catch(e) {}
+                recognition = null;
             }
 
-            function restoreRecordingControls() {
-                const recBtnShadow = document.getElementById('btn-start-record');
-                const resetBtnShadow = document.getElementById('btn-reset-shadow');
-                if (recBtnShadow) { recBtnShadow.style.display = 'inline-flex'; recBtnShadow.disabled = false; }
-                if (resetBtnShadow) resetBtnShadow.style.display = 'inline-flex';
-
-                const recBtnChat = document.getElementById('btn-chat-start-record');
-                const resetBtnChat = document.getElementById('btn-reset-chat');
-                if (recBtnChat) { recBtnChat.style.display = 'inline-flex'; recBtnChat.disabled = false; }
-                if (resetBtnChat) resetBtnChat.style.display = 'inline-flex';
-
-                const recBtnWord = document.getElementById('btn-word-shadow-start-record');
-                const resetBtnWord = document.getElementById('btn-reset-word-shadow');
-                if (recBtnWord) { recBtnWord.style.display = 'inline-flex'; recBtnWord.disabled = false; }
-                if (resetBtnWord) resetBtnWord.style.display = 'inline-flex';
+            if (mediaRecorder && mediaRecorder.stream) {
+                try {
+                    mediaRecorder.stream.getTracks().forEach(track => {
+                        track.stop();
+                        track.enabled = false;
+                    });
+                } catch(e) {}
+                mediaRecorder = null;
             }
 
-            function forceResetMicrophoneSession() {
-                if (recognition) {
-                    try {
-                        recognition.onstart = null;
-                        recognition.onend = null;
-                        recognition.onerror = null;
-                        recognition.onresult = null;
-                        recognition.abort();
-                    } catch(e) {}
-                    recognition = null;
-                }
+            revokeUserAudioUrl();
+            isRecording = false;
+            isToggling = false;
+            document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
 
-                if (mediaRecorder && mediaRecorder.stream) {
-                    try {
-                        mediaRecorder.stream.getTracks().forEach(track => {
-                            track.stop();
-                            track.enabled = false;
-                        });
-                    } catch(e) {}
-                    mediaRecorder = null;
-                }
+            const targetLblId = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-recognized-text' :
+                                (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-recognized-text' : 'lbl-recognized-text';
+            const lbl = document.getElementById(targetLblId);
+            if (lbl) lbl.innerText = "麥克風已完全釋放，請點擊錄音";
 
-                revokeUserAudioUrl();
-                isRecording = false;
-                isToggling = false;
-                document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
-
-                const targetLblId = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-recognized-text' :
-                                    (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-recognized-text' : 'lbl-recognized-text';
-                const lbl = document.getElementById(targetLblId);
-                if (lbl) lbl.innerText = "麥克風已完全釋放，請點擊錄音";
-
-                const scoreLblId = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-score' :
-                                   (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-score' : 'lbl-score';
-                const scoreLbl = document.getElementById(scoreLblId);
-                if (scoreLbl) {
-                    scoreLbl.innerText = "判定結果：--";
-                    scoreLbl.style.color = "var(--duo-blue)";
-                }
-
-                const chatEvalBtn = document.getElementById('btn-chat-submit-speech-eval');
-                if (chatEvalBtn) chatEvalBtn.style.display = 'none';
-                const shadowEvalBtn = document.getElementById('btn-submit-speech-eval');
-                if (shadowEvalBtn) shadowEvalBtn.style.display = 'none';
-                const wordEvalBtn = document.getElementById('btn-word-shadow-submit-speech-eval');
-                if (wordEvalBtn) wordEvalBtn.style.display = 'none';
+            const scoreLblId = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-score' :
+                               (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-score' : 'lbl-score';
+            const scoreLbl = document.getElementById(scoreLblId);
+            if (scoreLbl) {
+                scoreLbl.innerText = "判定結果：--";
+                scoreLbl.style.color = "var(--duo-blue)";
             }
 
-            function revokeUserAudioUrl() {
-                if (userRecordedAudioUrl) {
-                    try {
-                        URL.revokeObjectURL(userRecordedAudioUrl);
-                    } catch (e) {
-                        console.warn("釋放音訊記憶體失敗:", e);
-                    }
-                    userRecordedAudioUrl = null;
-                }
-            }
+            const chatEvalBtn = document.getElementById('btn-chat-submit-speech-eval');
+            if (chatEvalBtn) chatEvalBtn.style.display = 'none';
+            const shadowEvalBtn = document.getElementById('btn-submit-speech-eval');
+            if (shadowEvalBtn) shadowEvalBtn.style.display = 'none';
+            const wordEvalBtn = document.getElementById('btn-word-shadow-submit-speech-eval');
+            if (wordEvalBtn) wordEvalBtn.style.display = 'none';
+        }
 
-            function showIslandLoading(subText = "🏝️ 島嶼生成中，正在同步最新地圖...", progressPct = 30) {
-                const overlay = document.getElementById('game-loading-overlay');
-                const subElem = document.getElementById('lbl-island-loading-sub');
-                const bar = document.getElementById('island-loading-bar');
-                if (overlay) {
-                    overlay.classList.add('show');
-                    if (subElem) subElem.innerText = subText;
-                    if (bar) bar.style.width = `${progressPct}%`;
+        function revokeUserAudioUrl() {
+            if (userRecordedAudioUrl) {
+                try {
+                    URL.revokeObjectURL(userRecordedAudioUrl);
+                } catch (e) {
+                    console.warn("釋放音訊記憶體失敗:", e);
                 }
+                userRecordedAudioUrl = null;
             }
+        }
 
-            function updateIslandLoading(subText, progressPct) {
-                const subElem = document.getElementById('lbl-island-loading-sub');
-                const bar = document.getElementById('island-loading-bar');
+        function showIslandLoading(subText = "🏝️ 島嶼生成中，正在同步最新地圖...", progressPct = 30) {
+            const overlay = document.getElementById('game-loading-overlay');
+            const subElem = document.getElementById('lbl-island-loading-sub');
+            const bar = document.getElementById('island-loading-bar');
+            if (overlay) {
+                overlay.classList.add('show');
                 if (subElem) subElem.innerText = subText;
                 if (bar) bar.style.width = `${progressPct}%`;
             }
+        }
 
-            function hideIslandLoading() {
-                const bar = document.getElementById('island-loading-bar');
-                if (bar) bar.style.width = '100%';
-                setTimeout(() => {
-                    const overlay = document.getElementById('game-loading-overlay');
-                    if (overlay) overlay.classList.remove('show');
-                }, 300);
+        function updateIslandLoading(subText, progressPct) {
+            const subElem = document.getElementById('lbl-island-loading-sub');
+            const bar = document.getElementById('island-loading-bar');
+            if (subElem) subElem.innerText = subText;
+            if (bar) bar.style.width = `${progressPct}%`;
+        }
+
+        function hideIslandLoading() {
+            const bar = document.getElementById('island-loading-bar');
+            if (bar) bar.style.width = '100%';
+            setTimeout(() => {
+                const overlay = document.getElementById('game-loading-overlay');
+                if (overlay) overlay.classList.remove('show');
+            }, 300);
+        }
+
+        function formatFocusDurationText(totalSeconds) {
+            const secNum = Math.max(0, Math.floor(totalSeconds || 0));
+            const hours = Math.floor(secNum / 3600);
+            const minutes = Math.floor((secNum % 3600) / 60);
+            const seconds = secNum % 60;
+            if (hours > 0) return `${hours}時 ${minutes}分 ${seconds}秒`;
+            if (minutes > 0) return `${minutes}分 ${seconds}秒`;
+            return `${seconds}秒`;
+        }
+
+        const PRAISE_PASS_MESSAGES = [
+            "🏆 太棒了！",
+            "做得好！",
+            "✨ 不錯唷！"
+        ];
+
+        const RETRY_FAIL_MESSAGES = [
+            "🎯 再接再勵！",
+            "差一點點！"
+        ];
+
+        function getRandomPassPraise() {
+            return PRAISE_PASS_MESSAGES[Math.floor(Math.random() * PRAISE_PASS_MESSAGES.length)];
+        }
+
+        function getRandomFailNotice() {
+            return RETRY_FAIL_MESSAGES[Math.floor(Math.random() * RETRY_FAIL_MESSAGES.length)];
+        }
+
+        function getRandomPraise() {
+            return getRandomPassPraise();
+        }
+
+        function shuffleArray(arr) {
+            const array = [...arr];
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
             }
+            return array;
+        }
 
-            function formatFocusDurationText(totalSeconds) {
-                const secNum = Math.max(0, Math.floor(totalSeconds || 0));
-                const hours = Math.floor(secNum / 3600);
-                const minutes = Math.floor((secNum % 3600) / 60);
-                const seconds = secNum % 60;
-                if (hours > 0) return `${hours}時 ${minutes}分 ${seconds}秒`;
-                if (minutes > 0) return `${minutes}分 ${seconds}秒`;
-                return `${seconds}秒`;
-            }
+        function formatDurationMMSS(totalSeconds) {
+            if (!totalSeconds || totalSeconds < 0) return "--:--";
+            const m = Math.floor(totalSeconds / 60);
+            const s = Math.floor(totalSeconds % 60);
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
 
-            const PRAISE_PASS_MESSAGES = [
-                "🏆 太棒了！",
-                "做得好！",
-                "✨ 不錯唷！"
-            ];
+        function updateUserFlagIcon() {
+            const flagElem = document.getElementById('lbl-user-flag');
+            if (!flagElem) return;
+            const flagMap = { 'korean': '🇰🇷', 'japanese': '🇯🇵', 'english': '🇺🇸' };
+            flagElem.innerText = flagMap[currentConfig.category] || '🌐';
+        }
 
-            const RETRY_FAIL_MESSAGES = [
-                "🎯 再接再勵！",
-                "差一點點！"
-            ];
+        async function recordSessionFocusTime() {
+            if (!challengeSessionStartTime) return 0;
+            const now = Date.now();
+            const elapsedSeconds = Math.max(0, Math.round((now - challengeSessionStartTime) / 1000));
+            challengeSessionStartTime = null;
 
-            function getRandomPassPraise() {
-                return PRAISE_PASS_MESSAGES[Math.floor(Math.random() * PRAISE_PASS_MESSAGES.length)];
-            }
+            if (elapsedSeconds <= 0) return 0;
 
-            function getRandomFailNotice() {
-                return RETRY_FAIL_MESSAGES[Math.floor(Math.random() * RETRY_FAIL_MESSAGES.length)];
-            }
+            if (!window.currentUserData) window.currentUserData = {};
+            const currentTotalSeconds = Number(window.currentUserData.focusSeconds || (window.currentUserData.focusHours ? window.currentUserData.focusHours * 3600 : 0));
+            const updatedTotalSeconds = currentTotalSeconds + elapsedSeconds;
 
-            function getRandomPraise() {
-                return getRandomPassPraise();
-            }
+            window.currentUserData.focusSeconds = updatedTotalSeconds;
+            window.currentUserData.focusHours = Number((updatedTotalSeconds / 3600).toFixed(4));
 
-            function shuffleArray(arr) {
-                const array = [...arr];
-                for (let i = array.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
-                }
-                return array;
-            }
+            const formattedText = formatFocusDurationText(updatedTotalSeconds);
+            const dashFocus = document.getElementById('dash-focus-hours');
+            const myAccountFocus = document.getElementById('myaccount-focus-text');
+            if (dashFocus) dashFocus.innerText = formattedText;
+            if (myAccountFocus) myAccountFocus.innerText = formattedText;
 
-            function formatDurationMMSS(totalSeconds) {
-                if (!totalSeconds || totalSeconds < 0) return "--:--";
-                const m = Math.floor(totalSeconds / 60);
-                const s = Math.floor(totalSeconds % 60);
-                return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-            }
-
-            function updateUserFlagIcon() {
-                const flagElem = document.getElementById('lbl-user-flag');
-                if (!flagElem) return;
-                const flagMap = { 'korean': '🇰🇷', 'japanese': '🇯🇵', 'english': '🇺🇸' };
-                flagElem.innerText = flagMap[currentConfig.category] || '🌐';
-            }
-
-            async function recordSessionFocusTime() {
-                if (!challengeSessionStartTime) return 0;
-                const now = Date.now();
-                const elapsedSeconds = Math.max(0, Math.round((now - challengeSessionStartTime) / 1000));
-                challengeSessionStartTime = null;
-
-                if (elapsedSeconds <= 0) return 0;
-
-                if (!window.currentUserData) window.currentUserData = {};
-                const currentTotalSeconds = Number(window.currentUserData.focusSeconds || (window.currentUserData.focusHours ? window.currentUserData.focusHours * 3600 : 0));
-                const updatedTotalSeconds = currentTotalSeconds + elapsedSeconds;
-
-                window.currentUserData.focusSeconds = updatedTotalSeconds;
-                window.currentUserData.focusHours = Number((updatedTotalSeconds / 3600).toFixed(4));
-
-                const formattedText = formatFocusDurationText(updatedTotalSeconds);
-                const dashFocus = document.getElementById('dash-focus-hours');
-                const myAccountFocus = document.getElementById('myaccount-focus-text');
-                if (dashFocus) dashFocus.innerText = formattedText;
-                if (myAccountFocus) myAccountFocus.innerText = formattedText;
-
-                if (currentUser) {
-                    try {
-                        await db.collection("users").doc(currentUser.uid).set({
-                            focusSeconds: firebase.firestore.FieldValue.increment(elapsedSeconds),
-                            focusHours: Number((updatedTotalSeconds / 3600).toFixed(4))
-                        }, { merge: true });
-                    } catch (e) {
-                        console.error("更新專注秒數至雲端失敗:", e);
-                    }
-                }
-
-                return elapsedSeconds;
-            }
-
-            function getModeTagText() {
-                if (activeChallengeType === 'entry') return '(入門)';
-                if (activeChallengeType === 'timed') return '(挑戰)';
-                return '(練習)';
-            }
-
-            function getLocalDateString(d = new Date()) {
-                const year = d.getFullYear();
-                const month = String(d.getMonth() + 1).padStart(2, '0');
-                const day = String(d.getDate()).padStart(2, '0');
-                return `${year}-${month}-${day}`;
-            }
-
-            async function processDailyCheckIn(user, userData) {
-                const todayStr = getLocalDateString();
-                let history = Array.isArray(userData.checkInHistory) ? [...userData.checkInHistory] : [];
-                let lastDateStr = userData.lastCheckInDate || null;
-                let streak = userData.streakDays || 0;
-
-                if (lastDateStr === todayStr) {
-                    return { streakDays: streak, checkInHistory: history };
-                }
-
-                if (!lastDateStr) {
-                    streak = 1;
-                } else {
-                    const lastDate = new Date(lastDateStr + "T00:00:00");
-                    const todayDate = new Date(todayStr + "T00:00:00");
-                    const diffDays = Math.round((todayDate - lastDate) / (1000 * 60 * 60 * 24));
-
-                    if (diffDays === 1) streak += 1;
-                    else if (diffDays > 1) streak = 1;
-                }
-
-                if (!history.includes(todayStr)) history.push(todayStr);
-
-                userData.streakDays = streak;
-                userData.lastCheckInDate = todayStr;
-                userData.checkInHistory = history;
-                userData.xp = (userData.xp || 0) + 20;
-
+            if (currentUser) {
                 try {
-                    await db.collection("users").doc(user.uid).set({
-                        streakDays: streak,
-                        lastCheckInDate: todayStr,
-                        checkInHistory: history,
-                        xp: firebase.firestore.FieldValue.increment(20)
+                    await db.collection("users").doc(currentUser.uid).set({
+                        focusSeconds: firebase.firestore.FieldValue.increment(elapsedSeconds),
+                        focusHours: Number((updatedTotalSeconds / 3600).toFixed(4))
                     }, { merge: true });
                 } catch (e) {
-                    console.error("更新簽到紀錄失敗:", e);
+                    console.error("更新專注秒數至雲端失敗:", e);
                 }
+            }
 
+            return elapsedSeconds;
+        }
+
+        function getModeTagText() {
+            if (activeChallengeType === 'entry') return '(入門)';
+            if (activeChallengeType === 'timed') return '(挑戰)';
+            return '(練習)';
+        }
+
+        function getLocalDateString(d = new Date()) {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        async function processDailyCheckIn(user, userData) {
+            const todayStr = getLocalDateString();
+            let history = Array.isArray(userData.checkInHistory) ? [...userData.checkInHistory] : [];
+            let lastDateStr = userData.lastCheckInDate || null;
+            let streak = userData.streakDays || 0;
+
+            if (lastDateStr === todayStr) {
                 return { streakDays: streak, checkInHistory: history };
             }
 
-            function getItemField(item, fieldName) {
-                if (!item) return '';
-                const f = String(fieldName).toLowerCase().replace(/[\s_\-]/g, '');
+            if (!lastDateStr) {
+                streak = 1;
+            } else {
+                const lastDate = new Date(lastDateStr + "T00:00:00");
+                const todayDate = new Date(todayStr + "T00:00:00");
+                const diffDays = Math.round((todayDate - lastDate) / (1000 * 60 * 60 * 24));
 
-                if (Array.isArray(item)) {
-                    if (f === 'id') return item[0] !== undefined ? String(item[0]) : '';
-                    if (f === 'level' || f === 'lvl') return String(item[1] || '');
-                    if (f === 'unitid' || f === 'unit') return String(item[2] || '');
-                    if (f === 'lesson' || f === 'stage') return String(item[3] || '');
-                    if (f === 'text' || f === 'fulltext') return String(item[4] || '');
-                    if (f === 'voice') return String(item[10] || '');
-                    return '';
-                }
-
-                if (f === 'lesson' || f === 'stage') return String(item.lesson || item.stage || '');
-                if (f === 'unitid' || f === 'unit') return String(item.unit_id || item.unitid || item.unit || '');
-                if (f === 'level' || f === 'lvl') return String(item.level || item.lvl || '');
-                return item[fieldName] !== undefined ? String(item[fieldName]) : (item[f] !== undefined ? String(item[f]) : '');
+                if (diffDays === 1) streak += 1;
+                else if (diffDays > 1) streak = 1;
             }
 
-            const ProgressModel = {
-                loadProgress: async (uid) => {
-                    try {
-                        const doc = await db.collection("users").doc(uid).get();
-                        return doc.exists ? doc.data() : null;
-                    } catch (error) {
-                        console.error("載入進度失敗:", error);
-                        return null;
-                    }
-                },
-                saveProgress: async (uid, data) => {
-                    try { await db.collection("users").doc(uid).set(data, { merge: true }); }
-                    catch (e) { console.error("儲存失敗:", e); }
-                },
-                updateUnitProgress: async (uid, unit, lesson) => {
-                    try {
-                        if (!window.currentUserData.unitProgress) window.currentUserData.unitProgress = {};
-                        window.currentUserData.unitProgress[`unit_${unit}`] = {
-                            maxLesson: lesson,
-                            maxStage: lesson,
-                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                        };
-                        await db.collection("users").doc(uid).set({ "unitProgress": window.currentUserData.unitProgress }, { merge: true });
-                    } catch (e) {
-                        console.error("更新進度失敗:", e);
-                    }
-                }
-            };
+            if (!history.includes(todayStr)) history.push(todayStr);
 
-            function calculateStars(score) {
-                if (score >= 90) return { stars: 3, label: '⭐⭐⭐' };
-                if (score >= 71) return { stars: 2, label: '⭐⭐' };
-                if (score >= 51) return { stars: 1, label: '⭐' };
-                return { stars: 0, label: '未達成' };
+            userData.streakDays = streak;
+            userData.lastCheckInDate = todayStr;
+            userData.checkInHistory = history;
+            userData.xp = (userData.xp || 0) + 20;
+
+            try {
+                await db.collection("users").doc(user.uid).set({
+                    streakDays: streak,
+                    lastCheckInDate: todayStr,
+                    checkInHistory: history,
+                    xp: firebase.firestore.FieldValue.increment(20)
+                }, { merge: true });
+            } catch (e) {
+                console.error("更新簽到紀錄失敗:", e);
             }
 
-            function getRecordKey(lesson, mode, chalType, unitId = null) {
-                const actualUnit = unitId || currentConfig.unit_id;
-                return `${currentConfig.category}_${currentConfig.level}_${actualUnit}_${lesson}_${mode}_${chalType}`;
+            return { streakDays: streak, checkInHistory: history };
+        }
+
+        function getItemField(item, fieldName) {
+            if (!item) return '';
+            const f = String(fieldName).toLowerCase().replace(/[\s_\-]/g, '');
+
+            if (Array.isArray(item)) {
+                if (f === 'id') return item[0] !== undefined ? String(item[0]) : '';
+                if (f === 'level' || f === 'lvl') return String(item[1] || '');
+                if (f === 'unitid' || f === 'unit') return String(item[2] || '');
+                if (f === 'lesson' || f === 'stage') return String(item[3] || '');
+                if (f === 'text' || f === 'fulltext') return String(item[4] || '');
+                if (f === 'voice') return String(item[10] || '');
+                return '';
             }
 
-            function getStoredBestRecord(lesson, mode, chalType, unitId = null) {
-                const key = getRecordKey(lesson, mode, chalType, unitId);
-                const userScores = (window.currentUserData && window.currentUserData.modeScores) || {};
-                if (userScores[key]) return userScores[key];
+            if (f === 'lesson' || f === 'stage') return String(item.lesson || item.stage || '');
+            if (f === 'unitid' || f === 'unit') return String(item.unit_id || item.unitid || item.unit || '');
+            if (f === 'level' || f === 'lvl') return String(item.level || item.lvl || '');
+            return item[fieldName] !== undefined ? String(item[fieldName]) : (item[f] !== undefined ? String(item[f]) : '');
+        }
+
+        const ProgressModel = {
+            loadProgress: async (uid) => {
                 try {
-                    return JSON.parse(localStorage.getItem(`score_${key}`) || 'null');
-                } catch (e) {
+                    const doc = await db.collection("users").doc(uid).get();
+                    return doc.exists ? doc.data() : null;
+                } catch (error) {
+                    console.error("載入進度失敗:", error);
                     return null;
                 }
+            },
+            saveProgress: async (uid, data) => {
+                try { await db.collection("users").doc(uid).set(data, { merge: true }); }
+                catch (e) { console.error("儲存失敗:", e); }
+            },
+            updateUnitProgress: async (uid, unit, lesson) => {
+                try {
+                    if (!window.currentUserData.unitProgress) window.currentUserData.unitProgress = {};
+                    window.currentUserData.unitProgress[`unit_${unit}`] = {
+                        maxLesson: lesson,
+                        maxStage: lesson,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+                    await db.collection("users").doc(uid).set({ "unitProgress": window.currentUserData.unitProgress }, { merge: true });
+                } catch (e) {
+                    console.error("更新進度失敗:", e);
+                }
             }
+        };
+
+        function calculateStars(score) {
+            if (score >= 90) return { stars: 3, label: '⭐⭐⭐' };
+            if (score >= 71) return { stars: 2, label: '⭐⭐' };
+            if (score >= 51) return { stars: 1, label: '⭐' };
+            return { stars: 0, label: '未達成' };
+        }
+
+        function getRecordKey(lesson, mode, chalType, unitId = null) {
+            const actualUnit = unitId || currentConfig.unit_id;
+            return `${currentConfig.category}_${currentConfig.level}_${actualUnit}_${lesson}_${mode}_${chalType}`;
+        }
+
+        function getStoredBestRecord(lesson, mode, chalType, unitId = null) {
+            const key = getRecordKey(lesson, mode, chalType, unitId);
+            const userScores = (window.currentUserData && window.currentUserData.modeScores) || {};
+            if (userScores[key]) return userScores[key];
+            try {
+                return JSON.parse(localStorage.getItem(`score_${key}`) || 'null');
+            } catch (e) {
+                return null;
+            }
+        }
 async function verifyAndSyncUser(user, isInteractive = false) {
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
@@ -6831,40 +6795,11 @@ function triggerBottomGrammarAction() {
             }
         }
 
-        /* 句子跟讀：挑戰/入門模式下點擊按鈕手動揭開正確答案與發音 */
-        function toggleRevealShadowCorrectAnswer() {
-            const q = questions[currentIndex];
-            if (!q) return;
-
-            isSentenceRevealedManually = !isSentenceRevealedManually;
-
-            const targetTextElem = document.getElementById('lbl-target-text');
-            const transElem = document.getElementById('lbl-translation');
-            const toggleBtn = document.getElementById('btn-toggle-reveal-shadow');
-            const playRevealedBtn = document.getElementById('btn-play-shadow-revealed');
-
-            if (isSentenceRevealedManually) {
-                targetTextElem.innerText = q.text || "";
-                targetTextElem.style.visibility = "visible";
-                transElem.innerText = q.translation || "";
-                transElem.style.display = "block";
-                if (toggleBtn) toggleBtn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> 隱藏答案';
-                if (playRevealedBtn) playRevealedBtn.style.display = 'inline-flex';
-            } else {
-                targetTextElem.innerText = q.text || "題目";
-                targetTextElem.style.visibility = "hidden";
-                transElem.innerText = "";
-                if (toggleBtn) toggleBtn.innerHTML = '<i class="fa-solid fa-eye"></i> 顯示正確答案與翻譯';
-                if (playRevealedBtn) playRevealedBtn.style.display = 'none';
-            }
-        }
-
         function displayQuestion() {
             stopSpeechRecognition();
             resetSpeechEvalButtons();
             restoreRecordingControls();
             isCurrentQuestionAnswered = false;
-            isSentenceRevealedManually = false;
             if (!questions.length) return;
             const q = questions[currentIndex];
             const is0ALevel = (normalizeLevelStr(currentConfig.level) === '0A');
@@ -6882,37 +6817,25 @@ function triggerBottomGrammarAction() {
                 const transElem = document.getElementById('lbl-translation');
                 const hintElem = document.getElementById('lbl-hint');
                 const recordBtn = document.getElementById('btn-start-record');
-                const playAudioBtn = document.getElementById('btn-play-audio');
-                const revealArea = document.getElementById('area-reveal-shadow-answer');
-                const toggleRevealBtn = document.getElementById('btn-toggle-reveal-shadow');
-                const playRevealedBtn = document.getElementById('btn-play-shadow-revealed');
 
                 if (recordBtn) recordBtn.disabled = false;
-                if (revealArea) revealArea.style.display = 'none';
-                if (toggleRevealBtn) toggleRevealBtn.innerHTML = '<i class="fa-solid fa-eye"></i> 顯示正確答案與翻譯';
-                if (playRevealedBtn) playRevealedBtn.style.display = 'none';
 
-                // 核心更新：句子跟讀挑戰模式與入門模式一律顯示提示，並隱藏播放音檔按鈕與正解
                 if (isSentenceChallengeMode) {
                     targetTextElem.innerText = q.text || "題目";
                     targetTextElem.style.visibility = "hidden";
                     transElem.innerText = "";
-                    hintElem.innerText = q.hint ? `提示：${q.hint.trim()}` : (q.translation ? `提示：${q.translation.trim()}` : '請念出正確句子');
-                    hintElem.style.display = "inline-block";
-                    if (playAudioBtn) playAudioBtn.style.display = 'none';
+                    hintElem.style.display = "none";
                 } else if (isSentenceKeywordMode) {
                     targetTextElem.innerText = q.text || "題目";
                     targetTextElem.style.visibility = "hidden";
                     transElem.innerText = "";
-                    hintElem.innerText = q.hint ? `提示：${q.hint.trim()}` : (q.translation ? `提示：${q.translation.trim()}` : '無提示');
+                    hintElem.innerText = q.hint ? `提示：${q.hint.trim()}` : '無提示';
                     hintElem.style.display = "inline-block";
-                    if (playAudioBtn) playAudioBtn.style.display = 'none';
                 } else {
                     targetTextElem.innerText = q.text || "";
                     targetTextElem.style.visibility = "visible";
                     transElem.innerText = q.translation || "";
                     hintElem.style.display = "none";
-                    if (playAudioBtn) playAudioBtn.style.display = 'inline-flex';
                 }
 
                 document.getElementById('lbl-recognized-text').innerText = "-";
@@ -7606,6 +7529,7 @@ function triggerBottomGrammarAction() {
                 lblBubbleBText.innerText = curRound.bText;
                 if (btnPlayB) btnPlayB.style.display = 'inline-flex';
                 
+                // 修復：角色 A 答對後自動無障礙播放角色 B 音檔或 TTS 語音
                 setTimeout(() => {
                     playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85);
                 }, 400);
@@ -7787,18 +7711,7 @@ function triggerBottomGrammarAction() {
                     }
                     markQuestionAnswered(wordIndex);
                 } else {
-                    // 句子跟讀評分完成：若為挑戰或入門模式，不直接顯示韓文正解與翻譯，提供手動展開按鈕
                     if (isSentenceChallengeMode || isSentenceKeywordMode) {
-                        const targetTextElem = document.getElementById('lbl-target-text');
-                        targetTextElem.innerText = currentQ.text || "題目";
-                        targetTextElem.style.visibility = "hidden";
-                        
-                        const transElem = document.getElementById('lbl-translation');
-                        transElem.innerText = "";
-
-                        const revealArea = document.getElementById('area-reveal-shadow-answer');
-                        if (revealArea) revealArea.style.display = 'block';
-                    } else {
                         const targetTextElem = document.getElementById('lbl-target-text');
                         targetTextElem.innerText = currentQ.text || "";
                         targetTextElem.style.visibility = "visible";
@@ -7817,23 +7730,10 @@ function triggerBottomGrammarAction() {
                     const trans = getWordTranslation(currentQ);
                     document.getElementById('lbl-word-shadow-translation').innerText = trans ? `${trans}` : "";
                 } else {
-                    // 句子跟讀答錯：若為挑戰或入門模式，同樣先保持隱藏，由玩家自行點擊按鈕決定是否查看
-                    if (isSentenceChallengeMode || isSentenceKeywordMode) {
-                        const targetTextElem = document.getElementById('lbl-target-text');
-                        targetTextElem.innerText = currentQ.text || "題目";
-                        targetTextElem.style.visibility = "hidden";
-
-                        const transElem = document.getElementById('lbl-translation');
-                        transElem.innerText = "";
-
-                        const revealArea = document.getElementById('area-reveal-shadow-answer');
-                        if (revealArea) revealArea.style.display = 'block';
-                    } else {
-                        const targetTextElem = document.getElementById('lbl-target-text');
-                        targetTextElem.innerText = currentQ.text || "";
-                        targetTextElem.style.visibility = "visible";
-                        document.getElementById('lbl-translation').innerText = currentQ.translation || "";
-                    }
+                    const targetTextElem = document.getElementById('lbl-target-text');
+                    targetTextElem.innerText = currentQ.text || "";
+                    targetTextElem.style.visibility = "visible";
+                    document.getElementById('lbl-translation').innerText = currentQ.translation || "";
                 }
 
                 isCurrentQuestionAnswered = true;
@@ -7979,11 +7879,44 @@ function triggerBottomGrammarAction() {
             setUserLang(localStorage.getItem('preferred_user_lang') || 'zh');
             setLearnCategory(localStorage.getItem('preferred_learn_category') || 'korean');
             updateUserFlagIcon();
-            autoLoadCategoryData(currentConfig.category, false);
+            syncMutualExclusiveLangs('account');
+            goToStep('step-welcome');
+
+            window.addEventListener('resize', () => {
+                if (document.getElementById('step-lesson').classList.contains('active')) {
+                    drawRoadmapSvgPath();
+                }
+            });
+
+            ['mousedown', 'mousemove', 'touchstart', 'scroll', 'keydown', 'click'].forEach(evt => {
+                window.addEventListener(evt, () => {
+                    if (!isIdlePaused && challengeSessionStartTime) resetIdleTimer();
+                }, { passive: true });
+            });
+
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+                    e.preventDefault();
+                    return false;
+                }
+                if ((e.ctrlKey || e.metaKey) && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+                if ((e.ctrlKey || e.metaKey) && e.keyCode === 83) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
         };
     </script>
 </body>
 </html>
-```[cite: 1]
-
-至此，整份檔案已完整切分並提供完畢！已依您的需求修改好挑戰模式的提示顯示、音檔按鈕隱藏，以及比對後先保持隱藏、點擊按鈕才手動揭開正解與發音的完整互動機制[cite: 1]。
