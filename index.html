@@ -1647,8 +1647,7 @@
             <div id="login-error-msg" style="color: var(--duo-red); font-size: 0.82rem; margin-top: 10px;" class="hidden"></div>
         </div>
     </div>
-
-    <!-- 忘記密碼 Modal -->
+<!-- 忘記密碼 Modal -->
     <div id="modal-forgot-password" class="custom-modal">
         <div class="custom-modal-card">
             <h3 style="margin-top:0; font-size: 1.2rem;"><i class="fa-solid fa-key" style="color: var(--duo-blue);"></i> 忘記密碼</h3>
@@ -2210,6 +2209,11 @@
                         <i class="fa-solid fa-magnifying-glass"></i> 比對答案
                     </button>
 
+                    <!-- 新增：點擊顯示正確答案與翻譯按鈕（預設隱藏） -->
+                    <button class="btn-confirm" id="btn-reveal-shadow-answer" onclick="revealShadowAnswer()" style="display:none; margin-top:10px; background:#f59e0b; border-bottom-color:#d97706;">
+                        <i class="fa-solid fa-eye"></i> 顯示正確答案與翻譯
+                    </button>
+
                     <div class="nav-controls">
                         <span class="lbl-progress" id="lbl-shadow-progress">0 / 0</span>
                         <button class="btn-nav-next" id="btn-next" onclick="nextQuestion()">下一題 <i class="fa-solid fa-arrow-right"></i></button>
@@ -2323,8 +2327,7 @@
                         <button class="btn-circle btn-listen" id="btn-play-block-audio" onclick="playBlockAudio()" style="margin: 0 auto;"><i class="fa-solid fa-volume-high"></i></button>
                     </div>
                     <div class="translation-text" id="lbl-block-translation">...</div>
-
-                    <div id="area-block-click-mode">
+<div id="area-block-click-mode">
                         <div id="zone-answer" class="block-zone"></div>
                         <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
                     </div>
@@ -2623,6 +2626,7 @@
             </div>
 
         </div> <!-- shadowing-card 結束 -->
+
 <!-- 核心邏輯腳本開始 -->
         <script>
             const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
@@ -2772,8 +2776,7 @@
                     speakTTS(fallbackText, rate);
                 }
             }
-
-            const GUIDE_DETAILS_MAP = {
+const GUIDE_DETAILS_MAP = {
                 'grammar': {
                     title: '📘 關卡任務玩法說明',
                     content: `
@@ -2824,7 +2827,7 @@
                         <strong>2. 練習開口：</strong> 點擊紅色錄音按鈕，模仿母語人士的語速念出整句。<br>
                         <strong>3. 自由重錄：</strong> 錄音結束後會顯示辨識結果，未評分前可重複點擊麥克風重新錄音！<br>
                         <strong>4. 比對答案：</strong> 確定錄音無誤後點擊「比對答案」進行評分並標記錯字。<br>
-                        <strong>5. 提示切換：</strong> 入門模式下可參考關鍵字提示，挑戰模式下則全憑聽力發音。<br>
+                        <strong>5. 提示切換：</strong> 挑戰模式預設顯示提示，並隱藏播放按鈕與正確解答；點擊「顯示正確答案與翻譯」可自由展開查看！<br>
                         <strong>6. 星級通關：</strong> 完成全數句子後結算成績並獲取豐富經驗值 (XP)！
                     `
                 },
@@ -3241,7 +3244,8 @@
                 if (!curRound) return;
                 playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85);
             }
-function hideRecordingControls() {
+
+        function hideRecordingControls() {
             const activeMode = currentConfig.mode;
             if (activeMode === 'sentence_chat') {
                 const recBtn = document.getElementById('btn-chat-start-record');
@@ -3324,6 +3328,8 @@ function hideRecordingControls() {
             if (shadowEvalBtn) shadowEvalBtn.style.display = 'none';
             const wordEvalBtn = document.getElementById('btn-word-shadow-submit-speech-eval');
             if (wordEvalBtn) wordEvalBtn.style.display = 'none';
+            const revealShadowBtn = document.getElementById('btn-reveal-shadow-answer');
+            if (revealShadowBtn) revealShadowBtn.style.display = 'none';
         }
 
         function revokeUserAudioUrl() {
@@ -5963,6 +5969,31 @@ function triggerBottomGrammarAction() {
                 showGrammarQuizArea();
             }
         }
+
+        /* 句子跟讀：玩家主動點擊按鈕後才顯示正確韓文與翻譯 */
+        function revealShadowAnswer() {
+            const q = questions[currentIndex];
+            if (!q) return;
+
+            const targetTextElem = document.getElementById('lbl-target-text');
+            const transElem = document.getElementById('lbl-translation');
+            const playAudioBtn = document.getElementById('btn-play-audio');
+            const revealBtn = document.getElementById('btn-reveal-shadow-answer');
+
+            if (targetTextElem) {
+                targetTextElem.innerText = q.text || "";
+                targetTextElem.style.visibility = "visible";
+            }
+            if (transElem) {
+                transElem.innerText = q.translation || "";
+            }
+            if (playAudioBtn) {
+                playAudioBtn.style.display = 'inline-flex';
+            }
+            if (revealBtn) {
+                revealBtn.style.display = 'none';
+            }
+        }
 /* ================= 字母臨摹 Canvas 控制與筆劃評判 ================= */
         function initTraceCanvas(curItem) {
             const container = document.getElementById('trace-canvas-container');
@@ -6816,25 +6847,33 @@ function triggerBottomGrammarAction() {
                 const targetTextElem = document.getElementById('lbl-target-text');
                 const transElem = document.getElementById('lbl-translation');
                 const hintElem = document.getElementById('lbl-hint');
+                const playAudioBtn = document.getElementById('btn-play-audio');
                 const recordBtn = document.getElementById('btn-start-record');
+                const revealAnswerBtn = document.getElementById('btn-reveal-shadow-answer');
 
                 if (recordBtn) recordBtn.disabled = false;
+                if (revealAnswerBtn) revealAnswerBtn.style.display = 'none';
 
+                // 核心修改：挑戰模式下顯示提示，並隱藏播放按鈕與正確文本
                 if (isSentenceChallengeMode) {
                     targetTextElem.innerText = q.text || "題目";
                     targetTextElem.style.visibility = "hidden";
                     transElem.innerText = "";
-                    hintElem.style.display = "none";
+                    if (playAudioBtn) playAudioBtn.style.display = "none";
+                    hintElem.innerText = q.hint ? `提示：${q.hint.trim()}` : '無提示';
+                    hintElem.style.display = "inline-block";
                 } else if (isSentenceKeywordMode) {
                     targetTextElem.innerText = q.text || "題目";
                     targetTextElem.style.visibility = "hidden";
                     transElem.innerText = "";
+                    if (playAudioBtn) playAudioBtn.style.display = "inline-flex";
                     hintElem.innerText = q.hint ? `提示：${q.hint.trim()}` : '無提示';
                     hintElem.style.display = "inline-block";
                 } else {
                     targetTextElem.innerText = q.text || "";
                     targetTextElem.style.visibility = "visible";
                     transElem.innerText = q.translation || "";
+                    if (playAudioBtn) playAudioBtn.style.display = "inline-flex";
                     hintElem.style.display = "none";
                 }
 
@@ -6915,8 +6954,7 @@ function triggerBottomGrammarAction() {
                 playBlockAudio();
             }
         }
-
-        function renderBlocks() {
+function renderBlocks() {
             const q = questions[currentIndex];
             const zoneOptions = document.getElementById('zone-options');
             const zoneAnswer = document.getElementById('zone-answer');
@@ -7529,7 +7567,6 @@ function triggerBottomGrammarAction() {
                 lblBubbleBText.innerText = curRound.bText;
                 if (btnPlayB) btnPlayB.style.display = 'inline-flex';
                 
-                // 修復：角色 A 答對後自動無障礙播放角色 B 音檔或 TTS 語音
                 setTimeout(() => {
                     playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85);
                 }, 400);
@@ -7621,7 +7658,7 @@ function triggerBottomGrammarAction() {
         function resetSpeechEvalButtons() {
             lastRecognizedSpeechText = "";
             revokeUserAudioUrl();
-            ['btn-submit-speech-eval', 'btn-word-shadow-submit-speech-eval', 'btn-chat-submit-speech-eval'].forEach(id => {
+            ['btn-submit-speech-eval', 'btn-word-shadow-submit-speech-eval', 'btn-chat-submit-speech-eval', 'btn-reveal-shadow-answer'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
@@ -7711,7 +7748,12 @@ function triggerBottomGrammarAction() {
                     }
                     markQuestionAnswered(wordIndex);
                 } else {
-                    if (isSentenceChallengeMode || isSentenceKeywordMode) {
+                    // 句子跟讀通過時的顯示邏輯
+                    if (isSentenceChallengeMode) {
+                        // 挑戰模式：預設先隱藏，顯示按鈕供玩家點擊查看
+                        const revealBtn = document.getElementById('btn-reveal-shadow-answer');
+                        if (revealBtn) revealBtn.style.display = 'block';
+                    } else if (isSentenceKeywordMode) {
                         const targetTextElem = document.getElementById('lbl-target-text');
                         targetTextElem.innerText = currentQ.text || "";
                         targetTextElem.style.visibility = "visible";
@@ -7730,10 +7772,17 @@ function triggerBottomGrammarAction() {
                     const trans = getWordTranslation(currentQ);
                     document.getElementById('lbl-word-shadow-translation').innerText = trans ? `${trans}` : "";
                 } else {
-                    const targetTextElem = document.getElementById('lbl-target-text');
-                    targetTextElem.innerText = currentQ.text || "";
-                    targetTextElem.style.visibility = "visible";
-                    document.getElementById('lbl-translation').innerText = currentQ.translation || "";
+                    // 句子跟讀未通過時的顯示邏輯
+                    if (isSentenceChallengeMode) {
+                        // 挑戰模式：答錯同樣先隱藏，讓玩家自由點擊展開答案
+                        const revealBtn = document.getElementById('btn-reveal-shadow-answer');
+                        if (revealBtn) revealBtn.style.display = 'block';
+                    } else {
+                        const targetTextElem = document.getElementById('lbl-target-text');
+                        targetTextElem.innerText = currentQ.text || "";
+                        targetTextElem.style.visibility = "visible";
+                        document.getElementById('lbl-translation').innerText = currentQ.translation || "";
+                    }
                 }
 
                 isCurrentQuestionAnswered = true;
@@ -7879,42 +7928,12 @@ function triggerBottomGrammarAction() {
             setUserLang(localStorage.getItem('preferred_user_lang') || 'zh');
             setLearnCategory(localStorage.getItem('preferred_learn_category') || 'korean');
             updateUserFlagIcon();
-            syncMutualExclusiveLangs('account');
-            goToStep('step-welcome');
-
-            window.addEventListener('resize', () => {
-                if (document.getElementById('step-lesson').classList.contains('active')) {
-                    drawRoadmapSvgPath();
-                }
-            });
-
-            ['mousedown', 'mousemove', 'touchstart', 'scroll', 'keydown', 'click'].forEach(evt => {
-                window.addEventListener(evt, () => {
-                    if (!isIdlePaused && challengeSessionStartTime) resetIdleTimer();
-                }, { passive: true });
-            });
-
-            document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-            });
-
-            document.addEventListener('keydown', function(e) {
-                if (e.keyCode === 123) {
-                    e.preventDefault();
-                    return false;
-                }
-                if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
-                    e.preventDefault();
-                    return false;
-                }
-                if ((e.ctrlKey || e.metaKey) && e.keyCode === 85) {
-                    e.preventDefault();
-                    return false;
-                }
-                if ((e.ctrlKey || e.metaKey) && e.keyCode === 83) {
-                    e.preventDefault();
-                    return false;
-                }
+            
+            const savedCategory = localStorage.getItem('preferred_learn_category') || 'korean';
+            autoLoadCategoryData(savedCategory, false);
+            
+            ['touchstart', 'mousedown', 'keydown', 'scroll'].forEach(evtName => {
+                window.addEventListener(evtName, resetIdleTimer, { passive: true });
             });
         };
     </script>
