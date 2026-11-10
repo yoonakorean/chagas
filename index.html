@@ -835,7 +835,8 @@
         .doors-opened .gate-unlock-shine { opacity: 1; transform: scale(2.2); }
         .gate-unlock-title { color: #ffffff; font-size: 1.6rem; font-weight: 900; letter-spacing: 1px; margin-bottom: 6px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .gate-unlock-sub { color: #cbd5e1; font-size: 0.95rem; font-weight: bold; margin-bottom: 24px; }
-/* 角色切換專屬動畫 Modal 樣式 */
+
+        /* 角色切換專屬動畫 Modal 樣式 */
         #role-switch-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(8px);
@@ -1222,7 +1223,7 @@
         .nav-pill-btn.active { background: var(--duo-blue); color: white; border-color: var(--duo-blue); }
 
         .tab-segmented {
-            display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 14px;
+            display: flex background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 14px;
         }
         .tab-segmented-item {
             flex: 1; padding: 8px 10px; border: none; background: transparent; font-weight: bold;
@@ -1557,7 +1558,7 @@
     </style>
 </head>
 <body>
-<!-- 全螢幕「小船航行中...」遮罩 -->
+    <!-- 全螢幕「小船航行中...」遮罩 -->
     <div id="game-loading-overlay">
         <div class="loading-island-icon"><i class="fa-solid fa-sailboat"></i></div>
         <div class="loading-island-title" id="lbl-island-loading-title" style="font-size: 1.4rem; font-weight: 900; color: #1e293b; margin-bottom: 8px;">🏝️ 冒險地圖載入中...</div>
@@ -2030,83 +2031,83 @@
             <button class="ctrl-btn" id="btn-flashcard-next" onclick="stepFlashcard(1)" aria-label="下一個"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
     </div>
-<!-- 主介面容器 -->
-        <div class="shadowing-card">
-            
-            <!-- 上方狀態列 -->
-            <div class="user-meta-bar" id="app-user-meta-bar" style="display: none;">
-                <div class="user-meta-item" id="btn-profile-trigger" onclick="openProfileView()">
-                    <span id="lbl-user-flag" style="font-size: 1.1rem; line-height: 1;">🇰🇷</span>
-                    <i class="fa-solid fa-user" style="color: var(--duo-blue);"></i>
-                    <span id="lbl-username">訪客</span>
+
+    <!-- 主介面容器 -->
+    <div class="shadowing-card">
+        
+        <!-- 上方狀態列 -->
+        <div class="user-meta-bar" id="app-user-meta-bar" style="display: none;">
+            <div class="user-meta-item" id="btn-profile-trigger" onclick="openProfileView()">
+                <span id="lbl-user-flag" style="font-size: 1.1rem; line-height: 1;">🇰🇷</span>
+                <i class="fa-solid fa-user" style="color: var(--duo-blue);"></i>
+                <span id="lbl-username">訪客</span>
+            </div>
+            <div class="user-meta-item" id="btn-streak-trigger" onclick="openStreakDashboard()">
+                <i class="fa-solid fa-fire" style="color: var(--duo-red);"></i>
+                <span id="lbl-streak-days">1</span> 天
+            </div>
+            <div class="user-meta-item">
+                <i class="fa-solid fa-star" style="color: var(--duo-gold);"></i>
+                <span id="lbl-xp">0</span>
+            </div>
+            <div class="user-meta-item">
+                <i class="fa-solid fa-bolt-lightning" style="color: var(--duo-purple);"></i>
+                <span>100</span>
+            </div>
+            <div class="user-meta-item" id="btn-level-trigger" onclick="triggerLevelSelectionModal()" style="color: var(--duo-blue); border: 1.5px solid #e0f2fe; border-radius: 10px;">
+                <span id="lbl-user-level">1A</span>
+                <i class="fa-solid fa-caret-down" style="font-size: 0.75rem; color: #9ca3af;"></i>
+            </div>
+        </div>
+
+        <!-- 中間滾動主區塊 -->
+        <div id="learning-content-view">
+
+            <!-- 0. 全新開場畫面 -->
+            <div id="step-welcome" class="step-page active">
+                <div class="welcome-logo-icon">
+                    <i class="fa-solid fa-gamepad"></i>
                 </div>
-                <div class="user-meta-item" id="btn-streak-trigger" onclick="openStreakDashboard()">
-                    <i class="fa-solid fa-fire" style="color: var(--duo-red);"></i>
-                    <span id="lbl-streak-days">1</span> 天
-                </div>
-                <div class="user-meta-item">
-                    <i class="fa-solid fa-star" style="color: var(--duo-gold);"></i>
-                    <span id="lbl-xp">0</span>
-                </div>
-                <div class="user-meta-item">
-                    <i class="fa-solid fa-bolt-lightning" style="color: var(--duo-purple);"></i>
-                    <span>100</span>
-                </div>
-                <div class="user-meta-item" id="btn-level-trigger" onclick="triggerLevelSelectionModal()" style="color: var(--duo-blue); border: 1.5px solid #e0f2fe; border-radius: 10px;">
-                    <span id="lbl-user-level">1A</span>
-                    <i class="fa-solid fa-caret-down" style="font-size: 0.75rem; color: #9ca3af;"></i>
+                <h1 class="welcome-title">優娜多語大冒險</h1>
+                <p class="welcome-subtitle">每日通關練習，打造超強外語即戰力！</p>
+                <div class="welcome-actions-box">
+                    <button class="btn-welcome-play" onclick="handleStartGameClick()">
+                        <i class="fa-solid fa-play"></i> 進入遊戲
+                    </button>
+                    <button class="btn-welcome-register" onclick="handleOpenRegisterModal()">
+                        <i class="fa-solid fa-user-plus"></i> 註冊帳號
+                    </button>
                 </div>
             </div>
 
-            <!-- 中間滾動主區塊 -->
-            <div id="learning-content-view">
+            <div id="step-learn-lang" class="step-page hidden">
+                <div id="cache-status" style="font-size: 0.75rem; color: #6b7280; margin-top: 8px;"></div>
+            </div>
 
-                <!-- 0. 全新開場畫面 -->
-                <div id="step-welcome" class="step-page active">
-                    <div class="welcome-logo-icon">
-                        <i class="fa-solid fa-gamepad"></i>
-                    </div>
-                    <h1 class="welcome-title">優娜多語大冒險</h1>
-                    <p class="welcome-subtitle">每日通關練習，打造超強外語即戰力！</p>
-                    <div class="welcome-actions-box">
-                        <button class="btn-welcome-play" onclick="handleStartGameClick()">
-                            <i class="fa-solid fa-play"></i> 進入遊戲
-                        </button>
-                        <button class="btn-welcome-register" onclick="handleOpenRegisterModal()">
-                            <i class="fa-solid fa-user-plus"></i> 註冊帳號
-                        </button>
-                    </div>
+            <!-- 步驟 2：程度選擇 -->
+            <div id="step-level" class="step-page">
+                <div class="top-nav" style="justify-content: flex-end;">
+                    <button class="btn-sync-refresh" onclick="forceClearAndSync()" style="margin: 0; font-size: 0.8rem;"><i class="fa-solid fa-arrows-rotate"></i> 更新本課程資料</button>
                 </div>
+                <h2 class="step-title" style="margin-top: 6px;"><i class="fa-solid fa-layer-group"></i> 選擇程度</h2>
+                <div id="container-levels" class="option-grid grid-2"></div>
+            </div>
 
-                <div id="step-learn-lang" class="step-page hidden">
-                    <div id="cache-status" style="font-size: 0.75rem; color: #6b7280; margin-top: 8px;"></div>
+            <!-- 步驟 3：全新藍色系闖關大地圖畫面 -->
+            <div id="step-lesson" class="step-page">
+                <div class="top-nav">
+                    <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
+                    <span id="lbl-lesson-unit" class="top-nav-title-badge" style="color: var(--duo-blue);">冒險地圖</span>
                 </div>
+                
+                <div class="stage-pill-selector" id="container-stage-pills"></div>
 
-                <!-- 步驟 2：程度選擇 -->
-                <div id="step-level" class="step-page">
-                    <div class="top-nav" style="justify-content: flex-end;">
-                        <button class="btn-sync-refresh" onclick="forceClearAndSync()" style="margin: 0; font-size: 0.8rem;"><i class="fa-solid fa-arrows-rotate"></i> 更新本課程資料</button>
-                    </div>
-                    <h2 class="step-title" style="margin-top: 6px;"><i class="fa-solid fa-layer-group"></i> 選擇程度</h2>
-                    <div id="container-levels" class="option-grid grid-2"></div>
+                <div class="roadmap-container" id="roadmap-main-area">
+                    <svg class="roadmap-svg-layer" id="roadmap-svg-canvas"></svg>
+                    <div class="roadmap-nodes-container" id="roadmap-nodes-list"></div>
                 </div>
-
-                <!-- 步驟 3：全新藍色系闖關大地圖畫面 -->
-                <div id="step-lesson" class="step-page">
-                    <div class="top-nav">
-                        <button class="btn-back-step" onclick="goToStep('step-level')"><i class="fa-solid fa-arrow-left"></i> 回程度選擇</button>
-                        <span id="lbl-lesson-unit" class="top-nav-title-badge" style="color: var(--duo-blue);">冒險地圖</span>
-                    </div>
-                    
-                    <div class="stage-pill-selector" id="container-stage-pills"></div>
-
-                    <div class="roadmap-container" id="roadmap-main-area">
-                        <svg class="roadmap-svg-layer" id="roadmap-svg-canvas"></svg>
-                        <div class="roadmap-nodes-container" id="roadmap-nodes-list"></div>
-                    </div>
-                </div>
-
-                <!-- 步驟 5.5：語法介紹教室 -->
+            </div>
+<!-- 步驟 5.5：語法介紹教室 -->
                 <div id="step-grammar" class="step-page">
                     <div class="top-nav">
                         <button class="btn-back-step" onclick="goToStep('step-lesson')"><i class="fa-solid fa-arrow-left"></i> 回闖關地圖</button>
@@ -2209,7 +2210,7 @@
                         <i class="fa-solid fa-magnifying-glass"></i> 比對答案
                     </button>
 
-                    <!-- 新增：點擊顯示正確答案與翻譯按鈕（預設隱藏） -->
+                    <!-- 點擊顯示正確答案與翻譯按鈕（預設隱藏） -->
                     <button class="btn-confirm" id="btn-reveal-shadow-answer" onclick="revealShadowAnswer()" style="display:none; margin-top:10px; background:#f59e0b; border-bottom-color:#d97706;">
                         <i class="fa-solid fa-eye"></i> 顯示正確答案與翻譯
                     </button>
@@ -2327,7 +2328,8 @@
                         <button class="btn-circle btn-listen" id="btn-play-block-audio" onclick="playBlockAudio()" style="margin: 0 auto;"><i class="fa-solid fa-volume-high"></i></button>
                     </div>
                     <div class="translation-text" id="lbl-block-translation">...</div>
-<div id="area-block-click-mode">
+
+                    <div id="area-block-click-mode">
                         <div id="zone-answer" class="block-zone"></div>
                         <div id="zone-options" class="block-zone" style="border-bottom: none; background: #f9fafb; border-radius: 12px;"></div>
                     </div>
@@ -2626,7 +2628,6 @@
             </div>
 
         </div> <!-- shadowing-card 結束 -->
-
 <!-- 核心邏輯腳本開始 -->
         <script>
             const AUTH_WHITELIST_API = "https://script.google.com/macros/s/AKfycbw_M7IruZjeXV70lJb7CoaeRUYKsNus7-_ZsvjM_00I_ovqmo3SmJO6ZE5G54-OGP1H/exec";
@@ -2736,18 +2737,16 @@
             let currentAudioInstance = null;
 
             /**
-             * 關鍵修復：核心音訊播放函式 playAudioOrTTS
+             * 關鍵核心音訊播放函式 playAudioOrTTS
              * 優先播放音訊檔案 (音訊 URL)，若網址無效、空值或播放失敗則自動降級為標準 TTS 語音朗讀
              */
             function playAudioOrTTS(audioUrl, fallbackText, rate = 0.85) {
                 stopSpeechRecognition();
 
-                // 停止當前正在發聲的語音合成
                 if (window.speechSynthesis) {
                     window.speechSynthesis.cancel();
                 }
 
-                // 停止當前正在播放的音訊物件
                 if (currentAudioInstance) {
                     try {
                         currentAudioInstance.pause();
@@ -2776,7 +2775,8 @@
                     speakTTS(fallbackText, rate);
                 }
             }
-const GUIDE_DETAILS_MAP = {
+
+            const GUIDE_DETAILS_MAP = {
                 'grammar': {
                     title: '📘 關卡任務玩法說明',
                     content: `
@@ -3245,348 +3245,348 @@ const GUIDE_DETAILS_MAP = {
                 playAudioOrTTS(curRound.bAudio, curRound.bText, 0.85);
             }
 
-        function hideRecordingControls() {
-            const activeMode = currentConfig.mode;
-            if (activeMode === 'sentence_chat') {
-                const recBtn = document.getElementById('btn-chat-start-record');
-                const resetBtn = document.getElementById('btn-reset-chat');
-                if (recBtn) recBtn.style.display = 'none';
-                if (resetBtn) resetBtn.style.display = 'none';
-            } else if (activeMode === 'word_shadow') {
-                const recBtn = document.getElementById('btn-word-shadow-start-record');
-                const resetBtn = document.getElementById('btn-reset-word-shadow');
-                if (recBtn) { recBtn.style.display = 'inline-flex'; recBtn.disabled = false; }
-                if (resetBtn) resetBtn.style.display = 'inline-flex';
-            } else if (activeMode === 'shadow') {
-                const recBtn = document.getElementById('btn-start-record');
-                const resetBtn = document.getElementById('btn-reset-shadow');
-                if (recBtn) recBtn.style.display = 'none';
-                if (resetBtn) resetBtn.style.display = 'none';
-            }
-        }
-
-        function restoreRecordingControls() {
-            const recBtnShadow = document.getElementById('btn-start-record');
-            const resetBtnShadow = document.getElementById('btn-reset-shadow');
-            if (recBtnShadow) { recBtnShadow.style.display = 'inline-flex'; recBtnShadow.disabled = false; }
-            if (resetBtnShadow) resetBtnShadow.style.display = 'inline-flex';
-
-            const recBtnChat = document.getElementById('btn-chat-start-record');
-            const resetBtnChat = document.getElementById('btn-reset-chat');
-            if (recBtnChat) { recBtnChat.style.display = 'inline-flex'; recBtnChat.disabled = false; }
-            if (resetBtnChat) resetBtnChat.style.display = 'inline-flex';
-
-            const recBtnWord = document.getElementById('btn-word-shadow-start-record');
-            const resetBtnWord = document.getElementById('btn-reset-word-shadow');
-            if (recBtnWord) { recBtnWord.style.display = 'inline-flex'; recBtnWord.disabled = false; }
-            if (resetBtnWord) resetBtnWord.style.display = 'inline-flex';
-        }
-
-        function forceResetMicrophoneSession() {
-            if (recognition) {
-                try {
-                    recognition.onstart = null;
-                    recognition.onend = null;
-                    recognition.onerror = null;
-                    recognition.onresult = null;
-                    recognition.abort();
-                } catch(e) {}
-                recognition = null;
-            }
-
-            if (mediaRecorder && mediaRecorder.stream) {
-                try {
-                    mediaRecorder.stream.getTracks().forEach(track => {
-                        track.stop();
-                        track.enabled = false;
-                    });
-                } catch(e) {}
-                mediaRecorder = null;
-            }
-
-            revokeUserAudioUrl();
-            isRecording = false;
-            isToggling = false;
-            document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
-
-            const targetLblId = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-recognized-text' :
-                                (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-recognized-text' : 'lbl-recognized-text';
-            const lbl = document.getElementById(targetLblId);
-            if (lbl) lbl.innerText = "麥克風已完全釋放，請點擊錄音";
-
-            const scoreLblId = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-score' :
-                               (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-score' : 'lbl-score';
-            const scoreLbl = document.getElementById(scoreLblId);
-            if (scoreLbl) {
-                scoreLbl.innerText = "判定結果：--";
-                scoreLbl.style.color = "var(--duo-blue)";
-            }
-
-            const chatEvalBtn = document.getElementById('btn-chat-submit-speech-eval');
-            if (chatEvalBtn) chatEvalBtn.style.display = 'none';
-            const shadowEvalBtn = document.getElementById('btn-submit-speech-eval');
-            if (shadowEvalBtn) shadowEvalBtn.style.display = 'none';
-            const wordEvalBtn = document.getElementById('btn-word-shadow-submit-speech-eval');
-            if (wordEvalBtn) wordEvalBtn.style.display = 'none';
-            const revealShadowBtn = document.getElementById('btn-reveal-shadow-answer');
-            if (revealShadowBtn) revealShadowBtn.style.display = 'none';
-        }
-
-        function revokeUserAudioUrl() {
-            if (userRecordedAudioUrl) {
-                try {
-                    URL.revokeObjectURL(userRecordedAudioUrl);
-                } catch (e) {
-                    console.warn("釋放音訊記憶體失敗:", e);
+            function hideRecordingControls() {
+                const activeMode = currentConfig.mode;
+                if (activeMode === 'sentence_chat') {
+                    const recBtn = document.getElementById('btn-chat-start-record');
+                    const resetBtn = document.getElementById('btn-reset-chat');
+                    if (recBtn) recBtn.style.display = 'none';
+                    if (resetBtn) resetBtn.style.display = 'none';
+                } else if (activeMode === 'word_shadow') {
+                    const recBtn = document.getElementById('btn-word-shadow-start-record');
+                    const resetBtn = document.getElementById('btn-reset-word-shadow');
+                    if (recBtn) { recBtn.style.display = 'inline-flex'; recBtn.disabled = false; }
+                    if (resetBtn) resetBtn.style.display = 'inline-flex';
+                } else if (activeMode === 'shadow') {
+                    const recBtn = document.getElementById('btn-start-record');
+                    const resetBtn = document.getElementById('btn-reset-shadow');
+                    if (recBtn) recBtn.style.display = 'none';
+                    if (resetBtn) resetBtn.style.display = 'none';
                 }
-                userRecordedAudioUrl = null;
             }
-        }
 
-        function showIslandLoading(subText = "🏝️ 島嶼生成中，正在同步最新地圖...", progressPct = 30) {
-            const overlay = document.getElementById('game-loading-overlay');
-            const subElem = document.getElementById('lbl-island-loading-sub');
-            const bar = document.getElementById('island-loading-bar');
-            if (overlay) {
-                overlay.classList.add('show');
+            function restoreRecordingControls() {
+                const recBtnShadow = document.getElementById('btn-start-record');
+                const resetBtnShadow = document.getElementById('btn-reset-shadow');
+                if (recBtnShadow) { recBtnShadow.style.display = 'inline-flex'; recBtnShadow.disabled = false; }
+                if (resetBtnShadow) resetBtnShadow.style.display = 'inline-flex';
+
+                const recBtnChat = document.getElementById('btn-chat-start-record');
+                const resetBtnChat = document.getElementById('btn-reset-chat');
+                if (recBtnChat) { recBtnChat.style.display = 'inline-flex'; recBtnChat.disabled = false; }
+                if (resetBtnChat) resetBtnChat.style.display = 'inline-flex';
+
+                const recBtnWord = document.getElementById('btn-word-shadow-start-record');
+                const resetBtnWord = document.getElementById('btn-reset-word-shadow');
+                if (recBtnWord) { recBtnWord.style.display = 'inline-flex'; recBtnWord.disabled = false; }
+                if (resetBtnWord) resetBtnWord.style.display = 'inline-flex';
+            }
+
+            function forceResetMicrophoneSession() {
+                if (recognition) {
+                    try {
+                        recognition.onstart = null;
+                        recognition.onend = null;
+                        recognition.onerror = null;
+                        recognition.onresult = null;
+                        recognition.abort();
+                    } catch(e) {}
+                    recognition = null;
+                }
+
+                if (mediaRecorder && mediaRecorder.stream) {
+                    try {
+                        mediaRecorder.stream.getTracks().forEach(track => {
+                            track.stop();
+                            track.enabled = false;
+                        });
+                    } catch(e) {}
+                    mediaRecorder = null;
+                }
+
+                revokeUserAudioUrl();
+                isRecording = false;
+                isToggling = false;
+                document.querySelectorAll('.btn-record').forEach(b => b.classList.remove('recording'));
+
+                const targetLblId = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-recognized-text' :
+                                    (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-recognized-text' : 'lbl-recognized-text';
+                const lbl = document.getElementById(targetLblId);
+                if (lbl) lbl.innerText = "麥克風已完全釋放，請點擊錄音";
+
+                const scoreLblId = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-score' :
+                                   (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-score' : 'lbl-score';
+                const scoreLbl = document.getElementById(scoreLblId);
+                if (scoreLbl) {
+                    scoreLbl.innerText = "判定結果：--";
+                    scoreLbl.style.color = "var(--duo-blue)";
+                }
+
+                const chatEvalBtn = document.getElementById('btn-chat-submit-speech-eval');
+                if (chatEvalBtn) chatEvalBtn.style.display = 'none';
+                const shadowEvalBtn = document.getElementById('btn-submit-speech-eval');
+                if (shadowEvalBtn) shadowEvalBtn.style.display = 'none';
+                const wordEvalBtn = document.getElementById('btn-word-shadow-submit-speech-eval');
+                if (wordEvalBtn) wordEvalBtn.style.display = 'none';
+                const revealShadowBtn = document.getElementById('btn-reveal-shadow-answer');
+                if (revealShadowBtn) revealShadowBtn.style.display = 'none';
+            }
+
+            function revokeUserAudioUrl() {
+                if (userRecordedAudioUrl) {
+                    try {
+                        URL.revokeObjectURL(userRecordedAudioUrl);
+                    } catch (e) {
+                        console.warn("釋放音訊記憶體失敗:", e);
+                    }
+                    userRecordedAudioUrl = null;
+                }
+            }
+
+            function showIslandLoading(subText = "🏝️ 島嶼生成中，正在同步最新地圖...", progressPct = 30) {
+                const overlay = document.getElementById('game-loading-overlay');
+                const subElem = document.getElementById('lbl-island-loading-sub');
+                const bar = document.getElementById('island-loading-bar');
+                if (overlay) {
+                    overlay.classList.add('show');
+                    if (subElem) subElem.innerText = subText;
+                    if (bar) bar.style.width = `${progressPct}%`;
+                }
+            }
+
+            function updateIslandLoading(subText, progressPct) {
+                const subElem = document.getElementById('lbl-island-loading-sub');
+                const bar = document.getElementById('island-loading-bar');
                 if (subElem) subElem.innerText = subText;
                 if (bar) bar.style.width = `${progressPct}%`;
             }
-        }
 
-        function updateIslandLoading(subText, progressPct) {
-            const subElem = document.getElementById('lbl-island-loading-sub');
-            const bar = document.getElementById('island-loading-bar');
-            if (subElem) subElem.innerText = subText;
-            if (bar) bar.style.width = `${progressPct}%`;
-        }
-
-        function hideIslandLoading() {
-            const bar = document.getElementById('island-loading-bar');
-            if (bar) bar.style.width = '100%';
-            setTimeout(() => {
-                const overlay = document.getElementById('game-loading-overlay');
-                if (overlay) overlay.classList.remove('show');
-            }, 300);
-        }
-
-        function formatFocusDurationText(totalSeconds) {
-            const secNum = Math.max(0, Math.floor(totalSeconds || 0));
-            const hours = Math.floor(secNum / 3600);
-            const minutes = Math.floor((secNum % 3600) / 60);
-            const seconds = secNum % 60;
-            if (hours > 0) return `${hours}時 ${minutes}分 ${seconds}秒`;
-            if (minutes > 0) return `${minutes}分 ${seconds}秒`;
-            return `${seconds}秒`;
-        }
-
-        const PRAISE_PASS_MESSAGES = [
-            "🏆 太棒了！",
-            "做得好！",
-            "✨ 不錯唷！"
-        ];
-
-        const RETRY_FAIL_MESSAGES = [
-            "🎯 再接再勵！",
-            "差一點點！"
-        ];
-
-        function getRandomPassPraise() {
-            return PRAISE_PASS_MESSAGES[Math.floor(Math.random() * PRAISE_PASS_MESSAGES.length)];
-        }
-
-        function getRandomFailNotice() {
-            return RETRY_FAIL_MESSAGES[Math.floor(Math.random() * RETRY_FAIL_MESSAGES.length)];
-        }
-
-        function getRandomPraise() {
-            return getRandomPassPraise();
-        }
-
-        function shuffleArray(arr) {
-            const array = [...arr];
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+            function hideIslandLoading() {
+                const bar = document.getElementById('island-loading-bar');
+                if (bar) bar.style.width = '100%';
+                setTimeout(() => {
+                    const overlay = document.getElementById('game-loading-overlay');
+                    if (overlay) overlay.classList.remove('show');
+                }, 300);
             }
-            return array;
-        }
 
-        function formatDurationMMSS(totalSeconds) {
-            if (!totalSeconds || totalSeconds < 0) return "--:--";
-            const m = Math.floor(totalSeconds / 60);
-            const s = Math.floor(totalSeconds % 60);
-            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        }
+            function formatFocusDurationText(totalSeconds) {
+                const secNum = Math.max(0, Math.floor(totalSeconds || 0));
+                const hours = Math.floor(secNum / 3600);
+                const minutes = Math.floor((secNum % 3600) / 60);
+                const seconds = secNum % 60;
+                if (hours > 0) return `${hours}時 ${minutes}分 ${seconds}秒`;
+                if (minutes > 0) return `${minutes}分 ${seconds}秒`;
+                return `${seconds}秒`;
+            }
 
-        function updateUserFlagIcon() {
-            const flagElem = document.getElementById('lbl-user-flag');
-            if (!flagElem) return;
-            const flagMap = { 'korean': '🇰🇷', 'japanese': '🇯🇵', 'english': '🇺🇸' };
-            flagElem.innerText = flagMap[currentConfig.category] || '🌐';
-        }
+            const PRAISE_PASS_MESSAGES = [
+                "🏆 太棒了！",
+                "做得好！",
+                "✨ 不錯唷！"
+            ];
 
-        async function recordSessionFocusTime() {
-            if (!challengeSessionStartTime) return 0;
-            const now = Date.now();
-            const elapsedSeconds = Math.max(0, Math.round((now - challengeSessionStartTime) / 1000));
-            challengeSessionStartTime = null;
+            const RETRY_FAIL_MESSAGES = [
+                "🎯 再接再勵！",
+                "差一點點！"
+            ];
 
-            if (elapsedSeconds <= 0) return 0;
+            function getRandomPassPraise() {
+                return PRAISE_PASS_MESSAGES[Math.floor(Math.random() * PRAISE_PASS_MESSAGES.length)];
+            }
 
-            if (!window.currentUserData) window.currentUserData = {};
-            const currentTotalSeconds = Number(window.currentUserData.focusSeconds || (window.currentUserData.focusHours ? window.currentUserData.focusHours * 3600 : 0));
-            const updatedTotalSeconds = currentTotalSeconds + elapsedSeconds;
+            function getRandomFailNotice() {
+                return RETRY_FAIL_MESSAGES[Math.floor(Math.random() * RETRY_FAIL_MESSAGES.length)];
+            }
 
-            window.currentUserData.focusSeconds = updatedTotalSeconds;
-            window.currentUserData.focusHours = Number((updatedTotalSeconds / 3600).toFixed(4));
+            function getRandomPraise() {
+                return getRandomPassPraise();
+            }
 
-            const formattedText = formatFocusDurationText(updatedTotalSeconds);
-            const dashFocus = document.getElementById('dash-focus-hours');
-            const myAccountFocus = document.getElementById('myaccount-focus-text');
-            if (dashFocus) dashFocus.innerText = formattedText;
-            if (myAccountFocus) myAccountFocus.innerText = formattedText;
+            function shuffleArray(arr) {
+                const array = [...arr];
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
 
-            if (currentUser) {
+            function formatDurationMMSS(totalSeconds) {
+                if (!totalSeconds || totalSeconds < 0) return "--:--";
+                const m = Math.floor(totalSeconds / 60);
+                const s = Math.floor(totalSeconds % 60);
+                return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            }
+
+            function updateUserFlagIcon() {
+                const flagElem = document.getElementById('lbl-user-flag');
+                if (!flagElem) return;
+                const flagMap = { 'korean': '🇰🇷', 'japanese': '🇯🇵', 'english': '🇺🇸' };
+                flagElem.innerText = flagMap[currentConfig.category] || '🌐';
+            }
+
+            async function recordSessionFocusTime() {
+                if (!challengeSessionStartTime) return 0;
+                const now = Date.now();
+                const elapsedSeconds = Math.max(0, Math.round((now - challengeSessionStartTime) / 1000));
+                challengeSessionStartTime = null;
+
+                if (elapsedSeconds <= 0) return 0;
+
+                if (!window.currentUserData) window.currentUserData = {};
+                const currentTotalSeconds = Number(window.currentUserData.focusSeconds || (window.currentUserData.focusHours ? window.currentUserData.focusHours * 3600 : 0));
+                const updatedTotalSeconds = currentTotalSeconds + elapsedSeconds;
+
+                window.currentUserData.focusSeconds = updatedTotalSeconds;
+                window.currentUserData.focusHours = Number((updatedTotalSeconds / 3600).toFixed(4));
+
+                const formattedText = formatFocusDurationText(updatedTotalSeconds);
+                const dashFocus = document.getElementById('dash-focus-hours');
+                const myAccountFocus = document.getElementById('myaccount-focus-text');
+                if (dashFocus) dashFocus.innerText = formattedText;
+                if (myAccountFocus) myAccountFocus.innerText = formattedText;
+
+                if (currentUser) {
+                    try {
+                        await db.collection("users").doc(currentUser.uid).set({
+                            focusSeconds: firebase.firestore.FieldValue.increment(elapsedSeconds),
+                            focusHours: Number((updatedTotalSeconds / 3600).toFixed(4))
+                        }, { merge: true });
+                    } catch (e) {
+                        console.error("更新專注秒數至雲端失敗:", e);
+                    }
+                }
+
+                return elapsedSeconds;
+            }
+
+            function getModeTagText() {
+                if (activeChallengeType === 'entry') return '(入門)';
+                if (activeChallengeType === 'timed') return '(挑戰)';
+                return '(練習)';
+            }
+
+            function getLocalDateString(d = new Date()) {
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+
+            async function processDailyCheckIn(user, userData) {
+                const todayStr = getLocalDateString();
+                let history = Array.isArray(userData.checkInHistory) ? [...userData.checkInHistory] : [];
+                let lastDateStr = userData.lastCheckInDate || null;
+                let streak = userData.streakDays || 0;
+
+                if (lastDateStr === todayStr) {
+                    return { streakDays: streak, checkInHistory: history };
+                }
+
+                if (!lastDateStr) {
+                    streak = 1;
+                } else {
+                    const lastDate = new Date(lastDateStr + "T00:00:00");
+                    const todayDate = new Date(todayStr + "T00:00:00");
+                    const diffDays = Math.round((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+
+                    if (diffDays === 1) streak += 1;
+                    else if (diffDays > 1) streak = 1;
+                }
+
+                if (!history.includes(todayStr)) history.push(todayStr);
+
+                userData.streakDays = streak;
+                userData.lastCheckInDate = todayStr;
+                userData.checkInHistory = history;
+                userData.xp = (userData.xp || 0) + 20;
+
                 try {
-                    await db.collection("users").doc(currentUser.uid).set({
-                        focusSeconds: firebase.firestore.FieldValue.increment(elapsedSeconds),
-                        focusHours: Number((updatedTotalSeconds / 3600).toFixed(4))
+                    await db.collection("users").doc(user.uid).set({
+                        streakDays: streak,
+                        lastCheckInDate: todayStr,
+                        checkInHistory: history,
+                        xp: firebase.firestore.FieldValue.increment(20)
                     }, { merge: true });
                 } catch (e) {
-                    console.error("更新專注秒數至雲端失敗:", e);
+                    console.error("更新簽到紀錄失敗:", e);
                 }
-            }
 
-            return elapsedSeconds;
-        }
-
-        function getModeTagText() {
-            if (activeChallengeType === 'entry') return '(入門)';
-            if (activeChallengeType === 'timed') return '(挑戰)';
-            return '(練習)';
-        }
-
-        function getLocalDateString(d = new Date()) {
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
-        async function processDailyCheckIn(user, userData) {
-            const todayStr = getLocalDateString();
-            let history = Array.isArray(userData.checkInHistory) ? [...userData.checkInHistory] : [];
-            let lastDateStr = userData.lastCheckInDate || null;
-            let streak = userData.streakDays || 0;
-
-            if (lastDateStr === todayStr) {
                 return { streakDays: streak, checkInHistory: history };
             }
 
-            if (!lastDateStr) {
-                streak = 1;
-            } else {
-                const lastDate = new Date(lastDateStr + "T00:00:00");
-                const todayDate = new Date(todayStr + "T00:00:00");
-                const diffDays = Math.round((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+            function getItemField(item, fieldName) {
+                if (!item) return '';
+                const f = String(fieldName).toLowerCase().replace(/[\s_\-]/g, '');
 
-                if (diffDays === 1) streak += 1;
-                else if (diffDays > 1) streak = 1;
+                if (Array.isArray(item)) {
+                    if (f === 'id') return item[0] !== undefined ? String(item[0]) : '';
+                    if (f === 'level' || f === 'lvl') return String(item[1] || '');
+                    if (f === 'unitid' || f === 'unit') return String(item[2] || '');
+                    if (f === 'lesson' || f === 'stage') return String(item[3] || '');
+                    if (f === 'text' || f === 'fulltext') return String(item[4] || '');
+                    if (f === 'voice') return String(item[10] || '');
+                    return '';
+                }
+
+                if (f === 'lesson' || f === 'stage') return String(item.lesson || item.stage || '');
+                if (f === 'unitid' || f === 'unit') return String(item.unit_id || item.unitid || item.unit || '');
+                if (f === 'level' || f === 'lvl') return String(item.level || item.lvl || '');
+                return item[fieldName] !== undefined ? String(item[fieldName]) : (item[f] !== undefined ? String(item[f]) : '');
             }
 
-            if (!history.includes(todayStr)) history.push(todayStr);
+            const ProgressModel = {
+                loadProgress: async (uid) => {
+                    try {
+                        const doc = await db.collection("users").doc(uid).get();
+                        return doc.exists ? doc.data() : null;
+                    } catch (error) {
+                        console.error("載入進度失敗:", error);
+                        return null;
+                    }
+                },
+                saveProgress: async (uid, data) => {
+                    try { await db.collection("users").doc(uid).set(data, { merge: true }); }
+                    catch (e) { console.error("儲存失敗:", e); }
+                },
+                updateUnitProgress: async (uid, unit, lesson) => {
+                    try {
+                        if (!window.currentUserData.unitProgress) window.currentUserData.unitProgress = {};
+                        window.currentUserData.unitProgress[`unit_${unit}`] = {
+                            maxLesson: lesson,
+                            maxStage: lesson,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        };
+                        await db.collection("users").doc(uid).set({ "unitProgress": window.currentUserData.unitProgress }, { merge: true });
+                    } catch (e) {
+                        console.error("更新進度失敗:", e);
+                    }
+                }
+            };
 
-            userData.streakDays = streak;
-            userData.lastCheckInDate = todayStr;
-            userData.checkInHistory = history;
-            userData.xp = (userData.xp || 0) + 20;
-
-            try {
-                await db.collection("users").doc(user.uid).set({
-                    streakDays: streak,
-                    lastCheckInDate: todayStr,
-                    checkInHistory: history,
-                    xp: firebase.firestore.FieldValue.increment(20)
-                }, { merge: true });
-            } catch (e) {
-                console.error("更新簽到紀錄失敗:", e);
+            function calculateStars(score) {
+                if (score >= 90) return { stars: 3, label: '⭐⭐⭐' };
+                if (score >= 71) return { stars: 2, label: '⭐⭐' };
+                if (score >= 51) return { stars: 1, label: '⭐' };
+                return { stars: 0, label: '未達成' };
             }
 
-            return { streakDays: streak, checkInHistory: history };
-        }
-
-        function getItemField(item, fieldName) {
-            if (!item) return '';
-            const f = String(fieldName).toLowerCase().replace(/[\s_\-]/g, '');
-
-            if (Array.isArray(item)) {
-                if (f === 'id') return item[0] !== undefined ? String(item[0]) : '';
-                if (f === 'level' || f === 'lvl') return String(item[1] || '');
-                if (f === 'unitid' || f === 'unit') return String(item[2] || '');
-                if (f === 'lesson' || f === 'stage') return String(item[3] || '');
-                if (f === 'text' || f === 'fulltext') return String(item[4] || '');
-                if (f === 'voice') return String(item[10] || '');
-                return '';
+            function getRecordKey(lesson, mode, chalType, unitId = null) {
+                const actualUnit = unitId || currentConfig.unit_id;
+                return `${currentConfig.category}_${currentConfig.level}_${actualUnit}_${lesson}_${mode}_${chalType}`;
             }
 
-            if (f === 'lesson' || f === 'stage') return String(item.lesson || item.stage || '');
-            if (f === 'unitid' || f === 'unit') return String(item.unit_id || item.unitid || item.unit || '');
-            if (f === 'level' || f === 'lvl') return String(item.level || item.lvl || '');
-            return item[fieldName] !== undefined ? String(item[fieldName]) : (item[f] !== undefined ? String(item[f]) : '');
-        }
-
-        const ProgressModel = {
-            loadProgress: async (uid) => {
+            function getStoredBestRecord(lesson, mode, chalType, unitId = null) {
+                const key = getRecordKey(lesson, mode, chalType, unitId);
+                const userScores = (window.currentUserData && window.currentUserData.modeScores) || {};
+                if (userScores[key]) return userScores[key];
                 try {
-                    const doc = await db.collection("users").doc(uid).get();
-                    return doc.exists ? doc.data() : null;
-                } catch (error) {
-                    console.error("載入進度失敗:", error);
+                    return JSON.parse(localStorage.getItem(`score_${key}`) || 'null');
+                } catch (e) {
                     return null;
                 }
-            },
-            saveProgress: async (uid, data) => {
-                try { await db.collection("users").doc(uid).set(data, { merge: true }); }
-                catch (e) { console.error("儲存失敗:", e); }
-            },
-            updateUnitProgress: async (uid, unit, lesson) => {
-                try {
-                    if (!window.currentUserData.unitProgress) window.currentUserData.unitProgress = {};
-                    window.currentUserData.unitProgress[`unit_${unit}`] = {
-                        maxLesson: lesson,
-                        maxStage: lesson,
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    };
-                    await db.collection("users").doc(uid).set({ "unitProgress": window.currentUserData.unitProgress }, { merge: true });
-                } catch (e) {
-                    console.error("更新進度失敗:", e);
-                }
             }
-        };
-
-        function calculateStars(score) {
-            if (score >= 90) return { stars: 3, label: '⭐⭐⭐' };
-            if (score >= 71) return { stars: 2, label: '⭐⭐' };
-            if (score >= 51) return { stars: 1, label: '⭐' };
-            return { stars: 0, label: '未達成' };
-        }
-
-        function getRecordKey(lesson, mode, chalType, unitId = null) {
-            const actualUnit = unitId || currentConfig.unit_id;
-            return `${currentConfig.category}_${currentConfig.level}_${actualUnit}_${lesson}_${mode}_${chalType}`;
-        }
-
-        function getStoredBestRecord(lesson, mode, chalType, unitId = null) {
-            const key = getRecordKey(lesson, mode, chalType, unitId);
-            const userScores = (window.currentUserData && window.currentUserData.modeScores) || {};
-            if (userScores[key]) return userScores[key];
-            try {
-                return JSON.parse(localStorage.getItem(`score_${key}`) || 'null');
-            } catch (e) {
-                return null;
-            }
-        }
 async function verifyAndSyncUser(user, isInteractive = false) {
             try {
                 const gasResult = await requestGAS(AUTH_WHITELIST_API, '', `email=${encodeURIComponent(user.email)}`);
@@ -5970,7 +5970,6 @@ function triggerBottomGrammarAction() {
             }
         }
 
-        /* 句子跟讀：玩家主動點擊按鈕後才顯示正確韓文與翻譯 */
         function revealShadowAnswer() {
             const q = questions[currentIndex];
             if (!q) return;
@@ -6460,6 +6459,7 @@ function triggerBottomGrammarAction() {
 
                 const trans = getWordTranslation(item);
                 transElem.innerText = trans ? `${trans}` : "";
+                transElem.style.display = 'block';
 
                 if (activeChallengeType === 'timed') {
                     targetTextElem.innerText = item.text || "";
@@ -6527,6 +6527,7 @@ function triggerBottomGrammarAction() {
                 let pool = [];
                 let correctOpt = "";
 
+                /* ===== 單字選擇選項生成核心修改：優先從 choice 抓取，沒有才從其他欄位抓 ===== */
                 if (is0ALevel) {
                     targetTextElem.innerText = "";
                     targetTextElem.style.visibility = "hidden";
@@ -6534,14 +6535,43 @@ function triggerBottomGrammarAction() {
                     choiceSubElem.style.visibility = "hidden";
 
                     correctOpt = (item.text || '').trim();
-                    const wrongOpts = rawWordData
-                        .filter(v => (v.text || '').trim() !== correctOpt)
-                        .map(v => (v.text || '').trim())
-                        .filter(Boolean);
 
-                    const shuffledWrongs = shuffleArray([...new Set(wrongOpts)]).slice(0, 3);
-                    pool = shuffleArray([correctOpt, ...shuffledWrongs]);
+                    // 1. 優先判斷並解析 choice 欄位
+                    let parsedChoices = [];
+                    const rawChoice = item.choice || item.choices || '';
+                    if (rawChoice && typeof rawChoice === 'string') {
+                        parsedChoices = rawChoice.split(/[\/,，]/).map(s => s.trim()).filter(Boolean);
+                    } else if (Array.isArray(rawChoice)) {
+                        parsedChoices = rawChoice.map(s => String(s).trim()).filter(Boolean);
+                    }
+
+                    if (parsedChoices.length > 0) {
+                        let finalOpts = [...new Set(parsedChoices)];
+                        if (!finalOpts.includes(correctOpt)) {
+                            finalOpts.unshift(correctOpt);
+                        }
+                        pool = shuffleArray(finalOpts).slice(0, 4);
+                    } else {
+                        // 2. choice 沒有，再從同關卡其他單字的 kr_pron（若無則 text）中隨機抓 3 個干擾項
+                        const currentUnitStr = String(getItemField(item, 'unit_id')).trim();
+                        const currentLessonStr = String(getItemField(item, 'lesson')).trim();
+
+                        const unitSameWords = rawWordData.filter(v => 
+                            normalizeLevelStr(getItemField(v, 'level')) === '0A' &&
+                            String(getItemField(v, 'unit_id')).trim() === currentUnitStr &&
+                            String(getItemField(v, 'lesson')).trim() === currentLessonStr
+                        );
+                        const fallbackPoolSource = unitSameWords.length >= 4 ? unitSameWords : rawWordData;
+
+                        const wrongOpts = fallbackPoolSource
+                            .map(v => (v.kr_pron || v.text || '').trim())
+                            .filter(val => val && val !== correctOpt);
+
+                        const shuffledWrongs = shuffleArray([...new Set(wrongOpts)]).slice(0, 3);
+                        pool = shuffleArray([correctOpt, ...shuffledWrongs]);
+                    }
                 } else {
+                    // 1A 之後的程度
                     const userLang = currentConfig.lang;
                     const correctMeaning = (userLang === 'en') ? (item.en || item.zh_tw || item.zh || '').trim() :
                                            (userLang === 'ja') ? (item.ja || item.jp || item.zh_tw || item.zh || '').trim() :
@@ -6554,14 +6584,42 @@ function triggerBottomGrammarAction() {
                     choiceSubElem.innerText = "";
                     choiceSubElem.style.visibility = "hidden";
 
-                    const wrongOpts = rawWordData
-                        .map(v => (userLang === 'en') ? (v.en || v.zh_tw || v.zh || '').trim() :
-                                  (userLang === 'ja') ? (v.ja || v.jp || v.zh_tw || v.zh || '').trim() :
-                                  (v.zh_tw || v.zh || '').trim())
-                        .filter(v => v && v !== correctMeaning);
+                    // 1. 優先判斷並解析 choice 欄位
+                    let parsedChoices = [];
+                    const rawChoice = item.choice || item.choices || '';
+                    if (rawChoice && typeof rawChoice === 'string') {
+                        parsedChoices = rawChoice.split(/[\/,，]/).map(s => s.trim()).filter(Boolean);
+                    } else if (Array.isArray(rawChoice)) {
+                        parsedChoices = rawChoice.map(s => String(s).trim()).filter(Boolean);
+                    }
 
-                    const shuffledWrongs = shuffleArray([...new Set(wrongOpts)]).slice(0, 3);
-                    pool = shuffleArray([correctMeaning, ...shuffledWrongs]);
+                    if (parsedChoices.length > 0) {
+                        let finalOpts = [...new Set(parsedChoices)];
+                        if (!finalOpts.includes(correctMeaning)) {
+                            finalOpts.unshift(correctMeaning);
+                        }
+                        pool = shuffleArray(finalOpts).slice(0, 4);
+                    } else {
+                        // 2. choice 沒有，再從 zh_tw（或當前對應語言）抓取干擾選項
+                        const currentUnitStr = String(getItemField(item, 'unit_id')).trim();
+                        const currentLessonStr = String(getItemField(item, 'lesson')).trim();
+
+                        const unitSameWords = rawWordData.filter(v => 
+                            normalizeLevelStr(getItemField(v, 'level')) === normalizeLevelStr(currentConfig.level) &&
+                            String(getItemField(v, 'unit_id')).trim() === currentUnitStr &&
+                            String(getItemField(v, 'lesson')).trim() === currentLessonStr
+                        );
+                        const fallbackPoolSource = unitSameWords.length >= 4 ? unitSameWords : rawWordData;
+
+                        const wrongOpts = fallbackPoolSource
+                            .map(v => (userLang === 'en') ? (v.en || v.zh_tw || v.zh || '').trim() :
+                                      (userLang === 'ja') ? (v.ja || v.jp || v.zh_tw || v.zh || '').trim() :
+                                      (v.zh_tw || v.zh || '').trim())
+                            .filter(v => v && v !== correctMeaning);
+
+                        const shuffledWrongs = shuffleArray([...new Set(wrongOpts)]).slice(0, 3);
+                        pool = shuffleArray([correctMeaning, ...shuffledWrongs]);
+                    }
                 }
 
                 if (activeChallengeType !== 'timed') {
@@ -6825,8 +6883,7 @@ function triggerBottomGrammarAction() {
                 }
             }
         }
-
-        function displayQuestion() {
+function displayQuestion() {
             stopSpeechRecognition();
             resetSpeechEvalButtons();
             restoreRecordingControls();
@@ -6854,11 +6911,11 @@ function triggerBottomGrammarAction() {
                 if (recordBtn) recordBtn.disabled = false;
                 if (revealAnswerBtn) revealAnswerBtn.style.display = 'none';
 
-                // 核心修改：挑戰模式下顯示提示，並隱藏播放按鈕與正確文本
                 if (isSentenceChallengeMode) {
                     targetTextElem.innerText = q.text || "題目";
                     targetTextElem.style.visibility = "hidden";
                     transElem.innerText = "";
+                    transElem.style.display = 'block';
                     if (playAudioBtn) playAudioBtn.style.display = "none";
                     hintElem.innerText = q.hint ? `提示：${q.hint.trim()}` : '無提示';
                     hintElem.style.display = "inline-block";
@@ -6866,6 +6923,7 @@ function triggerBottomGrammarAction() {
                     targetTextElem.innerText = q.text || "題目";
                     targetTextElem.style.visibility = "hidden";
                     transElem.innerText = "";
+                    transElem.style.display = 'block';
                     if (playAudioBtn) playAudioBtn.style.display = "inline-flex";
                     hintElem.innerText = q.hint ? `提示：${q.hint.trim()}` : '無提示';
                     hintElem.style.display = "inline-block";
@@ -6873,6 +6931,7 @@ function triggerBottomGrammarAction() {
                     targetTextElem.innerText = q.text || "";
                     targetTextElem.style.visibility = "visible";
                     transElem.innerText = q.translation || "";
+                    transElem.style.display = 'block';
                     if (playAudioBtn) playAudioBtn.style.display = "inline-flex";
                     hintElem.style.display = "none";
                 }
@@ -6954,7 +7013,8 @@ function triggerBottomGrammarAction() {
                 playBlockAudio();
             }
         }
-function renderBlocks() {
+
+        function renderBlocks() {
             const q = questions[currentIndex];
             const zoneOptions = document.getElementById('zone-options');
             const zoneAnswer = document.getElementById('zone-answer');
@@ -7412,31 +7472,47 @@ function renderBlocks() {
             }
         }
 
+        /* ===== 對話挑戰角色 B 氣泡文字渲染修改：入門程度改為「依照提示念出句子」 ===== */
         function renderSpeakerBBubbleContent() {
             const curRound = chatRounds[chatRoundIndex];
             if (!curRound) return;
             const lblBubbleBText = document.getElementById('lbl-chat-bubble-b-text');
             const btnPlayB = document.getElementById('btn-bubble-play-b');
 
-            if (chatRole === 'B' && activeChallengeType === 'timed') {
-                if (chatRoundPassed || isCurrentQuestionAnswered) {
-                    if (!isBubbleBRevealed) {
-                        lblBubbleBText.innerHTML = `
-                            <div class="audio-wave-bar" title="點擊顯示正確句子">
-                                <div class="audio-wave-icon">
-                                    <span></span><span></span><span></span><span></span>
-                                    <span></span><span></span><span></span><span></span>
+            if (chatRole === 'B') {
+                if (activeChallengeType === 'timed') {
+                    if (chatRoundPassed || isCurrentQuestionAnswered) {
+                        if (!isBubbleBRevealed) {
+                            lblBubbleBText.innerHTML = `
+                                <div class="audio-wave-bar" title="點擊顯示正確句子">
+                                    <div class="audio-wave-icon">
+                                        <span></span><span></span><span></span><span></span>
+                                        <span></span><span></span><span></span><span></span>
+                                    </div>
                                 </div>
-                            </div>
-                        `;
-                        if (btnPlayB) btnPlayB.style.display = 'inline-flex';
+                            `;
+                            if (btnPlayB) btnPlayB.style.display = 'inline-flex';
+                        } else {
+                            lblBubbleBText.innerText = curRound.bText;
+                            if (btnPlayB) btnPlayB.style.display = 'inline-flex';
+                        }
                     } else {
+                        lblBubbleBText.innerText = "請根據提示回答";
+                        if (btnPlayB) btnPlayB.style.display = 'none';
+                    }
+                } else if (activeChallengeType === 'entry') {
+                    // 入門模式且擔任角色 B 時
+                    if (chatRoundPassed || isCurrentQuestionAnswered) {
                         lblBubbleBText.innerText = curRound.bText;
                         if (btnPlayB) btnPlayB.style.display = 'inline-flex';
+                    } else {
+                        lblBubbleBText.innerText = "依照提示念出句子";
+                        if (btnPlayB) btnPlayB.style.display = 'none';
                     }
                 } else {
-                    lblBubbleBText.innerText = "請根據提示回答";
-                    if (btnPlayB) btnPlayB.style.display = 'none';
+                    // 練習模式
+                    lblBubbleBText.innerText = curRound.bText || curRound.bxText;
+                    if (btnPlayB) btnPlayB.style.display = 'inline-flex';
                 }
             } else {
                 lblBubbleBText.innerText = curRound.bText || curRound.bxText;
@@ -7664,14 +7740,31 @@ function renderBlocks() {
             });
         }
 
+        /* ===== 比對語音結果函式：點擊比對答案後，入門與挑戰模式自動隱藏提示 ===== */
         function evaluateUserSpeech() {
             if (!lastRecognizedSpeechText) return alert("尚未取得辨識結果，請重新錄音！");
 
             hideRecordingControls();
 
+            // 1. 若處於入門或挑戰模式，點擊比對答案後自動隱藏提示
             if (activeChallengeType === 'entry' || activeChallengeType === 'timed') {
+                // 對話挑戰的提示氣泡
                 const hintBubble = document.getElementById('chat-a-hint-bubble');
                 if (hintBubble) hintBubble.style.display = 'none';
+
+                // 句子跟讀的提示區塊
+                const sentenceHint = document.getElementById('lbl-hint');
+                if (sentenceHint) sentenceHint.style.display = 'none';
+
+                // 單字跟讀的中文翻譯與音標提示
+                const wordTrans = document.getElementById('lbl-word-shadow-translation');
+                if (wordTrans) wordTrans.style.display = 'none';
+
+                const wordSub = document.getElementById('lbl-word-shadow-subtext');
+                if (wordSub) {
+                    wordSub.innerText = "";
+                    wordSub.style.visibility = "hidden";
+                }
             }
 
             if (currentConfig.mode === 'sentence_chat') {
@@ -7737,9 +7830,6 @@ function renderBlocks() {
                     const targetTextElem = document.getElementById('lbl-word-shadow-target-text');
                     targetTextElem.innerText = currentQ.text || "";
                     targetTextElem.style.visibility = "visible";
-                    
-                    const trans = getWordTranslation(currentQ);
-                    document.getElementById('lbl-word-shadow-translation').innerText = trans ? `${trans}` : "";
 
                     if (activeChallengeType === 'timed') {
                         const playAudioBtn = document.getElementById('btn-word-shadow-play-audio');
@@ -7748,16 +7838,13 @@ function renderBlocks() {
                     }
                     markQuestionAnswered(wordIndex);
                 } else {
-                    // 句子跟讀通過時的顯示邏輯
                     if (isSentenceChallengeMode) {
-                        // 挑戰模式：預設先隱藏，顯示按鈕供玩家點擊查看
                         const revealBtn = document.getElementById('btn-reveal-shadow-answer');
                         if (revealBtn) revealBtn.style.display = 'block';
                     } else if (isSentenceKeywordMode) {
                         const targetTextElem = document.getElementById('lbl-target-text');
                         targetTextElem.innerText = currentQ.text || "";
                         targetTextElem.style.visibility = "visible";
-                        document.getElementById('lbl-translation').innerText = currentQ.translation || "";
                     }
                     markQuestionAnswered(currentIndex);
                 }
@@ -7769,19 +7856,14 @@ function renderBlocks() {
                     const targetTextElem = document.getElementById('lbl-word-shadow-target-text');
                     targetTextElem.innerText = currentQ.text || "";
                     targetTextElem.style.visibility = "visible";
-                    const trans = getWordTranslation(currentQ);
-                    document.getElementById('lbl-word-shadow-translation').innerText = trans ? `${trans}` : "";
                 } else {
-                    // 句子跟讀未通過時的顯示邏輯
                     if (isSentenceChallengeMode) {
-                        // 挑戰模式：答錯同樣先隱藏，讓玩家自由點擊展開答案
                         const revealBtn = document.getElementById('btn-reveal-shadow-answer');
                         if (revealBtn) revealBtn.style.display = 'block';
                     } else {
                         const targetTextElem = document.getElementById('lbl-target-text');
                         targetTextElem.innerText = currentQ.text || "";
                         targetTextElem.style.visibility = "visible";
-                        document.getElementById('lbl-translation').innerText = currentQ.translation || "";
                     }
                 }
 
@@ -7860,82 +7942,61 @@ function renderBlocks() {
                                               (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-recognized-text' : 'lbl-recognized-text';
                             const scoreLbl = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-score' :
                                              (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-score' : 'lbl-score';
-                            
-                            document.getElementById(targetLbl).innerText = `${userSpeech} (未檢測到韓文)`;
-                            const scoreElem = document.getElementById(scoreLbl);
-                            scoreElem.innerText = "⚠ 辨識成英文囉！請對準麥克風清晰念出韓文";
-                            scoreElem.style.color = "var(--duo-orange)";
-                            stopSpeechRecognition();
+                            const el = document.getElementById(targetLbl);
+                            if (el) el.innerHTML = `<span class='err-char-highlight'>${userSpeech}</span>`;
+                            const sc = document.getElementById(scoreLbl);
+                            if (sc) {
+                                sc.innerHTML = "判定結果：<span style='color:#ef4444;'>請用韓文發音作答</span>";
+                            }
                             return;
                         }
                     }
                 }
 
-                if (currentConfig.category === 'japanese') {
-                    const convertedHira = normalizeToHiragana(userSpeech);
-                    if (convertedHira && convertedHira !== userSpeech) {
-                        userSpeech = convertedHira;
-                    }
-                }
-
                 lastRecognizedSpeechText = userSpeech;
+                const targetLblId = (currentConfig.mode === 'word_shadow') ? 'lbl-word-shadow-recognized-text' :
+                                    (currentConfig.mode === 'sentence_chat') ? 'lbl-chat-recognized-text' : 'lbl-recognized-text';
+                const lbl = document.getElementById(targetLblId);
+                if (lbl) lbl.innerText = userSpeech;
 
                 const isWord = (currentConfig.mode === 'word_shadow');
-                const isChat = (currentConfig.mode === 'sentence_chat');
-
-                if (isChat) {
-                    document.getElementById('lbl-chat-recognized-text').innerText = userSpeech;
-                    const evalBtn = document.getElementById('btn-chat-submit-speech-eval');
-                    if (evalBtn) evalBtn.style.display = 'block';
-                } else if (isWord) {
-                    document.getElementById('lbl-word-shadow-recognized-text').innerText = userSpeech;
-                    const evalBtn = document.getElementById('btn-word-shadow-submit-speech-eval');
-                    if (evalBtn) evalBtn.style.display = 'block';
-                } else {
-                    document.getElementById('lbl-recognized-text').innerText = userSpeech;
-                    const evalBtn = document.getElementById('btn-submit-speech-eval');
-                    if (evalBtn) evalBtn.style.display = 'block';
-                }
-
-                stopSpeechRecognition();
+                const evalBtn = isWord ? document.getElementById('btn-word-shadow-submit-speech-eval') :
+                                (currentConfig.mode === 'sentence_chat') ? document.getElementById('btn-chat-submit-speech-eval') :
+                                document.getElementById('btn-submit-speech-eval');
+                if (evalBtn) evalBtn.style.display = 'block';
             };
         }
 
-        function toggleRecording() {
+        async function toggleRecording() {
             if (isToggling) return;
             isToggling = true;
 
-            if (window.speechSynthesis) window.speechSynthesis.cancel();
-
-            if (isRecording) {
-                stopSpeechRecognition();
-                setTimeout(() => { isToggling = false; }, 200);
-            } else {
-                try {
-                    startMediaRecording();
-                    initSpeechRecognition();
-                    recognition.start();
-                } catch(err) {
-                    console.error("啟動錄音失敗:", err);
+            try {
+                if (isRecording) {
                     stopSpeechRecognition();
-                } finally {
-                    setTimeout(() => { isToggling = false; }, 300);
+                } else {
+                    revokeUserAudioUrl();
+                    initSpeechRecognition();
+                    if (recognition) {
+                        recognition.start();
+                        await startMediaRecording();
+                    }
                 }
+            } catch (err) {
+                console.warn("切換錄音異常:", err);
+                stopSpeechRecognition();
+            } finally {
+                setTimeout(() => { isToggling = false; }, 300);
             }
         }
 
-        window.onload = () => {
-            setUserLang(localStorage.getItem('preferred_user_lang') || 'zh');
-            setLearnCategory(localStorage.getItem('preferred_learn_category') || 'korean');
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('preferred_user_lang') || 'zh';
+            setUserLang(savedLang);
+            const savedCat = localStorage.getItem('preferred_learn_category') || 'korean';
+            setLearnCategory(savedCat);
             updateUserFlagIcon();
-            
-            const savedCategory = localStorage.getItem('preferred_learn_category') || 'korean';
-            autoLoadCategoryData(savedCategory, false);
-            
-            ['touchstart', 'mousedown', 'keydown', 'scroll'].forEach(evtName => {
-                window.addEventListener(evtName, resetIdleTimer, { passive: true });
-            });
-        };
+        });
     </script>
 </body>
 </html>
