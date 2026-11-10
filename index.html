@@ -1223,7 +1223,7 @@
         .nav-pill-btn.active { background: var(--duo-blue); color: white; border-color: var(--duo-blue); }
 
         .tab-segmented {
-            display: flex background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 14px;
+            display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px; margin-bottom: 14px;
         }
         .tab-segmented-item {
             flex: 1; padding: 8px 10px; border: none; background: transparent; font-weight: bold;
@@ -1844,8 +1844,7 @@
             </button>
         </div>
     </div>
-
-    <!-- 關卡任務完成提示彈窗 -->
+<!-- 關卡任務完成提示彈窗 -->
     <div id="modal-grammar-complete" class="custom-modal">
         <div class="custom-modal-card" style="padding: 26px 20px;">
             <div style="font-size: 2.6rem; color: var(--duo-purple); margin-bottom: 10px;">
@@ -6527,7 +6526,7 @@ function triggerBottomGrammarAction() {
                 let pool = [];
                 let correctOpt = "";
 
-                /* ===== 單字選擇選項生成核心修改：優先從 choice 抓取，沒有才從其他欄位抓 ===== */
+                /* ===== 單字選擇選項生成核心修改：優先從 choice 抓取，沒有才抓其他欄位 ===== */
                 if (is0ALevel) {
                     targetTextElem.innerText = "";
                     targetTextElem.style.visibility = "hidden";
@@ -7740,23 +7739,23 @@ function displayQuestion() {
             });
         }
 
-        /* ===== 比對語音結果函式：點擊比對答案後，入門與挑戰模式自動隱藏提示 ===== */
+        /* ===== 比對語音結果函式：點擊比對答案後，入門與挑戰模式隱藏提示，且句子跟讀入門模式顯示翻譯 ===== */
         function evaluateUserSpeech() {
             if (!lastRecognizedSpeechText) return alert("尚未取得辨識結果，請重新錄音！");
 
             hideRecordingControls();
 
-            // 1. 若處於入門或挑戰模式，點擊比對答案後自動隱藏提示
+            // 若處於入門或挑戰模式，點擊比對答案後隱藏提示
             if (activeChallengeType === 'entry' || activeChallengeType === 'timed') {
-                // 對話挑戰的提示氣泡
+                // 對話挑戰提示氣泡隱藏
                 const hintBubble = document.getElementById('chat-a-hint-bubble');
                 if (hintBubble) hintBubble.style.display = 'none';
 
-                // 句子跟讀的提示區塊
+                // 句子跟讀提示文字隱藏
                 const sentenceHint = document.getElementById('lbl-hint');
                 if (sentenceHint) sentenceHint.style.display = 'none';
 
-                // 單字跟讀的中文翻譯與音標提示
+                // 單字跟讀中文翻譯與音標提示隱藏
                 const wordTrans = document.getElementById('lbl-word-shadow-translation');
                 if (wordTrans) wordTrans.style.display = 'none';
 
@@ -7841,10 +7840,17 @@ function displayQuestion() {
                     if (isSentenceChallengeMode) {
                         const revealBtn = document.getElementById('btn-reveal-shadow-answer');
                         if (revealBtn) revealBtn.style.display = 'block';
-                    } else if (isSentenceKeywordMode) {
+                    } else {
+                        // 句子跟讀入門與練習模式：比對通過後仍顯示中文翻譯
                         const targetTextElem = document.getElementById('lbl-target-text');
                         targetTextElem.innerText = currentQ.text || "";
                         targetTextElem.style.visibility = "visible";
+
+                        const transElem = document.getElementById('lbl-translation');
+                        if (transElem) {
+                            transElem.innerText = currentQ.translation || "";
+                            transElem.style.display = 'block';
+                        }
                     }
                     markQuestionAnswered(currentIndex);
                 }
@@ -7861,9 +7867,16 @@ function displayQuestion() {
                         const revealBtn = document.getElementById('btn-reveal-shadow-answer');
                         if (revealBtn) revealBtn.style.display = 'block';
                     } else {
+                        // 句子跟讀入門與練習模式：比對未通過時仍顯示正解與翻譯供訂正
                         const targetTextElem = document.getElementById('lbl-target-text');
                         targetTextElem.innerText = currentQ.text || "";
                         targetTextElem.style.visibility = "visible";
+
+                        const transElem = document.getElementById('lbl-translation');
+                        if (transElem) {
+                            transElem.innerText = currentQ.translation || "";
+                            transElem.style.display = 'block';
+                        }
                     }
                 }
 
